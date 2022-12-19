@@ -1,14 +1,14 @@
 //
-//  MessageListView.swift
+//  MessageStack.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 18/12/22.
+//  Created by Martin Dutra on 19/12/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
 import SwiftUI
 
-struct MessageListView<DataSource>: View where DataSource: MessageList {
+struct MessageStack<DataSource>: View where DataSource: MessageList {
     @ObservedObject
     var dataSource: DataSource
 
@@ -16,7 +16,7 @@ struct MessageListView<DataSource>: View where DataSource: MessageList {
     private var appController: AppController
 
     var body: some View {
-        InfiniteListView(dataSource: dataSource) { message in
+        InfiniteStackView(dataSource: dataSource) { message in
             Button {
                 if let contact = (message as! Message).content.contact {
                     appController.open(identity: contact.contact)
@@ -30,4 +30,3 @@ struct MessageListView<DataSource>: View where DataSource: MessageList {
         }
     }
 }
-

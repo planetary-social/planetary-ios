@@ -126,10 +126,15 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageListView(strategy: strategy)
-                    .background(Color.appBg)
-                    .zIndex(extendedHeader ? 1000 : 500)
-                    .offset(y: contentOffset)
+                MessageStack(
+                    dataSource: FeedStrategyMessageList(
+                        strategy: strategy,
+                        bot: botRepository.current
+                    )
+                )
+                .background(Color.appBg)
+                .zIndex(extendedHeader ? 1000 : 500)
+                .offset(y: contentOffset)
                 Spacer()
                     .frame(height: contentOffset)
             }

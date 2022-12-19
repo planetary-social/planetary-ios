@@ -12,7 +12,10 @@ import Logger
 import SwiftUI
 
 struct HomeView: View, HelpDrawerHost {
-    init(helpDrawerState: HelpDrawerState) {
+    private var dataSource: FeedStrategyMessageList
+
+    init(dataSource: FeedStrategyMessageList, helpDrawerState: HelpDrawerState) {
+        self.dataSource = dataSource
         self.helpDrawerState = helpDrawerState
     }
 
@@ -80,47 +83,7 @@ struct HomeView: View, HelpDrawerHost {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Group {
-                if let messages = messages {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        ZStack {
-                            LazyVStack(alignment: .center) {
-                                if messages.isEmpty {
-                                    EmptyHomeView()
-                                } else {
-                                    ForEach(messages) { message in
-                                        Button {
-                                            if let contact = message.content.contact {
-                                                appController.open(identity: contact.contact)
-                                            } else {
-                                                appController.open(identifier: message.id)
-                                            }
-                                        } label: {
-                                            MessageView(message: message)
-                                                .onAppear {
-                                                    if message == messages.last {
-                                                        loadMore()
-                                                    }
-                                                }
-                                        }
-                                        .buttonStyle(MessageButtonStyle())
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: 500)
-                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
-                            if isLoadingMoreMessages, !noMoreMessages {
-                                HStack {
-                                    ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                } else {
-                    LoadingView()
-                }
-            }
+            MessageListView(dataSource: dataSource)
             if shouldShowFloatingButton {
                 FloatingButton(count: numberOfNewItems, isLoading: isLoadingFromScratch)
             }
@@ -166,7 +129,7 @@ struct HomeView: View, HelpDrawerHost {
             actions: {
                 Button(Localized.tryAgain.text) {
                     Task {
-                        await loadFromScratch()
+                        await dataSource.loadFromScratch()
                     }
                 }
                 Button(Localized.cancel.text, role: .cancel) {
@@ -177,33 +140,29 @@ struct HomeView: View, HelpDrawerHost {
                 Text(errorMessage ?? "")
             }
         )
-        .task {
-            if messages == nil {
-                await loadFromScratch()
-            }
-        }
-        .refreshable {
-            await loadFromScratch()
-        }
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
             Task.detached {
-                await loadFromScratch()
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { _ in
             Task.detached {
-                await loadFromScratch()
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didPublishPost)) { _ in
             Task.detached {
-                await loadFromScratch()
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didRefresh)) { _ in
             Task.detached {
                 await checkNewItemsIfNeeded()
             }
+        }
+        .onReceive(dataSource.$cache) { cache in
+            print("LISTEN: onReceive $cache")
+            updateBadgeNumber(value: 0)
         }
         .onAppear {
             CrashReporting.shared.record("Did Show Home")
@@ -221,67 +180,8 @@ struct HomeView: View, HelpDrawerHost {
         appController.present(navController, animated: true)
     }
 
-    func loadFromScratch() async {
-        guard !isLoadingFromScratch else {
-            return
-        }
-        isLoadingFromScratch = true
-        let strategy = feedStrategyStore.homeFeedStrategy
-        let bot = botRepository.current
-        let pageSize = 50
-        do {
-            let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: 0)
-            await MainActor.run {
-                messages = newMessages
-                offset = newMessages.count
-                noMoreMessages = newMessages.count < pageSize
-                isLoadingFromScratch = false
-                numberOfNewItems = 0
-                updateBadgeNumber(value: 0)
-            }
-        } catch {
-            CrashReporting.shared.reportIfNeeded(error: error)
-            Log.shared.optional(error)
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                isLoadingFromScratch = false
-                messages = []
-                offset = 0
-                noMoreMessages = true
-                numberOfNewItems = 0
-                updateBadgeNumber(value: 0)
-            }
-        }
-    }
-
-    func loadMore() {
-        guard !isLoadingMoreMessages, !noMoreMessages else {
-            return
-        }
-        isLoadingMoreMessages = true
-        Task.detached {
-            let strategy = await feedStrategyStore.homeFeedStrategy
-            let bot = await botRepository.current
-            let pageSize = 50
-            do {
-                let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
-                await MainActor.run {
-                    messages?.append(contentsOf: newMessages)
-                    offset += newMessages.count
-                    noMoreMessages = newMessages.count < pageSize
-                    isLoadingMoreMessages = false
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    isLoadingMoreMessages = false
-                }
-            }
-        }
-    }
-
     private func updateBadgeNumber(value: Int) {
+        numberOfNewItems = 0
         let navigationController = appController.mainViewController?.homeFeatureViewController
         if value > 0 {
             navigationController?.tabBarItem.badgeValue = "\(value)"
@@ -326,13 +226,19 @@ struct FeedStrategyStore {
 }
 
 struct HomeView_Previews: PreviewProvider {
+    static var dataSource: FeedStrategyMessageList {
+        FeedStrategyMessageList(
+            strategy: StaticAlgorithm(messages: []),
+            bot: FakeBot()
+        )
+    }
     static var previews: some View {
         Group {
             NavigationView {
-                HomeView(helpDrawerState: HelpDrawerState())
+                HomeView(dataSource: dataSource, helpDrawerState: HelpDrawerState())
             }
             NavigationView {
-                HomeView(helpDrawerState: HelpDrawerState())
+                HomeView(dataSource: dataSource, helpDrawerState: HelpDrawerState())
             }
             .preferredColorScheme(.dark)
         }

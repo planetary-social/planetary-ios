@@ -119,7 +119,10 @@ class MainViewController: UITabBarController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         homeFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
-                rootView: HomeView(helpDrawerState: helpDrawerState)
+                rootView: HomeView(
+                    dataSource: FeedStrategyMessageList(strategy: HomeStrategy(), bot: Bots.current),
+                    helpDrawerState: helpDrawerState
+                )
                     .environmentObject(BotRepository.shared)
                     .environmentObject(AppController.shared)
             ),
