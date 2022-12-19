@@ -46,6 +46,7 @@ type Node struct {
 	mutex      sync.Mutex
 	service    *di.Service
 	cancel     context.CancelFunc
+	cleanup    func()
 	repository string
 }
 
@@ -77,7 +78,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	service, err := di.BuildService(ctx, local, config)
+	service, cleanup, err := di.BuildService(ctx, local, config)
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
@@ -85,6 +86,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 
 	n.service = &service
 	n.cancel = cancel
+	n.cleanup = cleanup
 	n.repository = config.DataDirectory
 
 	go func() {
@@ -120,9 +122,12 @@ func (n *Node) Stop() error {
 	}
 
 	n.cancel()
+	n.cleanup()
 
 	n.service = nil
 	n.cancel = nil
+	n.repository = ""
+	n.cleanup = nil
 
 	return nil
 }
