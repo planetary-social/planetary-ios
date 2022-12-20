@@ -17,6 +17,13 @@ struct RoomAlias: Identifiable {
     }
     var roomID: Int64?
     var authorID: Int64
+    
+    var alias: String {
+        var components = string.replacingOccurrences(of: "https://", with: "")
+            .replacingOccurrences(of: "http://", with: "")
+            .components(separatedBy: ".")
+        return components.removeFirst() + "@" + components.joined(separator: ".")
+    }
 }
 
 // A view model for the RoomListView

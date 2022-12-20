@@ -1212,6 +1212,10 @@
 		E0020B28292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
 		E0020B2C292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json in Resources */ = {isa = PBXBuildFile; fileRef = E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */; };
 		E041A24C293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json in Resources */ = {isa = PBXBuildFile; fileRef = E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */; };
+		E04BC3412950CE5E005185CD /* AliasCountButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BC3402950CE5E005185CD /* AliasCountButton.swift */; };
+		E04BC3422950CE5E005185CD /* AliasCountButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BC3402950CE5E005185CD /* AliasCountButton.swift */; };
+		E04BC34529520A36005185CD /* AliasListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BC34429520A36005185CD /* AliasListView.swift */; };
+		E04BC34629520A36005185CD /* AliasListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04BC34429520A36005185CD /* AliasListView.swift */; };
 		E0A4AB1D294A52BC00A410CB /* PillButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A4AB1B294A52BC00A410CB /* PillButtonStyle.swift */; };
 		E0A4AB1E294A52BC00A410CB /* PillButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A4AB1B294A52BC00A410CB /* PillButtonStyle.swift */; };
 		E0A4AB21294A52C300A410CB /* RoomCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A4AB20294A52C300A410CB /* RoomCard.swift */; };
@@ -1891,6 +1895,8 @@
 		E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomAliasAnnouncement+ViewDatabase.swift"; sourceTree = "<group>"; };
 		E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_registered.json; sourceTree = "<group>"; };
 		E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_revoked.json; sourceTree = "<group>"; };
+		E04BC3402950CE5E005185CD /* AliasCountButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasCountButton.swift; sourceTree = "<group>"; };
+		E04BC34429520A36005185CD /* AliasListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AliasListView.swift; sourceTree = "<group>"; };
 		E0A4AB1B294A52BC00A410CB /* PillButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButtonStyle.swift; sourceTree = "<group>"; };
 		E0A4AB20294A52C300A410CB /* RoomCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomCard.swift; sourceTree = "<group>"; };
 		E0BB7184294A08B40048D55C /* RoomsOnboardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsOnboardingController.swift; sourceTree = "<group>"; };
@@ -2803,25 +2809,27 @@
 		5B7AB67D28F46E90007DCCF1 /* About */ = {
 			isa = PBXGroup;
 			children = (
-				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
-				5B32F258291EC037005985E2 /* IdentityHeaderView.swift */,
+				E04BC3402950CE5E005185CD /* AliasCountButton.swift */,
+				E04BC34429520A36005185CD /* AliasListView.swift */,
+				5B32F255291E963B005985E2 /* AvatarView.swift */,
 				5B3FBE3029295CEC004F34CC /* BioView.swift */,
+				5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */,
+				5BAB1844290C2767009F8F90 /* CompactIdentityView.swift */,
+				5BAB1840290C2634009F8F90 /* CompactPostView.swift */,
+				5B3FBE3C292BE5E0004F34CC /* EditAvatarButton.swift */,
+				5B3FBE2A29280AAA004F34CC /* EditIdentityButton.swift */,
 				5B7AB67E28F46EB1007DCCF1 /* ExtendedSocialStatsView.swift */,
 				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
-				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
-				5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */,
-				5B929DA929086954007922AB /* MessageListView.swift */,
-				5B929DA3290857DB007922AB /* MessageView.swift */,
-				5BAB1840290C2634009F8F90 /* CompactPostView.swift */,
+				5B32F258291EC037005985E2 /* IdentityHeaderView.swift */,
 				5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */,
-				5BAB1844290C2767009F8F90 /* CompactIdentityView.swift */,
-				5B8E8058291547D9005009FC /* MessageOptionsButton.swift */,
 				5BE8A30F291A96FE00C4A38E /* IdentityOptionsButton.swift */,
 				5BE8A312291A986200C4A38E /* IdentityShareButton.swift */,
-				5B32F255291E963B005985E2 /* AvatarView.swift */,
-				5B3FBE2A29280AAA004F34CC /* EditIdentityButton.swift */,
+				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
+				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
 				5B3FBE39292BB9E5004F34CC /* ImagePicker.swift */,
-				5B3FBE3C292BE5E0004F34CC /* EditAvatarButton.swift */,
+				5B929DA929086954007922AB /* MessageListView.swift */,
+				5B8E8058291547D9005009FC /* MessageOptionsButton.swift */,
+				5B929DA3290857DB007922AB /* MessageView.swift */,
 				5B040164292D1BE20048CD1F /* RelationshipButton.swift */,
 			);
 			path = About;
@@ -4152,6 +4160,7 @@
 				C9724BD02809EDDC000EBCCD /* AppDelegate+Push.swift in Sources */,
 				C9724B592809D5FE000EBCCD /* UIEdgeInsets+Layout.swift in Sources */,
 				C969F0E42899D0F000081615 /* RoomListView.swift in Sources */,
+				E04BC3422950CE5E005185CD /* AliasCountButton.swift in Sources */,
 				0AF9966E24D8A232001113BE /* Report.swift in Sources */,
 				2346ECB522141DAD009A94CB /* Messages.swift in Sources */,
 				0A3880392475D18E00777843 /* PubAPIService.swift in Sources */,
@@ -4308,6 +4317,7 @@
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
 				C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */,
 				C9C9BB5228C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */,
+				E04BC34629520A36005185CD /* AliasListView.swift in Sources */,
 				C9724B662809D6EC000EBCCD /* AboutCellView.swift in Sources */,
 				C9724BC82809ED75000EBCCD /* UINavigationBar+Verse.swift in Sources */,
 				C9724BDA2809EE32000EBCCD /* SendMissionOperation.swift in Sources */,
@@ -4867,6 +4877,7 @@
 				0ABCA8FD2436B41300D7F39C /* APIError+LocalizedError.swift in Sources */,
 				53211CCA227BA725007FB785 /* Array+SafeSubscript.swift in Sources */,
 				E0020B27292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */,
+				E04BC34529520A36005185CD /* AliasListView.swift in Sources */,
 				533EDBED238603D8008B3565 /* BlobCache.swift in Sources */,
 				8DE093D52344CA10009E505D /* RelationshipUIButton.swift in Sources */,
 				5BE8A310291A96FE00C4A38E /* IdentityOptionsButton.swift in Sources */,
@@ -4978,6 +4989,7 @@
 				8D6D2E64236387C800E7B0EC /* FollowCountView.swift in Sources */,
 				5BAB1845290C2767009F8F90 /* CompactIdentityView.swift in Sources */,
 				53211CDA2281EB22007FB785 /* AppController+Progress.swift in Sources */,
+				E04BC3412950CE5E005185CD /* AliasCountButton.swift in Sources */,
 				8D8A7B17231944030087895B /* CGSize+Square.swift in Sources */,
 				0A1CA4CA24EB2353006CAC43 /* SendMissionOperation.swift in Sources */,
 				E0BB718C294A093E0048D55C /* RoomsOnboardingView.swift in Sources */,
