@@ -213,7 +213,7 @@
 "Onboarding.listMeTitle" = "Adicione-me ao diretório de usuários";
 "Onboarding.listMeMessage" = "Isto permite que as pessoas o encontrem se souberem seu nome ou número de telefone";
 "Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "One more thing…";
+"Onboarding.doneOnboarding" = "Ufa! Terminei!";
 "Onboarding.earlyAccess" = "Este aplicativo está na fase inicial. Estamos dedicando tempo aos alicerces e, por isso, há lacunas e imperfeições na interface de usuário. Tenha paciência!";
 "Onboarding.iUnderstand" = "Sim, entendo";
 "Onboarding.followPlanetaryToggleTitle" = "Seguir o Planetary";
@@ -391,3 +391,9 @@
 "YourNetwork.title" = "Seus amigos, conexões e servidores públicos";
 "YourNetwork.body" = "Sua rede é única: é formada pelos usuários que você segue, por quem *eles* seguem e pelos servidores públicos que você usa para *fofocar* com todos eles.";
 "YourNetwork.highlightedWord" = "*fofoca*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} reply";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} replies";

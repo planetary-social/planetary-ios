@@ -6,7 +6,7 @@
 "Localized.skip" = "Omitir";
 "Localized.ok" = "OK";
 "Localized.next" = "Siguiente";
-"Localized.back" = "Back";
+"Localized.back" = "Atrás";
 "Localized.done" = "Hecho";
 "Localized.save" = "Guardar";
 "Localized.yes" = "Sí";
@@ -145,7 +145,7 @@
 "Localized.searchingLocally" = "Buscando publicaciones en tu base de datos local";
 "Localized.noResultsFound" = "No se encontraron resultados.";
 "Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
-"Localized.rooms" = "Rooms";
+"Localized.rooms" = "Salas";
 "Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
 "Localized.beta1MigrationComplete" = "Toca en el siguiente botón para cerrar esta pantalla y volver a tu feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "Puede que esto lleve un rato.\n\nPor favor deja la aplicación abierta hasta que termine.\n";
@@ -212,8 +212,8 @@
 "Onboarding.contactsWIP" = "Disculpas, esta funcionalidad no está terminada. Toca 'OK' para ver una lista de usuarios que te recomendamos seguir.";
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de teléfono";
-"Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "One more thing…";
+"Onboarding.orUseTheDefaults" = "O simplemente usa los valores por defecto";
+"Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes ásperas en la interfaz. ¡Anímate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Sigue a Planetary";
@@ -237,17 +237,17 @@
 "Onboarding.joinPlanetarySystemDescription" = "Unirse significa que usarás los servidores de retransmisión de Planetary para intercambiar mensajes con otros. Recomendado para nuevos usuarios.";
 "Onboarding.useTestNetwork" = "Usar red de pruebas";
 "Onboarding.useTestNetworkDescription" = "Esto creará tu identidad con una clave de red alternativa que no se replicará con la red SSB principal. Esto no se puede cambiar más tarde.";
-"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
-"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
-"Onboarding.yourAlias" = "youralias";
-"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
-"Onboarding.aliasSkip" = "Skip choosing an alias";
-"Onboarding.aliasServerSkip" = "Skip choosing a server";
-"Onboarding.aliasTaken" = "This alias is taken already";
-"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
-"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
-"Onboarding.typeYourAlias" = "Type your alias";
-"Onboarding.registeringAlias" = "Registering Alias...";
+"Onboarding.changeAlias" = "Podrás cambiar este alias desde los ajustes.";
+"Onboarding.aliasServerInformation" = "Los regidores de alias son como los servidores de email, donde puedes definir como los demás te encontrarán en Planetary.\n\ntualias.planetary.name es un buen comienzo, pero puedes elegir tu alias en otros servidores:";
+"Onboarding.yourAlias" = "tualias";
+"Onboarding.yourAliasPlanetary" = "tualias.planetary.name";
+"Onboarding.aliasSkip" = "Omitir la selección de un alias";
+"Onboarding.aliasServerSkip" = "Omitir la selección de un servidor";
+"Onboarding.aliasTaken" = "Este alias ya está en uso";
+"Onboarding.invalidAliasFormat" = "Formato incorrecto para el alias";
+"Onboarding.unknownAliasRegistrationError" = "Hubo un problema con el registro de este alias";
+"Onboarding.typeYourAlias" = "Introduce tu alias";
+"Onboarding.registeringAlias" = "Registrando alias...";
 
 "OnboardingStepTitle.backup" = "Okay, hemos creado tu identidad. ¿Te gustaría respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";
@@ -255,7 +255,7 @@
 "OnboardingStepTitle.birthday" = "Antes de comenzar, ¿cuál es tu fecha de nacimiento?";
 "OnboardingStepTitle.contacts" = "Puedes conectar tu lista de contactos para ver cuál de tus amigos está usando Planetary";
 "OnboardingStepTitle.directory" = "Gente que puede que conozcas";
-"OnboardingStepTitle.done" = "Customize your settings";
+"OnboardingStepTitle.done" = "Personaliza tus ajustes";
 "OnboardingStepTitle.earlyAccess" = "Un cordial recordatorio: este es un software en desarrollo";
 "OnboardingStepTitle.join" = "Creando tu identidad en Planetary...";
 "OnboardingStepTitle.name" = "Ahora, ¿cómo te gustaría ser llamado?";
@@ -265,8 +265,8 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
-"OnboardingStepTitle.aliasServer" = "Choose an alias server";
-"OnboardingStepTitle.alias" = "Now choose your alias";
+"OnboardingStepTitle.aliasServer" = "Elige un servidor de alias";
+"OnboardingStepTitle.alias" = "Ahora elige tus alias";
 
 "ManageRelays.relayServers" = "Servidores de retransmisión";
 "ManageRelays.managePubs" = "Administrar pubs";
@@ -391,3 +391,9 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios a los que sigues, aquellos que *ellos* siguen y los servidores Pub que usas para *susurrar* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*susurro*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} respuesta";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} respuestas";

@@ -213,7 +213,7 @@
 "Onboarding.listMeTitle" = "在用户目录中显示";
 "Onboarding.listMeMessage" = "This allows people to find you if they know your name or phone number";
 "Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "One more thing…";
+"Onboarding.doneOnboarding" = "Phew! I'm done!";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
@@ -391,3 +391,9 @@
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
 "YourNetwork.highlightedWord" = "*gossip*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} reply";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} replies";
