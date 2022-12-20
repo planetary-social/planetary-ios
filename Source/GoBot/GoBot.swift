@@ -33,7 +33,7 @@ let greatestRequestedSequenceNumberFromGoBotKey = "greatestRequestedSequenceNumb
 /// is used as a cache to speed up fetching of posts (ADR #4). The GoBot acts as a gatekeeper to these two components,
 /// presenting a simpler interface for read and write operations, while internally it manages several threads and
 /// synchronization between GoSSB's internal database and the SQLite layer.
-class GoBot: Bot {
+class GoBot: Bot, @unchecked Sendable {
     
     // TODO https://app.asana.com/0/914798787098068/1122165003408769/f
     // TODO expose in API?
@@ -375,48 +375,57 @@ class GoBot: Bot {
     
     func joinedRooms() async throws -> [Room] {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.getJoinedRooms()
+            try self.database.getJoinedRooms()
         }
         return try await task.value
     }
     
     func insert(room: Room) async throws {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.insert(room: room)
+            try self.database.insert(room: room)
         }
         return try await task.value
     }
     
     func delete(room: Room) async throws {
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.delete(room: room)
+            try self.database.delete(room: room)
         }
         return try await task.value
     }
     
     func registeredAliases() async throws -> [RoomAlias] {
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
         let task = Task.detached(priority: .userInitiated) {
-            return try self.database.getRegisteredAliases()
+            try self.database.getRegisteredAliasesByUser(user: identity)
         }
         return try await task.value
     }
     
     func register(alias: String, in room: Room) async throws -> RoomAlias {
+        
+        guard let identity = _identity else {
+            throw BotError.notLoggedIn
+        }
+        
         let task = Task.detached(priority: .userInitiated) { () throws -> RoomAlias in
-            if self.bot.register(alias: alias, in: room) {
-                return try self.database.insertRoomAlias(url: URL(string: "https://" + alias + "." + room.address.host)!, room: room)
-            } else {
-                // TODO: localize, better error messages i.e. in case of conflicts.
-                throw GoBotError.unexpectedFault("Failed to register room alias")
+            _ = try self.bot.register(alias: alias, in: room)
+            guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
+                throw GoBotError.unexpectedFault("Invalid URL")
             }
+            return try self.database.insertRoomAlias(
+                url: url,
+                room: room,
+                user: identity
+            )
         }
         return try await task.value
     }
     
     func revoke(alias: RoomAlias) async throws {
-        
     }
-    
 
     private var _isSyncing = false
     var isSyncing: Bool { self._isSyncing }
@@ -478,7 +487,6 @@ class GoBot: Bot {
             self.bot.replicate(feed: feed)
         }
     }
-    
 
     // MARK: Refresh
 
@@ -1607,7 +1615,7 @@ class GoBot: Bot {
     
     func posts(matching filter: String) async throws -> [Message] {
         let task = Task.detached(priority: .high) {
-            return try self.database.posts(matching: filter)
+            try self.database.posts(matching: filter)
         }
         
         return try await task.result.get()
@@ -1676,8 +1684,8 @@ class GoBot: Bot {
                 completion(statistics)
             }
             
-            //commenting out because we don't need to be logging this much information - rabble Nov 9 2022
-            //Analytics.shared.trackStatistics(statistics.analyticsStatistics)
+            // commenting out because we don't need to be logging this much information - rabble Nov 9 2022
+            // Analytics.shared.trackStatistics(statistics.analyticsStatistics)
         }
     }
     

@@ -13,7 +13,7 @@ struct SSBNetwork: Equatable {
     
     /// The name of the network. This is for convenience and is not transmitted, not part of the protocol, nor
     /// Equatable conformance.
-    var name: String? = nil
+    var name: String?
     
     /// The network key. Also called shs or caps.shs.
     var key: NetworkKey

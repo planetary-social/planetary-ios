@@ -17,7 +17,7 @@ import CryptoKit
 /// one can be in use at a time.
 ///
 /// The AppConfiguration is also used to prevent feed forks in some cases by storing the number of published messages.
-class AppConfiguration: NSObject, NSCoding, Identifiable {
+class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { // #982
     
     var id: String {
         let idComponents: [String] = [
@@ -27,7 +27,8 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
             network?.string ?? "null",
         ]
         let idString = idComponents.joined(separator: "&@!(#$*")
-        return SHA256.hash(data: idString.data(using: .utf8)!).description
+        let data = idString.data(using: .utf8) ?? Data()
+        return SHA256.hash(data: data).description
     }
 
     // MARK: Editable properties
@@ -138,6 +139,17 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
         }
     }
     
+    var communityAliasServers: [Room] {
+        switch ssbNetwork {
+        case Environment.Networks.mainNet:
+            return Environment.PlanetarySystem.communityAliasServers
+        case Environment.Networks.test:
+            return Environment.TestNetwork.communityAliasServers
+        default:
+            return []
+        }
+    }
+    
     func databaseDirectory() throws -> String {
         // lookup Application Support folder for bot and database
         let appSupportDirs = NSSearchPathForDirectoriesInDomains(
@@ -189,8 +201,16 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
         
         guard let name = aDecoder.decodeObject(forKey: "name") as? String else { return nil }
         self.name = name
-        if let data = aDecoder.decodeObject(forKey: "network") as? Data { self.network = NetworkKey(base64: data) } else { self.network = nil }
-        if let named = aDecoder.decodeObject(forKey: "bot") as? String { self.bot = Bots.bot(named: named) } else { self.bot = nil }
+        if let data = aDecoder.decodeObject(forKey: "network") as? Data {
+            self.network = NetworkKey(base64: data)
+        } else {
+            self.network = nil
+        }
+        if let named = aDecoder.decodeObject(forKey: "bot") as? String {
+            self.bot = Bots.bot(named: named)
+        } else {
+            self.bot = nil
+        }
         if aDecoder.containsValue(forKey: "numberOfPublishedMessages") {
             self.numberOfPublishedMessages = aDecoder.decodeInteger(forKey: "numberOfPublishedMessages")
         }
@@ -231,7 +251,6 @@ class AppConfiguration: NSObject, NSCoding, Identifiable {
     func unapplyIfCurrent() {
         if self.isCurrent { self.unapply() }
     }
-    
 }
 
 extension AppConfiguration {
@@ -252,9 +271,7 @@ extension AppConfiguration {
 extension AppConfiguration {
 
     func setDefaultName(_ name: String? = nil) {
-        let dateString = DateFormatter.localizedString(from: Date(),
-                                                       dateStyle: .short,
-                                                       timeStyle: .short)
+        let dateString = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)
         self.name = "\(name ?? "") \(dateString)"
     }
 }
@@ -263,8 +280,7 @@ typealias AppConfigurations = [AppConfiguration]
 
 fileprivate extension Keychain {
 
-    // TODO https://app.asana.com/0/914798787098068/1149043570373553/f
-    // TODO if the keychain does not unlock fast enough then this will be nil
+    // if the keychain does not unlock fast enough then this will be nil
     static var configuration: AppConfiguration? {
         get {
             guard let data = Keychain.data(for: "app.configuration") else { return nil }

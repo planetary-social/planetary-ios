@@ -87,7 +87,7 @@ fileprivate extension UIImage {
     /// a max size and compression ratio that fits within
     /// the SSB blob max bytes.
     func blobData() -> Data? {
-        guard let image = self.resized(toLargestDimension: 1_000) else { return nil }
+        guard let image = self.resized(toLargestDimension: 1000) else { return nil }
         guard let data = image.jpegData(compressionQuality: 0.5) else { return nil }
         return data
     }

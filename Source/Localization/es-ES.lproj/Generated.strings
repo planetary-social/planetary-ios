@@ -2,10 +2,12 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Ups";
+"Localized.success" = "Success!";
 "Localized.cancel" = "Cancelar";
 "Localized.skip" = "Omitir";
 "Localized.ok" = "OK";
 "Localized.next" = "Siguiente";
+"Localized.back" = "Atrás";
 "Localized.done" = "Hecho";
 "Localized.save" = "Guardar";
 "Localized.yes" = "Sí";
@@ -19,7 +21,7 @@
 "Localized.daysAgo" = "Hace {{ days }} días";
 "Localized.atDayTime" = "{{ day }} a las {{ time }}";
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} minutos";
-"Localized.profile" = "Profile";
+"Localized.profile" = "Perfil";
 "Localized.yourProfile" = "Tu perfil";
 "Localized.helpAndSupport" = "Ayuda y soporte";
 "Localized.reportBug" = "Reportar un error";
@@ -29,12 +31,12 @@
 "Localized.usersInYourNetwork" = "Usuarios en tu red";
 "Localized.goToYourNetwork" = "Ir a tu red";
 "Localized.emptyHomeFeedMessage" = "¡Está vacío! ¿Has considerado seguir a algunos usuarios o temas?";
-"Localized.posted" = "{{somebody}} posted";
+"Localized.posted" = "{{somebody}} publicó";
 "Localized.replied" = "{{somebody}} respondió";
 "Localized.liked" = "A {{somebody}} le gustó";
 "Localized.startedFollowing" = "{{somebody}} empezó a seguirte";
 "Localized.stoppedFollowing" = "{{somebody}} dejó de seguirte";
-"Localized.startedBlocking" = "{{somebody}} blocked";
+"Localized.startedBlocking" = "{{somebody}} bloqueó";
 "Localized.followStats" = "Siguiendo a {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "Este usuario está fuera de tu red";
 "Localized.showMeInDirectory" = "Mostrarme en el directorio";
@@ -53,7 +55,7 @@
 "Localized.deletePost" = "Eliminar esta publicación";
 "Localized.editPost" = "Editar esta publicación";
 "Localized.confirmDeletePost" = "¿Estás seguro de que quieres eliminar esta publicación?";
-"Localized.readMore" = "Read more";
+"Localized.readMore" = "Leer más";
 "Localized.postReply" = "Publicar respuesta";
 "Localized.postAReply" = "Publicar una respuesta";
 "Localized.createProfile" = "Crear perfil";
@@ -66,17 +68,17 @@
 "Localized.dislikesThis" = "no le gusta esto";
 "Localized.block" = "Ignorar";
 "Localized.blocked" = "Ignorado";
-"Localized.blocking" = "Ignoring";
+"Localized.blocking" = "Ignorando";
 "Localized.deleteSecretAndIdentity" = "Eliminar este secreto e identidad";
-"Localized.followBack" = "Follow back";
+"Localized.followBack" = "Seguir de vuelta";
 "Localized.follow" = "Seguir";
 "Localized.following" = "Siguiendo";
 "Localized.followedBy" = "Seguido por";
 "Localized.isFollowingYou" = "está siguiéndote actualmente";
 "Localized.followedByCount" = "Seguido por {{ count }}";
-"Localized.followingCount" = "Siguiendo {{ count }}";
-"Localized.blockingCount" = "Ignoring {{ count }}";
-"Localized.joinedCount" = "Joined {{ count }}";
+"Localized.followingCount" = "Siguiendo a {{ count }}";
+"Localized.blockingCount" = "Ignorando a {{ count }}";
+"Localized.joinedCount" = "Unido a {{ count }}";
 "Localized.inYourNetwork" = " en tu red";
 "Localized.followedByShortCount" = "{{ count }} Seguidores";
 "Localized.unfollow" = "Dejar de seguir";
@@ -124,7 +126,7 @@
 "Localized.like" = "Me gusta";
 "Localized.debug" = "Depuración";
 "Localized.join" = "Unirse";
-"Localized.joined" = "Joined";
+"Localized.joined" = "Unido";
 "Localized.redeemInvitation" = "Canjear una invitación";
 "Localized.pasteAddress" = "Token";
 "Localized.invitationRedeemed" = "¡Invitación canjeada!";
@@ -143,7 +145,8 @@
 "Localized.searchForUsers" = "Filtrar usuarios por nombre o ID";
 "Localized.searchingLocally" = "Buscando publicaciones en tu base de datos local";
 "Localized.noResultsFound" = "No se encontraron resultados.";
-"Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
+"Localized.rooms" = "Salas";
 "Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
 "Localized.beta1MigrationComplete" = "Toca en el siguiente botón para cerrar esta pantalla y volver a tu feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "Puede que esto lleve un rato.\n\nPor favor deja la aplicación abierta hasta que termine.\n";
@@ -155,13 +158,13 @@
 "Localized.beta1Disclaimers" = "\n• no podrás publicar o seguir hasta que todo tu feed se halla descargado\n\n• puede que no veas todos los mensajes previos hasta que se descarguen.";
 "Localized.areYouSure" = "¿Estás seguro?";
 "Localized.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
-"Localized.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
-"Localized.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
+"Localized.confirmCopyToMainNetwork" = "Debido a un error tu perfil fue creado en la red de pruebas de Planetary en vez de la red SSB principal. La aplicación copiará tu perfil a la red principal.";
+"Localized.confirmSkipCopyToMainNetwork" = "No se te pedirá que ejecutes esta solución de nuevo. ¿Estás seguro de que quieres omitirlo?";
 
-"Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
+"Blocking.alertTitle" = "¿Estás seguro de que quieres ignorar a {{ name }}? No podréis ver el contenido del otro o poder contactar el uno con el otro. Esto será visible públicamente.";
 "Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";
 "Blocking.blockedUsers" = "Usuarios ignorados";
-"Blocking.footer" = "Ignored users cannot see your posts or contact you, and you will need to unignore them before you can see their posts or contact them. It may take some time to see users and content once they have been unignored.";
+"Blocking.footer" = "Los usuarios ignorados no pueden ver tus publicaciones o contactarte y tendrás que dejar de ignorarles antes de poder ver sus publicaciones o contactarles. Puede que lleve un poco de tiempo ver usuarios y contenido después de que dejen de ser ignorados.";
 "Blocking.thisUser" = "este usuario";
 "Blocking.usersYouHaveBlocked" = "Usuarios a los que has ignorado";
 
@@ -181,12 +184,12 @@
 "Offboarding.reset" = "Eliminar";
 "Offboarding.resetIdentity" = "Eliminar mi identidad";
 "Offboarding.resetConfirmTitle" = "Advertencia";
-"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
+"Offboarding.resetConfirmMessage" = "¿Estás seguro de que quieres eliminar tu identidad de este dispositivo? Perderás este perfil y todo el contenido relacionado. Esto no puede deshacerse.";
 "Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
-"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
-"Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
-"Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para quitarte. Por favor inténtalo de nuevo.";
-"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, hemos creado una nota para arreglarlo. Por favor inténtalo de nuevo.";
+"Offboarding.resetConfirmAgainMessage" = "¿Estás realmente seguro de que quieres eliminar tu identidad de este dispositivo? Perderás este perfil y todo el contenido relacionado. Esto no puede deshacerse.";
+"Offboarding.resetFooter" = "Esto destruirá tu identidad en tu dispositivo. No podrás recuperar tu identidad, pero podrás crear una nueva.";
+"Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para eliminarte. Por favor, inténtalo de nuevo.";
+"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió, pero no te preocupes, hemos creado una nota para arreglarlo. Por favor, inténtalo de nuevo.";
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
@@ -210,31 +213,42 @@
 "Onboarding.contactsWIP" = "Disculpas, esta funcionalidad no está terminada. Toca 'OK' para ver una lista de usuarios que te recomendamos seguir.";
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de teléfono";
-"Onboarding.thanksForTrying" = "¡Gracias por probar Planetary! Te recomendamos que utilices el hashtag #newpeople para presentarte.";
+"Onboarding.orUseTheDefaults" = "O simplemente usa los valores por defecto";
 "Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes ásperas en la interfaz. ¡Anímate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Sigue a Planetary";
 "Onboarding.followPlanetaryToggleDescription" = "Sigue la cuenta de Planetary para ver publicaciones de nuestro equipo.";
-"Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
+"Onboarding.somethingWentWrong" = "¡Oh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. Puedes volver a intentar o comenzar de nuevo, y por favor ven a contarnos sobre ello.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tienes una llave secreta que debes que guardar de forma segura. Si puedes, deberías respaldarla. Nota: esta funcionalidad está todavía en desarrollo.";
 "Onboarding.backUp" = "Sí, respalda mi identidad";
 "Onboarding.bioHint" = "No te preocupes mucho por lo que dices, puedes cambiarlo después.";
-"Onboarding.benefits" = "🤝 On Planetary news travels from one friend to another, like it does in the real world. There are no supercomputers optimizing your experience for *engagement*. We call it a **gossip** network, and it's a healthier, happier place.\n\n👭 Building on real relationships, Planetary creates a **personal network** for you, your friends, and friends-of-friends. Your local network minimizes abusive content and spam that is typical on global platforms.\n\n🌍 We don't lock your social data into one app forever. If you stop enjoying our app you can take your data - including all your relationships - to another compatible app. Planetary is part of a **growing ecosystem** built on the Secure Scuttlebutt protocol. Refreshing, right?\n\n\n\nFind out more";
+"Onboarding.benefits" = "🤝 En Planetary las noticias viajan a través de un amigo a otro, al igual que en el mundo real. No hay supercomputadoras optimizando tu experiencia por *compromiso*. Lo llamamos una red de **susurro**, y es un lugar más sano y más feliz.\n\n👭 Al crear relaciones reales, Planetary crea una **red personal** para ti, tus amigos y los amigos de tus amigos. Tu red local minimiza el contenido abusivo y spam que tan típico es en otras plataformas.\n\n🌍 No bloqueamos tu información social en una aplicación para siempre. Si dejas de disfrutar de nuestra aplicación puedes tomar tu información - incluyendo todas tus relaciones - a otra aplicación compatible. Planetary es parte de un **ecosistema en crecimiento** construido en el protocolo Secure Scuttlebutt. Genial, ¿no?\n\n\n\nDescubre más";
 "Onboarding.findOutMore" = "Aprende más";
 "Onboarding.thatSoundsGreat" = "¡Eso suena muy bien!";
 "Onboarding.policyStatement" = "Si continúas, confirmas que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
-"Onboarding.termsOfService" = "Términos del Servicio";
+"Onboarding.termsOfService" = "Términos de Servicio";
 "Onboarding.privacyPolicy" = "Política de Privacidad";
-"Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
-"Onboarding.welcomeBotName" = "Planetary Help";
-"Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
-"Onboarding.joinPlanetarySystem" = "Join Planetary Network";
-"Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
-"Onboarding.useTestNetwork" = "Use Test Network";
-"Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
+"Onboarding.welcomeMessage" = "¡Bienvenido a Planetary! Estamos encantados de tenerte. Aquí tienes algunos consejos para comenzar tu viaje:";
+"Onboarding.welcomeBotName" = "Ayuda para Planetary";
+"Onboarding.welcomeBotBio" = "Esta es una cuenta falsa usada para mostrar mensajes de bienvenida a los nuevos usuarios. Para recibir ayuda abre un ticket de soporte desde el menú lateral o publica con el hashtag #planetary-help.";
+"Onboarding.joinPlanetarySystem" = "Unirse a la red de Planetary";
+"Onboarding.joinPlanetarySystemDescription" = "Unirse significa que usarás los servidores de retransmisión de Planetary para intercambiar mensajes con otros. Recomendado para nuevos usuarios.";
+"Onboarding.useTestNetwork" = "Usar red de pruebas";
+"Onboarding.useTestNetworkDescription" = "Esto creará tu identidad con una clave de red alternativa que no se replicará con la red SSB principal. Esto no se puede cambiar más tarde.";
+"Onboarding.changeAlias" = "Podrás cambiar este alias desde los ajustes.";
+"Onboarding.aliasServerInformation" = "Los regidores de alias son como los servidores de email, donde puedes definir como los demás te encontrarán en Planetary.\n\ntualias.planetary.name es un buen comienzo, pero puedes elegir tu alias en otros servidores:";
+"Onboarding.yourAlias" = "tualias";
+"Onboarding.yourAliasPlanetary" = "tualias.planetary.name";
+"Onboarding.aliasSkip" = "Omitir la selección de un alias";
+"Onboarding.aliasServerSkip" = "Omitir la selección de un servidor";
+"Onboarding.aliasTaken" = "Este alias ya está en uso";
+"Onboarding.invalidAliasFormat" = "Formato incorrecto para el alias";
+"Onboarding.unknownAliasRegistrationError" = "Hubo un problema con el registro de este alias";
+"Onboarding.typeYourAlias" = "Introduce tu alias";
+"Onboarding.registeringAlias" = "Registrando alias...";
 
 "OnboardingStepTitle.backup" = "Okay, hemos creado tu identidad. ¿Te gustaría respaldarla?";
 "OnboardingStepTitle.benefits" = "Planetary es una forma más saludable de ser social";
@@ -242,7 +256,7 @@
 "OnboardingStepTitle.birthday" = "Antes de comenzar, ¿cuál es tu fecha de nacimiento?";
 "OnboardingStepTitle.contacts" = "Puedes conectar tu lista de contactos para ver cuál de tus amigos está usando Planetary";
 "OnboardingStepTitle.directory" = "Gente que puede que conozcas";
-"OnboardingStepTitle.done" = "Bien hecho, llegaste en una sola pieza";
+"OnboardingStepTitle.done" = "Personaliza tus ajustes";
 "OnboardingStepTitle.earlyAccess" = "Un cordial recordatorio: este es un software en desarrollo";
 "OnboardingStepTitle.join" = "Creando tu identidad en Planetary...";
 "OnboardingStepTitle.name" = "Ahora, ¿cómo te gustaría ser llamado?";
@@ -252,11 +266,13 @@
 "OnboardingStepTitle.photoConfirm" = "Foto de perfil añadida";
 "OnboardingStepTitle.resume" = "Retomando la configuración de tu identidad en Planetary...";
 "OnboardingStepTitle.start" = "\nRedes sociales para humanos, no para algoritmos.";
+"OnboardingStepTitle.aliasServer" = "Elige un servidor de alias";
+"OnboardingStepTitle.alias" = "Ahora elige tus alias";
 
-"ManageRelays.relayServers" = "Relay Servers";
+"ManageRelays.relayServers" = "Servidores de retransmisión";
 "ManageRelays.managePubs" = "Administrar pubs";
 "ManageRelays.manageRooms" = "Administrar salas (beta)";
-"ManageRelays.footer" = "Pubs and Rooms are relay servers that distribute messages throughout the scuttlebutt network. You are automatically connected to Planetary pubs, but you can connect to others if you'd prefer, or even run one yourself.";
+"ManageRelays.footer" = "Los pubs y salas son servidores de retransmisión que distribuyen mensajes a través de la red de scuttlebutt. Eres automáticamente conectado a los pubs de Planetary, pero puedes conectar a otros si lo prefieres o incluso ejecutar uno por ti mismo.";
 "ManageRelays.addingPubs" = "Añadiendo pubs";
 "ManageRelays.yourPubs" = "Tus pubs";
 "ManageRelays.lastWorked" = "Último trabajo en";
@@ -265,52 +281,52 @@
 "ManageRelays.addRooms" = "Añadir salas";
 "ManageRelays.loadingRooms" = "Cargando salas...";
 "ManageRelays.invalidRoomURL" = "URL de sala inválido";
-"ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
-"ManageRelays.deleteRoom" = "Delete";
-"ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
+"ManageRelays.roomHelpText" = "Los servidores de sala permiten a los miembros conectarse entre ellos y susurrarse directamente, usando el servidor como un túnel. Para añadir una sala necesitas preguntar a un miembro de una sala existente por una invitación o ejecutar la tuya propia.";
+"ManageRelays.deleteRoom" = "Eliminar";
+"ManageRelays.deleteRoomConfirmation" = "Nota: Esto solamente eliminará la sala de tu base de datos local de Planetary. No te elimina como miembro de la sala.";
 
-"Message.noPostsTitle" = "No posts here yet";
-"Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsTitle" = "No hay publicaciones aquí todavía";
+"Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [como funciona susurrar]({{ link }}) en Planetary.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
 "Alias.roomAliases" = "Alias de sala (beta)";
 "Alias.aliases" = "Alias";
-"Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
+"Alias.introText" = "Los alias de sala son enlaces que puedes compartir con tus amigos para ayudarles a conectarse a ti en Planetary o cualquier otra aplicación de Scuttlebutt.";
 
-"Preview.title" = "Configuración avanzada";
-"Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
+"Preview.title" = "Ajustes avanzados";
+"Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y probadas y no han encontrado un lugar permanente en la aplicación.";
 
 "FeedAlgorithm.algorithms" = "Algoritmos";
 "FeedAlgorithm.feedAlgorithmTitle" = "Algoritmo Feed Principal";
 "FeedAlgorithm.feedAlgorithmDescription" = "Elige los algoritmos usados para ordenar y filtrar tus feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Publicaciones recientes";
-"FeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from the people you follow in the order they were posted. Excludes social graph messages like follows.";
+"FeedAlgorithm.recentPostsAlgorithmDescription" = "Muestra las publicaciones de la gente que sigues en el orden en el que fueron publicadas. Excluye mensajes gráficos sociales como gente que empieza a seguir a alguien.";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithm" = "Publicaciones y seguidores recientes";
 "FeedAlgorithm.recentPostsWithFollowsAlgorithmDescription" = "Muestra las publicaciones y mensajes de seguidor de la gente que sigues en el orden en que fueron publicados.";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithm" = "Publicaciones y seguidores recientemente activos (por defecto)";
 "FeedAlgorithm.recentlyActivePostsWithFollowsAlgorithmDescription" = "Muestra las publicaciones y mensajes de seguidor de la gente que sigues. Si un mensaje recibe una respuesta será empujado a lo alto de tu feed.";
 "FeedAlgorithm.randomPostsAlgorithm" = "Publicaciones sin leer aleatorias";
-"FeedAlgorithm.randomPostsAlgorithmDescription" = "Sometimes it's interesting to mix it up. This algorithm shows you random posts from the people in your network, prioritizing ones you haven't seen before. ";
+"FeedAlgorithm.randomPostsAlgorithmDescription" = "A veces es interesante mezclarlo. Este algoritmo te muestra publicaciones aleatorias de la gente en tu red, priorizando las que no has visto antes. ";
 "FeedAlgorithm.viewAlgorithmSource" = "Ver código fuente";
 "FeedAlgorithm.sourceCode" = "Código fuente";
 "FeedAlgorithm.sourceCodeDescription" = "El código de Planetary es abierto, así que nuestros algoritmos pueden ser auditados e incluso modificados por nuestros usuarios. Puedes ver el código fuente para estos algoritmos haciendo tap en el botón de aquí arriba.";
 
 "DiscoveryFeedAlgorithm.algorithms" = "Algoritmos";
-"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Algoritmo Discovery Feed";
+"DiscoveryFeedAlgorithm.feedAlgorithmTitle" = "Algoritmo de descubrimiento de Feed";
 "DiscoveryFeedAlgorithm.recentPostsAlgorithm" = "Publicaciones recientes";
-"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Shows posts from people you don't follow in your boader network sorted chronologically.";
+"DiscoveryFeedAlgorithm.recentPostsAlgorithmDescription" = "Muestra las publicaciones de la gente que no sigues en tu red más amplia ordenadas cronológicamente.";
 "DiscoveryFeedAlgorithm.randomPostsAlgorithm" = "Publicaciones sin leer aleatorias";
-"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Show posts that are new to you, that you haven't read, but sorted randomly, so there's always something new to see.";
+"DiscoveryFeedAlgorithm.randomPostsAlgorithmDescription" = "Muestra las publicaciones que son nuevas para ti, que no has leído, pero ordenadas aleatoriamente, así que siempre hay algo nuevo que ver.";
 
 "WebServices.title" = "Servicios web";
 "WebServices.publicWebHosting" = "Alojamiento web público";
 "WebServices.aliases" = "Alias (beta)";
-"WebServices.footer" = "Opt-in to indicate you want your feed to appear on public gateway websites. It may take a couple of hours for the changes to be visible.";
+"WebServices.footer" = "Indica que quieres que tu feed aparezca en sitios web de acceso públicos. Puede que lleve unas horas para que los cambios sean visibles.";
 
 "Push.enabled" = "Activado";
 "Push.title" = "Notificaciones Push";
-"Push.prompt" = "Las notificaciones Push para Planetary son controladas por la aplicación de Preferencias en tu dispositivo. ¿Te gustaría abrir Preferencias ahora?";
+"Push.prompt" = "Las notificaciones push para Planetary están controladas por la aplicación de ajustes en tu dispositivo. ¿Te gustaría abrir ajustes ahora?";
 "Push.footer" = "Mostrar una notificación de sistema cuando seas mencionado, respondido o seguido. La infraestructura de notificaciones está todavía en desarrollo, así que podrías no recibirlas consistentemente.";
 
 "Reporting.abusive" = "Abusivo para mí o alguien más";
@@ -331,15 +347,15 @@
 "Error.unexpected" = "Algo inesperado ocurrió.";
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
-"Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
+"Error.invitationRedemptionFailedWithReason" = "El canje de la invitación falló con el mensaje: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary está restaurando tus datos de la red y no puede publicar nuevos mensajes en este momento.";
 "Error.restoring" = "Planetary está restaurando tus datos de la red.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el enlace.";
 "Error.invalidRoomURL" = "No se pudo analizar tu invitación.";
-"Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
+"Error.invalidRoomInvitationOrAddress" = "Planetary no reconoce esto como una invitación de sala o dirección válida.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
-"Error.alreadyJoinedRoom" = "You are already a member of this room";
+"Error.alreadyJoinedRoom" = "Ya eres un miembro de esta sala";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
@@ -349,7 +365,7 @@
 
 "Report.somebody" = "Alguien";
 "Report.feedFollowed" = "%@ comenzó a seguirte";
-"Report.postReplied" = "%@ replied to a post you commented on";
+"Report.postReplied" = "%@ respondió a una publicación en la que comentaste";
 "Report.feedMentioned" = "%@ te mencionó en una publicación";
 "Report.messageLiked" = "A %@ le gustó tu publicación";
 
@@ -359,20 +375,26 @@
 "Help.indexOfTip" = "{{tipIndex}} de {{totalTipCount}} consejos";
 
 "Home.title" = "Mira las publicaciones y temas que sigues";
-"Home.body" = "If your feed is empty, open the Discover tab, look for something interesting and follow users or topics to see their posts in your Home Feed.";
+"Home.body" = "Si tu feed está vacío, abre la pestaña Descubrir, busca algo interesante y sigue a los usuarios o temas para ver sus publicaciones en tu Feed Principal.";
 "Home.highlightedWord" = "Descubrir";
 
 "Discover.title" = "Mira que hay nuevo y haz crecer tu red";
-"Discover.body" = "See posts from users and topics followed by your friends. Follow them to see their content in your Home Feed!";
+"Discover.body" = "Mira publicaciones de usuarios y temas seguidos por tus amigos. ¡Síguelos para ver su contenido en tu Feed Principal!";
 "Discover.highlightedWord" = "Feed Principal";
 
 "Notifications.title" = "Mantente al día en todas tus conversaciones";
-"Notifications.body" = "Check this screen for replies and reactions to your posts as well as conversations you participate in. We'll also notify you when someone mentions you.";
+"Notifications.body" = "Comprueba esta pantalla por respuestas y reacciones a tus publicaciones al igual que en las conversaciones en las que participas. También te notificaremos cuando alguien te mencione.";
 
 "Hashtags.title" = "De qué está hablando la comunidad";
-"Hashtags.body" = "Browse through thousands of topics, engage in conversations and keep up with the hottest topics with people on Your Network.";
+"Hashtags.body" = "Navega por miles de temas, participa en conversaciones y mantente al día con los temas más calientes con la gente en tu red.";
 "Hashtags.highlightedWord" = "Tu red";
 
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios a los que sigues, aquellos que *ellos* siguen y los servidores Pub que usas para *susurrar* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*susurro*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} respuesta";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} respuestas";

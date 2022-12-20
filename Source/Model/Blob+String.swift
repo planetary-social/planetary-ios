@@ -13,8 +13,7 @@ extension String {
     /// Matches `![name](identifier)` only, and will likely skip if there are `\` in the name range.
     private static let inlineBlobRegex = #"!\[.+\]\(&[A-Za-z0-9\/+]{43}=\.[\w\d]+\)"#
 
-    // TODO https://app.asana.com/0/914798787098068/1154472587426507/f
-    // TODO improve to handle alt text
+    // improve to handle alt text
     /// Returns an array of (String, NSRange) pairs denoting the blob identifiers in this string.
     func blobSubstringsAndRanges() -> [(String, NSRange)] {
 
@@ -22,10 +21,14 @@ extension String {
             return []
         }
 
+        // swiftlint:disable legacy_objc_type
         let string = self as NSString
-        let results = regex.matches(in: self,
-                                    options: [],
-                                    range: NSRange(location: 0, length: string.length))
+        // swiftlint:enable legacy_objc_type
+        let results = regex.matches(
+            in: self,
+            options: [],
+            range: NSRange(location: 0, length: string.length)
+        )
 
         // extract substrings and ranges
         let substringsAndRanges = results.map {
@@ -72,7 +75,9 @@ extension Blob {
     }
 
     static func identifier(from string: String) -> String? {
-        guard let range = string.range(of: #"\(&[A-Za-z0-9\/+]{43}=\.[\w\d]+\)"#, options: .regularExpression) else { return nil }
+        guard let range = string.range(of: #"\(&[A-Za-z0-9\/+]{43}=\.[\w\d]+\)"#, options: .regularExpression) else {
+            return nil
+        }
         let substring = String(string[range])
         let start = substring.index(substring.startIndex, offsetBy: 1)
         let end = substring.index(substring.endIndex, offsetBy: -1)

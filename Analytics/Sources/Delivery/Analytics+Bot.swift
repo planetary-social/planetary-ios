@@ -24,23 +24,26 @@ public extension Analytics {
     }
 
     func trackBotDidSkipMessage(key: String, reason: String) {
-        service.track(event: .did, element: .bot, name: "sync", params: ["Skipped": key,
-                                                                         "Reason": reason])
+        service.track(event: .did, element: .bot, name: "sync", params: ["Skipped": key, "Reason": reason])
     }
 
     func trackBotDidUpdateDatabase(count: Int, firstTimestamp: Float64, lastTimestamp: Float64, lastHash: String) {
-        let params: [String: Any] = ["msg.count": count,
-                                     "first.timestamp": firstTimestamp,
-                                     "last.timestamp": lastTimestamp,
-                                     "last.hash": lastHash]
+        let params: [String: Any] = [
+            "msg.count": count,
+            "first.timestamp": firstTimestamp,
+            "last.timestamp": lastTimestamp,
+            "last.hash": lastHash
+        ]
         service.track(event: .did, element: .bot, name: "db_update", params: params)
     }
 
     func trackBotDidRepair(databaseError: String, error: String?, repair: BotRepair) {
-        var params: [String: Any] = ["sql_error": databaseError,
-                                     "function": "ViewConstraints21012020",
-                                     "viewdb_current": repair.numberOfMessagesInDB,
-                                     "repo_messages_count": repair.numberOfMessagesInRepo] as [String: Any]
+        var params: [String: Any] = [
+            "sql_error": databaseError,
+            "function": "ViewConstraints21012020",
+            "viewdb_current": repair.numberOfMessagesInDB,
+            "repo_messages_count": repair.numberOfMessagesInRepo
+        ] as [String: Any]
         if let error = error {
             params["repair_failed"] = error
         }

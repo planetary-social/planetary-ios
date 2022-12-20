@@ -17,6 +17,7 @@ extension AppController {
     }
 
 #if DEBUG
+    // swiftlint:disable override_in_extension
     override var canBecomeFirstResponder: Bool {
         true
     }
@@ -30,5 +31,6 @@ extension AppController {
         guard self.presentingViewController == nil else { return }
         self.showDebug()
     }
+    // swiftlint:enable override_in_extension
 #endif
 }

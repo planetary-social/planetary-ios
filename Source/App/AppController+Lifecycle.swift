@@ -54,8 +54,11 @@ extension AppController {
 
 extension AppController {
 
+    // swiftlint:disable override_in_extension
     override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
         Log.info("AppController.didReceivingMemoryWarning() - invalidating caches")
         Caches.invalidate()
     }
+    // swiftlint:enable override_in_extension
 }

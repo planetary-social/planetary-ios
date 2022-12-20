@@ -490,7 +490,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `testLargestSeqFromReceiveLog()` excludes posts published by the current user.
     func testLargestSeqFromReceiveLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
         
         // Assert
@@ -506,7 +506,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqNotFromPublishedLog()` excludes posts published by the current user.
     func testLargestSeqNotFromPublishedLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestSeqInDbAtStart: Int64 = 80
 
         // Assert
@@ -522,7 +522,7 @@ class ViewDatabaseTests: XCTestCase {
     /// Verifies that `largestSeqFromPublishedLog()` only looks at posts published by the current user.
     func testLargestSeqFromPublishedLog() throws {
         // Arrange
-        let testMessage = MessageFixtures.post(receivedSeq: 1_000, author: fixture.owner)
+        let testMessage = MessageFixtures.post(receivedSeq: 1000, author: fixture.owner)
         let largestPublishedSeqInDbAtStart: Int64 = 77
         
         // Assert
@@ -743,6 +743,107 @@ class ViewDatabaseTests: XCTestCase {
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
         XCTAssertNotNil(try vdb.post(with: testMessage.key))
         XCTAssertNotNil(try vdb.authorID(of: bannedAuthor))
+    }
+    
+    // MARK: Room Alias Announcements
+    
+    func testFillRoomAliasAnnouncementGivenUnknownRoom() throws {
+        // Arrange
+        let startingMessageCount = try vdb.messageCount()
+        
+        let data = self.data(for: "RoomAliasAnnouncement_registered.json")
+        let msgs = try JSONDecoder().decode(Message.self, from: data)
+        let roomAliasAnnouncement = try XCTUnwrap(msgs.content.roomAliasAnnouncement)
+        
+        // Act
+        try vdb.fillMessages(msgs: [msgs])
+        let roomAlias = try XCTUnwrap(vdb.getRegisteredAliasesByUser(user: currentUser).first)
+        
+        // Assert
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
+        XCTAssertEqual(roomAlias.aliasURL.absoluteString, "https://matt.hermies.club")
+        XCTAssertEqual(roomAlias.id, 1)
+        XCTAssertEqual(roomAlias.roomID, nil)
+        XCTAssertEqual(roomAlias.authorID, 1)
+        XCTAssertEqual(roomAliasAnnouncement.action, RoomAliasAnnouncement.RoomAliasActionType.registered)
+        XCTAssertEqual(roomAliasAnnouncement.alias, "matt")
+        XCTAssertEqual(roomAliasAnnouncement.aliasURL, "https://matt.hermies.club")
+    }
+    
+    func testFillRoomAliasAnnouncementGivenKnownRoom() throws {
+        // Arrange
+        let colPubKey = Expression<String>("pub_key")
+        let colHost = Expression<String>("host")
+        let colPort = Expression<String>("port")
+        let colID = Expression<Int64>("id")
+        let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
+        let startingMessageCount = try vdb.messageCount()
+        
+        // Act
+        let db = try vdb.checkoutConnection()
+        try db.run(
+            rooms.insert(
+                colID <- 1,
+                colHost <- "matt.hermies.club",
+                colPort <- "8008",
+                colPubKey <- "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519"
+            )
+        )
+        
+        let data = self.data(for: "RoomAliasAnnouncement_registered.json")
+        let msgs = try JSONDecoder().decode(Message.self, from: data)
+        try vdb.fillMessages(msgs: [msgs])
+        
+        let roomAlias = try XCTUnwrap(vdb.getRegisteredAliasesByUser(user: currentUser).first)
+        let room = try XCTUnwrap(vdb.getJoinedRooms().first)
+        
+        // Assert
+        XCTAssertEqual(try vdb.getJoinedRooms().count, 1)
+        XCTAssertEqual(try vdb.messageCount(), startingMessageCount + 1)
+        XCTAssertEqual(roomAlias.aliasURL.absoluteString, "https://matt.hermies.club")
+        XCTAssertEqual(roomAlias.id, 1)
+        XCTAssertEqual(roomAlias.roomID, 1)
+        XCTAssertEqual(roomAlias.authorID, 1)
+        XCTAssertEqual(room.id, "net:matt.hermies.club:8008~shs:@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519")
+        XCTAssertEqual(room.address.host, "matt.hermies.club")
+        XCTAssertEqual(room.address.port, 8008)
+        XCTAssertEqual(room.address.keyID, "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519")
+    }
+    
+    func testFillRoomAliasAnnouncementGivenKnownRoomWithRevoke() throws {
+        // Arrange
+        let colPubKey = Expression<String>("pub_key")
+        let colHost = Expression<String>("host")
+        let colPort = Expression<String>("port")
+        let colID = Expression<Int64>("id")
+        let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
+        
+        let registeredData = self.data(for: "RoomAliasAnnouncement_registered.json")
+        let registeredMsg = try JSONDecoder().decode(Message.self, from: registeredData)
+        
+        let revokedData = self.data(for: "RoomAliasAnnouncement_revoked.json")
+        let revokedMsg = try JSONDecoder().decode(Message.self, from: revokedData)
+        
+        // Act
+        let db = try vdb.checkoutConnection()
+        try db.run(
+            rooms.insert(
+                colID <- 1,
+                colHost <- "matt.hermies.club",
+                colPort <- "8008",
+                colPubKey <- "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519"
+            )
+        )
+        
+        try vdb.fillMessages(msgs: [registeredMsg])
+        let roomAliasCountRegistered = try vdb.getRegisteredAliasesByUser(user: currentUser).count
+        
+        try vdb.fillMessages(msgs: [revokedMsg])
+        let roomAliasCountRevoked = try vdb.getRegisteredAliasesByUser(user: currentUser).count
+        
+        // Assert
+        XCTAssertEqual(roomAliasCountRegistered, 1)
+        XCTAssertEqual(roomAliasCountRevoked, 0)
     }
 }
 

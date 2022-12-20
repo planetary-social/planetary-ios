@@ -7,17 +7,22 @@
 //
 
 import Foundation
+import Logger
 
 // https://stackoverflow.com/questions/43561169/trying-to-understand-asynchronous-operation-subclass
 class AsynchronousOperation: Operation {
-    @objc private enum State: Int {
+    @objc
+    private enum State: Int {
         case ready
         case executing
         case finished
     }
     
     private var _state = State.ready
-    private let stateQueue = DispatchQueue(label: Bundle.main.bundleIdentifier! + ".op.state", attributes: .concurrent)
+    private let stateQueue = DispatchQueue(
+        label: Bundle.main.bundleIdentifier ?? "" + ".op.state",
+        attributes: .concurrent
+    )
     
     @objc private dynamic var state: State {
         get { stateQueue.sync { _state } }
@@ -57,8 +62,9 @@ class AsynchronousOperation: Operation {
         self.state = .executing
         main()
     }
+    
     override func main() {
-        fatalError("Implement in sublcass to perform task")
+        Log.error("Called unimplementd function \(#function)")
     }
     
     final func finish() {

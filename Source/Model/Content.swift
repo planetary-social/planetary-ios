@@ -36,6 +36,7 @@ struct Content: Codable {
     var dropContentRequest: DropContentRequest?
     var post: Post?
     var vote: ContentVote?
+    var roomAliasAnnouncement: RoomAliasAnnouncement?
 
     init(from post: Post) {
         self.type = .post
@@ -70,6 +71,13 @@ struct Content: Codable {
         self.typeString = "pub"
         self.typeException = nil
         self.pub = pub
+    }
+    
+    init(from roomAliasAnnouncement: RoomAliasAnnouncement) {
+        self.type = .roomAliasAnnouncement
+        self.typeString = "room/alias"
+        self.typeException = nil
+        self.roomAliasAnnouncement = roomAliasAnnouncement
     }
 
     /// The first responsibility of this decoder is to ensure that
@@ -123,14 +131,15 @@ struct Content: Codable {
     private mutating func decodeByContentType(_ decoder: Decoder) {
         do {
             switch self.type {
-                case .about: self.about = try About(from: decoder)
-                case .address: self.address = try Address(from: decoder)
-                case .contact: self.contact = try Contact(from: decoder)
-                case .dropContentRequest: self.dropContentRequest = try DropContentRequest(from: decoder)
-                case .pub: self.pub = try Pub(from: decoder)
-                case .post: self.post = try Post(from: decoder)
-                case .vote: self.vote = try ContentVote(from: decoder)
-                case .unknown, .unsupported: ()
+            case .about: self.about = try About(from: decoder)
+            case .address: self.address = try Address(from: decoder)
+            case .contact: self.contact = try Contact(from: decoder)
+            case .dropContentRequest: self.dropContentRequest = try DropContentRequest(from: decoder)
+            case .pub: self.pub = try Pub(from: decoder)
+            case .post: self.post = try Post(from: decoder)
+            case .vote: self.vote = try ContentVote(from: decoder)
+            case .roomAliasAnnouncement: self.roomAliasAnnouncement = try RoomAliasAnnouncement(from: decoder)
+            case .unknown, .unsupported: ()
             }
         } catch {
             self.contentException = error.localizedDescription
@@ -161,6 +170,7 @@ struct Content: Codable {
         case .pub: return pub
         case .post: return post
         case .vote: return vote
+        case .roomAliasAnnouncement: return roomAliasAnnouncement
         case .unknown, .unsupported: return nil
         }
     }
