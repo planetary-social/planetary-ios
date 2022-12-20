@@ -66,7 +66,8 @@ struct HelpDrawerView: View {
         self.dismissAction = dismissAction
         let asset = AVAsset(url: videoURL)
         let item = AVPlayerItem(asset: asset)
-        videoPlayer = AVQueuePlayer(playerItem: item)
+        videoPlayer = AVQueuePlayer(items: [item])
+        videoPlayer.actionAtItemEnd = .none
         videoPlayer.isMuted = true
         videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
         
@@ -87,7 +88,9 @@ struct HelpDrawerView: View {
                 SingleAxisGeometryReader(axis: .horizontal) { containerWidth in
                     NoControlsVideoPlayer(player: videoPlayer)
                         .frame(width: containerWidth, height: videoAspectRatio * containerWidth)
-                        .onAppear { videoPlayer.play() }
+                        .onAppear {
+                            videoPlayer.play()
+                        }
                 }
             }
             Spacer()

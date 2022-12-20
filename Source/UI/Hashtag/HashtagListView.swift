@@ -11,15 +11,35 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-struct HashtagListView: View {
+struct HashtagListView: View, HelpDrawerHost {
+
+    init(helpDrawerState: HelpDrawerState) {
+        self.helpDrawerState = helpDrawerState
+    }
+    
+    @ObservedObject
+    private var helpDrawerState: HelpDrawerState
 
     @EnvironmentObject
     private var botRepository: BotRepository
 
     @EnvironmentObject
-    private var helpDrawerState: HelpDrawerState
+    private var appController: AppController
 
-    private let helpDrawer = HelpDrawer.hashtags
+    let helpDrawerType = HelpDrawer.hashtags
+
+    @SwiftUI.Environment(\.horizontalSizeClass)
+    var horizontalSizeClass
+
+    func dismissDrawer(completion: (() -> Void)?) {
+        helpDrawerState.isShowingHashtagsHelpDrawer = false
+        // Unfortunately, there is no good way to know when the popover dismissed in SwiftUI
+        // So here I use a nasty simple trick to let the completion open the next drawer.
+        // Fortunately, we can get rid of this after we migrate the remaining screens to SwiftUI.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            completion?()
+        }
+    }
 
     @State
     private var allHashtags: [Hashtag]?
@@ -53,6 +73,7 @@ struct HashtagListView: View {
                             NavigationLink {
                                 HashtagView(hashtag: hashtag)
                                     .environmentObject(botRepository)
+                                    .environmentObject(appController)
                             } label: {
                                 CompactHashtagView(hashtag: hashtag)
                             }
@@ -60,6 +81,7 @@ struct HashtagListView: View {
                     }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: (.always)))
+                .disableAutocorrection(true)
                 .onChange(of: searchText) { value in
                     if value.isEmpty && !isSearching {
                         filter()
@@ -69,11 +91,7 @@ struct HashtagListView: View {
                     filter()
                 }
             } else {
-                ZStack {
-                    PeerConnectionAnimationView(peerCount: 3, color: UIColor.secondaryTxt)
-                        .scaleEffect(1.3)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                LoadingView()
             }
         }
         .background(Color.appBg)
@@ -87,19 +105,19 @@ struct HashtagListView: View {
             .popover(isPresented: $helpDrawerState.isShowingHashtagsHelpDrawer) {
                 Group {
                     if #available(iOS 16.0, *) {
-                        HelpDrawerCoordinator.helpDrawerView(for: helpDrawer) {
+                        HelpDrawerCoordinator.helpDrawerView(for: self) {
                             helpDrawerState.isShowingHashtagsHelpDrawer = false
                         }
                         .presentationDetents([.medium])
                     } else {
-                        HelpDrawerCoordinator.helpDrawerView(for: helpDrawer) {
+                        HelpDrawerCoordinator.helpDrawerView(for: self) {
                             helpDrawerState.isShowingHashtagsHelpDrawer = false
                         }
                     }
                 }
                 .onAppear {
-                    Analytics.shared.trackDidShowScreen(screenName: helpDrawer.screenName)
-                    HelpDrawerCoordinator.didShowHelp(for: helpDrawer)
+                    Analytics.shared.trackDidShowScreen(screenName: helpDrawerType.screenName)
+                    HelpDrawerCoordinator.didShowHelp(for: helpDrawerType)
                 }
             }
         }
@@ -129,7 +147,7 @@ struct HashtagListView: View {
         .onAppear {
             CrashReporting.shared.record("Did Show Channels")
             Analytics.shared.trackDidShowScreen(screenName: "channels")
-            HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawer, state: helpDrawerState)
+            HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawerType, state: helpDrawerState)
         }
     }
 
@@ -171,14 +189,15 @@ struct HashtagListView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                HashtagListView()
+                HashtagListView(helpDrawerState: HelpDrawerState())
             }
             NavigationView {
-                HashtagListView()
+                HashtagListView(helpDrawerState: HelpDrawerState())
             }
             .preferredColorScheme(.dark)
         }
         .environmentObject(BotRepository.fake)
         .environmentObject(HelpDrawerState())
+        .environmentObject(AppController.shared)
     }
 }

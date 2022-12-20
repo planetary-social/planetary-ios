@@ -19,7 +19,7 @@ struct FloatingButton: View {
     @SwiftUI.Environment(\.refresh)
     private var refresh
 
-    var title: AttributedString {
+    private var title: AttributedString {
         let countString = "\(count)"
         let arguments = ["count": countString]
         let string = count == 1 ? Localized.refreshSingular.text(arguments) : Localized.refreshPlural.text(arguments)
@@ -29,6 +29,7 @@ struct FloatingButton: View {
         }
         return attributedString
     }
+    
     var body: some View {
         Button {
             Task {

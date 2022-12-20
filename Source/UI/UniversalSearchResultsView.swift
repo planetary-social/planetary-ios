@@ -475,7 +475,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         case .users:
             let identity = searchQuery
             let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+                rootView: IdentityView(identity: identity)
+                    .environmentObject(BotRepository.shared)
+                    .environmentObject(AppController.shared)
             )
             delegate?.present(controller)
         case .posts:
@@ -492,7 +494,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             let about = inNetworkPeople[indexPath.row]
             let identity = about.identity
             let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+                rootView: IdentityView(identity: identity)
+                    .environmentObject(BotRepository.shared)
+                    .environmentObject(AppController.shared)
             )
             delegate?.present(controller)
         }

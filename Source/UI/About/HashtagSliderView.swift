@@ -14,6 +14,9 @@ struct HashtagSliderView: View {
 
     var hashtags: [Hashtag]?
 
+    @EnvironmentObject
+    private var appController: AppController
+
     private var isLoading: Bool {
         hashtags == nil
     }
@@ -24,7 +27,7 @@ struct HashtagSliderView: View {
                 if let hashtags = hashtags {
                     ForEach(hashtags) { hashtag in
                         Button {
-                            AppController.shared.open(string: hashtag.string)
+                            appController.open(string: hashtag.string)
                         } label: {
                             Text(hashtag.string)
                                 .font(.footnote)
@@ -72,5 +75,6 @@ struct HashtagSliderView_Previews: PreviewProvider {
         }
         .padding()
         .background(Color.cardBackground)
+        .environmentObject(AppController.shared)
     }
 }

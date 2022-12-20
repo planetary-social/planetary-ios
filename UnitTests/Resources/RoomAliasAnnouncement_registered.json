@@ -1,0 +1,20 @@
+{
+    "key": "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWt=.sha256",
+    "value": {
+        "previous": null,
+        "author": "@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519",
+        "sequence": 400,
+        "timestamp": 1549282075299,
+        "hash": "sha256",
+        "content": {
+            "type": "room/alias",
+            "action": "registered",
+            "alias": "matt",
+            "room": "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519",
+            "aliasURL": "https://matt.hermies.club"
+        },
+        "signature": "P9AXG0P9eNJgk/V34rRLEHGeLEngRUk3Ym8ZE7xiDoqWx9WRQMgPNEKX+LLvVst0cZz4+OqQ/rXTTEDDh+CWBA==.sig.ed25519"
+    },
+    "timestamp": 1549282075305,
+    "ReceiveLogSeq": -2
+}

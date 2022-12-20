@@ -12,7 +12,10 @@ struct MessageView: View {
 
     var message: Message
 
-    var attributedHeader: AttributedString? {
+    @EnvironmentObject
+    private var appController: AppController
+
+    private var attributedHeader: AttributedString? {
         let name = message.metadata.author.about?.name?.trimmedForSingleLine ?? String(message.author.prefix(7))
         var localized: Localized
         switch message.contentType {
@@ -55,7 +58,7 @@ struct MessageView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
                 Button {
-                    AppController.shared.open(identity: message.author)
+                    appController.open(identity: message.author)
                 } label: {
                     HStack(alignment: .center) {
                         AvatarView(metadata: message.metadata.author.about?.image, size: 24)
@@ -77,7 +80,7 @@ struct MessageView: View {
                 CompactIdentityView(identity: contact.contact)
             } else if let post = message.content.post {
                 Group {
-                    CompactPostView(post: post)
+                    CompactPostView(identifier: message.id, post: post)
                     Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
                     HStack {
                         StackedAvatarsView(avatars: replies, size: 20, border: 0)
@@ -243,5 +246,6 @@ struct MessageView_Previews: PreviewProvider {
         .padding()
         .background(Color.appBg)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

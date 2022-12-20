@@ -9,6 +9,10 @@
 import SwiftUI
 
 struct EmptyHomeView: View {
+
+    @EnvironmentObject
+    private var appController: AppController
+
     var body: some View {
         ZStack(alignment: .center) {
             VStack(alignment: .center, spacing: 20) {
@@ -40,7 +44,7 @@ struct EmptyHomeView: View {
     }
 
     private func openDirectory() {
-        guard let mainViewController = AppController.shared.mainViewController else {
+        guard let mainViewController = appController.mainViewController else {
             return
         }
         mainViewController.selectDirectoryTab()
@@ -60,5 +64,6 @@ struct EmptyHomeView_Previews: PreviewProvider {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.appBg)
+        .environmentObject(AppController.shared)
     }
 }

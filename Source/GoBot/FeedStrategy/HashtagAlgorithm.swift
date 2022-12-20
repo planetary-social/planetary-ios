@@ -47,14 +47,10 @@ final class HashtagAlgorithm: NSObject, FeedStrategy {
     /// - The number of replies to the message
     ///
     /// The WHERE clauses are as follows:
-    /// - Only posts and follows (contacts)
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only follows (contacts) to people we know something about
-    /// - Only posts and follows from user itsef
-    /// - Discard posts and follows from the future or before the message
+    /// - The name of the hashtag matches the text we want to look for
     ///
-    /// The result is sorted by  date
+    /// The result is sorted by message id so that we do a quick sort that normally puts newer messages on top
+    /// while not doing an expensive sort by date
     private let fetchMessagesQuery = """
         SELECT
           *,
@@ -139,6 +135,7 @@ final class HashtagAlgorithm: NSObject, FeedStrategy {
         self.hashtag = Hashtag(name: "")
         super.init()
     }
+
     func encode(with coder: NSCoder) {}
 
     func countNumberOfKeys(connection: Connection, userId: Int64) throws -> Int {

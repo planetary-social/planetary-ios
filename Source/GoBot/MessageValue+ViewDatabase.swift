@@ -29,7 +29,7 @@ extension MessageValue {
             content = Content(from: try About(row: row, db: db))
         case .pub:
             content = Content(from: try Pub(row: row, db: db))
-        case .dropContentRequest, .address, .unknown, .unsupported, .none:
+        case .dropContentRequest, .address, .unknown, .unsupported, .roomAliasAnnouncement, .none:
             throw ViewDatabaseError.unexpectedContentType(type)
         }
         

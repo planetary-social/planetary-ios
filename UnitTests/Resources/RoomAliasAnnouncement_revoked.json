@@ -1,0 +1,20 @@
+{
+    "key": "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWu=.sha256",
+    "value": {
+        "previous": "%fmm1SMij8QGyT1fyvBX686FdmVyetkDIpr+nMoURvWt=.sha256",
+        "author": "@MhOkMP3jDCgubbSVl5cVrZiPI3QodCNXhOnsPAzdSwE=.ed25519",
+        "sequence": 401,
+        "timestamp": 1549282075399,
+        "hash": "sha256",
+        "content": {
+            "type": "room/alias",
+            "action": "revoked",
+            "alias": "matt",
+            "room": "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519",
+            "aliasURL": "https://matt.hermies.club"
+        },
+        "signature": "P9AXG0P9eNJgk/V34rRLEHGeLEngRUk3Ym8ZE7xiDoqWx9WRQMgPNEKX+LLvVst0cZz4+OqQ/rXTTEDDh+CWBA==.sig.ed25519"
+    },
+    "timestamp": 1549282075405,
+    "ReceiveLogSeq": -1
+}

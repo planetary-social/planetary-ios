@@ -17,6 +17,9 @@ struct IdentityView: View {
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @EnvironmentObject
+    private var appController: AppController
+
     @State
     private var about: About?
 
@@ -52,7 +55,7 @@ struct IdentityView: View {
             errorMessage != nil
         } set: { _ in
             errorMessage = nil
-            AppController.shared.dismiss(animated: true)
+            appController.dismiss(animated: true)
         }
     }
 
@@ -123,7 +126,7 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: identity))
+                MessageListView(strategy: strategy)
                     .background(Color.appBg)
                     .zIndex(extendedHeader ? 1000 : 500)
                     .offset(y: contentOffset)
@@ -325,5 +328,6 @@ struct IdentityView_Previews: PreviewProvider {
             .preferredColorScheme(.dark)
         }
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }
