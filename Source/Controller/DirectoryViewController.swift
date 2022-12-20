@@ -345,16 +345,12 @@ extension DirectoryViewController: UITableViewDelegate {
         switch section {
         case .communityPubs:
             let star = communityPubs[indexPath.row]
-            let view = IdentityView(identity: star.feed)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            let view = IdentityViewBuilder().build(identity: star.feed, botRepository: .shared, appController: .shared)
             let controller = UIHostingController(rootView: view)
             self.navigationController?.pushViewController(controller, animated: true)
         case .users:
             let identity = searchFilter
-            let view = IdentityView(identity: identity)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            let view = IdentityViewBuilder().build(identity: identity, botRepository: .shared, appController: .shared)
             let controller = UIHostingController(rootView: view)
             self.navigationController?.pushViewController(controller, animated: true)
         case .posts:
@@ -368,9 +364,7 @@ extension DirectoryViewController: UITableViewDelegate {
             )
         case .network:
             let identity = self.people[indexPath.row].identity
-            let view = IdentityView(identity: identity)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            let view = IdentityViewBuilder().build(identity: identity, botRepository: .shared, appController: .shared)
             let controller = UIHostingController(rootView: view)
             self.navigationController?.pushViewController(controller, animated: true)
         }

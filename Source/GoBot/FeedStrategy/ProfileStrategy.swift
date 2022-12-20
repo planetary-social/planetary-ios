@@ -1,27 +1,30 @@
 //
-//  HomeStrategy.swift
+//  ProfileStrategy.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 19/12/22.
+//  Created by Martin Dutra on 20/12/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
 import Foundation
 import SQLite
 
-final class HomeStrategy: NSObject, FeedStrategy {
+final class ProfileStrategy: NSObject, FeedStrategy {
+
+    let identity: Identity
 
     private var innerStrategy: FeedStrategy {
-        let userDefaults = UserDefaults.standard
-        if let data = userDefaults.object(forKey: UserDefaults.homeFeedStrategy) as? Data,
-            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
-            let strategy = decodedObject as? FeedStrategy {
-            return strategy
-        }
-        return RecentlyActivePostsAndContactsAlgorithm()
+        isStar ? OneHopFeedAlgorithm(identity: identity) : NoHopFeedAlgorithm(identity: identity)
     }
 
-    override init() {
+    private var isStar: Bool {
+        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
+            (AppConfiguration.current?.systemPubs ?? [])
+        return pubs.contains { $0.feed == identity }
+    }
+
+    init(identity: Identity) {
+        self.identity = identity
         super.init()
     }
 

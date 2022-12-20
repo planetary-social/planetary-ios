@@ -55,21 +55,19 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let targetController = self.navigationController
-        if indexPath.section == 0 {
+        guard indexPath.section != 0 else {
             let controller = RedeemInviteViewController()
             controller.saveCompletion = { [weak self] _ in
                 self?.load()
                 targetController?.popViewController(animated: true)
             }
             targetController?.pushViewController(controller, animated: true)
-        } else {
-            let identity = dataSource.pubs[indexPath.row].address.key
-            let controller = UIHostingController(
-                rootView: IdentityView(identity: identity)
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
-            )
-            targetController?.pushViewController(controller, animated: true)
+            return
         }
+        let identity = dataSource.pubs[indexPath.row].address.key
+        let controller = UIHostingController(
+            rootView: IdentityViewBuilder().build(identity: identity, botRepository: .shared, appController: .shared)
+        )
+        targetController?.pushViewController(controller, animated: true)
     }
 }

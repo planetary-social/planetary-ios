@@ -618,6 +618,8 @@
 		5B2CF38C2950FD4600630CB6 /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38A2950FD4600630CB6 /* MessageList.swift */; };
 		5B2CF38E2950FD8700630CB6 /* InfiniteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */; };
 		5B2CF38F2950FD8700630CB6 /* InfiniteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */; };
+		5B2CF3912952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
+		5B2CF3922952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
 		5B32F256291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
 		5B32F257291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
 		5B32F259291EC037005985E2 /* IdentityHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F258291EC037005985E2 /* IdentityHeaderView.swift */; };
@@ -1681,6 +1683,7 @@
 		5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyMessageList.swift; sourceTree = "<group>"; };
 		5B2CF38A2950FD4600630CB6 /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteListView.swift; sourceTree = "<group>"; };
+		5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStrategy.swift; sourceTree = "<group>"; };
 		5B32F255291E963B005985E2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		5B32F258291EC037005985E2 /* IdentityHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityHeaderView.swift; sourceTree = "<group>"; };
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
@@ -2921,6 +2924,7 @@
 				5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */,
 				5BA321662949083400EF740B /* StaticAlgorithm.swift */,
 				5B2CF37D2950CE3100630CB6 /* HomeStrategy.swift */,
+				5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */,
 			);
 			path = FeedStrategy;
 			sourceTree = "<group>";
@@ -4470,6 +4474,7 @@
 				5BA32EDD291597DE00744984 /* BotRepository.swift in Sources */,
 				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
+				5B2CF3922952343B00630CB6 /* ProfileStrategy.swift in Sources */,
 				C9F1C84927C92842005A3228 /* Localizable.swift in Sources */,
 				C9724B212809D3FE000EBCCD /* PeerConnectionAnimation.swift in Sources */,
 				C9724BC22809ED1F000EBCCD /* ThreadInteractionView.swift in Sources */,
@@ -5157,6 +5162,7 @@
 				535754FB22694A2E002A6989 /* MessageTableViewCell.swift in Sources */,
 				0A07AB22242AC66D00EFD47F /* Notification+About.swift in Sources */,
 				53211CE92284B9F5007FB785 /* AppConfigurationViewController.swift in Sources */,
+				5B2CF3912952343B00630CB6 /* ProfileStrategy.swift in Sources */,
 				535B6A0E23728049008C248E /* NSNotification+Bot.swift in Sources */,
 				53C422B821C476B000A314AD /* DebugTableViewCell.swift in Sources */,
 				531587BB22A18C280004E2B1 /* Onboarding+Migrate.swift in Sources */,

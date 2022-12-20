@@ -10,9 +10,27 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+class IdentityViewBuilder {
+    func build(identity: Identity, botRepository: BotRepository, appController: AppController) -> some View {
+        IdentityView(
+            identity: identity,
+            dataSource: FeedStrategyMessageList(
+                strategy: ProfileStrategy(identity: identity),
+                bot: botRepository.current
+            )
+        ).environmentObject(botRepository).environmentObject(appController)
+    }
+}
+
 struct IdentityView: View {
 
     var identity: Identity
+    private var dataSource: FeedStrategyMessageList
+
+    init(identity: Identity, dataSource: FeedStrategyMessageList) {
+        self.identity = identity
+        self.dataSource = dataSource
+    }
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -57,16 +75,6 @@ struct IdentityView: View {
             errorMessage = nil
             appController.dismiss(animated: true)
         }
-    }
-
-    private var isStar: Bool {
-        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
-            (AppConfiguration.current?.systemPubs ?? [])
-        return pubs.contains { $0.feed == identity }
-    }
-
-    private var strategy: FeedStrategy {
-        isStar ? OneHopFeedAlgorithm(identity: identity) : NoHopFeedAlgorithm(identity: identity)
     }
 
     private func header(extendedHeader: Bool) -> some View {
@@ -126,15 +134,10 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageStack(
-                    dataSource: FeedStrategyMessageList(
-                        strategy: strategy,
-                        bot: botRepository.current
-                    )
-                )
-                .background(Color.appBg)
-                .zIndex(extendedHeader ? 1000 : 500)
-                .offset(y: contentOffset)
+                MessageStack(dataSource: dataSource)
+                    .background(Color.appBg)
+                    .zIndex(extendedHeader ? 1000 : 500)
+                    .offset(y: contentOffset)
                 Spacer()
                     .frame(height: contentOffset)
             }
@@ -323,12 +326,18 @@ struct IdentityView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                IdentityView(identity: .null)
+                IdentityView(
+                    identity: .null,
+                    dataSource: FeedStrategyMessageList(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                )
             }
             .preferredColorScheme(.light)
 
             NavigationView {
-                IdentityView(identity: .null)
+                IdentityView(
+                    identity: .null,
+                    dataSource: FeedStrategyMessageList(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                )
             }
             .preferredColorScheme(.dark)
         }

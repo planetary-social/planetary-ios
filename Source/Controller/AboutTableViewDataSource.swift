@@ -95,9 +95,7 @@ extension AboutTableViewDataSource: UITableViewDelegate {
         Analytics.shared.trackDidSelectItem(kindName: "identity")
         let identity = self.identities[indexPath.row]
         let controller = UIHostingController(
-            rootView: IdentityView(identity: identity)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            rootView: IdentityViewBuilder().build(identity: identity, botRepository: .shared, appController: .shared)
         )
         let targetController = self.delegate?.navigationController
         targetController?.pushViewController(controller, animated: true)

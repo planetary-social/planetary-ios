@@ -289,9 +289,11 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
             let identity = message.author
             let controller = UIHostingController(
-                rootView: IdentityView(identity: identity)
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
+                rootView: IdentityViewBuilder().build(
+                    identity: identity,
+                    botRepository: .shared,
+                    appController: .shared
+                )
             )
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         } else if message.contentType == .post {
