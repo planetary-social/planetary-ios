@@ -227,7 +227,6 @@ class AppController: UIViewController, ObservableObject {
     
     // MARK: Debug Menu
     
-    #if DEBUG
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         guard motion == .motionShake,
         topViewController.presentingViewController == nil,
@@ -237,5 +236,4 @@ class AppController: UIViewController, ObservableObject {
         let controller = UINavigationController(rootViewController: DebugViewController())
         topViewController.present(controller, animated: true, completion: nil)
     }
-    #endif
 }
