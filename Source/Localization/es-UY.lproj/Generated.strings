@@ -2,6 +2,7 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Oops";
+"Localized.success" = "Success!";
 "Localized.cancel" = "Cancel";
 "Localized.skip" = "Skip";
 "Localized.ok" = "OK";
@@ -213,7 +214,7 @@
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de celular";
 "Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "One more thing…";
+"Onboarding.doneOnboarding" = "¡Uf! ¡Ya terminé!";
 "Onboarding.earlyAccess" = "Esta aplicación está en una etapa temprana de desarrollo. Hemos enfocado nuestro tiempo en lo fundamental, así que hay detalles y partes desprolijas en la interfaz. ¡Animate!";
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Sigue a Planetary";
@@ -391,3 +392,9 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios que sigues, aquellos que *ellos* siguen y los servidores de pub que usas para *chismear* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*chismes*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} respuesta";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} respuestas";

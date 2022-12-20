@@ -23,21 +23,39 @@ extension ContentCodable {
     /// a `default:` case to
     func encodeToData() throws -> Data {
         switch self.type {
-
-            // models that can be published
-            case .about:    if let encodable = self as? About { return try JSONEncoder().encode(encodable) }
-            case .contact:  if let encodable = self as? Contact { return try JSONEncoder().encode(encodable) }
-            case .dropContentRequest: // i can re-pad this
-                            if let encodable = self as? DropContentRequest // if the PR is fine (i'd love it if swift had gofmt)
-                                                                       { return try JSONEncoder().encode(encodable) }
-            case .pub:      if let encodable = self as? Pub { return try JSONEncoder().encode(encodable) }
-            case .post:     if let encodable = self as? Post { return try JSONEncoder().encode(encodable) }
-            case .vote:     if let encodable = self as? ContentVote { return try JSONEncoder().encode(encodable) }
-
-            // models that SHOULD NOT be published
-            case .address:      throw BotError.encodeFailure
-            case .unknown:      throw BotError.encodeFailure
-            case .unsupported:  throw BotError.encodeFailure
+        // models that can be published
+        case .about:
+            if let encodable = self as? About {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .contact:
+            if let encodable = self as? Contact {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .dropContentRequest:
+            if let encodable = self as? DropContentRequest {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .pub:
+            if let encodable = self as? Pub {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .post:
+            if let encodable = self as? Post {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .vote:
+            if let encodable = self as? ContentVote {
+                return try JSONEncoder().encode(encodable)
+            }
+        case .roomAliasAnnouncement:
+            if let encodable = self as? RoomAliasAnnouncement {
+                return try JSONEncoder().encode(encodable)
+            }
+            
+        // models that SHOULD NOT be published
+        case .address, .unknown, .unsupported:
+            throw BotError.encodeFailure
         }
 
         // likely this should have thrown already

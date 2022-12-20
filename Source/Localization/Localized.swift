@@ -44,6 +44,7 @@ enum Localized: String, Localizable, CaseIterable {
     case planetary = "Planetary"
 
     case error = "Oops"
+    case success = "Success!"
     case cancel = "Cancel"
     case skip = "Skip"
     case ok = "OK"
@@ -198,6 +199,7 @@ enum Localized: String, Localizable, CaseIterable {
     case invitationRedeemed = "Invitation redeemed!"
     case addRoomAddressOrInvitation = "paste address or invitation"
     case joiningRoom = "Joining room..."
+    case pleaseSelectRoom = "Please select a room"
     
     case refreshSingular = "{{ count }} unread post!"
     case refreshPlural = "{{ count }} unread posts!"
