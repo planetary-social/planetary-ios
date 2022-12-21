@@ -510,7 +510,7 @@ class GoBotInternal {
         completion(newRef, nil)
     }
     
-    func blobFileURL(ref: BlobIdentifier) throws -> URL {
+    func blobFileURL(from ref: BlobIdentifier) throws -> URL {
         let hexRef = ref.hexEncodedString()
         if hexRef.isEmpty {
             throw GoBotError.unexpectedFault("blobGet: could not make hex representation of blob reference")
@@ -533,7 +533,7 @@ class GoBotInternal {
     /// Tries to fetch a blob from the filesystem. If the blob cannot be found, we indicate to go-ssb that we want
     /// it to download the blob from a peer.
     func blobGet(ref: BlobIdentifier) throws -> Data {
-        let u = try blobFileURL(ref: ref)
+        let u = try blobFileURL(from: ref)
         do {
             return try Data(contentsOf: u)
         } catch {

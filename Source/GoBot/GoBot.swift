@@ -1007,7 +1007,7 @@ class GoBot: Bot, @unchecked Sendable {
     func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
         // Use a same thread here, no need to mess with the our standard queue.
         do {
-            let repoURL = try self.bot.blobFileURL(ref: identifier)
+            let repoURL = try self.bot.blobFileURL(from: identifier)
             try FileManager.default.createDirectory(
                 at: repoURL.deletingLastPathComponent(),
                 withIntermediateDirectories: true,
@@ -1020,10 +1020,14 @@ class GoBot: Bot, @unchecked Sendable {
         }
     }
     
+    func blobFileURL(from ref: BlobIdentifier) throws -> URL {
+        try self.bot.blobFileURL(from: ref)
+    }
+    
     func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
         let url: URL
         do {
-            url = try self.bot.blobFileURL(ref: identifier)
+            url = try self.bot.blobFileURL(from: identifier)
         } catch {
             completion(nil, error)
             return

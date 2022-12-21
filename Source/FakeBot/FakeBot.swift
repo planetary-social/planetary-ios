@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CryptoKit
 
 enum FakeBotError: Error {
     case runtimeError(String)
@@ -100,11 +101,44 @@ class FakeBot: Bot {
 
     func addBlob(jpegOf image: UIImage, largestDimension: UInt?, completion: @escaping AddImageCompletion) { }
     
-    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) { }
+    private var blobStorage = [BlobIdentifier: Data]()
     
-    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) { }
-
-    func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) { }
+    func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        do {
+            let data = try Data(contentsOf: url)
+            store(data: data, for: identifier, completion: completion)
+        } catch {
+            completion(nil, error)
+        }
+    }
+    
+    func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
+        blobStorage[identifier] = data
+        let url = URL(fileURLWithPath: identifier)
+        completion(url, nil)
+    }
+    
+    func store(data: Data, completion: @escaping BlobsStoreCompletion) {
+        let blobIdentifier = "&\(SHA256.hash(data: data))=.sha256"
+        store(data: data, for: blobIdentifier, completion: completion)
+    }
+    
+    func store(url: URL, completion: @escaping BlobsStoreCompletion) {
+        do {
+            let data = try Data(contentsOf: url)
+            store(data: data, completion: completion)
+        } catch {
+            completion(nil, error)
+        }
+    }
+    
+    func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
+        completion(identifier, blobStorage[identifier], nil)
+    }
+    
+    func blobFileURL(from identifier: BlobIdentifier) throws -> URL {
+        URL(fileURLWithPath: identifier)
+    }
 
     func hashtags(completion: @escaping HashtagsCompletion) { }
 

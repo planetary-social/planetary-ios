@@ -290,6 +290,8 @@ protocol Bot: AnyObject, Sendable {
     /// Useful for storing a blob fetched from an external source.
     func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
     func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion)
+    
+    func blobFileURL(from ref: BlobIdentifier) throws -> URL
 
     // MARK: Statistics
 
