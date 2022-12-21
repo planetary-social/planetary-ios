@@ -66,17 +66,6 @@ struct HomeView: View, HelpDrawerHost {
     @State
     private var lastTimeNewFeedUpdatesWasChecked = Date()
 
-    @State
-    private var errorMessage: String?
-
-    private var shouldShowAlert: Binding<Bool> {
-        Binding {
-            errorMessage != nil
-        } set: { _ in
-            errorMessage = nil
-        }
-    }
-
     private var shouldShowFloatingButton: Bool {
         numberOfNewItems > 0
     }
@@ -123,23 +112,6 @@ struct HomeView: View, HelpDrawerHost {
                 }
             }
         }
-        .alert(
-            Localized.error.text,
-            isPresented: shouldShowAlert,
-            actions: {
-                Button(Localized.tryAgain.text) {
-                    Task {
-                        await dataSource.loadFromScratch()
-                    }
-                }
-                Button(Localized.cancel.text, role: .cancel) {
-                    shouldShowAlert.wrappedValue = false
-                }
-            },
-            message: {
-                Text(errorMessage ?? "")
-            }
-        )
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
             Task.detached {
                 await dataSource.loadFromScratch()
@@ -160,9 +132,11 @@ struct HomeView: View, HelpDrawerHost {
                 await checkNewItemsIfNeeded()
             }
         }
-        .onReceive(dataSource.$cache) { cache in
-            print("LISTEN: onReceive $cache")
-            updateBadgeNumber(value: 0)
+        .onReceive(dataSource.$pages) { pages in
+            print("LISTEN: onReceive $pages = \(pages)")
+            if pages == 1 {
+                updateBadgeNumber(value: 0)
+            }
         }
         .onAppear {
             CrashReporting.shared.record("Did Show Home")

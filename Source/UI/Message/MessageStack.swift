@@ -17,16 +17,9 @@ struct MessageStack<DataSource>: View where DataSource: MessageList {
 
     var body: some View {
         InfiniteStackView(dataSource: dataSource) { message in
-            Button {
-                if let contact = (message as! Message).content.contact {
-                    appController.open(identity: contact.contact)
-                } else {
-                    appController.open(identifier: (message as! Message).id)
-                }
-            } label: {
-                MessageView(message: message as! Message)
+            if let message = message as? Message {
+                MessageButton(message: message)
             }
-            .buttonStyle(MessageButtonStyle())
         }
     }
 }

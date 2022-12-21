@@ -29,13 +29,21 @@ class FeedStrategyMessageList: MessageList {
     @Published
     var isLoadingFromScratch = false
 
+    @Published
+    var errorMessage: String?
+
+    /// The number of loaded pages
+    @Published
+    var pages = 0
+
+    /// The size of each page
     private let pageSize = 50
 
+    /// The number of messages loaded
     private var offset = 0
 
+    /// If true, we know there are no more pages to be loaded
     private var noMoreMessages = false
-
-    private var errorMessage: String?
 
     @MainActor
     func loadFromScratch() async {
@@ -51,6 +59,7 @@ class FeedStrategyMessageList: MessageList {
                 offset = messages.count
                 noMoreMessages = messages.count < pageSize
                 isLoadingFromScratch = false
+                pages = 1
             }
         } catch {
             CrashReporting.shared.reportIfNeeded(error: error)
@@ -61,6 +70,7 @@ class FeedStrategyMessageList: MessageList {
                 offset = 0
                 noMoreMessages = true
                 isLoadingFromScratch = false
+                pages = 0
             }
         }
     }
@@ -82,6 +92,7 @@ class FeedStrategyMessageList: MessageList {
                     offset += messages.count
                     noMoreMessages = messages.count < pageSize
                     isLoadingMore = false
+                    pages += 1
                 }
             } catch {
                 CrashReporting.shared.reportIfNeeded(error: error)

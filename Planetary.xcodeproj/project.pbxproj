@@ -620,6 +620,8 @@
 		5B2CF38F2950FD8700630CB6 /* InfiniteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */; };
 		5B2CF3912952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
 		5B2CF3922952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
+		5B2CF39A2953A03000630CB6 /* MessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3992953A03000630CB6 /* MessageButton.swift */; };
+		5B2CF39B2953A03000630CB6 /* MessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3992953A03000630CB6 /* MessageButton.swift */; };
 		5B32F256291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
 		5B32F257291E963B005985E2 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F255291E963B005985E2 /* AvatarView.swift */; };
 		5B32F259291EC037005985E2 /* IdentityHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B32F258291EC037005985E2 /* IdentityHeaderView.swift */; };
@@ -715,8 +717,6 @@
 		5BAE9C8C281F5226008AEA84 /* ContactCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */; };
 		5BAE9C8E281F556A008AEA84 /* ContactReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */; };
 		5BAE9C90281F779F008AEA84 /* ContactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */; };
-		5BBD5C372943B21800B99C5A /* MessageButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */; };
-		5BBD5C382943B21800B99C5A /* MessageButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */; };
 		5BC2974628048AD800C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC2974528048AD800C0CD81 /* SQLite */; };
 		5BC297482804A22500C0CD81 /* ExtendedAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297472804A22500C0CD81 /* ExtendedAboutView.swift */; };
 		5BC2974A2804B98C00C0CD81 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 5BC297492804B98C00C0CD81 /* SQLite */; };
@@ -1684,6 +1684,7 @@
 		5B2CF38A2950FD4600630CB6 /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteListView.swift; sourceTree = "<group>"; };
 		5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStrategy.swift; sourceTree = "<group>"; };
+		5B2CF3992953A03000630CB6 /* MessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageButton.swift; sourceTree = "<group>"; };
 		5B32F255291E963B005985E2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		5B32F258291EC037005985E2 /* IdentityHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityHeaderView.swift; sourceTree = "<group>"; };
 		5B373837288B09A30017756B /* ExtendedAboutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutCellView.swift; sourceTree = "<group>"; };
@@ -1738,7 +1739,6 @@
 		5BAE9C8B281F5226008AEA84 /* ContactCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCellView.swift; sourceTree = "<group>"; };
 		5BAE9C8D281F556A008AEA84 /* ContactReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactReplyView.swift; sourceTree = "<group>"; };
 		5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactHeaderView.swift; sourceTree = "<group>"; };
-		5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageButtonStyle.swift; sourceTree = "<group>"; };
 		5BC297472804A22500C0CD81 /* ExtendedAboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedAboutView.swift; sourceTree = "<group>"; };
 		5BC297532805F4A800C0CD81 /* FeedStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategy.swift; sourceTree = "<group>"; };
 		5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsAlgorithm.swift; sourceTree = "<group>"; };
@@ -2473,7 +2473,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		53631EEB23A87169009C6999 /* Message */ = {
+		53631EEB23A87169009C6999 /* MessageUI */ = {
 			isa = PBXGroup;
 			children = (
 				535754FA22694A2E002A6989 /* MessageTableViewCell.swift */,
@@ -2486,7 +2486,7 @@
 				0A4871002498030800BCD063 /* PostCollectionViewCell.swift */,
 				0A487104249D1B3500BCD063 /* MessagePaginatedCollectionViewDelegate.swift */,
 			);
-			path = Message;
+			path = MessageUI;
 			sourceTree = "<group>";
 		};
 		5369D2A0220B55DA00A65622 /* FakeBot */ = {
@@ -2585,13 +2585,14 @@
 		5396A63622483B7900C57A4B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				5B2CF3982953A01F00630CB6 /* Message */,
 				5B4AEA6C294D14240059E039 /* Home */,
 				E0A4AB1F294A52C300A410CB /* Cards */,
 				8DE093D6234651AD009E505D /* Buttons */,
 				5B7AB67D28F46E90007DCCF1 /* About */,
 				5B4AEA74294D14320059E039 /* Hashtag */,
 				C923DBAE288057E900569AAB /* Help */,
-				53631EEB23A87169009C6999 /* Message */,
+				53631EEB23A87169009C6999 /* MessageUI */,
 				C920A3A0289AFB01009C83F3 /* SwiftUI Helper Views */,
 				C9A2DE3027CFD63900EAFA73 /* SwiftUI Previews */,
 				53211CCF227C8F85007FB785 /* AboutCellView.swift */,
@@ -2837,6 +2838,20 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		5B2CF3982953A01F00630CB6 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				5B929DA3290857DB007922AB /* MessageView.swift */,
+				5B8E8058291547D9005009FC /* MessageOptionsButton.swift */,
+				5B2CF3992953A03000630CB6 /* MessageButton.swift */,
+				5B2CF38A2950FD4600630CB6 /* MessageList.swift */,
+				5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */,
+				5B5EF4FA294FE1230052237A /* MessageListView.swift */,
+				5B2CF3842950FC6600630CB6 /* MessageStack.swift */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
 		5B4AEA6B294D14050059E039 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -2880,11 +2895,9 @@
 				5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */,
 				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
 				5BE8A30829193ECE00C4A38E /* BlobGalleryView.swift */,
-				5B929DA3290857DB007922AB /* MessageView.swift */,
 				5BAB1840290C2634009F8F90 /* CompactPostView.swift */,
 				5BE8A30C2919C9E800C4A38E /* IdentityListView.swift */,
 				5BAB1844290C2767009F8F90 /* CompactIdentityView.swift */,
-				5B8E8058291547D9005009FC /* MessageOptionsButton.swift */,
 				5BE8A30F291A96FE00C4A38E /* IdentityOptionsButton.swift */,
 				5BE8A312291A986200C4A38E /* IdentityShareButton.swift */,
 				5B32F255291E963B005985E2 /* AvatarView.swift */,
@@ -2893,11 +2906,6 @@
 				5B3FBE3C292BE5E0004F34CC /* EditAvatarButton.swift */,
 				5B040164292D1BE20048CD1F /* RelationshipButton.swift */,
 				5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */,
-				5BBD5C362943B21800B99C5A /* MessageButtonStyle.swift */,
-				5B5EF4FA294FE1230052237A /* MessageListView.swift */,
-				5B2CF3842950FC6600630CB6 /* MessageStack.swift */,
-				5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */,
-				5B2CF38A2950FD4600630CB6 /* MessageList.swift */,
 			);
 			path = About;
 			sourceTree = "<group>";
@@ -4391,6 +4399,7 @@
 				C9724B1B2809D370000EBCCD /* DebugTableViewCell.swift in Sources */,
 				C9724B292809D43B000EBCCD /* UIViewController+NavigationItems.swift in Sources */,
 				0A3880092475AAE000777843 /* PushAPI.swift in Sources */,
+				5B2CF39B2953A03000630CB6 /* MessageButton.swift in Sources */,
 				C9724B972809EA7D000EBCCD /* Comparable+Clamped.swift in Sources */,
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
 				C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */,
@@ -4510,7 +4519,6 @@
 				C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */,
 				5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageList.swift in Sources */,
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
-				5BBD5C382943B21800B99C5A /* MessageButtonStyle.swift in Sources */,
 				C9724B222809D403000EBCCD /* Layout+Center.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
 				5B7AB67B28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */,
@@ -4849,6 +4857,7 @@
 				5BA6E3B729366ED4000393AC /* HashtagAlgorithm.swift in Sources */,
 				5B4AEA7B294D14320059E039 /* HashtagListView.swift in Sources */,
 				530F01B422E0D3E7007EBAE2 /* TitledToggle.swift in Sources */,
+				5B2CF39A2953A03000630CB6 /* MessageButton.swift in Sources */,
 				53AD3FD1226F736A005228F9 /* UIViewTapGesture.swift in Sources */,
 				530F018D22DCE78A007EBAE2 /* String+PhoneNumberKit.swift in Sources */,
 				533EDBE42385F3B1008B3565 /* Cache.swift in Sources */,
@@ -4877,7 +4886,6 @@
 				535B6A10237362AE008C248E /* BlockedUsersViewController.swift in Sources */,
 				8D74DE012335601F003C284B /* UIViewController+NavigationItems.swift in Sources */,
 				0A64A82824734F00009A5EBF /* VersePubAPI.swift in Sources */,
-				5BBD5C372943B21800B99C5A /* MessageButtonStyle.swift in Sources */,
 				539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */,
 				53C9FA2F22FCF64700EAC35F /* SettingsViewController.swift in Sources */,
 				5B2CF3852950FC6600630CB6 /* MessageStack.swift in Sources */,

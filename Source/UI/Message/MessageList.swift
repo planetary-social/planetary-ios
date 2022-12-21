@@ -11,6 +11,7 @@ import Foundation
 protocol MessageList: InfiniteList {
     associatedtype CachedCollection = [Message]
     var cache: [Message]? { get }
+    var errorMessage: String? { get set }
     var isLoadingFromScratch: Bool { get set }
     var isLoadingMore: Bool { get set }
     func loadFromScratch() async

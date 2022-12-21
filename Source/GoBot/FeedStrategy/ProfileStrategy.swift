@@ -9,6 +9,8 @@
 import Foundation
 import SQLite
 
+/// This strategy acts like a Composite strategy that uses the most adequate strategy for displaying a list of
+/// messages for an identity (ie. in the Profile screen).
 final class ProfileStrategy: NSObject, FeedStrategy {
 
     let identity: Identity
@@ -41,10 +43,13 @@ final class ProfileStrategy: NSObject, FeedStrategy {
     }
 
     func encode(with coder: NSCoder) {
-
+        coder.encode(identity, forKey: "identity")
     }
 
     init?(coder: NSCoder) {
-        nil
+        guard let decodedIdentity = coder.decodeObject(forKey: "identity") as? String else {
+            return nil
+        }
+        identity = decodedIdentity
     }
 }

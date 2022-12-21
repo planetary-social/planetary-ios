@@ -8,9 +8,11 @@
 
 import SwiftUI
 
-protocol InfiniteList: ObservableObject where CachedCollection.Element: Hashable, CachedCollection.Element: Identifiable {
+protocol InfiniteList: ObservableObject
+where CachedCollection.Element: Hashable, CachedCollection.Element: Identifiable {
     associatedtype CachedCollection: RandomAccessCollection
     var cache: CachedCollection? { get }
+    var errorMessage: String? { get set }
     var isLoadingFromScratch: Bool { get set }
     var isLoadingMore: Bool { get set }
     func loadFromScratch() async

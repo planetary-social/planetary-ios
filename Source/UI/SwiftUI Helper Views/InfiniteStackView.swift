@@ -13,6 +13,14 @@ struct InfiniteStackView<DataSource, Content>: View where DataSource: InfiniteLi
     @ObservedObject var dataSource: DataSource
     let content: (DataSource.CachedCollection.Element) -> Content
 
+    private var shouldShowAlert: Binding<Bool> {
+        Binding {
+            dataSource.errorMessage != nil
+        } set: { _ in
+            dataSource.errorMessage = nil
+        }
+    }
+    
     init(
         dataSource: DataSource,
         @ViewBuilder content: @escaping (DataSource.CachedCollection.Element) -> Content
@@ -54,6 +62,23 @@ struct InfiniteStackView<DataSource, Content>: View where DataSource: InfiniteLi
                 }
             }
         }
+        .alert(
+            Localized.error.text,
+            isPresented: shouldShowAlert,
+            actions: {
+                Button(Localized.tryAgain.text) {
+                    Task {
+                        await dataSource.loadFromScratch()
+                    }
+                }
+                Button(Localized.cancel.text, role: .cancel) {
+                    shouldShowAlert.wrappedValue = false
+                }
+            },
+            message: {
+                Text(dataSource.errorMessage ?? "")
+            }
+        )
         .task {
             if dataSource.cache == nil, !dataSource.isLoadingFromScratch {
                 await dataSource.loadFromScratch()

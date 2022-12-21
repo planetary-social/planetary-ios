@@ -9,6 +9,9 @@
 import Foundation
 import SQLite
 
+/// This strategy acts like a Composite strategy that uses one strategy (selected by the user in the Settings screen)
+/// and routes all functions through that strategy so that we have the responsibility of choosing the right strategy
+/// to this class and let other parts o
 final class HomeStrategy: NSObject, FeedStrategy {
 
     private var innerStrategy: FeedStrategy {
@@ -37,11 +40,7 @@ final class HomeStrategy: NSObject, FeedStrategy {
         try innerStrategy.countNumberOfKeys(connection: connection, userId: userId, since: message)
     }
 
-    func encode(with coder: NSCoder) {
+    func encode(with coder: NSCoder) { }
 
-    }
-
-    init?(coder: NSCoder) {
-        nil
-    }
+    init?(coder: NSCoder) { }
 }

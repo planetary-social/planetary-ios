@@ -1,16 +1,34 @@
 //
-//  MessageButtonStyle.swift
+//  MessageButton.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 9/12/22.
+//  Created by Martin Dutra on 21/12/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
 import SwiftUI
 
-/// Use this button style when using a MessageView as a Button label
-/// It will give it the shadows and a pressed state
-struct MessageButtonStyle: ButtonStyle {
+struct MessageButton: View {
+    var message: Message
+
+    @EnvironmentObject
+    private var appController: AppController
+
+    var body: some View {
+        Button {
+            if let contact = message.content.contact {
+                appController.open(identity: contact.contact)
+            } else {
+                appController.open(identifier: message.id)
+            }
+        } label: {
+            MessageView(message: message)
+        }
+        .buttonStyle(MessageButtonStyle())
+    }
+}
+
+fileprivate struct MessageButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .offset(y: configuration.isPressed ? 3 : 0)
@@ -25,7 +43,7 @@ struct MessageButtonStyle: ButtonStyle {
     }
 }
 
-struct MessageButtonStyle_Previews: PreviewProvider {
+struct MessageButton_Previews: PreviewProvider {
     static var messageValue: MessageValue {
         MessageValue(
             author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
@@ -62,11 +80,11 @@ struct MessageButtonStyle_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        Button {
-            print("Clicked")
-        } label: {
-            MessageView(message: message)
+        Group {
+            MessageButton(message: message)
+            MessageButton(message: message)
+                .preferredColorScheme(.dark)
         }
-        .buttonStyle(MessageButtonStyle())
+        .environmentObject(AppController.shared)
     }
 }
