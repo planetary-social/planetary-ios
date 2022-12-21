@@ -8,8 +8,14 @@
 
 import Foundation
 
+// swiftlint:disable identifier_name
 enum MIMEType: String {
-    case jpeg = "image/jpeg"
+    case jpeg, jpg = "image/jpeg"
+    case gif = "image/gif"
     case json = "application/json"
     case png = "image/png"
+    case octetStream = "application/octet-stream"
+    case mpeg, mp3 = "audio/mpeg"
+    case aac = "audio/aac"
+    case unknown = "unknown"
 }

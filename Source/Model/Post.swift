@@ -117,6 +117,23 @@ class Post: ContentCodable {
             return try? values.decode([Identifier].self, forKey: .branch)
         }
     }
+    
+    /// Returns `[(Identifier, MIMEType)]` for all detected media on a post.
+    func attachedMedia() -> [(Identifier, MIMEType)] {
+        var attachedMedia = [(Identifier, MIMEType)]()
+        
+        mentions?.forEach { mention in
+            guard let type = mention.type, let mimeType = MIMEType(rawValue: type) else {
+                
+                // switch on name extension?
+                
+                attachedMedia.append((mention.identity, MIMEType.unknown))
+                return
+            }
+            attachedMedia.append((mention.identity, mimeType))
+        }
+        return attachedMedia
+    }
 }
 
 extension Post {
@@ -201,4 +218,10 @@ func getRecipientIdentities(recps: [RecipientElement]) -> [Identity] {
         }
     }
     return identities
+}
+
+extension String {
+    func getPathExtension() -> String {
+        return (self as NSString).pathExtension
+    }
 }
