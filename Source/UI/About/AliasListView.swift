@@ -15,25 +15,17 @@ struct AliasListView: View {
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 1) {
-                let aliasStrings = aliases.map { $0.alias }
                 Divider()
-                ForEach(aliasStrings, id: \.self) { alias in
+                ForEach(aliases) { alias in
                     HStack {
-                        Text(alias)
+                        Text(alias.alias)
                         Button {
-                            UIPasteboard.general.string = alias
+                            UIPasteboard.general.string = alias.string
                         }
                         label: {
                             Text(Localized.copyID.text)
                                 .foregroundLinearGradient(
-                                    LinearGradient(
-                                        colors: [
-                                            .aliasCountButtonTextGradientLeading,
-                                            .aliasCountButtonTextGradientTrailing
-                                        ],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
+                                    LinearGradient.horizontalAccent
                                 )
                                 .font(.system(size: 10))
                                 .padding(4)

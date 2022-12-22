@@ -22,7 +22,7 @@ struct RoomAlias: Identifiable {
         var components = string.replacingOccurrences(of: "https://", with: "")
             .replacingOccurrences(of: "http://", with: "")
             .components(separatedBy: ".")
-        return components.removeFirst() + "@" + components.joined(separator: ".")
+        return components.joined(separator: ".")
     }
 }
 

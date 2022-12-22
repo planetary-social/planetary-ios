@@ -39,11 +39,7 @@ struct AliasCountButton: View {
         } label: {
             Text("+\(count)")
                 .foregroundLinearGradient(
-                    LinearGradient(
-                        colors: [.aliasCountButtonTextGradientLeading, .aliasCountButtonTextGradientTrailing],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                    LinearGradient.horizontalAccent
                 )
                 .font(.system(size: 10))
                 .padding(4)
