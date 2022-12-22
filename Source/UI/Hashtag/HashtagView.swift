@@ -16,6 +16,17 @@ struct HashtagView: View {
     
     var hashtag: Hashtag
 
+    init(hashtag: Hashtag, bot: Bot) {
+        self.hashtag = hashtag
+        self.dataSource = FeedStrategyMessageList(
+            strategy: HashtagAlgorithm(hashtag: hashtag),
+            bot: bot
+        )
+    }
+
+    @ObservedObject
+    private var dataSource: FeedStrategyMessageList
+
     @EnvironmentObject
     private var botRepository: BotRepository
 
@@ -23,21 +34,22 @@ struct HashtagView: View {
     private var appController: AppController
 
     var body: some View {
-        MessageListView(
-            dataSource: FeedStrategyMessageList(
-                strategy: HashtagAlgorithm(hashtag: hashtag),
-                bot: botRepository.current
-            )
-        )
-        .background(Color.appBg)
-        .navigationTitle(hashtag.string)
+        MessageListView(dataSource: dataSource)
+            .placeholder(when: dataSource.isEmpty) {
+                EmptyPostsView(description: Localized.Message.noPostsInHashtagDescription)
+            }
+            .background(Color.appBg)
+            .navigationTitle(hashtag.string)
     }
 }
 
 struct HashtagView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            HashtagView(hashtag: Hashtag(name: "technology"))
+            HashtagView(
+                hashtag: Hashtag(name: "technology"),
+                bot: FakeBot.shared
+            )
         }
         .environmentObject(BotRepository.fake)
         .environmentObject(AppController.shared)

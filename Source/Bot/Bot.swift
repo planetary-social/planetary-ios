@@ -789,7 +789,7 @@ extension Bot {
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {
-                    continuation.resume(returning: messages)
+                    continuation.resume(returning: [])
                 }
             }
         }

@@ -25,6 +25,8 @@ class IdentityViewBuilder {
 struct IdentityView: View {
 
     var identity: Identity
+
+    @ObservedObject
     private var dataSource: FeedStrategyMessageList
 
     init(identity: Identity, dataSource: FeedStrategyMessageList) {
@@ -135,6 +137,9 @@ struct IdentityView: View {
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
                 MessageStack(dataSource: dataSource)
+                    .placeholder(when: dataSource.isEmpty) {
+                        EmptyPostsView(description: Localized.Message.noPostsDescription)
+                    }
                     .background(Color.appBg)
                     .zIndex(extendedHeader ? 1000 : 500)
                     .offset(y: contentOffset)

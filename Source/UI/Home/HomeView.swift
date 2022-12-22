@@ -12,6 +12,7 @@ import Logger
 import SwiftUI
 
 struct HomeView: View, HelpDrawerHost {
+    @ObservedObject
     private var dataSource: FeedStrategyMessageList
 
     init(dataSource: FeedStrategyMessageList, helpDrawerState: HelpDrawerState) {
@@ -73,6 +74,9 @@ struct HomeView: View, HelpDrawerHost {
     var body: some View {
         ZStack(alignment: .top) {
             MessageListView(dataSource: dataSource)
+                .placeholder(when: dataSource.isEmpty) {
+                    EmptyHomeView()
+                }
             if shouldShowFloatingButton {
                 FloatingButton(count: numberOfNewItems, isLoading: isLoadingFromScratch)
             }
@@ -113,17 +117,17 @@ struct HomeView: View, HelpDrawerHost {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
-            Task.detached {
+            Task {
                 await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { _ in
-            Task.detached {
+            Task {
                 await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didPublishPost)) { _ in
-            Task.detached {
+            Task {
                 await dataSource.loadFromScratch()
             }
         }
@@ -133,7 +137,6 @@ struct HomeView: View, HelpDrawerHost {
             }
         }
         .onReceive(dataSource.$pages) { pages in
-            print("LISTEN: onReceive $pages = \(pages)")
             if pages == 1 {
                 updateBadgeNumber(value: 0)
             }
@@ -156,6 +159,7 @@ struct HomeView: View, HelpDrawerHost {
 
     private func updateBadgeNumber(value: Int) {
         numberOfNewItems = 0
+        lastTimeNewFeedUpdatesWasChecked = Date()
         let navigationController = appController.mainViewController?.homeFeatureViewController
         if value > 0 {
             navigationController?.tabBarItem.badgeValue = "\(value)"
@@ -175,7 +179,6 @@ struct HomeView: View, HelpDrawerHost {
             do {
                 let result = try await bot.numberOfRecentItems(since: lastMessage)
                 await MainActor.run {
-                    lastTimeNewFeedUpdatesWasChecked = Date()
                     numberOfNewItems = result
                     updateBadgeNumber(value: result)
                 }

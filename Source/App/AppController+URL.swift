@@ -135,7 +135,7 @@ extension AppController {
     }
 
     func pushChannelViewController(for hashtag: String) {
-        let view = HashtagView(hashtag: Hashtag.named(hashtag))
+        let view = HashtagView(hashtag: Hashtag.named(hashtag), bot: Bots.current)
             .environmentObject(BotRepository.shared)
             .environmentObject(AppController.shared)
         self.push(UIHostingController(rootView: view))

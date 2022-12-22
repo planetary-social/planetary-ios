@@ -35,7 +35,7 @@ struct InfiniteStackView<DataSource, Content>: View where DataSource: InfiniteLi
                 ZStack {
                     LazyVStack(alignment: .center) {
                         if cache.isEmpty {
-                            EmptyHomeView()
+                            EmptyView()
                         } else {
                             ForEach(cache, id: \.self) { item in
                                 content(item)

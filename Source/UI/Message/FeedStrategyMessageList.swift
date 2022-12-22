@@ -36,6 +36,14 @@ class FeedStrategyMessageList: MessageList {
     @Published
     var pages = 0
 
+    @MainActor
+    var isEmpty: Bool {
+        if let cache = cache {
+            return cache.count == 0
+        }
+        return false
+    }
+
     /// The size of each page
     private let pageSize = 50
 
@@ -54,7 +62,6 @@ class FeedStrategyMessageList: MessageList {
         do {
             let messages = try await bot.feed(strategy: strategy, limit: pageSize, offset: 0)
             await MainActor.run {
-                print("LISTEN: Load from scratch")
                 cache = messages
                 offset = messages.count
                 noMoreMessages = messages.count < pageSize
@@ -87,7 +94,6 @@ class FeedStrategyMessageList: MessageList {
             do {
                 let messages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
                 await MainActor.run {
-                    print("LISTEN: Load more")
                     cache?.append(contentsOf: messages)
                     offset += messages.count
                     noMoreMessages = messages.count < pageSize
