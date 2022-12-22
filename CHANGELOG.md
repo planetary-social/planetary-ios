@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 - Display aliases on profile screen #979
+## Unreleased 
+- Fix "Oops! Invitation redeemed!" message when successfully redeeming Planetary.name room invitation. #949
 
 ## [1.3.10] 2022-11-25
 
