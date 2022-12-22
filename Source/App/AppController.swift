@@ -224,4 +224,16 @@ class AppController: UIViewController, ObservableObject {
     func addOperation(_ operation: Operation) {
         operationQueue.addOperation(operation)
     }
+    
+    // MARK: Debug Menu
+    
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        guard motion == .motionShake,
+        topViewController.presentingViewController == nil,
+        UIApplication.shared.applicationState == .active else {
+            return
+        }
+        let controller = UINavigationController(rootViewController: DebugViewController())
+        topViewController.present(controller, animated: true, completion: nil)
+    }
 }
