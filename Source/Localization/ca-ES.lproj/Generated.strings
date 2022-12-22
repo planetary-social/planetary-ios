@@ -2,7 +2,6 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Vaja!";
-"Localized.success" = "Success!";
 "Localized.cancel" = "Cancel·lar";
 "Localized.skip" = "Omet";
 "Localized.ok" = "D'acord";
@@ -372,8 +371,7 @@
 "Notifications.markAllAsRead" = "Marcar tots com a llegits";
 
 "Help.help" = "Ajuda";
-"Help.indexOfTip" = "
-{{tipIndex}} de {{totalTipCount}} consells";
+"Help.indexOfTip" = "{{tipIndex}} de {{totalTipCount}} consells";
 
 "Home.title" = "Consulta les publicacions dels usuaris i els temes que segueixes";
 "Home.body" = "Si el vostre canal està buit, obriu la pestanya Descobriu, cerqueu alguna cosa interessant i seguiu els usuaris o els temes per veure les seves publicacions al vostre canal d'inici.";
