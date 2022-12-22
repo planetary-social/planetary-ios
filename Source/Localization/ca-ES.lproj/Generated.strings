@@ -132,6 +132,7 @@
 "Localized.invitationRedeemed" = "Invitació bescanviada!";
 "Localized.addRoomAddressOrInvitation" = "enganxa l'adreça o la invitació";
 "Localized.joiningRoom" = "Unint-se a sala...";
+"Localized.pleaseSelectRoom" = "Please select a room";
 "Localized.refreshSingular" = "{{ count }} publicació no llegida!";
 "Localized.refreshPlural" = "{{ count }} publicació no llegida!";
 "Localized.markdownSupported" = "Previsualització de Markdown";
@@ -372,8 +373,7 @@
 "Notifications.markAllAsRead" = "Marcar tots com a llegits";
 
 "Help.help" = "Ajuda";
-"Help.indexOfTip" = "
-{{tipIndex}} de {{totalTipCount}} consells";
+"Help.indexOfTip" = "{{tipIndex}} de {{totalTipCount}} consells";
 
 "Home.title" = "Consulta les publicacions dels usuaris i els temes que segueixes";
 "Home.body" = "Si el vostre canal està buit, obriu la pestanya Descobriu, cerqueu alguna cosa interessant i seguiu els usuaris o els temes per veure les seves publicacions al vostre canal d'inici.";
@@ -393,9 +393,3 @@
 "YourNetwork.title" = "Els teus amics, connexions i pubs";
 "YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
 "YourNetwork.highlightedWord" = "xafarderia";
-
-/* Reply.one */
-"Reply.one" = "{{ count }} resposta";
-
-/* Reply.many */
-"Reply.many" = "{{ count }} respostes";
