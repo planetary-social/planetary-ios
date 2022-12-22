@@ -132,6 +132,7 @@
 "Localized.invitationRedeemed" = "Invitation redeemed!";
 "Localized.addRoomAddressOrInvitation" = "paste address or invitation";
 "Localized.joiningRoom" = "Joining room...";
+"Localized.pleaseSelectRoom" = "Please select a room";
 "Localized.refreshSingular" = "{{ count }} unread post!";
 "Localized.refreshPlural" = "{{ count }} unread posts!";
 "Localized.markdownSupported" = "Markdown preview";
@@ -392,9 +393,3 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios que sigues, aquellos que *ellos* siguen y los servidores de pub que usas para *chismear* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*chismes*";
-
-/* Reply.one */
-"Reply.one" = "{{ count }} respuesta";
-
-/* Reply.many */
-"Reply.many" = "{{ count }} respuestas";

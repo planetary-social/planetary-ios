@@ -132,6 +132,7 @@
 "Localized.invitationRedeemed" = "¡Invitación canjeada!";
 "Localized.addRoomAddressOrInvitation" = "pega la dirección o invitación";
 "Localized.joiningRoom" = "Uniéndose a la sala...";
+"Localized.pleaseSelectRoom" = "Please select a room";
 "Localized.refreshSingular" = "¡{{ count }} publicación sin leer!";
 "Localized.refreshPlural" = "¡{{ count }} publicaciones sin leer!";
 "Localized.markdownSupported" = "Vista previa de Markdown";
@@ -392,9 +393,3 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios a los que sigues, aquellos que *ellos* siguen y los servidores Pub que usas para *susurrar* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*susurro*";
-
-/* Reply.one */
-"Reply.one" = "{{ count }} respuesta";
-
-/* Reply.many */
-"Reply.many" = "{{ count }} respuestas";
