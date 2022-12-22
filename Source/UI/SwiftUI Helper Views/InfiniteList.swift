@@ -2,7 +2,7 @@
 //  InfiniteList.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 18/12/22.
+//  Created by Matthew Lorentz on 10/7/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
