@@ -131,6 +131,7 @@
 "Localized.invitationRedeemed" = "Invitació bescanviada!";
 "Localized.addRoomAddressOrInvitation" = "enganxa l'adreça o la invitació";
 "Localized.joiningRoom" = "Unint-se a sala...";
+"Localized.pleaseSelectRoom" = "Please select a room";
 "Localized.refreshSingular" = "{{ count }} publicació no llegida!";
 "Localized.refreshPlural" = "{{ count }} publicació no llegida!";
 "Localized.markdownSupported" = "Previsualització de Markdown";
@@ -391,9 +392,3 @@
 "YourNetwork.title" = "Els teus amics, connexions i pubs";
 "YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
 "YourNetwork.highlightedWord" = "xafarderia";
-
-/* Reply.one */
-"Reply.one" = "{{ count }} resposta";
-
-/* Reply.many */
-"Reply.many" = "{{ count }} respostes";
