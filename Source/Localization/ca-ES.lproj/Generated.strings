@@ -2,6 +2,7 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Vaja!";
+"Localized.success" = "Success!";
 "Localized.cancel" = "Cancel·lar";
 "Localized.skip" = "Omet";
 "Localized.ok" = "D'acord";
