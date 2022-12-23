@@ -78,7 +78,7 @@ class FakeBot: Bot {
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
     
-    func registeredAliases() async throws -> [RoomAlias] {
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
         throw FakeBotError.notImplemented
     }
     

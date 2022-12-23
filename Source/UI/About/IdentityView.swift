@@ -226,7 +226,7 @@ struct IdentityView: View {
         Task.detached {
             let bot = await botRepository.current
             do {
-                let result = try await bot.registeredAliases()
+                let result = try await bot.registeredAliases(await identity)
                 await MainActor.run {
                     aliases = result
                 }
