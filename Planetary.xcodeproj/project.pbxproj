@@ -3995,7 +3995,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Source/Localization/ExportStrings.swift",
 				"$(SRCROOT)/Source/Localization/Localizable.swift",
-				"$(SRCROOT)/Source/Localization/Text.swift",
+				"$(SRCROOT)/Source/Localization/Localized.swift",
 				"$(SRCROOT)/Source/Localization/ExportStrings.sh",
 			);
 			name = "Generate Localized Strings";

@@ -23,7 +23,7 @@ struct AliasListView: View {
                             UIPasteboard.general.string = alias.string
                         }
                         label: {
-                            Text(Localized.copyID.text)
+                            Text(Localized.allCapsCopy.text)
                                 .foregroundLinearGradient(
                                     LinearGradient.horizontalAccent
                                 )
