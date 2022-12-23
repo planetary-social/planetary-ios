@@ -14,6 +14,7 @@ import SwiftUI
 struct IdentityHeaderView: View {
 
     var identity: Identity
+    var aliases: [RoomAlias]?
     var about: About?
     var relationship: Relationship?
     var hashtags: [Hashtag]?
@@ -87,9 +88,15 @@ struct IdentityHeaderView: View {
                             .lineLimit(1)
                             .font(.title3.weight(.semibold))
                             .foregroundColor(Color.primaryTxt)
-                        Text(identity.prefix(7))
-                            .font(.subheadline)
-                            .foregroundColor(Color.secondaryTxt)
+                        HStack {
+                            Text(aliases?.first?.alias ?? String(identity.prefix(7)))
+                                .font(.subheadline)
+                                .lineLimit(1)
+                                .foregroundColor(Color.secondaryTxt)
+                            if let aliases, let count = aliases.count, count > 1 {
+                                AliasCountButton(aliases: aliases, count: count - 1)
+                            }
+                        }
                         if extendedHeader {
                             followButton
                         }
@@ -126,8 +133,21 @@ struct IdentityHeaderView: View {
     }
 }
 
+// swiftlint:disable force_unwrapping
 struct IdentityHeaderView_Previews: PreviewProvider {
     static var identity = Identity("@unset")
+    static var aliases = [
+        RoomAlias(
+            id: 1,
+            aliasURL: URL(string: "https://rose.techno.planetary")!,
+            authorID: 1
+        ),
+        RoomAlias(
+            id: 2,
+            aliasURL: URL(string: "https://rose.fungi.planetary")!,
+            authorID: 1
+        )
+    ]
     static var about: About {
         About(
             about: .null,
@@ -161,6 +181,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
             VStack {
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: nil,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -169,6 +190,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: aliases,
                     about: nil,
                     relationship: nil,
                     hashtags: nil,
@@ -177,6 +199,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -187,6 +210,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
             VStack {
                 IdentityHeaderView(
                     identity: .null,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -195,6 +219,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: .null,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -205,6 +230,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
             VStack {
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -213,6 +239,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: aliases,
                     about: nil,
                     relationship: nil,
                     hashtags: nil,
@@ -221,6 +248,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: identity,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -232,6 +260,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
             VStack {
                 IdentityHeaderView(
                     identity: .null,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,
@@ -240,6 +269,7 @@ struct IdentityHeaderView_Previews: PreviewProvider {
                 )
                 IdentityHeaderView(
                     identity: .null,
+                    aliases: aliases,
                     about: about,
                     relationship: relationship,
                     hashtags: hashtags,

@@ -91,7 +91,7 @@ protocol Bot: AnyObject, Sendable {
     func insert(room: Room) async throws
     func delete(room: Room) async throws
     
-    func registeredAliases() async throws -> [RoomAlias]
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias]
     func register(alias: String, in: Room) async throws -> RoomAlias
     func revoke(alias: RoomAlias) async throws
 

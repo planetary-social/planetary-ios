@@ -8,6 +8,7 @@ import SwiftUI
 
 extension Color {
 
+       static let aliasCountButtonBackground = Color("aliasCountButtonBackground", bundle: Bundle.current)
        static let appBackground = Color("appBackground", bundle: Bundle.current)
        static let avatarRing = Color("avatarRing", bundle: Bundle.current)
        static let cardBackground = Color("cardBackground", bundle: Bundle.current)
@@ -82,6 +83,7 @@ extension Color {
 
 extension UIColor {
 
+       static let aliasCountButtonBackground = UIColor(named: "aliasCountButtonBackground", in: Bundle.current, compatibleWith: nil)!
        static let appBackground = UIColor(named: "appBackground", in: Bundle.current, compatibleWith: nil)!
        static let avatarRing = UIColor(named: "avatarRing", in: Bundle.current, compatibleWith: nil)!
        static let cardBackground = UIColor(named: "cardBackground", in: Bundle.current, compatibleWith: nil)!
