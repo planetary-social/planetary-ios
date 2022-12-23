@@ -33,10 +33,13 @@ enum BlobCacheError: Error {
 /// 7. `BlobCache` hears the notification and retries step 3.
 @preconcurrency
 class BlobCache: DictionaryCache {
+    
+    private var bot: Bot
 
     // MARK: Lifecycle
 
-    override init() {
+    init(bot: Bot = Bots.current) {
+        self.bot = bot
         super.init()
         self.registerNotifications()
     }
@@ -128,7 +131,7 @@ class BlobCache: DictionaryCache {
 
     private func loadImage(for identifier: BlobIdentifier) {
         
-        Bots.current.data(for: identifier) { [weak self] identifier, data, error in
+        bot.data(for: identifier) { [weak self] identifier, data, error in
             guard let self = self else { return }
 
             // If we don't have the blob downloaded yet ask the Planetary API for it as an optimization.
@@ -221,7 +224,7 @@ class BlobCache: DictionaryCache {
                 return
             }
             
-            Bots.current.store(data: data, for: blobRef) { (_, error) in
+            self?.bot.store(data: data, for: blobRef) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 

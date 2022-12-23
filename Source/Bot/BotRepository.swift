@@ -20,7 +20,7 @@ final class BotRepository: ObservableObject, Sendable {
 
     var current: Bot {
         if fake {
-            return Bots.bot(named: "FakeBot") ?? Bots.current
+            return Bots.fake
         }
         return Bots.current
     }

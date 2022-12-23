@@ -40,9 +40,12 @@ struct BlobGalleryView: View {
     
     @EnvironmentObject
     private var botRepository: BotRepository
+    
+    private var blobCache: BlobCache
 
-    init(blobs: [Blob], enableTapGesture: Bool = true) {
+    init(blobs: [Blob], blobCache: BlobCache = Caches.blobs, enableTapGesture: Bool = true) {
         self.blobs = blobs
+        self.blobCache = blobCache
         self.selectedBlob = blobs.first ?? Blob(identifier: .null)
         self.enableTapGesture = enableTapGesture
     }
@@ -55,22 +58,25 @@ struct BlobGalleryView: View {
             return false
         }
         
-        let asset = AVURLAsset(url: url, options: ["AVURLAssetOutOfBandMIMETypeKey": "video/mp4"])
+        let asset = AVURLAsset(url: url)
+//        let asset = AVURLAsset(url: url, options: ["AVURLAssetOutOfBandMIMETypeKey": "video/mp4"])
 //        return asset.load(.isPlayable)
-        return asset.isPlayable
+//        return asset.isPlayable
         
 //        let length=Float(asset.duration.value)/Float(asset.duration.timescale)
-//        return true
+        return true
 //        return length > 0
     }
     
     private func videoPlayer(for url: URL) -> some View {
+//        let asset = AVURLAsset(url: url)
         let asset = AVURLAsset(url: url, options: ["AVURLAssetOutOfBandMIMETypeKey": "video/mp4"])
         
         let item = AVPlayerItem(asset: asset)
-        let player = AVQueuePlayer(playerItem: item)
+        let player = AVQueuePlayer(items: [item])
 //        return NoControlsVideoPlayer(player: player)
-        return AVPlayerControllerRepresented(player: player)
+//        return AVPlayerControllerRepresented(player: player)
+        return VideoPlayer(player: player)
     }
     
     var body: some View {
@@ -89,10 +95,12 @@ struct BlobGalleryView: View {
                             Text("error")
                         }
                     } else {
-                        Text("image")
-//                        ImageMetadataView(metadata: ImageMetadata(link: blob.identifier))
-//                            .scaledToFill()
-//                            .tag(blob)
+                        ImageMetadataView(
+                            metadata: ImageMetadata(link: blob.identifier),
+                            blobCache: blobCache
+                        )
+                            .scaledToFill()
+                            .tag(blob)
                     }
                 }
             }
@@ -112,13 +120,17 @@ struct BlobGalleryView: View {
 
 struct ImageMetadataGalleryView_Previews: PreviewProvider {
     
+    static var cache: BlobCache = {
+        BlobCache(bot: Bots.fake)
+    }()
+    
     static var imageSample: Blob {
-        Caches.blobs.update(UIImage(named: "test") ?? .remove, for: "&test")
+        cache.update(UIImage(named: "test") ?? .remove, for: "&test")
         return Blob(identifier: "&test")
     }
     
     static var anotherImageSample: Blob {
-        Caches.blobs.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
+        cache.update(UIImage(named: "avatar1") ?? .remove, for: "&avatar1")
         return Blob(identifier: "&avatar1")
     }
     
@@ -126,29 +138,50 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
         let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
         let data = try! Data(contentsOf: videoURL)
         let blobIdentifier = "&\(SHA256.hash(data: data))=.sha256"
-        (BotRepository.fake.current as! FakeBot).store(url: videoURL) { _, _ in
+        (Bots.fake as! FakeBot).store(url: videoURL) { _, _ in
             
             
         }
         return Blob(identifier: blobIdentifier)
     }
     
+    static var videoPlayer: AVQueuePlayer {
+        let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
+        let asset = AVAsset(url: videoURL)
+        let item = AVPlayerItem(asset: asset)
+        let videoPlayer = AVQueuePlayer(items: [item])
+//        videoPlayer.actionAtItemEnd = .none
+//        videoPlayer.isMuted = true
+//        let videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
+        return videoPlayer
+    }
+    
+    static var video: some View {
+        VideoPlayer(player: videoPlayer)
+//        AVPlayerControllerRepresented(player: videoPlayer)
+    }
+    
     static var previews: some View {
         Group {
             VStack {
-                BlobGalleryView(blobs: [videoSample], enableTapGesture: false)
-                BlobGalleryView(blobs: [imageSample])
-                BlobGalleryView(blobs: [imageSample, anotherImageSample])
+                BlobGalleryView(
+                    blobs: [
+                        videoSample,
+                        imageSample,
+                        anotherImageSample
+                    ],
+                    blobCache: cache,
+                    enableTapGesture: false
+                    
+                )
+                .background(Color.cardBackground)
             }
-            VStack {
-                BlobGalleryView(blobs: [imageSample])
-                BlobGalleryView(blobs: [imageSample, anotherImageSample])
-            }
-            .preferredColorScheme(.dark)
+            .background(Color.gray)
+            .padding()
+            .environmentObject(AppController.shared)
+            .environmentObject(BotRepository.fake)
+            
+            video
         }
-        .padding()
-        .background(Color.cardBackground)
-        .environmentObject(AppController.shared)
-        .environmentObject(BotRepository.fake)
     }
 }

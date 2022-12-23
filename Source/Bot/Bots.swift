@@ -15,6 +15,10 @@ class Bots {
         let bots = Bots.all.filter { $0.name == name }
         return bots.first
     }
+    
+    static var fake: FakeBot {
+        bot(named: "FakeBot") as! FakeBot
+    }
 
     static var current: Bot {
         self._bot

@@ -12,11 +12,14 @@ struct ImageMetadataView: View {
 
     var metadata: ImageMetadata?
 
-    @StateObject
-    private var imageLoader = ImageLoader()
+    @ObservedObject private var imageLoader: ImageLoader
+    
+    private var blobCache: BlobCache
 
-    init(metadata: ImageMetadata?) {
+    init(metadata: ImageMetadata?, blobCache: BlobCache = Caches.blobs) {
         self.metadata = metadata
+        self.blobCache = blobCache
+        self.imageLoader = ImageLoader(blobCache: blobCache)
     }
     
     var body: some View {
@@ -50,6 +53,12 @@ fileprivate class ImageLoader: ObservableObject {
 
     var metadata: ImageMetadata?
     private var completion: UUID?
+    
+    private var blobCache: BlobCache
+    
+    init(blobCache: BlobCache) {
+        self.blobCache = blobCache
+    }
 
     deinit {
         self.forgetBlobCompletion()
@@ -58,7 +67,7 @@ fileprivate class ImageLoader: ObservableObject {
     private func forgetBlobCompletion() {
         guard let identifier = self.metadata?.identifier else { return }
         guard let uuid = self.completion else { return }
-        Caches.blobs.forgetCompletions(with: uuid, for: identifier)
+        blobCache.forgetCompletions(with: uuid, for: identifier)
     }
 
     func load(from metadata: ImageMetadata?) async {
@@ -72,14 +81,14 @@ fileprivate class ImageLoader: ObservableObject {
             }
 
             // cached image
-            if let uiImage = Caches.blobs.image(for: metadata.identifier) {
+            if let uiImage = blobCache.image(for: metadata.identifier) {
                 self?.image = uiImage
                 self?.isLoading = false
                 return
             }
 
             // request image
-            let uuid = Caches.blobs.imageOrPlaceholder(for: metadata.identifier) { [weak self] uiImage in
+            let uuid = blobCache.imageOrPlaceholder(for: metadata.identifier) { [weak self] uiImage in
                 self?.image = uiImage
             }
 
