@@ -117,6 +117,9 @@ struct HomeView: View, HelpDrawerHost {
                         }
                         .frame(maxWidth: .infinity)
                     }
+                    .refreshable {
+                        await loadFromScratch()
+                    }
                 } else {
                     LoadingView()
                 }
@@ -181,9 +184,6 @@ struct HomeView: View, HelpDrawerHost {
             if messages == nil {
                 await loadFromScratch()
             }
-        }
-        .refreshable {
-            await loadFromScratch()
         }
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
             Task.detached {
