@@ -2,7 +2,7 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Ups";
-"Localized.success" = "Success!";
+"Localized.success" = "¡Éxito!";
 "Localized.cancel" = "Cancelar";
 "Localized.skip" = "Omitir";
 "Localized.ok" = "OK";
@@ -132,7 +132,7 @@
 "Localized.invitationRedeemed" = "¡Invitación canjeada!";
 "Localized.addRoomAddressOrInvitation" = "pega la dirección o invitación";
 "Localized.joiningRoom" = "Uniéndose a la sala...";
-"Localized.pleaseSelectRoom" = "Please select a room";
+"Localized.pleaseSelectRoom" = "Por favor selecciona una sala";
 "Localized.refreshSingular" = "¡{{ count }} publicación sin leer!";
 "Localized.refreshPlural" = "¡{{ count }} publicaciones sin leer!";
 "Localized.markdownSupported" = "Vista previa de Markdown";
