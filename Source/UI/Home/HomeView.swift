@@ -12,14 +12,17 @@ import Logger
 import SwiftUI
 
 struct HomeView: View, HelpDrawerHost {
-    @ObservedObject
-    private var dataSource: FeedStrategyMessageDataSource
-
-    init(dataSource: FeedStrategyMessageDataSource, helpDrawerState: HelpDrawerState) {
-        self.dataSource = dataSource
+    init(helpDrawerState: HelpDrawerState, bot: Bot) {
         self.helpDrawerState = helpDrawerState
+        self.dataSource = FeedStrategyMessageDataSource(
+            strategy: HomeStrategy(),
+            bot: bot
+        )
     }
 
+    @ObservedObject
+    private var dataSource: FeedStrategyMessageDataSource
+    
     @ObservedObject
     private var helpDrawerState: HelpDrawerState
 
@@ -204,19 +207,13 @@ struct FeedStrategyStore {
 }
 
 struct HomeView_Previews: PreviewProvider {
-    static var dataSource: FeedStrategyMessageDataSource {
-        FeedStrategyMessageDataSource(
-            strategy: StaticAlgorithm(messages: []),
-            bot: FakeBot()
-        )
-    }
     static var previews: some View {
         Group {
             NavigationView {
-                HomeView(dataSource: dataSource, helpDrawerState: HelpDrawerState())
+                HomeView(helpDrawerState: HelpDrawerState(), bot: FakeBot.shared)
             }
             NavigationView {
-                HomeView(dataSource: dataSource, helpDrawerState: HelpDrawerState())
+                HomeView(helpDrawerState: HelpDrawerState(), bot: FakeBot.shared)
             }
             .preferredColorScheme(.dark)
         }

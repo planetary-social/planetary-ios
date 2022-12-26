@@ -16,14 +16,8 @@ enum IdentityViewBuilder {
         botRepository: BotRepository = BotRepository.shared,
         appController: AppController = AppController.shared
     ) -> some View {
-        IdentityView(
-            identity: identity,
-            dataSource: FeedStrategyMessageDataSource(
-                strategy: ProfileStrategy(identity: identity),
-                bot: botRepository.current
-            )
-        )
-        .injectAppEnvironment(botRepository: botRepository, appController: appController)
+        IdentityView(identity: identity, bot: botRepository.current)
+            .injectAppEnvironment(botRepository: botRepository, appController: appController)
     }
 }
 
@@ -31,13 +25,16 @@ struct IdentityView: View {
 
     var identity: Identity
 
+    init(identity: Identity, bot: Bot) {
+        self.identity = identity
+        self.dataSource = FeedStrategyMessageDataSource(
+            strategy: ProfileStrategy(identity: identity),
+            bot: bot
+        )
+    }
+
     @ObservedObject
     private var dataSource: FeedStrategyMessageDataSource
-
-    init(identity: Identity, dataSource: FeedStrategyMessageDataSource) {
-        self.identity = identity
-        self.dataSource = dataSource
-    }
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -359,18 +356,12 @@ struct IdentityView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                IdentityView(
-                    identity: .null,
-                    dataSource: dataSource
-                )
+                IdentityView(identity: .null, bot: FakeBot.shared)
             }
             .preferredColorScheme(.light)
 
             NavigationView {
-                IdentityView(
-                    identity: .null,
-                    dataSource: dataSource
-                )
+                IdentityView(identity: .null, bot: FakeBot.shared)
             }
             .preferredColorScheme(.dark)
         }

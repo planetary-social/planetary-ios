@@ -119,11 +119,7 @@ class MainViewController: UITabBarController {
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         homeFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
-                rootView: HomeView(
-                    dataSource: FeedStrategyMessageDataSource(strategy: HomeStrategy(), bot: Bots.current),
-                    helpDrawerState: helpDrawerState
-                )
-                .injectAppEnvironment()
+                rootView: HomeView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
             ),
             tabBarItemImageName: "tab-icon-home"
         )

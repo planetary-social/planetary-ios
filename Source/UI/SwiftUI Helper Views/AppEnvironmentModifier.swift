@@ -9,8 +9,7 @@
 import SwiftUI
 
 extension View {
-    /// Overlays a placeholder view on top of this view. Useful for customizng the styling of a text placeholder in a
-    /// `TextField`.
+    /// Sets the `BotRepository` and `AppController` environment objects.
     func injectAppEnvironment(
         botRepository: BotRepository = .shared,
         appController: AppController = .shared
@@ -20,4 +19,3 @@ extension View {
             .environmentObject(appController)
     }
 }
-
