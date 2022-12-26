@@ -148,6 +148,7 @@
 "Localized.noResultsFound" = "No se encontraron resultados.";
 "Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
 "Localized.rooms" = "Salas";
+"Localized.allCapsCopy" = "COPY";
 "Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
 "Localized.beta1MigrationComplete" = "Toca en el siguiente botón para cerrar esta pantalla y volver a tu feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "Puede que esto lleve un rato.\n\nPor favor deja la aplicación abierta hasta que termine.\n";
@@ -288,6 +289,7 @@
 
 "Message.noPostsTitle" = "No hay publicaciones aquí todavía";
 "Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [como funciona susurrar]({{ link }}) en Planetary.";
+"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
@@ -357,6 +359,9 @@
 "Error.invalidRoomInvitationOrAddress" = "Planetary no reconoce esto como una invitación de sala o dirección válida.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
 "Error.alreadyJoinedRoom" = "Ya eres un miembro de esta sala";
+
+"Reply.one" = "{{ count }} reply";
+"Reply.many" = "{{ count }} replies";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
