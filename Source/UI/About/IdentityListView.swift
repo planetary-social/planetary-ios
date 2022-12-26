@@ -12,13 +12,16 @@ struct IdentityListView: View {
 
     var identities: [Identity]
 
+    @EnvironmentObject
+    private var appController: AppController
+
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 1) {
                 ForEach(identities, id: \.self) { identity in
                     CompactIdentityView(identity: identity)
                         .onTapGesture {
-                            AppController.shared.open(identity: identity)
+                            appController.open(identity: identity)
                         }
                         .background(
                             Color.cardBackground
@@ -49,5 +52,6 @@ struct IdentityListView_Previews: PreviewProvider {
         .padding()
         .background(Color.appBg)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

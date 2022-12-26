@@ -111,7 +111,6 @@ class RelationshipUIButton: IconButton {
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
-                AppController.shared.mainViewController?.homeViewController?.load()
             }
         }
     }
@@ -132,7 +131,6 @@ class RelationshipUIButton: IconButton {
             }
             self.relationship.load(reload: true) {
                 self.relationship.notifyUpdate()
-                AppController.shared.mainViewController?.homeViewController?.load()
             }
         }
     }

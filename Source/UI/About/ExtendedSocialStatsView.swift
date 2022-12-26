@@ -136,16 +136,7 @@ struct ExtendedSocialStatsView: View {
 
     private func tab(label: Localized, value: Int, avatars: [ImageMetadata]) -> some View {
         VStack {
-            ZStack(alignment: .leading) {
-                ForEach(Array(zip(avatars.indices, avatars)), id: \.0) { index, avatar in
-                    AvatarView(metadata: avatar, size: 26)
-                        .offset(x: matrix(avatars.count)[index] * 8.0, y: 0)
-                }
-            }
-            .frame(width: avatars.isEmpty ? 0 :  CGFloat(30 + 16 * (avatars.count - 1)), height: 30)
-            .background(
-                Color.hashtagBg.cornerRadius(99)
-            )
+            StackedAvatarsView(avatars: avatars)
             Text("\(value)")
                 .font(.title)
                 .foregroundLinearGradient(.horizontalAccent)
@@ -154,23 +145,6 @@ struct ExtendedSocialStatsView: View {
                 .dynamicTypeSize(...DynamicTypeSize.xLarge)
                 .foregroundColor(.secondaryTxt)
         }
-    }
-
-    private func matrix(_ numberOfItems: Int) -> [CGFloat] {
-        var startingArray: [CGFloat] = []
-        if numberOfItems.isMultiple(of: 2) {
-            startingArray = []
-        } else {
-            startingArray = [0]
-        }
-        let arrayToAppend = stride(
-            from: 1.0 + CGFloat(startingArray.count),
-            through: CGFloat(numberOfItems / 2) + CGFloat(startingArray.count),
-            by: 1.0
-        )
-        startingArray.insert(contentsOf: arrayToAppend.map { $0 * -1 }, at: 0)
-        startingArray.append(contentsOf: arrayToAppend)
-        return startingArray
     }
 }
 

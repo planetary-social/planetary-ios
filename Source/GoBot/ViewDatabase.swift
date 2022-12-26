@@ -64,7 +64,7 @@ class ViewDatabase {
     private let connectionPool = DatabaseConnectionPool()
 
     // should be changed on login/logout
-    private var currentUserID: Int64 = -1
+    private(set) var currentUserID: Int64 = -1
     private(set) var currentUser: Identity?
 
     // skip messages older than this (6 months)

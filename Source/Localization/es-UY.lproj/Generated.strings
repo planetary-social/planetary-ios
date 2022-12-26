@@ -289,6 +289,7 @@
 
 "Message.noPostsTitle" = "No posts here yet";
 "Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
@@ -358,6 +359,9 @@
 "Error.invalidRoomInvitationOrAddress" = "Planetary no reconoce esto como una invitación o dirección válida de la sala.";
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
 "Error.alreadyJoinedRoom" = "You are already a member of this room";
+
+"Reply.one" = "{{ count }} respuesta";
+"Reply.many" = "{{ count }} respuestas";
 
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";

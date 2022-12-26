@@ -608,6 +608,23 @@ extension Bot {
         }
     }
 
+    /// Fetch all hashtags in the database
+    ///
+    /// - returns: Array with the hashtags found
+    ///
+    /// This function will throw if it cannot access the database
+    func hashtags() async throws -> [Hashtag] {
+        try await withCheckedThrowingContinuation { continuation in
+            hashtags { hashtags, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: hashtags)
+            }
+        }
+    }
+
     /// Fetch the hashtags that someone has published to recently
     ///
     /// - parameter identity: The publisher's identity

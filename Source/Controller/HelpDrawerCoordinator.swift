@@ -48,17 +48,51 @@ enum HelpDrawer {
     }
 }
 
-/// A protocol for view controllers that host a `HelpDrawer`
-protocol HelpDrawerHost: UIViewController {
+protocol HelpDrawerHost {
     var helpDrawerType: HelpDrawer { get }
+    var horizontalSizeClass: UserInterfaceSizeClass? { get }
+    /// The host should dismiss the drawer if present and call completion after the animation finishes
+    func dismissDrawer(completion: (() -> Void)?)
+}
+
+/// A protocol for view controllers that host a `HelpDrawer`
+protocol HelpDrawerViewControllerHost: HelpDrawerHost, UIViewController {
     var helpButton: UIBarButtonItem { get }
     func helpButtonTouchUpInside()
 }
 
-extension HelpDrawerHost {
-    
+extension HelpDrawerViewControllerHost {
+
+    var horizontalSizeClass: UserInterfaceSizeClass? {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            return .compact
+        case .regular:
+            return .regular
+        default:
+            return nil
+        }
+    }
+
     @MainActor func helpButtonTouchUpInside() {
         HelpDrawerCoordinator.showHelp(for: self)
+    }
+
+    func dismissDrawer(completion: (() -> Void)?) {
+        self.dismiss(animated: true, completion: completion)
+    }
+}
+
+class HelpDrawerState: ObservableObject {
+    @Published
+    var isShowingHomeHelpDrawer = false
+
+    @Published
+    var isShowingHashtagsHelpDrawer = false
+
+    init(isShowingHome: Bool = false, isShowingHashtags: Bool = false) {
+        self.isShowingHomeHelpDrawer = isShowingHome
+        self.isShowingHashtagsHelpDrawer = isShowingHashtags
     }
 }
     
@@ -66,20 +100,39 @@ extension HelpDrawerHost {
 enum HelpDrawerCoordinator {
     
     /// Shows the help drawer for the given host view controller.
-    @MainActor static func showHelp(for viewController: HelpDrawerHost) {
+    @MainActor static func showHelp(for viewController: HelpDrawerViewControllerHost) {
         let helpDrawerType = viewController.helpDrawerType
         if viewController.presentedViewController == nil {
             let controller = HelpDrawerCoordinator.helpController(for: viewController)
             viewController.present(controller, animated: true, completion: nil)
-            UserDefaults.standard.set(true, forKey: helpDrawerType.hasSeenDrawerKey)
-            UserDefaults.standard.synchronize()
+            didShowHelp(for: helpDrawerType)
         }
         
         Analytics.shared.trackDidShowScreen(screenName: helpDrawerType.screenName)
     }
-        
+
+    /// Marks the help drawer as seen and does not show it again at first time
+    @MainActor static func didShowHelp(for helpDrawer: HelpDrawer) {
+        UserDefaults.standard.set(true, forKey: helpDrawer.hasSeenDrawerKey)
+        UserDefaults.standard.synchronize()
+    }
+
     /// Shows the help drawer only if the user has never seen it before.
-    @MainActor static func showFirstTimeHelp(for viewController: HelpDrawerHost) {
+    @MainActor static func showFirstTimeHelp(for helpDrawer: HelpDrawer, state: HelpDrawerState) {
+        if UserDefaults.standard.bool(forKey: helpDrawer.hasSeenDrawerKey) == false {
+            switch helpDrawer {
+            case .home:
+                state.isShowingHomeHelpDrawer = true
+            case .hashtags:
+                state.isShowingHashtagsHelpDrawer = true
+            default:
+                break
+            }
+        }
+    }
+
+    /// Shows the help drawer only if the user has never seen it before.
+    @MainActor static func showFirstTimeHelp(for viewController: HelpDrawerViewControllerHost) {
         let helpDrawerType = viewController.helpDrawerType
         if UserDefaults.standard.bool(forKey: helpDrawerType.hasSeenDrawerKey) == false {
             showHelp(for: viewController)
@@ -88,9 +141,12 @@ enum HelpDrawerCoordinator {
     
     /// Creates a UIViewController containing the help information. Configures it to be presented as a sheet or
     /// popover depending on size class.
-    @MainActor static func helpController(for viewController: HelpDrawerHost) -> UIViewController {
+    @MainActor static func helpController(for viewController: HelpDrawerViewControllerHost) -> UIViewController {
         
-        let view = helpDrawerView(for: viewController, dismissAction: { viewController.dismiss(animated: true) })
+        let view = helpDrawerView(
+            for: viewController,
+            dismissAction: { viewController.dismiss(animated: true) }
+        )
         let controller = UIHostingController(rootView: view)
         
         controller.modalPresentationStyle = .popover
@@ -105,7 +161,7 @@ enum HelpDrawerCoordinator {
     }
     
     /// Creates a help button for the navigation bar that presents the help drawer for the given host view controller.
-    static func helpBarButton(for host: HelpDrawerHost) -> UIBarButtonItem {
+    static func helpBarButton(for host: HelpDrawerViewControllerHost) -> UIBarButtonItem {
         let image = UIImage(systemName: "questionmark.circle")
         return UIBarButtonItem(
             title: Localized.Help.help.text,
@@ -118,25 +174,22 @@ enum HelpDrawerCoordinator {
     }
     
     /// Builds a closure that will show the given help drawer from the given viewController.
-    static func createShowClosure(for drawer: HelpDrawer, from viewController: UIViewController) -> () -> Void {
+    static func createShowClosure(for drawer: HelpDrawer, from host: HelpDrawerHost) -> () -> Void {
         
         let tabBar = AppController.shared.mainViewController
         
         switch drawer {
         case .home:
             return {
-                viewController.dismiss(animated: true) {
+                host.dismissDrawer {
                     let featureVC = tabBar?.homeFeatureViewController
-                    let helpHost = featureVC?.viewControllers.first as? HomeViewController
                     tabBar?.selectedViewController = featureVC
-                    // Yield so we don't end up presenting on a view that hasn't loaded yet.
-                    Task { await helpHost?.helpButtonTouchUpInside() }
+                    tabBar?.helpDrawerState.isShowingHomeHelpDrawer = true
                 }
             }
-            
         case .discover:
             return {
-                viewController.dismiss(animated: true) {
+                host.dismissDrawer {
                     let featureVC = tabBar?.everyoneViewController
                     let helpHost = featureVC?.viewControllers.first as? DiscoverViewController
                     tabBar?.selectedViewController = featureVC
@@ -146,7 +199,7 @@ enum HelpDrawerCoordinator {
             }
         case .notifications:
             return {
-                viewController.dismiss(animated: true) {
+                host.dismissDrawer {
                     let featureVC = tabBar?.notificationsFeatureViewController
                     let helpHost = featureVC?.viewControllers.first as? NotificationsViewController
                     tabBar?.selectedViewController = featureVC
@@ -156,17 +209,15 @@ enum HelpDrawerCoordinator {
             }
         case .hashtags:
             return {
-                viewController.dismiss(animated: true) {
+                host.dismissDrawer {
                     let featureVC = tabBar?.channelsFeatureViewController
-                    let helpHost = featureVC?.viewControllers.first as? ChannelsViewController
                     tabBar?.selectedViewController = featureVC
-                    // Yield so we don't end up presenting on a view that hasn't loaded yet.
-                    Task { await helpHost?.helpButtonTouchUpInside() }
+                    tabBar?.helpDrawerState.isShowingHashtagsHelpDrawer = true
                 }
             }
         case .network:
             return {
-                viewController.dismiss(animated: true) {
+                host.dismissDrawer {
                     let featureVC = tabBar?.directoryFeatureViewController
                     let helpHost = featureVC?.viewControllers.first as? DirectoryViewController
                     tabBar?.selectedViewController = featureVC
@@ -178,18 +229,16 @@ enum HelpDrawerCoordinator {
     }
     
     // swiftlint:disable function_body_length
-    /// Builds the SwiftUI help drawer view for the given view controller.
-    @MainActor private static func helpDrawerView(
-        for viewController: HelpDrawerHost,
+    /// Builds the SwiftUI help drawer view for the given view controller type.
+    @MainActor static func helpDrawerView(
+        for host: HelpDrawerHost,
         dismissAction: @escaping () -> Void
     ) -> HelpDrawerView? {
-        
-        let inDrawer = viewController.traitCollection.horizontalSizeClass == .compact
-        
+        let inDrawer = host.horizontalSizeClass == .compact
         // This function is a little kludgy but I'm not going to spend time refactoring it now. It would be
         // better to build a configuration object and pass that to the HelpDrawerView initializer rather than having
         // so many parameters.
-        switch viewController.helpDrawerType {
+        switch host.helpDrawerType {
         case .home:
             return HelpDrawerView(
                 tabName: Localized.home.text,
@@ -202,7 +251,7 @@ enum HelpDrawerCoordinator {
                 link: MainTab.discover.url,
                 inDrawer: inDrawer,
                 tipIndex: 1,
-                nextTipAction: createShowClosure(for: .discover, from: viewController),
+                nextTipAction: createShowClosure(for: .discover, from: host),
                 previousTipAction: nil,
                 dismissAction: dismissAction
             )
@@ -218,8 +267,8 @@ enum HelpDrawerCoordinator {
                 link: MainTab.home.url,
                 inDrawer: inDrawer,
                 tipIndex: 2,
-                nextTipAction: createShowClosure(for: .notifications, from: viewController),
-                previousTipAction: createShowClosure(for: .home, from: viewController),
+                nextTipAction: createShowClosure(for: .notifications, from: host),
+                previousTipAction: createShowClosure(for: .home, from: host),
                 dismissAction: dismissAction
             )
         case .notifications:
@@ -234,8 +283,8 @@ enum HelpDrawerCoordinator {
                 link: nil,
                 inDrawer: inDrawer,
                 tipIndex: 3,
-                nextTipAction: createShowClosure(for: .hashtags, from: viewController),
-                previousTipAction: createShowClosure(for: .discover, from: viewController),
+                nextTipAction: createShowClosure(for: .hashtags, from: host),
+                previousTipAction: createShowClosure(for: .discover, from: host),
                 dismissAction: dismissAction
             )
         case .hashtags:
@@ -250,8 +299,8 @@ enum HelpDrawerCoordinator {
                 link: MainTab.network.url,
                 inDrawer: inDrawer,
                 tipIndex: 4,
-                nextTipAction: createShowClosure(for: .network, from: viewController),
-                previousTipAction: createShowClosure(for: .notifications, from: viewController),
+                nextTipAction: createShowClosure(for: .network, from: host),
+                previousTipAction: createShowClosure(for: .notifications, from: host),
                 dismissAction: dismissAction
             )
         case .network:
@@ -267,7 +316,7 @@ enum HelpDrawerCoordinator {
                 inDrawer: inDrawer,
                 tipIndex: 5,
                 nextTipAction: nil,
-                previousTipAction: createShowClosure(for: .hashtags, from: viewController),
+                previousTipAction: createShowClosure(for: .hashtags, from: host),
                 dismissAction: dismissAction
             )
         }

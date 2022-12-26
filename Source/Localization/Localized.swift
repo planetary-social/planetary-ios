@@ -23,6 +23,7 @@ extension Localized {
             Localized.Reporting.self,
             Localized.Debug.self,
             Localized.Error.self,
+            Localized.Reply.self,
             Localized.Channel.self,
             Localized.Post.self,
             Localized.Report.self,
@@ -428,6 +429,7 @@ extension Localized {
     enum Message: String, Localizable, CaseIterable {
         case noPostsTitle = "No posts here yet"
         case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
+        case noPostsInHashtagDescription = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
     }
 }
 // MARK: - Manage Aliases
@@ -576,6 +578,12 @@ extension Localized {
     }
 }
 
+extension Localized {
+    enum Reply: String, Localizable, CaseIterable {
+        case one = "{{ count }} reply"
+        case many = "{{ count }} replies"
+    }
+}
 extension Localized {
     enum Channel: String, Localizable, CaseIterable {
         case one = "channel"

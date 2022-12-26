@@ -12,7 +12,10 @@ struct MessageView: View {
 
     var message: Message
 
-    var attributedHeader: AttributedString? {
+    @EnvironmentObject
+    private var appController: AppController
+
+    private var attributedHeader: AttributedString? {
         let name = message.metadata.author.about?.name?.trimmedForSingleLine ?? String(message.author.prefix(7))
         var localized: Localized
         switch message.contentType {
@@ -55,7 +58,7 @@ struct MessageView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
                 Button {
-                    AppController.shared.open(identity: message.author)
+                    appController.open(identity: message.author)
                 } label: {
                     HStack(alignment: .center) {
                         AvatarView(metadata: message.metadata.author.about?.image, size: 24)
@@ -72,36 +75,24 @@ struct MessageView: View {
                 MessageOptionsButton(message: message)
             }
             .padding(10)
-            Divider().background(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+            Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
             if let contact = message.content.contact {
                 CompactIdentityView(identity: contact.contact)
-                    .onTapGesture {
-                        AppController.shared.open(identity: contact.contact)
-                    }
             } else if let post = message.content.post {
                 Group {
-                    CompactPostView(post: post)
+                    CompactPostView(identifier: message.id, post: post)
+                    Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
                     HStack {
-                        HStack {
-                            Text(Localized.postAReply.text)
+                        StackedAvatarsView(avatars: replies, size: 20, border: 0)
+                        if let replies = attributedReplies {
+                            Text(replies)
                                 .font(.subheadline)
                                 .foregroundColor(Color.secondaryTxt)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Image.navIconCamera
-                                .renderingMode(.template)
-                                .foregroundColor(.accentTxt)
                         }
-                        .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                        .frame(maxWidth: .infinity, idealHeight: 35)
-                        .background(Color.postareplyBackground)
-                        .cornerRadius(18)
-                        .shadow(color: .postareplyShadowTop, radius: 0, x: 0, y: -1)
-                        .shadow(color: .postareplyShadowBottom, radius: 0, x: 0, y: 1)
+                        Spacer()
+                        Image.buttonReply
                     }
                     .padding(15)
-                }
-                .onTapGesture {
-                    AppController.shared.open(identifier: message.id)
                 }
             }
         }
@@ -113,6 +104,29 @@ struct MessageView: View {
             )
         )
         .cornerRadius(20)
+        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+    }
+
+    private var replies: [ImageMetadata] {
+        Array(message.metadata.replies.abouts.compactMap { $0.image }.prefix(2))
+    }
+
+    private var attributedReplies: AttributedString? {
+        guard !message.metadata.replies.isEmpty else {
+            return nil
+        }
+        let replyCount = message.metadata.replies.count
+        let localized = replyCount == 1 ? Localized.Reply.one : Localized.Reply.many
+        let string = localized.text(["count": "**\(replyCount)**"])
+        do {
+            var attributed = try AttributedString(markdown: string)
+            if let range = attributed.range(of: "\(replyCount)") {
+                attributed[range].foregroundColor = .primaryTxt
+            }
+            return attributed
+        } catch {
+            return nil
+        }
     }
 }
 
@@ -127,7 +141,7 @@ struct MessageView_Previews: PreviewProvider {
                     hashtags: nil,
                     mentions: nil,
                     root: nil,
-                    text: .loremIpsum(1)
+                    text: .loremIpsum(words: 10)
                 )
             ),
             hash: "",
@@ -146,6 +160,40 @@ struct MessageView_Previews: PreviewProvider {
         message.metadata = Message.Metadata(
             author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
             replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+
+    static var messageWithOneReply: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(
+                count: 1,
+                abouts: Set(Array(repeating: About(about: .null, image: .null), count: 1))
+            ),
+            isPrivate: false
+        )
+        return message
+    }
+
+    static var messageWithReplies: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(
+                count: 2,
+                abouts: Set(Array(repeating: About(about: .null, image: .null), count: 2))
+            ),
             isPrivate: false
         )
         return message
@@ -175,20 +223,29 @@ struct MessageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            VStack {
-                MessageView(message: message)
-                MessageView(message: messageWithLongAuthor)
-                MessageView(message: messageWithUnknownAuthor)
+            ScrollView {
+                VStack {
+                    MessageView(message: message)
+                    MessageView(message: messageWithOneReply)
+                    MessageView(message: messageWithReplies)
+                    MessageView(message: messageWithLongAuthor)
+                    MessageView(message: messageWithUnknownAuthor)
+                }
             }
-            VStack {
-                MessageView(message: message)
-                MessageView(message: messageWithLongAuthor)
-                MessageView(message: messageWithUnknownAuthor)
+            ScrollView {
+                VStack {
+                    MessageView(message: message)
+                    MessageView(message: messageWithOneReply)
+                    MessageView(message: messageWithReplies)
+                    MessageView(message: messageWithLongAuthor)
+                    MessageView(message: messageWithUnknownAuthor)
+                }
             }
             .preferredColorScheme(.dark)
         }
         .padding()
         .background(Color.appBg)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

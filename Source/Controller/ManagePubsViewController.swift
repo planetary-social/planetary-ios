@@ -65,7 +65,9 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
         } else {
             let identity = dataSource.pubs[indexPath.row].address.key
             let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+                rootView: IdentityView(identity: identity)
+                    .environmentObject(BotRepository.shared)
+                    .environmentObject(AppController.shared)
             )
             targetController?.pushViewController(controller, animated: true)
         }

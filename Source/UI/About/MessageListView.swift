@@ -12,14 +12,17 @@ import SwiftUI
 
 struct MessageListView: View {
 
-    @State
-    var messages = [Message]()
-
     var strategy: FeedStrategy
 
     @EnvironmentObject
     private var botRepository: BotRepository
 
+    @EnvironmentObject
+    private var appController: AppController
+
+    @State
+    private var messages = [Message]()
+    
     @State
     private var isLoading = false
 
@@ -28,59 +31,42 @@ struct MessageListView: View {
 
     @State
     private var noMoreMessages = false
-
-    private let howGossippingWorks = "https://github.com/planetary-social/planetary-ios/wiki/Distributed-Social-Network"
     
     var body: some View {
-        LazyVStack {
-            if messages.isEmpty, !isLoading {
-                Text("⏳")
-                    .font(.system(size: 68))
-                    .padding()
-                    .padding(.top, 35)
-                Text(Localized.Message.noPostsTitle.text)
-                    .font(.title3.weight(.semibold))
-                    .foregroundColor(.primaryTxt)
-                Text(noPostsDescription)
-                    .font(.subheadline)
-                    .foregroundColor(.secondaryTxt)
-                    .accentColor(.accentTxt)
-                    .multilineTextAlignment(.center)
-                    .padding()
-            } else {
-                ForEach(messages, id: \.self) { message in
-                    MessageView(message: message)
-                        .onAppear {
-                            if message == messages.last {
-                                loadMore()
+        ZStack {
+            LazyVStack {
+                if messages.isEmpty, !isLoading {
+                    EmptyPostsView(description: Localized.Message.noPostsDescription)
+                } else {
+                    ForEach(messages, id: \.self) { message in
+                        Button {
+                            if let contact = message.content.contact {
+                                appController.open(identity: contact.contact)
+                            } else {
+                                appController.open(identifier: message.id)
                             }
+                        } label: {
+                            MessageView(message: message)
+                                .onAppear {
+                                    if message == messages.last {
+                                        loadMore()
+                                    }
+                                }
                         }
-                        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
-                        .compositingGroup()
-                        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-                        .shadow(color: .cardShadowBottom, radius: 10, x: 0, y: 4)
+                        .buttonStyle(MessageButtonStyle())
+                    }
+                }
+                if isLoading, !noMoreMessages {
+                    HStack {
+                        ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
+                    }
                 }
             }
-            if isLoading, !noMoreMessages {
-                HStack {
-                    ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
-                }
-            }
+            .frame(maxWidth: 500)
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
         }
-        .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
+        .frame(maxWidth: .infinity)
         .task { loadMore() }
-    }
-
-    var noPostsDescription: AttributedString {
-        let unformattedDescription = Localized.Message.noPostsDescription.text(["link": howGossippingWorks])
-        do {
-            return try AttributedString(
-                markdown: unformattedDescription,
-                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-            )
-        } catch {
-            return AttributedString(unformattedDescription)
-        }
     }
 
     func loadMore() {
@@ -169,15 +155,15 @@ struct MessageListView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(strategy: StaticAlgorithm(messages: []))
                 ScrollView {
-                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                    MessageListView(strategy: StaticAlgorithm(messages: [sample, another]))
                 }
             }
             VStack {
-                MessageListView(messages: [], strategy: NoHopFeedAlgorithm(identity: .null))
+                MessageListView(strategy: StaticAlgorithm(messages: []))
                 ScrollView {
-                    MessageListView(messages: [sample, another], strategy: NoHopFeedAlgorithm(identity: .null))
+                    MessageListView(strategy: StaticAlgorithm(messages: [sample, another]))
                 }
             }
             .preferredColorScheme(.dark)
@@ -185,5 +171,6 @@ struct MessageListView_Previews: PreviewProvider {
         .padding()
         .background(Color.cardBackground)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }
