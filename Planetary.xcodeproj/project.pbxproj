@@ -232,6 +232,7 @@
 		2D1F3F9E2894E81200742C45 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
 		2D5DC59E28B05A6F00E064A6 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
 		2DBA7C98263DB1FA008B646F /* Generated.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA7C95263DB1FA008B646F /* Generated.strings */; };
+		2DD1621129581DBB00A6EB26 /* NostrBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1621029581DBB00A6EB26 /* NostrBot.swift */; };
 		53033E9A237F682F004609F8 /* ResumeOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E99237F682F004609F8 /* ResumeOnboardingStep.swift */; };
 		53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9B23831CD1004609F8 /* Onboarding+Status.swift */; };
 		53033E9F2383322B004609F8 /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
@@ -1376,6 +1377,10 @@
 		2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryFeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
 		2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomAlgorithm.swift; sourceTree = "<group>"; };
 		2DBA7C96263DB1FA008B646F /* zh-CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-CN"; path = Generated.strings; sourceTree = "<group>"; };
+		2DD1621029581DBB00A6EB26 /* NostrBot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NostrBot.swift; sourceTree = "<group>"; };
+		2DD1621329582CBA00A6EB26 /* NostrKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NostrKit; path = ../../experiments/NostrKit; sourceTree = "<group>"; };
+		2DD1621429582CF200A6EB26 /* NostrKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = NostrKit; sourceTree = "<group>"; };
+		2DD1621529582CF200A6EB26 /* NostrKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NostrKit; path = ../../experiments/NostrKit; sourceTree = "<group>"; };
 		2DFBECE325E1542A00803075 /* development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = development.entitlements; sourceTree = "<group>"; };
 		2DFBECE425E1545000803075 /* production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = production.entitlements; sourceTree = "<group>"; };
 		316D716D251CC0B347E630DA /* Pods-Planetary.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.appstore.xcconfig"; sourceTree = "<group>"; };
@@ -2093,6 +2098,22 @@
 			path = "zh-CN.lproj";
 			sourceTree = "<group>";
 		};
+		2DD1620E29581D9A00A6EB26 /* NostrBot */ = {
+			isa = PBXGroup;
+			children = (
+				2DD1621029581DBB00A6EB26 /* NostrBot.swift */,
+			);
+			path = NostrBot;
+			sourceTree = "<group>";
+		};
+		2DD1621229582CBA00A6EB26 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				2DD1621329582CBA00A6EB26 /* NostrKit */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
 		5308168621C46A53005C48ED /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -2344,6 +2365,9 @@
 		5344D82221C4649700704A34 = {
 			isa = PBXGroup;
 			children = (
+				2DD1621429582CF200A6EB26 /* NostrKit */,
+				2DD1621529582CF200A6EB26 /* NostrKit */,
+				2DD1621229582CBA00A6EB26 /* Packages */,
 				C9BF623428F5B54700FD69A3 /* swiftgen.yml */,
 				C9489999278CCC3A009BE021 /* README.md */,
 				C94BACFB279EFE0E00CC4743 /* CHANGELOG.md */,
@@ -2385,6 +2409,7 @@
 				531A8A4521F96F3500D5C8C0 /* Controller */,
 				53C422AB21C4769900A314AD /* Debug */,
 				5376FAE0228D001E00411F5B /* Extension */,
+				2DD1620E29581D9A00A6EB26 /* NostrBot */,
 				5369D2A0220B55DA00A65622 /* FakeBot */,
 				C9BF623028F5AE7100FD69A3 /* Generated */,
 				531D0A1121EACBEE008E40A8 /* GoBot */,
@@ -5048,6 +5073,7 @@
 				C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				5344D82F21C4649700704A34 /* AppDelegate.swift in Sources */,
 				53AD3FE72273AE21005228F9 /* ThreadViewController.swift in Sources */,
+				2DD1621129581DBB00A6EB26 /* NostrBot.swift in Sources */,
 				0A38800B2475ACC300777843 /* NullPubAPI.swift in Sources */,
 				C9E144C427E3C6ED00D6668A /* FakeBot.swift in Sources */,
 				53C422B621C476B000A314AD /* UserDefaults+Debug.swift in Sources */,

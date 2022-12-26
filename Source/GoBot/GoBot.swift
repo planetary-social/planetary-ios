@@ -1064,7 +1064,7 @@ class GoBot: Bot, @unchecked Sendable {
         return self._about
     }
 
-    func about(completion: @escaping AboutCompletion) {
+    func     {
         guard let user = self._identity else {
             completion(nil, BotError.notLoggedIn)
             return
