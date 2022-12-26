@@ -22,6 +22,9 @@ struct IdentityView: View {
 
     @State
     private var about: About?
+    
+    @State
+    private var aliases: [RoomAlias]?
 
     @State
     private var relationship: Relationship?
@@ -72,6 +75,7 @@ struct IdentityView: View {
     private func header(extendedHeader: Bool) -> some View {
         IdentityHeaderView(
             identity: identity,
+            aliases: aliases,
             about: about,
             relationship: relationship,
             hashtags: hashtags,
@@ -196,6 +200,7 @@ struct IdentityView: View {
         }
         .task {
             loadAbout()
+            loadAliases()
             loadRelationship()
             loadHashtags()
             loadSocialStats()
@@ -210,6 +215,23 @@ struct IdentityView: View {
                 let result = try await bot.about(identity: identityToLoad)
                 await MainActor.run {
                     about = result
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    private func loadAliases() {
+        Task.detached {
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.registeredAliases(await identity)
+                await MainActor.run {
+                    aliases = result
                 }
             } catch {
                 Log.optional(error)
