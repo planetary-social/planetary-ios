@@ -148,6 +148,7 @@
 "Localized.noResultsFound" = "No s'ha trobat resultats.";
 "Localized.noResultsHelp" = "No veus el que estàs buscant? Planetary només pot cercar les persones i les publicacions de la vostra xarxa. Ara mateix, la cerca només coincideix amb paraules senceres, identificadors d'usuari i identificadors de publicació. També podem excloure publicacions de més de 6 mesos per estalviar espai al teu dispositiu.";
 "Localized.rooms" = "Sales";
+"Localized.allCapsCopy" = "COPY";
 "Localized.upgradingAndRestoring" = "Planetary està actualitzant i restaurant els teus missatges des de la xarxa.";
 "Localized.beta1MigrationComplete" = "Toca el següent botó per tancar aquesta pantalla i tornar al vostre canal.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "Això pot trigar una estona.\n\nSi us plau, deixa l'aplicació oberta fins que acabi.\n";
@@ -288,6 +289,7 @@
 
 "Message.noPostsTitle" = "Encara no hi ha publicacions aquí";
 "Message.noPostsDescription" = "Això vol dir que l'usuari no ha publicat res o que no tens prou connexions en comú per sincronitzar les seves publicacions.\n\nAprèn [com funcionen les xafarderies]({{ link }}) a Planetary.";
+"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Gestiona els àlies (beta)";
 "Alias.addAlias" = "Registra un àlies nou";
@@ -357,6 +359,9 @@
 "Error.invalidRoomInvitationOrAddress" = "Planetary no ho reconeix com a invitació d'espai vàlid o adreça vàlida.";
 "Error.notLoggedIn" = "L'operació no s'ha pogut completar perquè no hi ha cap usuari amb la sessió iniciada.";
 "Error.alreadyJoinedRoom" = "Ja ets un membre d'aquest espai";
+
+"Reply.one" = "{{ count }} reply";
+"Reply.many" = "{{ count }} replies";
 
 "Channel.one" = "canal";
 "Channel.many" = "canals";
