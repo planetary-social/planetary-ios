@@ -6,7 +6,7 @@ We encourage you to read this guide first or contact any of us. We have a public
 
 ## Translations
 
-If you want to contribute by translating the app to another language, you can head in to our [project in Crowdin](https://crowdin.com/project/planetary) and start translating there. It will automatically generate a Pull Request that we will happily take care of merging.
+If you want to contribute by translating the app to another language, you can head in to our [project in Crowdin](https://crowdin.com/project/planetary) and start translating there. It will automatically generate a Pull Request that we will happily take care of merging. Please do not edit the Generated.strings files directly.
 
 ## Building
 

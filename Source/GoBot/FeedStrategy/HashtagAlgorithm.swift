@@ -15,12 +15,7 @@ final class HashtagAlgorithm: NSObject, FeedStrategy {
     /// SQL query to count the total number of items in the feed
     ///
     /// The WHERE clauses are as follows:
-    /// - Only posts and follows (contacts)
-    /// - Discard private messages
-    /// - Discard hidden messages
-    /// - Only follows (contacts) to people we know something about
-    /// - Only posts and follows from user itsef
-    /// - Discard posts and follows from the future
+    /// - The name of the hashtag matches the text we want to look for
     private let countNumberOfKeysQuery = """
         SELECT
           COUNT(*)
