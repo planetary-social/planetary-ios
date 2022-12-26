@@ -132,7 +132,7 @@ struct HomeView: View, HelpDrawerHost {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didRefresh)) { _ in
-            Task.detached {
+            Task {
                 await checkNewItemsIfNeeded()
             }
         }
@@ -168,6 +168,7 @@ struct HomeView: View, HelpDrawerHost {
         }
     }
 
+    @MainActor
     private func checkNewItemsIfNeeded() async {
         // Check that more than a minute passed since the last time we checked for new updates
         let elapsed = Date().timeIntervalSince(lastTimeNewFeedUpdatesWasChecked)
@@ -219,7 +220,6 @@ struct HomeView_Previews: PreviewProvider {
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }

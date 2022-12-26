@@ -83,29 +83,25 @@ class FeedStrategyMessageDataSource: MessageDataSource {
     }
 
     @MainActor
-    func loadMore() {
+    func loadMore() async {
         guard !isLoadingMore, !noMoreMessages else {
             return
         }
         isLoadingMore = true
-        Task {
-            // let strategy = await feedStrategyStore.homeFeedStrategy
-            // let bot = await botRepository.current
-            do {
-                let messages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
-                await MainActor.run {
-                    cache?.append(contentsOf: messages)
-                    offset += messages.count
-                    noMoreMessages = messages.count < pageSize
-                    isLoadingMore = false
-                    pages += 1
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    isLoadingMore = false
-                }
+        do {
+            let messages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
+            await MainActor.run {
+                cache?.append(contentsOf: messages)
+                offset += messages.count
+                noMoreMessages = messages.count < pageSize
+                isLoadingMore = false
+                pages += 1
+            }
+        } catch {
+            CrashReporting.shared.reportIfNeeded(error: error)
+            Log.shared.optional(error)
+            await MainActor.run {
+                isLoadingMore = false
             }
         }
     }

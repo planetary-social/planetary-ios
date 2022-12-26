@@ -123,16 +123,13 @@ class MainViewController: UITabBarController {
                     dataSource: FeedStrategyMessageDataSource(strategy: HomeStrategy(), bot: Bots.current),
                     helpDrawerState: helpDrawerState
                 )
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
+                .injectAppEnvironment()
             ),
             tabBarItemImageName: "tab-icon-home"
         )
         channelsFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
-                rootView: HashtagListView(helpDrawerState: helpDrawerState)
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
+                rootView: HashtagListView(helpDrawerState: helpDrawerState).injectAppEnvironment()
             ),
             tabBarItemImageName: "tab-icon-channels"
         )

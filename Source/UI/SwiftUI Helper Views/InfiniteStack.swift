@@ -41,7 +41,9 @@ struct InfiniteStack<DataSource, Content>: View where DataSource: InfiniteDataSo
                                 content(item)
                                     .onAppear {
                                         if item == cache.last {
-                                            dataSource.loadMore()
+                                            Task {
+                                                await dataSource.loadMore()
+                                            }
                                         }
                                     }
                             }

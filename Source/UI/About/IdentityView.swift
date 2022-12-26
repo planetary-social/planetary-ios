@@ -22,7 +22,8 @@ enum IdentityViewBuilder {
                 strategy: ProfileStrategy(identity: identity),
                 bot: botRepository.current
             )
-        ).environmentObject(botRepository).environmentObject(appController)
+        )
+        .injectAppEnvironment(botRepository: botRepository, appController: appController)
     }
 }
 
@@ -354,12 +355,13 @@ fileprivate struct ScrollViewOffsetPreferenceKey: PreferenceKey {
 }
 
 struct IdentityView_Previews: PreviewProvider {
+    static let dataSource = FeedStrategyMessageDataSource(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
     static var previews: some View {
         Group {
             NavigationView {
                 IdentityView(
                     identity: .null,
-                    dataSource: FeedStrategyMessageDataSource(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                    dataSource: dataSource
                 )
             }
             .preferredColorScheme(.light)
@@ -367,12 +369,11 @@ struct IdentityView_Previews: PreviewProvider {
             NavigationView {
                 IdentityView(
                     identity: .null,
-                    dataSource: FeedStrategyMessageDataSource(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                    dataSource: dataSource
                 )
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }

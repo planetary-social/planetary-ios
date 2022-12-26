@@ -75,8 +75,7 @@ struct HashtagListView: View, HelpDrawerHost {
                                     hashtag: hashtag,
                                     bot: botRepository.current
                                 )
-                                .environmentObject(botRepository)
-                                .environmentObject(appController)
+                                .injectAppEnvironment(botRepository: botRepository, appController: appController)
                             } label: {
                                 CompactHashtagView(hashtag: hashtag)
                             }
@@ -199,8 +198,6 @@ struct HashtagListView_Previews: PreviewProvider {
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(HelpDrawerState())
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }

@@ -51,7 +51,6 @@ struct HashtagView_Previews: PreviewProvider {
                 bot: FakeBot.shared
             )
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment()
     }
 }
