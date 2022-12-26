@@ -608,16 +608,16 @@
 		5B2A4F9B28205C8F00A5BE48 /* PostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */; };
 		5B2CF37E2950CE3100630CB6 /* HomeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF37D2950CE3100630CB6 /* HomeStrategy.swift */; };
 		5B2CF37F2950CE3100630CB6 /* HomeStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF37D2950CE3100630CB6 /* HomeStrategy.swift */; };
-		5B2CF3822950D80A00630CB6 /* InfiniteStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3812950D80A00630CB6 /* InfiniteStackView.swift */; };
-		5B2CF3832950D80A00630CB6 /* InfiniteStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3812950D80A00630CB6 /* InfiniteStackView.swift */; };
+		5B2CF3822950D80A00630CB6 /* InfiniteStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3812950D80A00630CB6 /* InfiniteStack.swift */; };
+		5B2CF3832950D80A00630CB6 /* InfiniteStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3812950D80A00630CB6 /* InfiniteStack.swift */; };
 		5B2CF3852950FC6600630CB6 /* MessageStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3842950FC6600630CB6 /* MessageStack.swift */; };
 		5B2CF3862950FC6600630CB6 /* MessageStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3842950FC6600630CB6 /* MessageStack.swift */; };
-		5B2CF3882950FD1D00630CB6 /* FeedStrategyMessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */; };
-		5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */; };
-		5B2CF38B2950FD4600630CB6 /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38A2950FD4600630CB6 /* MessageList.swift */; };
-		5B2CF38C2950FD4600630CB6 /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38A2950FD4600630CB6 /* MessageList.swift */; };
-		5B2CF38E2950FD8700630CB6 /* InfiniteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */; };
-		5B2CF38F2950FD8700630CB6 /* InfiniteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */; };
+		5B2CF3882950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift */; };
+		5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift */; };
+		5B2CF38B2950FD4600630CB6 /* MessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38A2950FD4600630CB6 /* MessageDataSource.swift */; };
+		5B2CF38C2950FD4600630CB6 /* MessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38A2950FD4600630CB6 /* MessageDataSource.swift */; };
+		5B2CF38E2950FD8700630CB6 /* InfiniteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteList.swift */; };
+		5B2CF38F2950FD8700630CB6 /* InfiniteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF38D2950FD8700630CB6 /* InfiniteList.swift */; };
 		5B2CF3912952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
 		5B2CF3922952343B00630CB6 /* ProfileStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */; };
 		5B2CF39A2953A03000630CB6 /* MessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2CF3992953A03000630CB6 /* MessageButton.swift */; };
@@ -656,10 +656,10 @@
 		5B533E3D2959DF5B00F5EED1 /* MessageOptionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */; };
 		5B533E3E2959DF5B00F5EED1 /* MessageOptionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */; };
 		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
-		5B5EF4F7294FDA460052237A /* InfiniteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteList.swift */; };
-		5B5EF4F8294FDA460052237A /* InfiniteList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteList.swift */; };
-		5B5EF4FB294FE1230052237A /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4FA294FE1230052237A /* MessageListView.swift */; };
-		5B5EF4FC294FE1230052237A /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4FA294FE1230052237A /* MessageListView.swift */; };
+		5B5EF4F7294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
+		5B5EF4F8294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
+		5B5EF4FB294FE1230052237A /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4FA294FE1230052237A /* MessageList.swift */; };
+		5B5EF4FC294FE1230052237A /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4FA294FE1230052237A /* MessageList.swift */; };
 		5B67FFDD2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */; };
 		5B67FFDE2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */; };
 		5B7786D828F876190081B1C6 /* ImageMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7786D728F876190081B1C6 /* ImageMetadataView.swift */; };
@@ -1684,11 +1684,11 @@
 		5B1FF5E428D8AA25008F3A85 /* RawMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawMessageController.swift; sourceTree = "<group>"; };
 		5B1FF5FB28DA42BA008F3A85 /* SelectableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableText.swift; sourceTree = "<group>"; };
 		5B2CF37D2950CE3100630CB6 /* HomeStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStrategy.swift; sourceTree = "<group>"; };
-		5B2CF3812950D80A00630CB6 /* InfiniteStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteStackView.swift; sourceTree = "<group>"; };
+		5B2CF3812950D80A00630CB6 /* InfiniteStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteStack.swift; sourceTree = "<group>"; };
 		5B2CF3842950FC6600630CB6 /* MessageStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStack.swift; sourceTree = "<group>"; };
-		5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyMessageList.swift; sourceTree = "<group>"; };
-		5B2CF38A2950FD4600630CB6 /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
-		5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteListView.swift; sourceTree = "<group>"; };
+		5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyMessageDataSource.swift; sourceTree = "<group>"; };
+		5B2CF38A2950FD4600630CB6 /* MessageDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDataSource.swift; sourceTree = "<group>"; };
+		5B2CF38D2950FD8700630CB6 /* InfiniteList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteList.swift; sourceTree = "<group>"; };
 		5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStrategy.swift; sourceTree = "<group>"; };
 		5B2CF3992953A03000630CB6 /* MessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageButton.swift; sourceTree = "<group>"; };
 		5B32F255291E963B005985E2 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -1707,8 +1707,8 @@
 		5B50BBBD293E1935001D4C9A /* EmptyHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyHomeView.swift; sourceTree = "<group>"; };
 		5B533E392959DF5400F5EED1 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
-		5B5EF4F6294FDA460052237A /* InfiniteList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteList.swift; sourceTree = "<group>"; };
-		5B5EF4FA294FE1230052237A /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
+		5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteDataSource.swift; sourceTree = "<group>"; };
+		5B5EF4FA294FE1230052237A /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
 		5B6C333C2832D512001F10D6 /* swiftlint_diffonly.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = swiftlint_diffonly.sh; sourceTree = "<group>"; };
 		5B7786D728F876190081B1C6 /* ImageMetadataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMetadataView.swift; sourceTree = "<group>"; };
@@ -2854,9 +2854,9 @@
 				5B533E392959DF5400F5EED1 /* MessageView.swift */,
 				5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */,
 				5B2CF3992953A03000630CB6 /* MessageButton.swift */,
-				5B2CF38A2950FD4600630CB6 /* MessageList.swift */,
-				5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageList.swift */,
-				5B5EF4FA294FE1230052237A /* MessageListView.swift */,
+				5B2CF38A2950FD4600630CB6 /* MessageDataSource.swift */,
+				5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift */,
+				5B5EF4FA294FE1230052237A /* MessageList.swift */,
 				5B2CF3842950FC6600630CB6 /* MessageStack.swift */,
 			);
 			path = Message;
@@ -3075,9 +3075,9 @@
 				C949E9702811A8AF006C5F18 /* VerticallyCenteringScrollView.swift */,
 				C920A3A2289AFB88009C83F3 /* PlaceholderModifier.swift */,
 				5BA32ED72915930000744984 /* ActivityView.swift */,
-				5B5EF4F6294FDA460052237A /* InfiniteList.swift */,
-				5B2CF38D2950FD8700630CB6 /* InfiniteListView.swift */,
-				5B2CF3812950D80A00630CB6 /* InfiniteStackView.swift */,
+				5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */,
+				5B2CF38D2950FD8700630CB6 /* InfiniteList.swift */,
+				5B2CF3812950D80A00630CB6 /* InfiniteStack.swift */,
 			);
 			path = "SwiftUI Helper Views";
 			sourceTree = "<group>";
@@ -4251,7 +4251,7 @@
 				C9724B822809E92F000EBCCD /* UIViewTapGesture.swift in Sources */,
 				C9724BC12809ED1A000EBCCD /* UITableView+VisibleIndexPath.swift in Sources */,
 				C9724BC02809ED16000EBCCD /* ThreadReplyView.swift in Sources */,
-				5B5EF4FC294FE1230052237A /* MessageListView.swift in Sources */,
+				5B5EF4FC294FE1230052237A /* MessageList.swift in Sources */,
 				C9724B232809D40D000EBCCD /* Layout+Fill.swift in Sources */,
 				C9724B8F2809E9B7000EBCCD /* Offboarding.swift in Sources */,
 				C9724BD02809EDDC000EBCCD /* AppDelegate+Push.swift in Sources */,
@@ -4288,7 +4288,7 @@
 				C9724B0F2809D1C4000EBCCD /* Onboarding.swift in Sources */,
 				5B040166292D1BE20048CD1F /* RelationshipButton.swift in Sources */,
 				5B2CF3862950FC6600630CB6 /* MessageStack.swift in Sources */,
-				5B2CF3832950D80A00630CB6 /* InfiniteStackView.swift in Sources */,
+				5B2CF3832950D80A00630CB6 /* InfiniteStack.swift in Sources */,
 				C9724B3A2809D481000EBCCD /* Onboarding+AppConfiguration.swift in Sources */,
 				C9724B3B2809D481000EBCCD /* Onboarding+Follow.swift in Sources */,
 				C9724BEC2809EF34000EBCCD /* ConnectedPeerCell.swift in Sources */,
@@ -4535,7 +4535,7 @@
 				C9C3788227C692F800238B58 /* ConnectedPeerListController.swift in Sources */,
 				C9724B242809D416000EBCCD /* Beta1MigrationController.swift in Sources */,
 				C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */,
-				5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageList.swift in Sources */,
+				5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift in Sources */,
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
 				C9724B222809D403000EBCCD /* Layout+Center.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
@@ -4565,7 +4565,7 @@
 				C9724B8C2809E985000EBCCD /* AboutsMenu.swift in Sources */,
 				C9724BA32809EACD000EBCCD /* IconButton.swift in Sources */,
 				C9724BAD2809EBAE000EBCCD /* RelationshipUIButton.swift in Sources */,
-				5B5EF4F8294FDA460052237A /* InfiniteList.swift in Sources */,
+				5B5EF4F8294FDA460052237A /* InfiniteDataSource.swift in Sources */,
 				5B7AB68328F4946D007DCCF1 /* HashtagSliderView.swift in Sources */,
 				C9A2DE2B27CFCB6000EAFA73 /* Publisher+Async.swift in Sources */,
 				2356500D2369C6CB00C3DBC0 /* DropContentRequest.swift in Sources */,
@@ -4620,7 +4620,7 @@
 				5B0A4658286E0CA60050D6AC /* NumberOfReportsOperation.swift in Sources */,
 				531A8A4321F8358600D5C8C0 /* Identifier.swift in Sources */,
 				C9724B1D2809D38B000EBCCD /* AboutTableViewDataSource.swift in Sources */,
-				5B2CF38F2950FD8700630CB6 /* InfiniteListView.swift in Sources */,
+				5B2CF38F2950FD8700630CB6 /* InfiniteList.swift in Sources */,
 				C9724B692809D717000EBCCD /* PostTextEditorView.swift in Sources */,
 				C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */,
 				238ED6B2232282D600E054A3 /* Blob.swift in Sources */,
@@ -4638,7 +4638,7 @@
 				2388897C220868B70030CB92 /* ViewDatabase.swift in Sources */,
 				C93FE9BB27D6C3F10013D4CF /* UIImage+Verse.swift in Sources */,
 				5BAB1846290C2767009F8F90 /* CompactIdentityView.swift in Sources */,
-				5B2CF38C2950FD4600630CB6 /* MessageList.swift in Sources */,
+				5B2CF38C2950FD4600630CB6 /* MessageDataSource.swift in Sources */,
 				C969F43C282C7AB000FF6FE3 /* LottieAnimation.swift in Sources */,
 				C9724B892809E96D000EBCCD /* PostTruncatedTextCache.swift in Sources */,
 				C9421EBB2888A4FA00A4C86D /* HighlightedText.swift in Sources */,
@@ -4907,7 +4907,7 @@
 				539FD4AF22C19B9F005A4DF2 /* AboutsMenu.swift in Sources */,
 				53C9FA2F22FCF64700EAC35F /* SettingsViewController.swift in Sources */,
 				5B2CF3852950FC6600630CB6 /* MessageStack.swift in Sources */,
-				5B2CF3822950D80A00630CB6 /* InfiniteStackView.swift in Sources */,
+				5B2CF3822950D80A00630CB6 /* InfiniteStack.swift in Sources */,
 				5B3FBE3A292BB9E5004F34CC /* ImagePicker.swift in Sources */,
 				C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */,
 				5BC297542805F4A800C0CD81 /* FeedStrategy.swift in Sources */,
@@ -5028,7 +5028,7 @@
 				E0A4AB21294A52C300A410CB /* RoomCard.swift in Sources */,
 				530F01A622DEAE1E007EBAE2 /* BackupOnboardingStep.swift in Sources */,
 				0A3880052475AAB200777843 /* NullPushAPI.swift in Sources */,
-				5B5EF4F7294FDA460052237A /* InfiniteList.swift in Sources */,
+				5B5EF4F7294FDA460052237A /* InfiniteDataSource.swift in Sources */,
 				2346ECBA22144D61009A94CB /* SimplePublishView.swift in Sources */,
 				C97A826528D256D00064848A /* Task+CancellableSleep.swift in Sources */,
 				53E341F2224D9B9D002BB5F4 /* UIColor+Debug.swift in Sources */,
@@ -5042,7 +5042,7 @@
 				53211CDC228230D6007FB785 /* UIView+Round.swift in Sources */,
 				C9A2DE2D27CFD61900EAFA73 /* ConnectedPeerCell.swift in Sources */,
 				53EAB39A239B106900DF5530 /* CachesViewController.swift in Sources */,
-				5B2CF38B2950FD4600630CB6 /* MessageList.swift in Sources */,
+				5B2CF38B2950FD4600630CB6 /* MessageDataSource.swift in Sources */,
 				53B634B6221627CC00400403 /* UIView+AutoLayout.swift in Sources */,
 				53BD748823235A450060E47E /* Post+Blob.swift in Sources */,
 				C9A2894528F5C97200B347B7 /* SwiftUI+Localized.swift in Sources */,
@@ -5136,7 +5136,7 @@
 				5B9C69562888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */,
 				53AD3FD7226FC4B8005228F9 /* UITableView+Verse.swift in Sources */,
 				53AD3FDD22712CE0005228F9 /* MessageTableViewDelegate.swift in Sources */,
-				5B2CF3882950FD1D00630CB6 /* FeedStrategyMessageList.swift in Sources */,
+				5B2CF3882950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift in Sources */,
 				536255DE23AC4C46001007D0 /* UIViewController+Sync.swift in Sources */,
 				23C7443B2200B12000FB554A /* Content.swift in Sources */,
 				0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */,
@@ -5279,7 +5279,7 @@
 				0ACE91AE243D74D200EFB4E9 /* ViewDatabaseError+LocalizedError.swift in Sources */,
 				53569F3523A85DD700DA291D /* PostTruncatedTextCache.swift in Sources */,
 				5B4AEA70294D14240059E039 /* HomeView.swift in Sources */,
-				5B2CF38E2950FD8700630CB6 /* InfiniteListView.swift in Sources */,
+				5B2CF38E2950FD8700630CB6 /* InfiniteList.swift in Sources */,
 				23D8CE272253DB29001EB7D5 /* Address.swift in Sources */,
 				53E26C6F230CC88B009240B2 /* UIDevice+Simulator.swift in Sources */,
 				C969F0DF2899CED100081615 /* Room.swift in Sources */,
@@ -5294,7 +5294,7 @@
 				53C422B721C476B000A314AD /* DebugTableViewController.swift in Sources */,
 				0A64A82324734EC2009A5EBF /* PubAPIService.swift in Sources */,
 				53211CE42283717C007FB785 /* Image+UIImage.swift in Sources */,
-				5B5EF4FB294FE1230052237A /* MessageListView.swift in Sources */,
+				5B5EF4FB294FE1230052237A /* MessageList.swift in Sources */,
 				53033E9C23831CD1004609F8 /* Onboarding+Status.swift in Sources */,
 				5B1FF5E528D8AA25008F3A85 /* RawMessageController.swift in Sources */,
 				53211CE022827B58007FB785 /* UIImage+Resize.swift in Sources */,

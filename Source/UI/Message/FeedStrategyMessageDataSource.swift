@@ -1,5 +1,5 @@
 //
-//  FeedStrategyMessageList.swift
+//  FeedStrategyMessageDataSource.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 19/12/22.
@@ -10,7 +10,7 @@ import CrashReporting
 import Foundation
 import Logger
 
-class FeedStrategyMessageList: MessageList {
+class FeedStrategyMessageDataSource: MessageDataSource {
     let strategy: FeedStrategy
     let bot: Bot
 

@@ -18,14 +18,14 @@ struct HashtagView: View {
 
     init(hashtag: Hashtag, bot: Bot) {
         self.hashtag = hashtag
-        self.dataSource = FeedStrategyMessageList(
+        self.dataSource = FeedStrategyMessageDataSource(
             strategy: HashtagAlgorithm(hashtag: hashtag),
             bot: bot
         )
     }
 
     @ObservedObject
-    private var dataSource: FeedStrategyMessageList
+    private var dataSource: FeedStrategyMessageDataSource
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -34,7 +34,7 @@ struct HashtagView: View {
     private var appController: AppController
 
     var body: some View {
-        MessageListView(dataSource: dataSource)
+        MessageList(dataSource: dataSource)
             .placeholder(when: dataSource.isEmpty) {
                 EmptyPostsView(description: Localized.Message.noPostsInHashtagDescription)
             }

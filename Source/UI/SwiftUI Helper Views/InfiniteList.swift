@@ -8,13 +8,37 @@
 
 import SwiftUI
 
-protocol InfiniteList: ObservableObject
-where CachedCollection.Element: Hashable, CachedCollection.Element: Identifiable {
-    associatedtype CachedCollection: RandomAccessCollection
-    var cache: CachedCollection? { get }
-    var errorMessage: String? { get set }
-    var isLoadingFromScratch: Bool { get set }
-    var isLoadingMore: Bool { get set }
-    func loadFromScratch() async
-    func loadMore()
+/// https://swiftuirecipes.com/blog/infinite-scroll-list-in-swiftui
+struct InfiniteList<DataSource, Content>: View where DataSource: InfiniteDataSource, Content: View {
+
+    @ObservedObject var dataSource: DataSource
+    let content: (DataSource.CachedCollection.Element) -> Content
+
+    init(
+        dataSource: DataSource,
+        @ViewBuilder content: @escaping (DataSource.CachedCollection.Element) -> Content
+    ) {
+        self.dataSource = dataSource
+        self.content = content
+    }
+
+    var body: some View {
+        Group {
+            if dataSource.cache != nil {
+                ScrollView(.vertical, showsIndicators: false) {
+                    InfiniteStack(dataSource: dataSource, content: content)
+                }
+            } else {
+                LoadingView()
+            }
+        }
+        .task {
+            if dataSource.cache == nil {
+                await dataSource.loadFromScratch()
+            }
+        }
+        .refreshable {
+            await dataSource.loadFromScratch()
+        }
+    }
 }

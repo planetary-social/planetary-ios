@@ -120,7 +120,7 @@ class MainViewController: UITabBarController {
         homeFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
                 rootView: HomeView(
-                    dataSource: FeedStrategyMessageList(strategy: HomeStrategy(), bot: Bots.current),
+                    dataSource: FeedStrategyMessageDataSource(strategy: HomeStrategy(), bot: Bots.current),
                     helpDrawerState: helpDrawerState
                 )
                     .environmentObject(BotRepository.shared)

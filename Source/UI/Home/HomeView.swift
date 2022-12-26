@@ -13,9 +13,9 @@ import SwiftUI
 
 struct HomeView: View, HelpDrawerHost {
     @ObservedObject
-    private var dataSource: FeedStrategyMessageList
+    private var dataSource: FeedStrategyMessageDataSource
 
-    init(dataSource: FeedStrategyMessageList, helpDrawerState: HelpDrawerState) {
+    init(dataSource: FeedStrategyMessageDataSource, helpDrawerState: HelpDrawerState) {
         self.dataSource = dataSource
         self.helpDrawerState = helpDrawerState
     }
@@ -73,7 +73,7 @@ struct HomeView: View, HelpDrawerHost {
 
     var body: some View {
         ZStack(alignment: .top) {
-            MessageListView(dataSource: dataSource)
+            MessageList(dataSource: dataSource)
                 .placeholder(when: dataSource.isEmpty) {
                     EmptyHomeView()
                 }
@@ -203,8 +203,8 @@ struct FeedStrategyStore {
 }
 
 struct HomeView_Previews: PreviewProvider {
-    static var dataSource: FeedStrategyMessageList {
-        FeedStrategyMessageList(
+    static var dataSource: FeedStrategyMessageDataSource {
+        FeedStrategyMessageDataSource(
             strategy: StaticAlgorithm(messages: []),
             bot: FakeBot()
         )

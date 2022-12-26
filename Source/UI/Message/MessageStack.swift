@@ -8,15 +8,15 @@
 
 import SwiftUI
 
-struct MessageStack<DataSource>: View where DataSource: MessageList {
+/// A stack of messages. The primary purpose of this view is to be used in the Profile screen
+/// inside the ScrollView defined in that screen. For most cases, consider using MessageList instead
+/// that already integrates a ScrollView.
+struct MessageStack<DataSource>: View where DataSource: MessageDataSource {
     @ObservedObject
     var dataSource: DataSource
 
-    @EnvironmentObject
-    private var appController: AppController
-
     var body: some View {
-        InfiniteStackView(dataSource: dataSource) { message in
+        InfiniteStack(dataSource: dataSource) { message in
             if let message = message as? Message {
                 MessageButton(message: message)
             }

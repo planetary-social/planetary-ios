@@ -2,18 +2,22 @@
 //  MessageList.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 19/12/22.
+//  Created by Martin Dutra on 18/12/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
-protocol MessageList: InfiniteList {
-    associatedtype CachedCollection = [Message]
-    var cache: [Message]? { get }
-    var errorMessage: String? { get set }
-    var isLoadingFromScratch: Bool { get set }
-    var isLoadingMore: Bool { get set }
-    func loadFromScratch() async
-    func loadMore()
+/// A scrollable list of messages
+struct MessageList<DataSource>: View where DataSource: MessageDataSource {
+    @ObservedObject
+    var dataSource: DataSource
+
+    var body: some View {
+        InfiniteList(dataSource: dataSource) { message in
+            if let message = message as? Message {
+                MessageButton(message: message)
+            }
+        }
+    }
 }

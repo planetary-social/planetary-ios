@@ -1,5 +1,5 @@
 //
-//  InfiniteStackView.swift
+//  InfiniteStack.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 19/12/22.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct InfiniteStackView<DataSource, Content>: View where DataSource: InfiniteList, Content: View {
+struct InfiniteStack<DataSource, Content>: View where DataSource: InfiniteDataSource, Content: View {
 
     @ObservedObject var dataSource: DataSource
     let content: (DataSource.CachedCollection.Element) -> Content

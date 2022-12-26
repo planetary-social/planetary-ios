@@ -10,11 +10,15 @@ import CrashReporting
 import Logger
 import SwiftUI
 
-class IdentityViewBuilder {
-    func build(identity: Identity, botRepository: BotRepository, appController: AppController) -> some View {
+enum IdentityViewBuilder {
+    static func build(
+        identity: Identity,
+        botRepository: BotRepository = BotRepository.shared,
+        appController: AppController = AppController.shared
+    ) -> some View {
         IdentityView(
             identity: identity,
-            dataSource: FeedStrategyMessageList(
+            dataSource: FeedStrategyMessageDataSource(
                 strategy: ProfileStrategy(identity: identity),
                 bot: botRepository.current
             )
@@ -27,9 +31,9 @@ struct IdentityView: View {
     var identity: Identity
 
     @ObservedObject
-    private var dataSource: FeedStrategyMessageList
+    private var dataSource: FeedStrategyMessageDataSource
 
-    init(identity: Identity, dataSource: FeedStrategyMessageList) {
+    init(identity: Identity, dataSource: FeedStrategyMessageDataSource) {
         self.identity = identity
         self.dataSource = dataSource
     }
@@ -355,7 +359,7 @@ struct IdentityView_Previews: PreviewProvider {
             NavigationView {
                 IdentityView(
                     identity: .null,
-                    dataSource: FeedStrategyMessageList(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                    dataSource: FeedStrategyMessageDataSource(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
                 )
             }
             .preferredColorScheme(.light)
@@ -363,7 +367,7 @@ struct IdentityView_Previews: PreviewProvider {
             NavigationView {
                 IdentityView(
                     identity: .null,
-                    dataSource: FeedStrategyMessageList(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
+                    dataSource: FeedStrategyMessageDataSource(strategy: StaticAlgorithm(messages: []), bot: FakeBot.shared)
                 )
             }
             .preferredColorScheme(.dark)
