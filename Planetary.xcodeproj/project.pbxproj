@@ -657,6 +657,8 @@
 		5B533E3E2959DF5B00F5EED1 /* MessageOptionsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */; };
 		5B533E402959F96D00F5EED1 /* AppEnvironmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */; };
 		5B533E412959F96D00F5EED1 /* AppEnvironmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */; };
+		5B533E49295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */; };
+		5B533E4A295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */; };
 		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
 		5B5EF4F7294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
 		5B5EF4F8294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
@@ -1708,6 +1710,7 @@
 		5B533E392959DF5400F5EED1 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
 		5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironmentModifier.swift; sourceTree = "<group>"; };
+		5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticMessageDataSource.swift; sourceTree = "<group>"; };
 		5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteDataSource.swift; sourceTree = "<group>"; };
 		5B5EF4FA294FE1230052237A /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
@@ -1719,10 +1722,8 @@
 		5B7AB67928F0926B007DCCF1 /* String+LoremIpsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+LoremIpsum.swift"; sourceTree = "<group>"; };
 		5B7AB67E28F46EB1007DCCF1 /* ExtendedSocialStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedSocialStatsView.swift; sourceTree = "<group>"; };
 		5B7AB68128F4946D007DCCF1 /* HashtagSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagSliderView.swift; sourceTree = "<group>"; };
-		5B8E8058291547D9005009FC /* MessageOptionsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
 		5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneHopFeedAlgorithm.swift; sourceTree = "<group>"; };
 		5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedAvatarsView.swift; sourceTree = "<group>"; };
-		5B929DA3290857DB007922AB /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		5B92E2762849583C003127F2 /* HashtagListStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategyTests.swift; sourceTree = "<group>"; };
 		5B92E279284A7A8F003127F2 /* HashtagListStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListStrategy.swift; sourceTree = "<group>"; };
 		5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularHashtagsAlgorithm.swift; sourceTree = "<group>"; };
@@ -2857,6 +2858,7 @@
 				5B2CF3992953A03000630CB6 /* MessageButton.swift */,
 				5B2CF38A2950FD4600630CB6 /* MessageDataSource.swift */,
 				5B2CF3872950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift */,
+				5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */,
 				5B5EF4FA294FE1230052237A /* MessageList.swift */,
 				5B2CF3842950FC6600630CB6 /* MessageStack.swift */,
 			);
@@ -2917,8 +2919,6 @@
 				5B7AB66428DE3C19007DCCF1 /* IdentityView.swift */,
 				5B7786D728F876190081B1C6 /* ImageMetadataView.swift */,
 				5B3FBE39292BB9E5004F34CC /* ImagePicker.swift */,
-				5B8E8058291547D9005009FC /* MessageOptionsButton.swift */,
-				5B929DA3290857DB007922AB /* MessageView.swift */,
 				5B040164292D1BE20048CD1F /* RelationshipButton.swift */,
 				5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */,
 			);
@@ -4385,6 +4385,7 @@
 				C9724B272809D42E000EBCCD /* UIViewController+Keyboard.swift in Sources */,
 				C9D1EACC2832A0230092E098 /* BlobTests.swift in Sources */,
 				C9724B582809D5F8000EBCCD /* PostCollectionViewCell.swift in Sources */,
+				5B533E4A295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */,
 				C9724BF32809EFC9000EBCCD /* AvatarImageViewRepresentable.swift in Sources */,
 				C9C3787C27C68DE900238B58 /* ConnectedPeersControllerTests.swift in Sources */,
 				C9724BBA2809ECA2000EBCCD /* StatisticsOperation.swift in Sources */,
@@ -4922,6 +4923,7 @@
 				539FD4C822C43FC8005A4DF2 /* ImageButton.swift in Sources */,
 				0ABCA9062437C12C00D7F39C /* NSAttributedString+Markdown.swift in Sources */,
 				0A3880072475AAE000777843 /* PushAPI.swift in Sources */,
+				5B533E49295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */,
 				53569F3323A85DB400DA291D /* PostTextCache.swift in Sources */,
 				535B6A0C237243E4008C248E /* UINavigationController+Remove.swift in Sources */,
 				5396A6352248377900C57A4B /* UIColor+Verse.swift in Sources */,

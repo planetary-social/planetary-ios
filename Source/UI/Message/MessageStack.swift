@@ -23,3 +23,42 @@ struct MessageStack<DataSource>: View where DataSource: MessageDataSource {
         }
     }
 }
+
+struct MessageStack_Previews: PreviewProvider {
+    static var messageValue: MessageValue {
+        MessageValue(
+            author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
+            content: Content(
+                from: Post(
+                    blobs: nil,
+                    branches: nil,
+                    hashtags: nil,
+                    mentions: nil,
+                    root: nil,
+                    text: .loremIpsum(words: 10)
+                )
+            ),
+            hash: "",
+            previous: nil,
+            sequence: 0,
+            signature: .null,
+            claimedTimestamp: 0
+        )
+    }
+    static var message: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+    static var previews: some View {
+        MessageStack(dataSource: StaticMessageDataSource(messages: [message]))
+    }
+}
