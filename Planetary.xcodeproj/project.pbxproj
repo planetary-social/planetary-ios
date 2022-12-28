@@ -659,6 +659,14 @@
 		5B533E412959F96D00F5EED1 /* AppEnvironmentModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */; };
 		5B533E49295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */; };
 		5B533E4A295A07D700F5EED1 /* StaticMessageDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */; };
+		5B533E4D295B5BA300F5EED1 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E4C295B5BA300F5EED1 /* DiscoverView.swift */; };
+		5B533E4E295B5BA300F5EED1 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E4C295B5BA300F5EED1 /* DiscoverView.swift */; };
+		5B533E50295B5D0500F5EED1 /* InfiniteGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E4F295B5D0500F5EED1 /* InfiniteGrid.swift */; };
+		5B533E51295B5D0500F5EED1 /* InfiniteGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E4F295B5D0500F5EED1 /* InfiniteGrid.swift */; };
+		5B533E53295B5F8200F5EED1 /* MessageGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E52295B5F8200F5EED1 /* MessageGrid.swift */; };
+		5B533E54295B5F8200F5EED1 /* MessageGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E52295B5F8200F5EED1 /* MessageGrid.swift */; };
+		5B533E56295B85F400F5EED1 /* DiscoverStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E55295B85F400F5EED1 /* DiscoverStrategy.swift */; };
+		5B533E57295B85F400F5EED1 /* DiscoverStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B533E55295B85F400F5EED1 /* DiscoverStrategy.swift */; };
 		5B5BB8DD283E8BFC00D99AB8 /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = 5B5BB8DC283E8BFC00D99AB8 /* SkeletonView */; };
 		5B5EF4F7294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
 		5B5EF4F8294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
@@ -1711,6 +1719,10 @@
 		5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
 		5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironmentModifier.swift; sourceTree = "<group>"; };
 		5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticMessageDataSource.swift; sourceTree = "<group>"; };
+		5B533E4C295B5BA300F5EED1 /* DiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverView.swift; sourceTree = "<group>"; };
+		5B533E4F295B5D0500F5EED1 /* InfiniteGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteGrid.swift; sourceTree = "<group>"; };
+		5B533E52295B5F8200F5EED1 /* MessageGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageGrid.swift; sourceTree = "<group>"; };
+		5B533E55295B85F400F5EED1 /* DiscoverStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverStrategy.swift; sourceTree = "<group>"; };
 		5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteDataSource.swift; sourceTree = "<group>"; };
 		5B5EF4FA294FE1230052237A /* MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList.swift; sourceTree = "<group>"; };
 		5B67FFDC2863B4F40028ABE4 /* NumberOfRecentItemsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberOfRecentItemsOperation.swift; sourceTree = "<group>"; };
@@ -2597,6 +2609,7 @@
 		5396A63622483B7900C57A4B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				5B533E4B295B5B9B00F5EED1 /* Discover */,
 				5B2CF3982953A01F00630CB6 /* Message */,
 				5B4AEA6C294D14240059E039 /* Home */,
 				E0A4AB1F294A52C300A410CB /* Cards */,
@@ -2861,6 +2874,7 @@
 				5B533E48295A07D700F5EED1 /* StaticMessageDataSource.swift */,
 				5B5EF4FA294FE1230052237A /* MessageList.swift */,
 				5B2CF3842950FC6600630CB6 /* MessageStack.swift */,
+				5B533E52295B5F8200F5EED1 /* MessageGrid.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -2896,6 +2910,14 @@
 				5B4AEA78294D14320059E039 /* HashtagView.swift */,
 			);
 			path = Hashtag;
+			sourceTree = "<group>";
+		};
+		5B533E4B295B5B9B00F5EED1 /* Discover */ = {
+			isa = PBXGroup;
+			children = (
+				5B533E4C295B5BA300F5EED1 /* DiscoverView.swift */,
+			);
+			path = Discover;
 			sourceTree = "<group>";
 		};
 		5B7AB67D28F46E90007DCCF1 /* About */ = {
@@ -2948,6 +2970,7 @@
 				5BA321662949083400EF740B /* StaticAlgorithm.swift */,
 				5B2CF37D2950CE3100630CB6 /* HomeStrategy.swift */,
 				5B2CF3902952343B00630CB6 /* ProfileStrategy.swift */,
+				5B533E55295B85F400F5EED1 /* DiscoverStrategy.swift */,
 			);
 			path = FeedStrategy;
 			sourceTree = "<group>";
@@ -3079,6 +3102,7 @@
 				5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */,
 				5B2CF38D2950FD8700630CB6 /* InfiniteList.swift */,
 				5B2CF3812950D80A00630CB6 /* InfiniteStack.swift */,
+				5B533E4F295B5D0500F5EED1 /* InfiniteGrid.swift */,
 				5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */,
 			);
 			path = "SwiftUI Helper Views";
@@ -4245,6 +4269,7 @@
 				C9724B682809D70F000EBCCD /* AppController+URL.swift in Sources */,
 				C9724B952809EA6D000EBCCD /* Bool+YesOrNo.swift in Sources */,
 				110CA7F62910DEBB003BF90A /* TextFieldWithInsets.swift in Sources */,
+				5B533E57295B85F400F5EED1 /* DiscoverStrategy.swift in Sources */,
 				53EE01FC220503C400DFDF16 /* Secret.swift in Sources */,
 				C9724B4D2809D58A000EBCCD /* UIView+Stroke.swift in Sources */,
 				C9724BD92809EE2D000EBCCD /* BlobViewController.swift in Sources */,
@@ -4485,6 +4510,7 @@
 				C9724B772809E7B8000EBCCD /* GalleryView.swift in Sources */,
 				C9724BA12809EABE000EBCCD /* UIView+Shake.swift in Sources */,
 				5BA6E3B829366ED4000393AC /* HashtagAlgorithm.swift in Sources */,
+				5B533E51295B5D0500F5EED1 /* InfiniteGrid.swift in Sources */,
 				53AD3FEC22776A4C005228F9 /* Date+millisecs.swift in Sources */,
 				C99DC1BB28F5C41600880A2E /* Assets+Planetary.swift in Sources */,
 				C9724BD82809EE21000EBCCD /* Notification+About.swift in Sources */,
@@ -4591,6 +4617,7 @@
 				23C7445A2200B13F00FB554A /* Contact.swift in Sources */,
 				C9421EBE2888A71B00A4C86D /* LinearGradient+Planetary.swift in Sources */,
 				C9F53837286F6E220015A146 /* Message+ViewDatabase.swift in Sources */,
+				5B533E4E295B5BA300F5EED1 /* DiscoverView.swift in Sources */,
 				2346ECB422141D9E009A94CB /* Bot.swift in Sources */,
 				C9724B6E2809E735000EBCCD /* MessageUIView.swift in Sources */,
 				5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */,
@@ -4710,6 +4737,7 @@
 				C9724BB32809EC4A000EBCCD /* CachesViewController.swift in Sources */,
 				C9D1EAD32832A0230092E098 /* AppConfigurationTests.swift in Sources */,
 				C9724BB22809EC42000EBCCD /* UIDevice+Localhost.swift in Sources */,
+				5B533E54295B5F8200F5EED1 /* MessageGrid.swift in Sources */,
 				533EDBE82385F7CD008B3565 /* CacheTests.swift in Sources */,
 				C98A9E8E292C2C0400A17251 /* DatabaseConnectionPool.swift in Sources */,
 				2370620823CFC53C0070712C /* GoBotReproductionHelper.swift in Sources */,
@@ -5057,6 +5085,7 @@
 				23C744572200B13F00FB554A /* Contact.swift in Sources */,
 				5BAE9C82281E0E51008AEA84 /* JoinPlanetarySystemOperation.swift in Sources */,
 				8D18035D234F5E77004E30AA /* PillButton.swift in Sources */,
+				5B533E56295B85F400F5EED1 /* DiscoverStrategy.swift in Sources */,
 				C9C3787627C5956200238B58 /* PeerConnectionAnimationView.swift in Sources */,
 				530F019A22DE8F57007EBAE2 /* UIImagePicker.swift in Sources */,
 				5396A62722444A1500C57A4B /* BotViewController.swift in Sources */,
@@ -5111,6 +5140,7 @@
 				5B7786D828F876190081B1C6 /* ImageMetadataView.swift in Sources */,
 				8D6D2E64236387C800E7B0EC /* FollowCountView.swift in Sources */,
 				5BAB1845290C2767009F8F90 /* CompactIdentityView.swift in Sources */,
+				5B533E53295B5F8200F5EED1 /* MessageGrid.swift in Sources */,
 				53211CDA2281EB22007FB785 /* AppController+Progress.swift in Sources */,
 				E04BC3412950CE5E005185CD /* AliasCountButton.swift in Sources */,
 				8D8A7B17231944030087895B /* CGSize+Square.swift in Sources */,
@@ -5120,6 +5150,7 @@
 				5B7AB67F28F46EB1007DCCF1 /* ExtendedSocialStatsView.swift in Sources */,
 				53B4F5F622B85BF200027C6A /* Markdownable.swift in Sources */,
 				5357550322694BCC002A6989 /* AboutView.swift in Sources */,
+				5B533E4D295B5BA300F5EED1 /* DiscoverView.swift in Sources */,
 				53E29CD822D7DF84008A2CB1 /* Hashtag.swift in Sources */,
 				23EF5AA8249D177F00469977 /* BanListAPI.swift in Sources */,
 				530F01A422DEADFD007EBAE2 /* PhoneVerifyOnboardingStep.swift in Sources */,
@@ -5242,6 +5273,7 @@
 				531587B922A0CDFB0004E2B1 /* Onboarding+Follow.swift in Sources */,
 				53E29CCD22D296BA008A2CB1 /* String+HashtagSubstrings.swift in Sources */,
 				23EF5AAD249D185E00469977 /* BearerBanListAPI.swift in Sources */,
+				5B533E50295B5D0500F5EED1 /* InfiniteGrid.swift in Sources */,
 				5B32F259291EC037005985E2 /* IdentityHeaderView.swift in Sources */,
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
@@ -5987,7 +6019,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 393;
+				CURRENT_PROJECT_VERSION = 394;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -6002,9 +6034,9 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 1.3.12;
+				MARKETING_VERSION = 1.3.13;
 				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -6022,7 +6054,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 393;
+				CURRENT_PROJECT_VERSION = 394;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -6037,9 +6069,9 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 1.3.12;
+				MARKETING_VERSION = 1.3.13;
 				OTHER_LDFLAGS = "$(inherited)";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				SDKROOT = iphoneos;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
