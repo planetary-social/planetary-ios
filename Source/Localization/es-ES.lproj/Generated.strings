@@ -288,8 +288,8 @@
 "ManageRelays.deleteRoomConfirmation" = "Nota: Esto solamente eliminará la sala de tu base de datos local de Planetary. No te elimina como miembro de la sala.";
 
 "Message.noPostsTitle" = "No hay publicaciones aquí todavía";
-"Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [como funciona susurrar]({{ link }}) en Planetary.";
-"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";
+"Message.noPostsInHashtagDescription" = "Esto significa que no se han publicado mensajes con este hashtag, o no tienes las suficientes conexiones como para sincronizarte con estas publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";
 
 "Alias.manageAliases" = "Administrar alias (beta)";
 "Alias.addAlias" = "Registrar un nuevo alias";
@@ -360,8 +360,8 @@
 "Error.notLoggedIn" = "La operación no pudo ser completada porque no hay ningún usuario conectado.";
 "Error.alreadyJoinedRoom" = "Ya eres un miembro de esta sala";
 
-"Reply.one" = "{{ count }} reply";
-"Reply.many" = "{{ count }} replies";
+"Reply.one" = "{{ count }} respuesta";
+"Reply.many" = "{{ count }} respuestas";
 
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
