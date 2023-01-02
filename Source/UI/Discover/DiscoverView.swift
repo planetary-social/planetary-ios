@@ -12,12 +12,10 @@ import Logger
 import SwiftUI
 
 struct DiscoverView: View, HelpDrawerHost {
+
     init(helpDrawerState: HelpDrawerState, bot: Bot) {
         self.helpDrawerState = helpDrawerState
-        self.dataSource = FeedStrategyMessageDataSource(
-            strategy: DiscoverStrategy(),
-            bot: bot
-        )
+        self.dataSource = FeedStrategyMessageDataSource(strategy: DiscoverStrategy(), bot: bot)
     }
 
     @ObservedObject
@@ -25,8 +23,6 @@ struct DiscoverView: View, HelpDrawerHost {
 
     @ObservedObject
     private var helpDrawerState: HelpDrawerState
-
-    private var feedStrategyStore = DiscoverFeedStrategyStore()
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -53,7 +49,7 @@ struct DiscoverView: View, HelpDrawerHost {
         ZStack(alignment: .top) {
             MessageGrid(dataSource: dataSource)
                 .placeholder(when: dataSource.isEmpty) {
-                    EmptyHomeView()
+                    EmptyDiscoverView()
                 }
         }
         .background(Color.appBg)
@@ -61,20 +57,20 @@ struct DiscoverView: View, HelpDrawerHost {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
-                    helpDrawerState.isShowingHomeHelpDrawer = true
+                    helpDrawerState.isShowingDiscoverHelpDrawer = true
                 } label: {
                     Image.navIconHelp
                 }
-                .popover(isPresented: $helpDrawerState.isShowingHomeHelpDrawer) {
+                .popover(isPresented: $helpDrawerState.isShowingDiscoverHelpDrawer) {
                     Group {
                         if #available(iOS 16.0, *) {
                             HelpDrawerCoordinator.helpDrawerView(for: self) {
-                                helpDrawerState.isShowingHomeHelpDrawer = false
+                                helpDrawerState.isShowingDiscoverHelpDrawer = false
                             }
                             .presentationDetents([.medium])
                         } else {
                             HelpDrawerCoordinator.helpDrawerView(for: self) {
-                                helpDrawerState.isShowingHomeHelpDrawer = false
+                                helpDrawerState.isShowingDiscoverHelpDrawer = false
                             }
                         }
                     }
@@ -120,18 +116,6 @@ struct DiscoverView: View, HelpDrawerHost {
         }
         let navController = UINavigationController(rootViewController: controller)
         appController.present(navController, animated: true)
-    }
-}
-
-struct DiscoverFeedStrategyStore {
-    var discoverFeedStrategy: FeedStrategy {
-        let userDefaults = UserDefaults.standard
-        if let data = userDefaults.object(forKey: UserDefaults.discoveryFeedStrategy) as? Data,
-            let decodedObject = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data),
-            let strategy = decodedObject as? FeedStrategy {
-            return strategy
-        }
-        return RandomAlgorithm(onlyFollowed: false)
     }
 }
 

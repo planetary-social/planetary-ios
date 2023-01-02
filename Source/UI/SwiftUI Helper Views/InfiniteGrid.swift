@@ -29,40 +29,26 @@ struct InfiniteGrid<DataSource, Content>: View where DataSource: InfiniteDataSou
         self.content = content
     }
 
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible())]
 
     var body: some View {
         Group {
             if let cache = dataSource.cache {
                 ScrollView(.vertical, showsIndicators: false) {
                     ZStack(alignment: .top) {
-                        HStack {
+                        LazyVGrid(columns: columns, spacing: 14) {
                             if cache.isEmpty {
                                 EmptyView()
                             } else {
-                                LazyVStack {
-                                    ForEach(cache, id: \.self) { item in
-                                        content(item)
-                                            .onAppear {
-                                                if item == cache.last {
-                                                    Task {
-                                                        await dataSource.loadMore()
-                                                    }
+                                ForEach(cache, id: \.self) { item in
+                                    content(item)
+                                        .onAppear {
+                                            if item == cache.last {
+                                                Task {
+                                                    await dataSource.loadMore()
                                                 }
                                             }
-                                    }
-                                }
-                                LazyVStack {
-                                    ForEach(cache.reversed(), id: \.self) { item in
-                                        content(item)
-                                            .onAppear {
-                                                if item == cache.last {
-                                                    Task {
-                                                        await dataSource.loadMore()
-                                                    }
-                                                }
-                                            }
-                                    }
+                                        }
                                 }
                                 if dataSource.isLoadingMore {
                                     HStack {
@@ -72,7 +58,7 @@ struct InfiniteGrid<DataSource, Content>: View where DataSource: InfiniteDataSou
                             }
                         }
                         .frame(maxWidth: 500)
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
+                        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -234,7 +220,7 @@ struct InfiniteGrid_Previews: PreviewProvider {
     }
     static var previews: some View {
         InfiniteGrid(dataSource: StaticMessageDataSource(messages: [message, second, third, fourth])) { message in
-            MessageButton(message: message)
+            MessageButton(message: message, type: .golden)
         }
         .injectAppEnvironment(botRepository: .fake, appController: .shared)
     }

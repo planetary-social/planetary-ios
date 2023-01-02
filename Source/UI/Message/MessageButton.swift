@@ -10,6 +10,7 @@ import SwiftUI
 
 struct MessageButton: View {
     var message: Message
+    var type: MessageView.`Type` = .compact
 
     @EnvironmentObject
     private var appController: AppController
@@ -22,7 +23,7 @@ struct MessageButton: View {
                 appController.open(identifier: message.id)
             }
         } label: {
-            MessageView(message: message)
+            MessageView(message: message, type: type)
         }
         .buttonStyle(MessageButtonStyle())
     }
@@ -82,6 +83,7 @@ struct MessageButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MessageButton(message: message)
+            MessageButton(message: message, type: .golden)
             MessageButton(message: message)
                 .preferredColorScheme(.dark)
         }

@@ -16,7 +16,7 @@ struct MessageGrid<DataSource>: View where DataSource: MessageDataSource {
     var body: some View {
         InfiniteGrid(dataSource: dataSource) { message in
             if let message = message as? Message {
-                MessageButton(message: message)
+                MessageButton(message: message, type: .golden)
             }
         }
     }
