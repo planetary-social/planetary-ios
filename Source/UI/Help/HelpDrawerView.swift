@@ -229,6 +229,7 @@ struct HelpDrawerView: View {
             )
         }
         .edgesIgnoringSafeArea(.bottom)
+        .frame(idealWidth: 320, idealHeight: 480)
     }
 }
 
@@ -295,26 +296,26 @@ struct HomeHelpView_Previews: PreviewProvider {
         homeTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
-        
+
         // iPhone 13 Pro Max
         homeTabPreview
             .previewLayout(.fixed(width: 428, height: 502))
             .preferredColorScheme(.dark)
-        
+
         // iPhone SE 2nd gen
         homeTabPreview
             .previewLayout(.fixed(width: 375, height: 351))
             .preferredColorScheme(.dark)
-        
+
         notificationsTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.light)
-        
+
         notificationsTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraLarge)
-        
+
         // iPad popover size
         iPadPreview
     }

@@ -378,12 +378,16 @@ class GoBot: Bot, @unchecked Sendable {
         return try await task.value
     }
     
-    func registeredAliases() async throws -> [RoomAlias] {
-        guard let identity = _identity else {
+    /// Returns registered aliases for the specified identity. If no identities are supplied,
+    ///  the aliases of the current user are returned.
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
+        
+        guard let currentUserIdentity = _identity else {
             throw BotError.notLoggedIn
         }
+        
         let task = Task.detached(priority: .userInitiated) {
-            try self.database.getRegisteredAliasesByUser(user: identity)
+            try self.database.getRegisteredAliasesByUser(user: identity ?? currentUserIdentity)
         }
         return try await task.value
     }

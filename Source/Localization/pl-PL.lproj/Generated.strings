@@ -2,6 +2,7 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Oops";
+"Localized.success" = "Success!";
 "Localized.cancel" = "Cancel";
 "Localized.skip" = "Skip";
 "Localized.ok" = "OK";
@@ -131,6 +132,7 @@
 "Localized.invitationRedeemed" = "Invitation redeemed!";
 "Localized.addRoomAddressOrInvitation" = "paste address or invitation";
 "Localized.joiningRoom" = "Joining room...";
+"Localized.pleaseSelectRoom" = "Please select a room";
 "Localized.refreshSingular" = "{{ count }} unread post!";
 "Localized.refreshPlural" = "{{ count }} unread posts!";
 "Localized.markdownSupported" = "Markdown preview";
@@ -146,6 +148,7 @@
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Localized.rooms" = "Rooms";
+"Localized.allCapsCopy" = "COPY";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -213,7 +216,7 @@
 "Onboarding.listMeTitle" = "Wyświetl mnie w katalogu użytkowników";
 "Onboarding.listMeMessage" = "Dzięki temu ludzie mogą Cię znaleźć, jeśli znają Twoje imię i nazwisko lub numer telefonu";
 "Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "One more thing…";
+"Onboarding.doneOnboarding" = "Uff! Udało się!";
 "Onboarding.earlyAccess" = "Aplikacja jest na wczesnym etapie rozwoju. Skupiliśmy się na podstawach, więc w interfejsie użytkownika są spore luki. Prosimy o wyrozumiałość!";
 "Onboarding.iUnderstand" = "Tak, rozumiem";
 "Onboarding.followPlanetaryToggleTitle" = "Obserwuj Planetary";
