@@ -77,7 +77,7 @@ struct BlobGalleryView: View {
         let asset = AVURLAsset(url: url)
 //        let asset = AVURLAsset(url: url, options: ["AVURLAssetOutOfBandMIMETypeKey": "video/mp4"])
 //        return asset.load(.isPlayable)
-//        return asset.isPlayable
+        return asset.isPlayable
         
 //        let length=Float(asset.duration.value)/Float(asset.duration.timescale)
         return true
@@ -101,43 +101,43 @@ struct BlobGalleryView: View {
     }
     
     var body: some View {
-        let tabView = TabView(selection: $selectedBlob) {
+        TabView(selection: $selectedBlob) {
             if blobs.isEmpty {
                 Spacer()
             } else {
                 ForEach(blobs) { blob in
                     if canUseAVPlayer(on: blob) {
-                        if let url = createSymbolicLink(for: blob) {
-                            VStack {
-                                videoPlayer(for: url)
+                        NavigationLink(destination: {
+                            if let url = createSymbolicLink(for: blob) {
+                                VStack {
+                                    videoPlayer(for: url)
+                                }
+                            } else {
+                                Text("error")
                             }
-                        } else {
-                            Text("error")
-                        }
+                        }, label: {
+                            Text("Media")
+                        })
                     } else {
-                        ImageMetadataView(
+                        let image = ImageMetadataView(
                             metadata: ImageMetadata(link: blob.identifier),
                             blobCache: blobCache
                         )
-                            .scaledToFill()
-                            .tag(blob)
+                        .scaledToFill()
+                        .tag(blob)
+
+                        NavigationLink {
+                            image
+                        } label: {
+                            image
+                        }
+
                     }
                 }
             }
         }
         .tabViewStyle(.page)
         .aspectRatio(1, contentMode: .fit)
-        
-        VStack {
-            Text(debugString)
-            if enableTapGesture {
-                tabView.onTapGesture {
-                    appController.open(string: selectedBlob.identifier)
-                }
-            } else {
-                tabView
-            }
-        }
     }
 }
 
@@ -192,25 +192,31 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            VStack {
-                BlobGalleryView(
-                    blobs: [
-                        videoSample,
-//                        imageSample,
-//                        anotherImageSample
-                    ],
-                    blobCache: cache,
-                    enableTapGesture: false
-                    
-                )
-                .background(Color.cardBackground)
+            NavigationView {
+                VStack {
+                    Spacer()
+                    BlobGalleryView(
+                        blobs: [
+                            videoSample,
+                            imageSample,
+                            anotherImageSample
+                        ],
+                        blobCache: cache,
+                        enableTapGesture: false
+                    )
+                    Spacer()
+                }
+                .environmentObject(AppController.shared)
+                .environmentObject(BotRepository.fake)
+                .background(Color.black)
             }
-            .background(Color.gray)
-            .padding()
-            .environmentObject(AppController.shared)
-            .environmentObject(BotRepository.fake)
             
-            video
+            VStack {
+                Spacer()
+                video
+                Spacer()
+            }
+            .background(Color.black)
         }
     }
 }
