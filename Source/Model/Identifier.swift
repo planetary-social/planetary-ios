@@ -123,7 +123,13 @@ extension Identifier {
     // TODO: also it retuns a hex string but i have spent to much time on this already
     var sha256hash: String {
         let input = self.data(using: .utf8)!
-        let hashed = SHA256.hash(data: input)
+        return input.sha256
+    }
+}
+
+extension Data {
+    var sha256: String {
+        let hashed = SHA256.hash(data: self)
         // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
         let descr = hashed.description
         let prefix = "SHA256 digest: "

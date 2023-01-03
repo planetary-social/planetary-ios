@@ -101,7 +101,7 @@ class FakeBot: Bot {
 
     func addBlob(jpegOf image: UIImage, largestDimension: UInt?, completion: @escaping AddImageCompletion) { }
     
-    private var blobStorage = [BlobIdentifier: Data]()
+    private let blobStorageDir = NSTemporaryDirectory().appending("FakeBot-blobs/")
     
     func store(url: URL, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
         do {
@@ -113,13 +113,18 @@ class FakeBot: Bot {
     }
     
     func store(data: Data, for identifier: BlobIdentifier, completion: @escaping BlobsStoreCompletion) {
-        blobStorage[identifier] = data
-        let url = URL(fileURLWithPath: identifier)
-        completion(url, nil)
+        do {
+            let storageURL = try blobFileURL(from: identifier)
+            try FileManager.default.createDirectory(atPath: blobStorageDir, withIntermediateDirectories: true)
+            try data.write(to: storageURL)
+            completion(storageURL, nil)
+        } catch {
+            completion(nil, FakeBotError.runtimeError("Could not store blob"))
+        }
     }
     
     func store(data: Data, completion: @escaping BlobsStoreCompletion) {
-        let blobIdentifier = "&\(SHA256.hash(data: data))=.sha256"
+        let blobIdentifier = "&\(data.sha256)=.sha256"
         store(data: data, for: blobIdentifier, completion: completion)
     }
     
@@ -133,11 +138,17 @@ class FakeBot: Bot {
     }
     
     func data(for identifier: BlobIdentifier, completion: @escaping ((BlobIdentifier, Data?, Error?) -> Void)) {
-        completion(identifier, blobStorage[identifier], nil)
+        do {
+            let storageURL = try blobFileURL(from: identifier)
+            let data = try Data(contentsOf: storageURL)
+            completion(identifier, data, nil)
+        } catch {
+            completion(identifier, nil, FakeBotError.runtimeError("Could not load blob from URL"))
+        }
     }
     
     func blobFileURL(from identifier: BlobIdentifier) throws -> URL {
-        URL(fileURLWithPath: identifier)
+        URL(fileURLWithPath: blobStorageDir.appending(identifier.id))
     }
 
     func hashtags(completion: @escaping HashtagsCompletion) { }
