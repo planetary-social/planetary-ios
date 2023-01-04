@@ -30,6 +30,15 @@ struct DiscoverView: View, HelpDrawerHost {
     @EnvironmentObject
     private var appController: AppController
 
+    @State
+    private var searchText = ""
+
+    @SwiftUI.Environment(\.isSearching)
+    private var isSearching
+
+    @State
+    private var searchResults: SearchResultsView.SearchResults?
+
     let helpDrawerType = HelpDrawer.discover
 
     func dismissDrawer(completion: (() -> Void)?) {
@@ -45,12 +54,32 @@ struct DiscoverView: View, HelpDrawerHost {
     @SwiftUI.Environment(\.horizontalSizeClass)
     var horizontalSizeClass
 
+    private let columns = [GridItem(.flexible(), spacing: 10), GridItem(.flexible())]
+
     var body: some View {
         ZStack(alignment: .top) {
-            MessageGrid(dataSource: dataSource)
-                .placeholder(when: dataSource.isEmpty) {
-                    EmptyDiscoverView()
+            if let searchResults = searchResults {
+                SearchResultsView(searchResults: searchResults)
+            } else {
+                MessageGrid(dataSource: dataSource)
+                    .placeholder(when: dataSource.isEmpty) {
+                        EmptyDiscoverView()
+                    }
+            }
+        }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: (.always)))
+        .disableAutocorrection(true)
+        .onChange(of: searchText) { value in
+            if value.isEmpty && !isSearching {
+                Task {
+                    await filter()
                 }
+            }
+        }
+        .onSubmit(of: .search) {
+            Task {
+                await filter()
+            }
         }
         .background(Color.appBg)
         .navigationTitle(Localized.explore.text)
@@ -116,6 +145,77 @@ struct DiscoverView: View, HelpDrawerHost {
         }
         let navController = UINavigationController(rootViewController: controller)
         appController.present(navController, animated: true)
+    }
+
+    private func filter() async {
+        searchResults = await fetchSearchResults(for: searchText)
+    }
+
+    private func fetchSearchResults(for query: String) async -> SearchResultsView.SearchResults? {
+        guard !query.isEmpty else {
+            return nil
+        }
+
+        let normalizedQuery = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let identifier: Identifier = query
+        let isFeedIdentifier = identifier.isValidIdentifier && identifier.sigil == .feed
+        let isMessageIdentifier = identifier.isValidIdentifier && identifier.sigil == .message
+
+        if isFeedIdentifier {
+            return SearchResultsView.SearchResults(data: .feedID(await loadPerson(with: identifier)), query: query)
+        } else if isMessageIdentifier {
+            return SearchResultsView.SearchResults(data: .messageID(await loadMessage(with: identifier)), query: query)
+        } else {
+            async let people = loadPeople(matching: normalizedQuery)
+            async let posts = loadPosts(matching: normalizedQuery)
+            return SearchResultsView.SearchResults(data: .universal(people: await people, posts: await posts), query: query)
+        }
+    }
+
+    func loadPeople(matching filter: String) async -> [About] {
+        do {
+            return try await Bots.current.abouts(matching: filter)
+        } catch {
+            Log.optional(error)
+            return []
+        }
+    }
+
+    func loadPosts(matching filter: String) async -> [Message] {
+        do {
+            return try await Bots.current.posts(matching: filter)
+        } catch {
+            Log.optional(error)
+            return []
+        }
+    }
+
+    /// Loads the message with the given id from the database and displays it if it's still valid.
+    func loadMessage(with msgID: MessageIdentifier) async -> Either<Message, MessageIdentifier> {
+        var result: Either<Message, MessageIdentifier>
+        do {
+            result = .left(try Bots.current.post(from: msgID))
+        } catch {
+            result = .right(msgID)
+            Log.optional(error)
+        }
+        return result
+    }
+
+    func loadPerson(with feedIdentifier: FeedIdentifier) async -> Either<About, FeedIdentifier> {
+        var result: Either<About, FeedIdentifier>
+        do {
+            let about = try await Bots.current.about(identity: feedIdentifier)
+            if let about = about {
+                result = .left(about)
+            } else {
+                result = .right(feedIdentifier)
+            }
+        } catch {
+            result = .right(feedIdentifier)
+            Log.optional(error)
+        }
+        return result
     }
 }
 

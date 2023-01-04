@@ -702,6 +702,12 @@
 		5B97D1DE295F5049000AA5D1 /* MessageHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1DC295F5049000AA5D1 /* MessageHeaderView.swift */; };
 		5B97D1E02962238C000AA5D1 /* EmptyDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1DF2962238C000AA5D1 /* EmptyDiscoverView.swift */; };
 		5B97D1E12962238C000AA5D1 /* EmptyDiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1DF2962238C000AA5D1 /* EmptyDiscoverView.swift */; };
+		5B97D1E529635FFF000AA5D1 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1E429635FFF000AA5D1 /* SearchResultsView.swift */; };
+		5B97D1E629635FFF000AA5D1 /* SearchResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1E429635FFF000AA5D1 /* SearchResultsView.swift */; };
+		5B97D1EC2964AC91000AA5D1 /* GoldenIdentityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1EB2964AC91000AA5D1 /* GoldenIdentityView.swift */; };
+		5B97D1ED2964AC91000AA5D1 /* GoldenIdentityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1EB2964AC91000AA5D1 /* GoldenIdentityView.swift */; };
+		5B97D1EF2964AFFB000AA5D1 /* IdentityButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1EE2964AFFB000AA5D1 /* IdentityButton.swift */; };
+		5B97D1F02964AFFB000AA5D1 /* IdentityButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B97D1EE2964AFFB000AA5D1 /* IdentityButton.swift */; };
 		5B9C6951288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */; };
 		5B9C6952288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */; };
 		5B9C69562888813000229469 /* CountUnreadNotificationsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */; };
@@ -1745,6 +1751,9 @@
 		5B92E27B284A7B12003127F2 /* PopularHashtagsAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularHashtagsAlgorithm.swift; sourceTree = "<group>"; };
 		5B97D1DC295F5049000AA5D1 /* MessageHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHeaderView.swift; sourceTree = "<group>"; };
 		5B97D1DF2962238C000AA5D1 /* EmptyDiscoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDiscoverView.swift; sourceTree = "<group>"; };
+		5B97D1E429635FFF000AA5D1 /* SearchResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsView.swift; sourceTree = "<group>"; };
+		5B97D1EB2964AC91000AA5D1 /* GoldenIdentityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoldenIdentityView.swift; sourceTree = "<group>"; };
+		5B97D1EE2964AFFB000AA5D1 /* IdentityButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityButton.swift; sourceTree = "<group>"; };
 		5B9C6950288726F300229469 /* ClearUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
 		5B9C69552888813000229469 /* CountUnreadNotificationsOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountUnreadNotificationsOperation.swift; sourceTree = "<group>"; };
 		5BA321662949083400EF740B /* StaticAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticAlgorithm.swift; sourceTree = "<group>"; };
@@ -2925,6 +2934,7 @@
 			children = (
 				5B533E4C295B5BA300F5EED1 /* DiscoverView.swift */,
 				5B97D1DF2962238C000AA5D1 /* EmptyDiscoverView.swift */,
+				5B97D1E429635FFF000AA5D1 /* SearchResultsView.swift */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -2951,6 +2961,8 @@
 				5B3FBE39292BB9E5004F34CC /* ImagePicker.swift */,
 				5B040164292D1BE20048CD1F /* RelationshipButton.swift */,
 				5B90A8F02940CD1100467C6A /* StackedAvatarsView.swift */,
+				5B97D1EB2964AC91000AA5D1 /* GoldenIdentityView.swift */,
+				5B97D1EE2964AFFB000AA5D1 /* IdentityButton.swift */,
 			);
 			path = About;
 			sourceTree = "<group>";
@@ -4311,6 +4323,7 @@
 				C9D1EACA2832A0230092E098 /* AttributedStringTests.swift in Sources */,
 				5B4AEA71294D14240059E039 /* HomeView.swift in Sources */,
 				5B2A4F9928205C8900A5BE48 /* PostsAndContactsAlgorithm.swift in Sources */,
+				5B97D1ED2964AC91000AA5D1 /* GoldenIdentityView.swift in Sources */,
 				5369D2AF220CF39E00A65622 /* Data+JSON.swift in Sources */,
 				C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */,
 				5B533E3E2959DF5B00F5EED1 /* MessageOptionsButton.swift in Sources */,
@@ -4409,6 +4422,7 @@
 				C9724B122809D2CC000EBCCD /* MainViewController.swift in Sources */,
 				C9A1632728AE88DC00ACDCC5 /* AddAliasView.swift in Sources */,
 				C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */,
+				5B97D1E629635FFF000AA5D1 /* SearchResultsView.swift in Sources */,
 				C9724B742809E7A6000EBCCD /* UIFont+Verse.swift in Sources */,
 				C969F0E12899CFEE00081615 /* Room.swift in Sources */,
 				C9724BE22809EE7D000EBCCD /* SyncOperation.swift in Sources */,
@@ -4537,6 +4551,7 @@
 				C9412AEB28AEE8EB00F791A7 /* RoomAliasRegistrationController.swift in Sources */,
 				5B4AEA7E294D14320059E039 /* CompactHashtagView.swift in Sources */,
 				C9724B782809E7C1000EBCCD /* AppController+Push.swift in Sources */,
+				5B97D1F02964AFFB000AA5D1 /* IdentityButton.swift in Sources */,
 				5BA32EDD291597DE00744984 /* BotRepository.swift in Sources */,
 				C9134DDB28184AF700595D49 /* (null) in Sources */,
 				C9724BE02809EE5A000EBCCD /* Tappable.swift in Sources */,
@@ -5045,6 +5060,7 @@
 				1B32D378249AAA4800811DC9 /* SmallPostHeaderView.swift in Sources */,
 				5B3FBE2B29280AAA004F34CC /* EditIdentityButton.swift in Sources */,
 				23EF5A99249CDCF900469977 /* BanListAPIService.swift in Sources */,
+				5B97D1EC2964AC91000AA5D1 /* GoldenIdentityView.swift in Sources */,
 				0ACE91A6243D742700EFB4E9 /* GoBotError+LocalizedError.swift in Sources */,
 				5BAD727D2892C4C5001494B4 /* NoHopFeedAlgorithm.swift in Sources */,
 				C997F3E028B1D86D00DAC117 /* AliasCell.swift in Sources */,
@@ -5239,6 +5255,7 @@
 				5B2CF3912952343B00630CB6 /* ProfileStrategy.swift in Sources */,
 				535B6A0E23728049008C248E /* NSNotification+Bot.swift in Sources */,
 				53C422B821C476B000A314AD /* DebugTableViewCell.swift in Sources */,
+				5B97D1EF2964AFFB000AA5D1 /* IdentityButton.swift in Sources */,
 				531587BB22A18C280004E2B1 /* Onboarding+Migrate.swift in Sources */,
 				5342426F2368A66F00192293 /* EarlyAccessOnboardingStep.swift in Sources */,
 				5357550722694D8C002A6989 /* MessageUIView.swift in Sources */,
@@ -5290,6 +5307,7 @@
 				53AD3FD5226FBD91005228F9 /* AppDelegate+UIAppearance.swift in Sources */,
 				53E26C6923062AC3009240B2 /* Layout+Fill.swift in Sources */,
 				5BE8A30929193ECE00C4A38E /* BlobGalleryView.swift in Sources */,
+				5B97D1E529635FFF000AA5D1 /* SearchResultsView.swift in Sources */,
 				536255D523AB16A6001007D0 /* Date+Holidays.swift in Sources */,
 				533F4055225FB3B40060B4B9 /* Layout+SpacerView.swift in Sources */,
 				53211CDE228250D7007FB785 /* UIView+Stroke.swift in Sources */,

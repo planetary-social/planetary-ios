@@ -182,6 +182,12 @@ extension About {
     }
 }
 
+extension About: Identifiable {
+    var id: String {
+        identity
+    }
+}
+
 extension About: Comparable {
 
     static func < (lhs: About, rhs: About) -> Bool {
