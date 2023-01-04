@@ -25,9 +25,18 @@ struct AVPlayerControllerRepresented : UIViewControllerRepresentable {
     }
 }
 
+class BlobSource: ObservableObject {
+    var blobs: Blobs
+    
+    init(blobs: Blobs) {
+        self.blobs = blobs
+    }
+}
+
 struct BlobGalleryView: View {
 
-    var blobs: [Blob]
+    @ObservedObject
+    private var dataSource: BlobSource
 
     @State
     private var selectedBlob: Blob
@@ -44,9 +53,20 @@ struct BlobGalleryView: View {
     private var blobCache: BlobCache
     
     @State var debugString = "start"
+    
+    private var blobs: Blobs {
+        dataSource.blobs
+    }
+    
+    init(blobSource: BlobSource, blobCache: BlobCache = Caches.blobs, enableTapGesture: Bool = true) {
+        self.dataSource = blobSource
+        self.blobCache = blobCache
+        self.selectedBlob = blobSource.blobs.first ?? Blob(identifier: .null)
+        self.enableTapGesture = enableTapGesture
+    }
 
     init(blobs: [Blob], blobCache: BlobCache = Caches.blobs, enableTapGesture: Bool = true) {
-        self.blobs = blobs
+        self.dataSource = BlobSource(blobs: blobs)
         self.blobCache = blobCache
         self.selectedBlob = blobs.first ?? Blob(identifier: .null)
         self.enableTapGesture = enableTapGesture
@@ -107,31 +127,30 @@ struct BlobGalleryView: View {
             } else {
                 ForEach(blobs) { blob in
                     if canUseAVPlayer(on: blob) {
-                        NavigationLink(destination: {
-                            if let url = createSymbolicLink(for: blob) {
-                                VStack {
-                                    videoPlayer(for: url)
-                                }
-                            } else {
-                                Text("error")
-                            }
+                        Button(action: {
+
+                            appController.pushBlobViewController(for: blob)
+//                            if let url = createSymbolicLink(for: blob) {
+//                                VStack {
+//                                    videoPlayer(for: url)
+//                                }
+//                            } else {
+//                                Text("error")
+//                            }
                         }, label: {
                             Text("Media")
                         })
                     } else {
-                        let image = ImageMetadataView(
-                            metadata: ImageMetadata(link: blob.identifier),
-                            blobCache: blobCache
-                        )
-                        .scaledToFill()
-                        .tag(blob)
-
-                        NavigationLink {
-                            image
+                        Button {
+                            appController.pushBlobViewController(for: blob)
                         } label: {
-                            image
+                            ImageMetadataView(
+                                metadata: ImageMetadata(link: blob.identifier),
+                                blobCache: blobCache
+                            )
+                            .scaledToFill()
+                            .tag(blob)
                         }
-
                     }
                 }
             }
@@ -197,8 +216,8 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
                     Spacer()
                     BlobGalleryView(
                         blobs: [
-                            videoSample,
                             imageSample,
+                            videoSample,
                             anotherImageSample
                         ],
                         blobCache: cache,

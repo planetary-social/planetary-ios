@@ -173,7 +173,7 @@ class PostCellView: MessageUIView {
     // the gallery view allows custom insets for the actual content
     // inside of it, and this value was chosen to allow for a specific
     // distance between the content top and the northern text view
-    private let galleryView = GalleryView()
+    private let galleryViewController = BlobGalleryViewController(blobs: [])
     private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
     private var galleryViewFullHeightConstraint: NSLayoutConstraint!
     private var galleryViewBottomConstraint: NSLayoutConstraint?
@@ -207,17 +207,26 @@ class PostCellView: MessageUIView {
                                                                constant: 5)
         self.textViewZeroHeightConstraint.isActive = false
 
-        self.addSubview(self.galleryView)
-        self.galleryView.pinTop(toBottomOf: self.textView, constant: 5)
-        self.galleryView.pinLeftToSuperview()
-        self.galleryView.constrainWidth(to: self)
-        galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        galleryViewBottomConstraint?.isActive = true
-
-        self.galleryViewFullHeightConstraint = self.galleryView.heightAnchor.constraint(equalTo: self.galleryView.widthAnchor)
-        self.galleryViewZeroHeightConstraint = self.galleryView.heightAnchor.constraint(equalToConstant: 0)
-        self.galleryViewZeroHeightConstraint.isActive = true
+        // Gallery View
+        // Using AppController.shared here feels bad, but this class should be deleted soon and replaced with SwiftUI.
+        if let galleryView = galleryViewController.view {
+            galleryView.useAutoLayout()
+            
+            AppController.shared.addChild(galleryViewController)
+            addSubview(galleryView)
+            galleryViewController.didMove(toParent: AppController.shared)
+            
+            galleryView.pinTop(toBottomOf: self.textView, constant: 5)
+            galleryView.pinLeftToSuperview()
+            galleryView.constrainWidth(to: self)
+            galleryView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
+            galleryViewBottomConstraint = galleryView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            galleryViewBottomConstraint?.isActive = true
+            
+            galleryViewFullHeightConstraint = galleryView.heightAnchor.constraint(equalTo: galleryView.widthAnchor)
+            galleryViewZeroHeightConstraint = galleryView.heightAnchor.constraint(equalToConstant: 0)
+            galleryViewZeroHeightConstraint.isActive = true
+        }
     }
 
     convenience init(message: Message) {
@@ -271,7 +280,7 @@ class PostCellView: MessageUIView {
             self.galleryViewFullHeightConstraint.isActive = post.hasBlobs
             self.galleryViewZeroHeightConstraint.isActive = !post.hasBlobs
             self.galleryViewBottomConstraint?.constant = (post.hasBlobs && self.allowSpaceUnderGallery) ? -Layout.verticalSpacing : 0
-            self.galleryView.update(with: post)
+            self.galleryViewController.update(with: post)
         } else {
             return
         }

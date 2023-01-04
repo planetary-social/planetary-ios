@@ -7,7 +7,6 @@ project 'Planetary', 'Test' => :debug
 inhibit_all_warnings!
 
 target 'Planetary' do
-    pod 'ImageSlideshow', '1.8.3'
     pod 'KeychainSwift', '19.0.0'
     pod 'PhoneNumberKit', '3.2.0'
     pod 'SVProgressHUD', '2.2.5'
@@ -22,7 +21,6 @@ target 'APITests' do
 end
 
 target 'UnitTests' do
-    pod 'ImageSlideshow', '1.8.3'
     pod 'KeychainSwift', '19.0.0'
     pod 'Multipart', '0.1.0'
     pod 'Down', '0.9.2'

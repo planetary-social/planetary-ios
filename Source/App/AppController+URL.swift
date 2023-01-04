@@ -120,12 +120,13 @@ extension AppController {
         self.push(controller, animated: true)
     }
 
-    func pushBlobViewController(for blob: BlobIdentifier) {
-        let view = BlobGalleryView(blobs: [Blob(identifier: blob)], enableTapGesture: false)
-            .environmentObject(BotRepository.shared)
-            .environmentObject(AppController.shared)
-        let controller = UIHostingController(rootView: view)
-//        let controller = BlobViewController(with: blob)
+    func pushBlobViewController(for blobID: BlobIdentifier) {
+        let controller = BlobViewController(for: blobID)
+        self.push(controller)
+    }
+    
+    func pushBlobViewController(for blob: Blob) {
+        let controller = BlobViewController(for: blob)
         self.push(controller)
     }
     

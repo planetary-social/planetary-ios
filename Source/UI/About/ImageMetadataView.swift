@@ -23,15 +23,17 @@ struct ImageMetadataView: View {
     }
     
     var body: some View {
-        Group {
-            if let image = imageLoader.image {
-                Image(uiImage: image)
-                    .resizable()
-            } else if imageLoader.isLoading {
-                ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
-            } else {
-                Image("missing-about-icon")
-                    .resizable()
+        VStack {
+            Group {
+                if let image = imageLoader.image {
+                    Image(uiImage: image)
+                        .resizable()
+                } else if imageLoader.isLoading {
+                    ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
+                } else {
+                    Image("missing-about-icon")
+                        .resizable()
+                }
             }
         }.task(id: metadata) {
             await loadImage(from: metadata)
@@ -108,15 +110,8 @@ struct ImageMetadataView_Previews: PreviewProvider {
     }
     static var previews: some View {
         Group {
-            VStack {
-                ImageMetadataView(metadata: loadingSample)
-                ImageMetadataView(metadata: sample)
-            }
-            VStack {
-                ImageMetadataView(metadata: loadingSample)
-                ImageMetadataView(metadata: sample)
-            }
-            .preferredColorScheme(.dark)
+            ImageMetadataView(metadata: sample)
+            ImageMetadataView(metadata: loadingSample)
         }
         .padding()
         .background(Color.cardBackground)

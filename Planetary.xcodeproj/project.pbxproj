@@ -763,6 +763,8 @@
 		8DE093DC234651E1009E505D /* FollowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE093DB234651E1009E505D /* FollowButton.swift */; };
 		8E610EDB60FA79ADD1B10FAB /* Pods_Planetary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */; };
 		8F6DDE5DB47CDEED56B74CB3 /* Pods_UnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EA32E74C0DFF1EF8924773F /* Pods_UnitTests.framework */; };
+		C90530922965D68E00D21204 /* BlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90530912965D68E00D21204 /* BlobView.swift */; };
+		C90530932965D68E00D21204 /* BlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90530912965D68E00D21204 /* BlobView.swift */; };
 		C90EBE7327E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C90EBE7427E0D5C900EAE560 /* PreloadedPubService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */; };
 		C9134DDB28184AF700595D49 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -1070,6 +1072,8 @@
 		C982CBE228353E2600D8963F /* ContactHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C8F281F779F008AEA84 /* ContactHeaderView.swift */; };
 		C982CBE328353E2D00D8963F /* ExtendedAboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC297472804A22500C0CD81 /* ExtendedAboutView.swift */; };
 		C982CBE428353E7400D8963F /* Support+GoBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAE9C85281E0EA9008AEA84 /* Support+GoBot.swift */; };
+		C98876FB2965E26A00957956 /* BlobGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98876FA2965E26A00957956 /* BlobGalleryViewController.swift */; };
+		C98876FC2965E26A00957956 /* BlobGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98876FA2965E26A00957956 /* BlobGalleryViewController.swift */; };
 		C98A013C2790AED800E29A97 /* ViewDatabasePerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */; };
 		C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */; };
 		C98A014B2790C5A900E29A97 /* Feed_big.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = C98A014A2790C5A800E29A97 /* Feed_big.sqlite */; };
@@ -1767,6 +1771,7 @@
 		99D5A2E9DFD5EB7FA7D264CA /* Pods-Planetary.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Planetary.test.xcconfig"; path = "Pods/Target Support Files/Pods-Planetary/Pods-Planetary.test.xcconfig"; sourceTree = "<group>"; };
 		B048339688C76587A4977D81 /* Pods-UnitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BAC5369BCA54E7B2D4790182 /* Pods-UnitTests.appstore.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.appstore.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.appstore.xcconfig"; sourceTree = "<group>"; };
+		C90530912965D68E00D21204 /* BlobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobView.swift; sourceTree = "<group>"; };
 		C90EBE7227E0D5C900EAE560 /* PreloadedPubService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreloadedPubService.swift; sourceTree = "<group>"; };
 		C91D9E5C27EDE56B00C79009 /* swiftlint */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swiftlint; sourceTree = BUILT_PRODUCTS_DIR; };
 		C920A3A2289AFB88009C83F3 /* PlaceholderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderModifier.swift; sourceTree = "<group>"; };
@@ -1811,6 +1816,7 @@
 		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
 		C982CBD62834233700D8963F /* FeedStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyTests.swift; sourceTree = "<group>"; };
 		C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Planetary.swift"; sourceTree = "<group>"; };
+		C98876FA2965E26A00957956 /* BlobGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobGalleryViewController.swift; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
 		C98A013D2790AF4400E29A97 /* DatabaseFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseFixtures.swift; sourceTree = "<group>"; };
 		C98A01402790B9ED00E29A97 /* Shared.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.release.xcconfig; sourceTree = "<group>"; };
@@ -2237,6 +2243,7 @@
 			children = (
 				8DB042012355ECC6006AC35B /* AboutTableViewDataSource.swift */,
 				C9EE7BD927FF3A5D00748106 /* Beta1MigrationController.swift */,
+				C98876FA2965E26A00957956 /* BlobGalleryViewController.swift */,
 				53E341F7224DB1D8002BB5F4 /* BlobViewController.swift */,
 				535B6A0F237362AE008C248E /* BlockedUsersViewController.swift */,
 				C9C3787727C6881000238B58 /* ConnectedPeerListController.swift */,
@@ -2467,6 +2474,7 @@
 				5357550622694D8C002A6989 /* MessageUIView.swift */,
 				0A4871002498030800BCD063 /* PostCollectionViewCell.swift */,
 				0A487104249D1B3500BCD063 /* MessagePaginatedCollectionViewDelegate.swift */,
+				C90530912965D68E00D21204 /* BlobView.swift */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -4302,6 +4310,7 @@
 				C9724BEB2809EF2E000EBCCD /* NSAttributedString+Flatten.swift in Sources */,
 				C9724BB92809EC7B000EBCCD /* BotViewController.swift in Sources */,
 				C9421EB72888A43600A4C86D /* URL+Planetary.swift in Sources */,
+				C98876FC2965E26A00957956 /* BlobGalleryViewController.swift in Sources */,
 				C9724B362809D47D000EBCCD /* PhotoConfirmOnboardingStep.swift in Sources */,
 				C9724BBB2809ECA8000EBCCD /* Saveable.swift in Sources */,
 				5BFC1C2528FF0859008A4B87 /* ExtendedSocialStats.swift in Sources */,
@@ -4600,6 +4609,7 @@
 				C9724BEF2809EF45000EBCCD /* UIViewController+TopViewController.swift in Sources */,
 				C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
 				7BDA1D16291BFCD500EA2124 /* StoreReviewController.swift in Sources */,
+				C90530932965D68E00D21204 /* BlobView.swift in Sources */,
 				C923DBB2288057EB00569AAB /* HelpDrawerView.swift in Sources */,
 				23CA4B93232291E1005B35E8 /* UITextView+NSMutableAttributedString.swift in Sources */,
 				5B4C8C74282D45E800803547 /* SocialStats.swift in Sources */,
@@ -5120,6 +5130,7 @@
 				5B7AB68228F4946D007DCCF1 /* HashtagSliderView.swift in Sources */,
 				8DB042022355ECC6006AC35B /* AboutTableViewDataSource.swift in Sources */,
 				53E34200225000D4002BB5F4 /* UIViewController+Keyboard.swift in Sources */,
+				C90530922965D68E00D21204 /* BlobView.swift in Sources */,
 				C9EADA8927D178D5002066D9 /* View+RoundedCorner.swift in Sources */,
 				23EF5AA3249CE69900469977 /* NullBlocksAPI.swift in Sources */,
 				5319258022F3A09C00B44FA3 /* NotificationCellView.swift in Sources */,
@@ -5197,6 +5208,7 @@
 				5B7AB66528DE3C19007DCCF1 /* IdentityView.swift in Sources */,
 				C9C3788427C6940C00238B58 /* IdentityFixtures.swift in Sources */,
 				53E341F4224D9E3B002BB5F4 /* URL+Identifier.swift in Sources */,
+				C98876FB2965E26A00957956 /* BlobGalleryViewController.swift in Sources */,
 				8DD985D22329B94600FA2F1A /* ThreadInteractionView.swift in Sources */,
 				0AF9E0A22465D7A800910575 /* ThreadReplyPaginatedDataSource.swift in Sources */,
 				53362F672208C2B3007264CB /* AppController+Lifecycle.swift in Sources */,

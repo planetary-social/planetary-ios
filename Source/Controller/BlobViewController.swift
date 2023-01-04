@@ -8,68 +8,37 @@
 
 import Foundation
 import UIKit
-import Analytics
-import Logger
-import CrashReporting
+import SwiftUI
 
-class BlobViewController: ContentViewController {
+class BlobViewController: UIViewController {
 
-    private let blob: BlobIdentifier
+    private let blob: Blob
 
-    private let imageView: UIImageView
-
-    private var completion: UUID?
+    convenience init(for blobID: BlobIdentifier) {
+        self.init(for: Blob(identifier: blobID))
+    }
     
-    init(with blob: BlobIdentifier) {
+    init(for blob: Blob) {
         self.blob = blob
-        imageView = UIImageView.forAutoLayout()
-        imageView.contentMode = .scaleAspectFit
-        super.init(scrollable: false)
+        super.init(nibName: nil, bundle: nil)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    deinit {
-        forgetBlobCompletion()
-    }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        Layout.fill(view: self.contentView, with: self.imageView)
-        self.update()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        CrashReporting.shared.record("Did Show Blob")
-        Analytics.shared.trackDidShowScreen(screenName: "blob")
-    }
-
-    private func forgetBlobCompletion() {
-        guard let uuid = self.completion else { return }
-        Caches.blobs.forgetCompletions(with: uuid, for: blob)
-    }
-
-    private func update() {
-        // always forget any pending completion
-        forgetBlobCompletion()
-
-        Task { @MainActor [weak self] in
-            // cached image
-            if let uiImage = Caches.blobs.image(for: blob) {
-                self?.imageView.image = uiImage
-                return
-            }
-
-            // request image
-            let uuid = Caches.blobs.imageOrPlaceholder(for: blob) { [weak self] uiImage in
-                self?.imageView.image = uiImage
-            }
-
-            self?.completion = uuid
-        }
+        
+        let blobView = BlobView(blob: blob) { self.dismiss(animated: true) }
+            .environmentObject(BotRepository.shared)
+            .environmentObject(AppController.shared)
+        
+        let hostingController = UIHostingController(rootView: blobView)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.didMove(toParent: self)
     }
 }
