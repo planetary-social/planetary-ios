@@ -113,8 +113,7 @@ extension AppController {
     // reset the root controller, not push into a child feature controller
     func pushViewController(for contentType: ContentType, with identity: Identity) {
         guard contentType == .about else { return }
-        let view = IdentityViewBuilder.build(identity: identity)
-        let controller = UIHostingController(rootView: view)
+        let controller = IdentityViewBuilder.build(identity: identity)
         self.push(controller, animated: true)
     }
 

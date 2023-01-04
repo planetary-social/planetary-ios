@@ -15,9 +15,11 @@ enum IdentityViewBuilder {
         identity: Identity,
         botRepository: BotRepository = BotRepository.shared,
         appController: AppController = AppController.shared
-    ) -> some View {
-        IdentityView(identity: identity, bot: botRepository.current)
-            .injectAppEnvironment(botRepository: botRepository, appController: appController)
+    ) -> UIHostingController<some View> {
+        UIHostingController(
+            rootView: IdentityView(identity: identity, bot: botRepository.current)
+                .injectAppEnvironment(botRepository: botRepository, appController: appController)
+        )
     }
 }
 

@@ -345,13 +345,11 @@ extension DirectoryViewController: UITableViewDelegate {
         switch section {
         case .communityPubs:
             let star = communityPubs[indexPath.row]
-            let view = IdentityViewBuilder.build(identity: star.feed)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
         case .users:
             let identity = searchFilter
-            let view = IdentityViewBuilder.build(identity: identity)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: identity)
             self.navigationController?.pushViewController(controller, animated: true)
         case .posts:
             guard let post = searchedPost else {
@@ -364,8 +362,7 @@ extension DirectoryViewController: UITableViewDelegate {
             )
         case .network:
             let identity = self.people[indexPath.row].identity
-            let view = IdentityViewBuilder.build(identity: identity)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: identity)
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }

@@ -65,9 +65,7 @@ class ManagePubsViewController: UITableViewController, KnownPubsTableViewDataSou
             return
         }
         let identity = dataSource.pubs[indexPath.row].address.key
-        let controller = UIHostingController(
-            rootView: IdentityViewBuilder.build(identity: identity)
-        )
+        let controller = IdentityViewBuilder.build(identity: identity)
         targetController?.pushViewController(controller, animated: true)
     }
 }
