@@ -27,9 +27,11 @@ struct AVPlayerControllerRepresented : UIViewControllerRepresentable {
 
 class BlobSource: ObservableObject {
     var blobs: Blobs
+    @Published var selected: Blob
     
-    init(blobs: Blobs) {
+    init(blobs: Blobs, selected: Blob? = nil) {
         self.blobs = blobs
+        self.selected = selected ?? blobs.first ?? Blob(identifier: .null)
     }
 }
 
@@ -37,12 +39,15 @@ struct BlobGalleryView: View {
 
     @ObservedObject
     private var dataSource: BlobSource
-
-    @State
-    private var selectedBlob: Blob
     
-    @State
-    private var enableTapGesture: Bool
+    var dismissHandler: (() -> Void)?
+
+//    lazy var selectedBlob: Binding<Blob> = {
+//    }()
+    
+    private var fullscreen: Bool {
+        dismissHandler != nil
+    }
 
     @EnvironmentObject
     private var appController: AppController
@@ -58,18 +63,14 @@ struct BlobGalleryView: View {
         dataSource.blobs
     }
     
-    init(blobSource: BlobSource, blobCache: BlobCache = Caches.blobs, enableTapGesture: Bool = true) {
+    init(blobSource: BlobSource, blobCache: BlobCache = Caches.blobs, dismissHandler: (() -> Void)? = nil) {
         self.dataSource = blobSource
         self.blobCache = blobCache
-        self.selectedBlob = blobSource.blobs.first ?? Blob(identifier: .null)
-        self.enableTapGesture = enableTapGesture
+        self.dismissHandler = dismissHandler
     }
 
-    init(blobs: [Blob], blobCache: BlobCache = Caches.blobs, enableTapGesture: Bool = true) {
-        self.dataSource = BlobSource(blobs: blobs)
-        self.blobCache = blobCache
-        self.selectedBlob = blobs.first ?? Blob(identifier: .null)
-        self.enableTapGesture = enableTapGesture
+    init(blobs: [Blob], blobCache: BlobCache = Caches.blobs, dismissHandler: (() -> Void)? = nil) {
+        self.init(blobSource: BlobSource(blobs: blobs), blobCache: blobCache, dismissHandler: dismissHandler)
     }
     
     private func createSymbolicLink(for blob: Blob) -> URL? {
@@ -120,43 +121,110 @@ struct BlobGalleryView: View {
         return Text(blobIdentifier)
     }
     
+    @State private var dragOffset: CGSize = .zero
+    
     var body: some View {
-        TabView(selection: $selectedBlob) {
+        let tabView = TabView(selection: $dataSource.selected) {
             if blobs.isEmpty {
                 Spacer()
             } else {
                 ForEach(blobs) { blob in
-                    if canUseAVPlayer(on: blob) {
-                        Button(action: {
-
-                            appController.pushBlobViewController(for: blob)
-//                            if let url = createSymbolicLink(for: blob) {
-//                                VStack {
-//                                    videoPlayer(for: url)
-//                                }
-//                            } else {
-//                                Text("error")
-//                            }
-                        }, label: {
-                            Text("Media")
-                        })
-                    } else {
-                        Button {
-                            appController.pushBlobViewController(for: blob)
-                        } label: {
-                            ImageMetadataView(
-                                metadata: ImageMetadata(link: blob.identifier),
-                                blobCache: blobCache
+                    if fullscreen {
+                        BlobFullScreenView(blob: blob, blobCache: blobCache)
+                            .offset(y: dragOffset.height)
+                            .scaleEffect(1 - min(0.5, abs(dragOffset.height) / 200))
+                            .animation(.interactiveSpring(), value: dragOffset)
+                            .simultaneousGesture(
+                                DragGesture(minimumDistance: 40)
+                                    .onChanged { gesture in
+                                        if gesture.translation.width < 40 {
+                                            dragOffset = gesture.translation
+                                        }                                     }
+                                    .onEnded { _ in
+                                        if abs(dragOffset.height) > 100 {
+                                            dismissHandler?()
+                                            dragOffset = .zero
+                                        } else {
+                                            dragOffset = .zero
+                                        }
+                                    }
                             )
-                            .scaledToFill()
                             .tag(blob)
-                        }
+                    } else {
+                        BlobThumbnailView(blob: blob, blobCache: blobCache)
+                            .tag(blob)
+                            .onTapGesture {
+                                appController.pushBlobViewController(for: blobs, selected: dataSource.selected)
+                            }
                     }
                 }
             }
         }
         .tabViewStyle(.page)
-        .aspectRatio(1, contentMode: .fit)
+        
+        if fullscreen {
+            tabView
+                .background(Color.black.ignoresSafeArea())
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(
+                    VStack {
+                        HStack {
+                            Button {
+                                dismissHandler?()
+                            } label: {
+                                let xmark = Image(systemName: "xmark.circle.fill")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .padding(16)
+                                    .foregroundColor(Color.black)
+                                
+                                xmark
+                                //                            .overlay(Color.black.mask(xmark))
+                                    .background(
+                                        Circle()
+                                            .foregroundColor(Color.white)
+                                            .frame(width: 30, height: 30)
+                                    )
+                            }
+                            
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                )
+        } else {
+            tabView
+                .aspectRatio(1, contentMode: .fit)
+        }
+                
+    }
+}
+
+struct BlobThumbnailView: View {
+    
+        var blob: Blob
+    var blobCache: BlobCache
+    
+    var body: some View {
+        ImageMetadataView(
+            metadata: ImageMetadata(link: blob.identifier),
+            blobCache: blobCache
+        )
+        .scaledToFill()
+    }
+}
+
+struct BlobFullScreenView: View {
+    
+    var blob: Blob
+    var blobCache: BlobCache
+    
+    var body: some View {
+        ImageMetadataView(
+            metadata: ImageMetadata(link: blob.identifier),
+            blobCache: blobCache
+        )
+        .scaledToFit()
     }
 }
 
@@ -211,31 +279,30 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            NavigationView {
-                VStack {
-                    Spacer()
-                    BlobGalleryView(
-                        blobs: [
-                            imageSample,
-                            videoSample,
-                            anotherImageSample
-                        ],
-                        blobCache: cache,
-                        enableTapGesture: false
-                    )
-                    Spacer()
-                }
-                .environmentObject(AppController.shared)
-                .environmentObject(BotRepository.fake)
-                .background(Color.black)
-            }
+            BlobGalleryView(
+                blobs: [
+                    imageSample,
+                    videoSample,
+                    anotherImageSample
+                ],
+                blobCache: cache,
+                dismissHandler: nil
+            )
+            .frame(maxWidth: 400, maxHeight: 400)
+            .environmentObject(AppController.shared)
+            .environmentObject(BotRepository.fake)
             
-            VStack {
-                Spacer()
-                video
-                Spacer()
-            }
-            .background(Color.black)
+            BlobGalleryView(
+                blobs: [
+                    imageSample,
+                    videoSample,
+                    anotherImageSample
+                ],
+                blobCache: cache,
+                dismissHandler: {}
+            )
+            .environmentObject(AppController.shared)
+            .environmentObject(BotRepository.fake)
         }
     }
 }

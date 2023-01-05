@@ -119,6 +119,13 @@ extension AppController {
         let controller = UIHostingController(rootView: view)
         self.push(controller, animated: true)
     }
+    
+    func pushBlobViewController(for blobs: [Blob], selected: Blob) {
+        let controller = BlobGalleryViewController(blobs: blobs, selected: selected)
+        controller.modalPresentationStyle = .overFullScreen
+        controller.modalTransitionStyle = .crossDissolve
+        self.present(controller, animated: true)
+    }
 
     func pushBlobViewController(for blobID: BlobIdentifier) {
         let controller = BlobViewController(for: blobID)

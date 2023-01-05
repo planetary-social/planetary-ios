@@ -53,6 +53,10 @@ extension AppDelegate {
         
         // table views
         UITableView.appearance().backgroundColor = .appBackground
+        
+        // page control
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.tint.default
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.25)
     }
 }
 

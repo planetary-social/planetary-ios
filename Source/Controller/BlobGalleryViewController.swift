@@ -14,14 +14,13 @@ class BlobGalleryViewController: UIViewController {
     
     private var blobSource = BlobSource(blobs: [])
     
-    init(blobs: Blobs) {
+    init(blobs: Blobs, selected: Blob? = nil) {
         super.init(nibName: nil, bundle: nil)
-        blobSource.blobs = blobs
+        blobSource = BlobSource(blobs: blobs, selected: selected)
     }
     
-    init(blobID: BlobIdentifier) {
-        super.init(nibName: nil, bundle: nil)
-        blobSource.blobs = [Blob(identifier: blobID)]
+    convenience init(blobID: BlobIdentifier) {
+        self.init(blobs: [Blob(identifier: blobID)])
     }
     
     @available(*, unavailable)
@@ -32,7 +31,7 @@ class BlobGalleryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let galleryView = BlobGalleryView(blobSource: blobSource)
+        let galleryView = BlobGalleryView(blobSource: blobSource, dismissHandler: { self.dismiss(animated: true) })
             .environmentObject(BotRepository.shared)
             .environmentObject(AppController.shared)
         
@@ -40,6 +39,7 @@ class BlobGalleryViewController: UIViewController {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
         view.addSubview(hostingController.view)
+        Layout.fill(view: view, with: hostingController.view, respectSafeArea: false)
         hostingController.didMove(toParent: self)
     }
     
