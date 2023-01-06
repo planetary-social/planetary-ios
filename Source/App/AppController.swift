@@ -64,6 +64,10 @@ class AppController: UIViewController, ObservableObject {
     }
 
     // MARK: Root view controller
+    
+    var rootViewController: UIViewController? {
+        children.first
+    }
 
     func setRootViewController(_ controller: UIViewController, animated: Bool = true) {
         self.removeRootViewController()
@@ -217,7 +221,11 @@ class AppController: UIViewController, ObservableObject {
             return controller
         }
         
-        return getPresentedController(self)
+        if let root = rootViewController {
+            return getPresentedController(root)
+        } else {
+            return getPresentedController(self)
+        }
     }
     
     // MARK: Operations

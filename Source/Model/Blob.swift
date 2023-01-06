@@ -47,35 +47,37 @@ struct Blob: Codable {
         self.metadata = metadata
     }
     
-    // MARK: - MIME type
+    // MARK: MIME Type
     
     // https://stackoverflow.com/a/32765708/982195
-    static func mimeType(for data: Data) -> String {
+    static func type(for data: Data) -> BlobType {
 
-        var b: UInt8 = 0
-        data.copyBytes(to: &b, count: 1)
+        var byte: UInt8 = 0
+        data.copyBytes(to: &byte, count: 1)
 
-        switch b {
+        switch byte {
         case 0xFF:
-            return "image/jpeg"
+            return .jpg
         case 0x89:
-            return "image/png"
+            return .png
         case 0x47:
-            return "image/gif"
+            return .gif
         case 0x4D, 0x49:
-            return "image/tiff"
+            return .tiff
         case 0x25:
-            return "application/pdf"
+            return .pdf
         case 0xD0:
-            return "application/vnd"
+            return .vnd
         case 0x46:
-            return "text/plain"
+            return .txt
         default:
-            return "application/octet-stream"
+            return .unsupported
         }
     }
+}
     
-    // MARK: mentions gap
+enum BlobType: String {
+    case jpg, png, gif, tiff, pdf, vnd, txt, unsupported
 }
 
 typealias Blobs = [Blob]

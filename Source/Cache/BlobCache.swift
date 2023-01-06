@@ -51,13 +51,85 @@ class BlobCache: DictionaryCache {
     // MARK: Request UIImage blob
 
     typealias UIImageCompletion = ((Result<(BlobIdentifier, UIImage), Error>) -> Void)
-    typealias UIImageCompletionHandle = UUID
+    typealias DataCompletion = ((Result<(BlobIdentifier, Data), Error>) -> Void)
+    typealias CancellationToken = UUID
+    
+    // MARK: - Public Interface
 
     /// Immediately returns the cached image for the identifier.  This will
     /// not request to load the image from the bot, use `image(for:completion)` instead.
     func image(for identifier: BlobIdentifier) -> UIImage? {
         Thread.assertIsMainThread()
-        return self.item(for: identifier) as? UIImage
+        if let data = item(for: identifier) as? Data {
+            return UIImage(data: data)
+        } else {
+            return nil
+        }
+    }
+    
+    @MainActor
+    func data(for identifier: BlobIdentifier) async throws -> Data {
+        // check for cache hit
+        if let anyItem = self.item(for: identifier), let data = anyItem as? Data {
+            return data
+        }
+        
+        let cancellationToken = UUID()
+        let result = await withCheckedContinuation { continuation in
+            let loadCompletion = { (result: Result<(BlobIdentifier, Data), Error>) in
+                continuation.resume(returning: result)
+            }
+            Task {
+                let isFirstRequest = await self.requestManager.add(
+                    loadCompletion,
+                    for: identifier,
+                    token: cancellationToken
+                )
+                
+                // start request if there is not a pending one
+                if isFirstRequest {
+                    await MainActor.run {
+                        self.loadImage(for: identifier)
+                    }
+                }
+            }
+        }
+        
+        switch result {
+        case .success((_, let data)):
+            return data
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    func data(for identifier: BlobIdentifier, completion: @escaping DataCompletion) {
+        Task {
+            do {
+                let data = try await data(for: identifier)
+                completion(.success((identifier, data)))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func blobFileURL(from blob: Blob) -> URL? {
+        return try? bot.blobFileURL(from: blob.identifier)
+    }
+    
+    func symbolicLink(for blob: Blob, fileExtension: String) -> URL? {
+        do {
+//            let _ = try await data(for: blob.identifier) // TODO: optimize?
+            let blobURL = try bot.blobFileURL(from: blob.identifier)
+            // TODO: don't use UUID
+            let linkURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())\(UUID().uuidString).\(fileExtension)")
+            try FileManager.default.createSymbolicLink(at: linkURL, withDestinationURL: blobURL)
+            return linkURL
+        } catch {
+            // TODO
+            return nil
+        }
     }
 
     /// Asynchronously returns the cached image for the identifier, or requests the
@@ -70,12 +142,13 @@ class BlobCache: DictionaryCache {
     /// is useful for views that are re-used, like table view cells, to manage how many
     /// elements are waiting for a particular blob.
     @discardableResult
-    func image(for identifier: BlobIdentifier, completion: @escaping UIImageCompletion) -> UIImageCompletionHandle? {
+    func image(for identifier: BlobIdentifier, completion: @escaping UIImageCompletion) -> CancellationToken? {
         Thread.assertIsMainThread()
 
         // returns the cached image immediately
         if let anyItem = self.item(for: identifier) {
-            if let image = anyItem as? UIImage {
+            if let data = anyItem as? Data,
+                let image = UIImage(data: data) {
                 completion(.success((identifier, image)))
             } else {
                 completion(.failure(BlobCacheError.unsupported))
@@ -83,11 +156,24 @@ class BlobCache: DictionaryCache {
             return nil
         }
         
-        let requestUUID = UUID()
+        let cancellationToken = UUID()
         
         Task.detached {
+            let imageCompletion = { (result: Result<(BlobIdentifier, Data), Error>) in
+                switch result {
+                case .success((_, let data)):
+                    if let image = UIImage(data: data) {
+                        completion(.success((identifier, image)))
+                    } else {
+                        completion(.failure(BlobCacheError.unsupported))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+            
             // otherwise schedule the completion
-            let isFirstRequest = await self.requestManager.add(completion, for: identifier, uuid: requestUUID)
+            let isFirstRequest = await self.requestManager.add(imageCompletion, for: identifier, token: cancellationToken)
             
             // start request if there is not a pending one
             if isFirstRequest {
@@ -98,7 +184,7 @@ class BlobCache: DictionaryCache {
         }
 
         // wait for load
-        return requestUUID
+        return cancellationToken
     }
     
     /// Same as `image(for identifier:completion:)` except in returns a placeholder image if the blob type is
@@ -107,7 +193,7 @@ class BlobCache: DictionaryCache {
     func imageOrPlaceholder(
         for identifier: BlobIdentifier,
         completion: @escaping (UIImage) -> Void
-    ) -> UIImageCompletionHandle? {
+    ) -> CancellationToken? {
         
         image(for: identifier) { result in
             switch result {
@@ -128,8 +214,14 @@ class BlobCache: DictionaryCache {
             }
         }
     }
-
+    
+    // MARK: - Implementation
+    
     private func loadImage(for identifier: BlobIdentifier) {
+        loadData(for: identifier)
+    }
+
+    private func loadData(for identifier: BlobIdentifier) {
         
         bot.data(for: identifier) { [weak self] identifier, data, error in
             guard let self = self else { return }
@@ -171,20 +263,15 @@ class BlobCache: DictionaryCache {
                 return
             }
 
-            guard let image = UIImage(data: data) else {
-                self.didLoad(identifier, result: .failure(BlobCacheError.unsupported))
-                return
-            }
-
             // only complete if valid image
-            self.didLoad(identifier, result: .success(image))
+            self.didLoad(identifier, result: .success(data))
         }
     }
     
     /// Attempt to load a blob from Planetary's cloud services.
     private func loadBlobFromCloud(
         for blobRef: BlobIdentifier,
-        completion: @escaping (Result<UIImage, BlobCacheError>) -> Void
+        completion: @escaping (Result<Data, BlobCacheError>) -> Void
     ) {
         let hexRef = blobRef.hexEncodedString()
         
@@ -219,18 +306,13 @@ class BlobCache: DictionaryCache {
                 return
             }
             
-            guard let image = UIImage(data: data) else {
-                completion(.failure(.unsupported))
-                return
-            }
-            
             self?.bot.store(data: data, for: blobRef) { (_, error) in
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
                 
                 if error == nil {
                     DispatchQueue.main.async {
-                        completion(.success(image))
+                        completion(.success(data))
                     }
                 }
                 
@@ -262,11 +344,11 @@ class BlobCache: DictionaryCache {
         return false
     }
     
-    private func didLoad(_ identifier: BlobIdentifier, result: Result<UIImage, Error>) {
+    private func didLoad(_ identifier: BlobIdentifier, result: Result<Data, Error>) {
         Task.detached {
             await MainActor.run {
-                if let image = try? result.get() {
-                    self.store(image, for: identifier)
+                if let data = try? result.get() {
+                    self.store(data, for: identifier)
                 }
             }
             
@@ -294,7 +376,7 @@ class BlobCache: DictionaryCache {
         
         /// A map of completion handlers along with their unique IDs and the identifiers of the blobs they are
         /// waiting on.
-        private var completions: [BlobIdentifier: [UUID: UIImageCompletion]] = [:]
+        private var completions: [BlobIdentifier: [CancellationToken: DataCompletion]] = [:]
         
         /// A dictionary that keeps track of how many time we have tried and failed to get a blob.
         private var retries: [BlobIdentifier: Int] = [:]
@@ -325,16 +407,20 @@ class BlobCache: DictionaryCache {
         
         /// Adds a single completion for a specific blob identifier. Returns true if this is the first request
         /// for the given blob.
-        func add(_ completion: @escaping UIImageCompletion, for identifier: BlobIdentifier, uuid: UUID) -> Bool {
+        func add(
+            _ completion: @escaping DataCompletion,
+            for identifier: BlobIdentifier,
+            token: CancellationToken
+        ) -> Bool {
             var completions = self.completions[identifier] ?? [:]
-            completions[uuid] = completion
+            completions[token] = completion
             self.completions[identifier] = completions
             return completions.count == 1
         }
         
         /// Removes the completion handlers for the given blob from storage and returns them.
         /// Completions can only be accessed this way externally to prevent handlers from being called twice.
-        func popCompletions(for identifier: BlobIdentifier) -> [UUID: UIImageCompletion] {
+        func popCompletions(for identifier: BlobIdentifier) -> [CancellationToken: DataCompletion] {
             let completionsForIdentifier = completions[identifier] ?? [:]
             forgetCompletions(for: identifier)
             return completionsForIdentifier
@@ -375,10 +461,10 @@ class BlobCache: DictionaryCache {
         }
         /// Forgets a specific UUID tagged completion for a blob identifier.  This will
         /// remove a single completion at a time.
-        func forgetCompletions(with uuid: UUID, for identifier: BlobIdentifier) {
+        func forgetCompletions(with token: CancellationToken, for identifier: BlobIdentifier) {
             // remove completions per UUID
             var completions = self.completions[identifier] ?? [:]
-            completions.removeValue(forKey: uuid)
+            completions.removeValue(forKey: token)
 
             // if no completions left then remove blob identifier
             if completions.isEmpty {
@@ -411,9 +497,9 @@ class BlobCache: DictionaryCache {
         }
     }
     
-    func forgetCompletions(with uuid: UUID, for identifier: BlobIdentifier) {
+    func forgetCompletions(with token: CancellationToken, for identifier: BlobIdentifier) {
         Task.detached {
-            await self.requestManager.forgetCompletions(with: uuid, for: identifier)
+            await self.requestManager.forgetCompletions(with: token, for: identifier)
         }
     }
 
@@ -431,11 +517,10 @@ class BlobCache: DictionaryCache {
 
     // tracks the total bytes in use
     private var bytes: Int = 0
-
-    /// Inserts the image into the cache and updates the number of bytes used by the cache.
-    private func store(_ image: UIImage, for identifier: Identifier) {
-        self.bytes += self.bytes(for: image)
-        super.update(image, for: identifier)
+    
+    private func store(_ data: Data, for identifier: Identifier) {
+        self.bytes += data.count
+        super.update(data, for: identifier)
     }
 
     /// Removes cached images, starting with the oldest last recently used LRU, down to

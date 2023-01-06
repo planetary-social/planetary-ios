@@ -121,7 +121,7 @@ extension AppController {
     }
     
     func pushBlobViewController(for blobs: [Blob], selected: Blob) {
-        let controller = BlobGalleryViewController(blobs: blobs, selected: selected)
+        let controller = BlobGalleryViewController(blobs: blobs, selected: selected, fullScreen: true)
         controller.modalPresentationStyle = .overFullScreen
         controller.modalTransitionStyle = .crossDissolve
         self.present(controller, animated: true)

@@ -10,17 +10,19 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class BlobGalleryViewController: UIViewController {
+class BlobGalleryViewController: UIViewController, ObservableObject {
     
-    private var blobSource = BlobSource(blobs: [])
+    @Published var blobSource: BlobSource
+    private var fullScreen: Bool
     
-    init(blobs: Blobs, selected: Blob? = nil) {
+    init(blobs: Blobs, selected: Blob? = nil, fullScreen: Bool) {
+        self.fullScreen = fullScreen
+        self.blobSource = BlobSource(blobs: blobs, selected: selected)
         super.init(nibName: nil, bundle: nil)
-        blobSource = BlobSource(blobs: blobs, selected: selected)
     }
     
-    convenience init(blobID: BlobIdentifier) {
-        self.init(blobs: [Blob(identifier: blobID)])
+    convenience init(blobID: BlobIdentifier, fullScreen: Bool) {
+        self.init(blobs: [Blob(identifier: blobID)], fullScreen: fullScreen)
     }
     
     @available(*, unavailable)
@@ -31,7 +33,8 @@ class BlobGalleryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let galleryView = BlobGalleryView(blobSource: blobSource, dismissHandler: { self.dismiss(animated: true) })
+        let dismissHandler = fullScreen ? { self.dismiss(animated: true) } : nil
+        let galleryView = BlobGalleryView(blobSource: blobSource, dismissHandler: dismissHandler)
             .environmentObject(BotRepository.shared)
             .environmentObject(AppController.shared)
         
@@ -39,11 +42,12 @@ class BlobGalleryViewController: UIViewController {
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
         view.addSubview(hostingController.view)
-        Layout.fill(view: view, with: hostingController.view, respectSafeArea: false)
+        Layout.fill(view: view, with: hostingController.view, respectSafeArea: !fullScreen)
         hostingController.didMove(toParent: self)
     }
     
     func update(with post: Post) {
         blobSource.blobs = post.anyBlobs
+        blobSource.selected = blobSource.blobs.first ?? Blob(identifier: .null)
     }
 }

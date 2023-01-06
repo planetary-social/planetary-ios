@@ -79,6 +79,13 @@ class NewPostViewController: ContentViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+//        let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
+//        let data = try! Data(contentsOf: videoURL)
+//        Bots.current.addBlob(data: data) { blobID, error in
+//            print(blobID)
+//            print(error)
+//        }
     }
     
     override func willMove(toParent parent: UIViewController?) {
@@ -162,7 +169,7 @@ class NewPostViewController: ContentViewController {
         }
         
         let text = self.textView.attributedText
-        let post = Post(attributedText: text)
+        let post = Post(attributedText: text).copy(with: [Blob(identifier: "&sf5hbmTveIaamRNkeBXt58k0Ai781hau/9WHc7Df9Uw=.sha256", name: "video:video.mp4")])
         let images = self.galleryView.images
 
         let draftStore = draftStore

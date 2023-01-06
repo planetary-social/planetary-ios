@@ -9,6 +9,7 @@
 import SwiftUI
 import AVKit
 import CryptoKit
+import Logger
 
 struct AVPlayerControllerRepresented : UIViewControllerRepresentable {
     var player : AVPlayer
@@ -26,7 +27,7 @@ struct AVPlayerControllerRepresented : UIViewControllerRepresentable {
 }
 
 class BlobSource: ObservableObject {
-    var blobs: Blobs
+    @Published var blobs: Blobs
     @Published var selected: Blob
     
     init(blobs: Blobs, selected: Blob? = nil) {
@@ -123,6 +124,66 @@ struct BlobGalleryView: View {
     
     @State private var dragOffset: CGSize = .zero
     
+    @State private var shareURL: URL?
+    
+    private var shareButtonDisabled: Bool {
+        shareURL == nil
+    }
+    
+    func loadShareURL() async {
+        let blob = dataSource.selected
+        async let data = blobCache.data(for: blob.id)
+        var filename = blob.name?.trimmed ?? ""
+        if filename.isEmpty {
+            
+            filename = String(blob.identifier.hexEncodedString().prefix(8))
+            
+        }
+        if filename.starts(with: "video:") {
+            filename = String(filename.dropFirst("video:".count))
+        }
+        if filename.starts(with: "audio:") {
+            filename = String(filename.dropFirst("audio:".count))
+        }
+        
+        var activityURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())\(filename)")
+        
+        // try to determine file extension if there isn't one
+        if activityURL.pathExtension.isEmpty {
+            do {
+                let blobType = Blob.type(for: try await data)
+                switch blobType {
+                case .unsupported:
+                    break
+                case .jpg, .png, .pdf, .vnd, .gif, .txt, .tiff:
+                    activityURL = activityURL.appendingPathExtension(blobType.rawValue)
+                }
+            } catch {
+                Log.optional(error)
+            }
+        }
+        
+        shareURL = activityURL
+    }
+    
+    func showShareSheet() {
+        let blob = dataSource.selected
+        Task {
+            let data = try? await self.blobCache.data(for: blob.id)
+            if let shareURL, let data {
+                try data.write(to: shareURL)
+                
+                let top = appController.topViewController
+                let activityViewController = UIActivityViewController(
+                    activityItems: [shareURL],
+                    applicationActivities: nil
+                )
+                activityViewController.popoverPresentationController?.sourceView = top.view
+                top.present(activityViewController, animated: true, completion: nil)
+            }
+        }
+    }
+    
     var body: some View {
         let tabView = TabView(selection: $dataSource.selected) {
             if blobs.isEmpty {
@@ -139,7 +200,8 @@ struct BlobGalleryView: View {
                                     .onChanged { gesture in
                                         if gesture.translation.width < 40 {
                                             dragOffset = gesture.translation
-                                        }                                     }
+                                        }
+                                    }
                                     .onEnded { _ in
                                         if abs(dragOffset.height) > 100 {
                                             dismissHandler?()
@@ -151,11 +213,12 @@ struct BlobGalleryView: View {
                             )
                             .tag(blob)
                     } else {
-                        BlobThumbnailView(blob: blob, blobCache: blobCache)
-                            .tag(blob)
-                            .onTapGesture {
-                                appController.pushBlobViewController(for: blobs, selected: dataSource.selected)
-                            }
+                        Button {
+                            appController.pushBlobViewController(for: blobs, selected: dataSource.selected)
+                        } label: {
+                            BlobThumbnailView(blob: blob, blobCache: blobCache)
+                        }
+                        .tag(blob)
                     }
                 }
             }
@@ -172,22 +235,28 @@ struct BlobGalleryView: View {
                             Button {
                                 dismissHandler?()
                             } label: {
-                                let xmark = Image(systemName: "xmark.circle.fill")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
+                                let xmark = Image(systemName: "xmark")
+                                    .font(.system(size: 25))
                                     .padding(16)
-                                    .foregroundColor(Color.black)
+                                    .foregroundColor(Color.white)
                                 
                                 xmark
-                                //                            .overlay(Color.black.mask(xmark))
-                                    .background(
-                                        Circle()
-                                            .foregroundColor(Color.white)
-                                            .frame(width: 30, height: 30)
-                                    )
                             }
                             
                             Spacer()
+                            
+                            Button {
+                                showShareSheet()
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 25))
+                                    .padding(16)
+                                    .foregroundColor(shareButtonDisabled ? Color.gray : Color.white)
+                            }
+                            .disabled(shareButtonDisabled)
+                            .task {
+                                await loadShareURL()
+                            }
                         }
                         Spacer()
                     }
@@ -196,37 +265,62 @@ struct BlobGalleryView: View {
             tabView
                 .aspectRatio(1, contentMode: .fit)
         }
-                
     }
 }
 
-struct BlobThumbnailView: View {
-    
-        var blob: Blob
-    var blobCache: BlobCache
-    
-    var body: some View {
-        ImageMetadataView(
-            metadata: ImageMetadata(link: blob.identifier),
-            blobCache: blobCache
-        )
-        .scaledToFill()
-    }
-}
-
-struct BlobFullScreenView: View {
-    
-    var blob: Blob
-    var blobCache: BlobCache
-    
-    var body: some View {
-        ImageMetadataView(
-            metadata: ImageMetadata(link: blob.identifier),
-            blobCache: blobCache
-        )
-        .scaledToFit()
-    }
-}
+//class BlobActivityProvider: UIActivityItemProvider {
+//
+//    var blob: Blob
+//    var blobCache: BlobCache
+//    var activityURL: URL?
+//
+//    init(blob: Blob, cache: BlobCache) {
+//        self.blob = blob
+//        self.blobCache = cache
+//
+//        var filename = blob.name?.trimmed ?? ""
+//        if filename.isEmpty {
+//
+//            filename = String(blob.identifier.hexEncodedString().prefix(8))
+//
+//        }
+//        if filename.starts(with: "video:") {
+//            filename = String(filename.dropFirst("video:".count))
+//        }
+//        if filename.starts(with: "audio:") {
+//            filename = String(filename.dropFirst("audio:".count))
+//        }
+//
+//        activityURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())\(filename)")
+//
+//        super.init(placeholderItem: activityURL)
+//    }
+//
+//    private var blobData: Data?
+//
+//    override var item: Any {
+//        if let data = Self.synchronouslyGetData(for: blob, from: blobCache), var activityURL = activityURL {
+//
+//        } else {
+//            return NSObject()
+//        }
+//    }
+//
+//    private static func synchronouslyGetData(for blob: Blob, from cache: BlobCache) -> Data? {
+//        var data: Data?
+//        let lock = NSLock()
+//        lock.lock()
+//        DispatchQueue(label: "BlobActivityProvider").sync {
+//            cache.data(for: blob.id) { result in
+//                data = try? result.get().1
+//                lock.unlock()
+//            }
+//        }
+//        lock.lock()
+//        lock.unlock()
+//        return data
+//    }
+//}
 
 struct ImageMetadataGalleryView_Previews: PreviewProvider {
     
@@ -248,33 +342,8 @@ struct ImageMetadataGalleryView_Previews: PreviewProvider {
         let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
         let data = try! Data(contentsOf: videoURL)
         let blobIdentifier = "&\(data.sha256)=.sha256"
-        (Bots.fake as! FakeBot).store(url: videoURL) { _, _ in
-            
-            
-        }
-        return Blob(identifier: blobIdentifier)
-    }
-    
-    static var videoPlayer: AVPlayer {
-        let blobURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
-        let linkURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())/\(UUID().uuidString).mp4")
-        try! FileManager.default.createSymbolicLink(at: linkURL, withDestinationURL: blobURL)
-//        let videoURL = Bundle.main.url(forResource: "HomeFeedHelp", withExtension: "mp4")!
-        let videoURL = linkURL
-        let asset = AVAsset(url: videoURL)
-        let item = AVPlayerItem(asset: asset)
-//        let videoPlayer = AVQueuePlayer(items: [item])
-        let videoPlayer = AVPlayer(playerItem: item)
-//        videoPlayer.actionAtItemEnd = .none
-//        videoPlayer.isMuted = true
-//        let videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
-//        return AVPlayerControllerRepresented(player: AVPlayer(playerItem: item))
-        return videoPlayer
-    }
-    
-    static var video: some View {
-//        VideoPlayer(player: videoPlayer)
-        AVPlayerControllerRepresented(player: videoPlayer)
+        (Bots.fake as! FakeBot).store(url: videoURL) { _, _ in }
+        return Blob(identifier: blobIdentifier, name: "video:vide.mp4")
     }
     
     static var previews: some View {

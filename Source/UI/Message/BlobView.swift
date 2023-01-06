@@ -20,7 +20,8 @@ struct BlobView: View {
         VStack {
             Spacer()
             ImageMetadataView(
-                metadata: ImageMetadata(link: blob.identifier),
+                blob: blob,
+                thumbnail: false,
                 blobCache: blobCache
             )
             .tag(blob)

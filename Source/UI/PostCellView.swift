@@ -11,6 +11,20 @@ import ImageSlideshow
 import UIKit
 import SkeletonView
 
+// https://stackoverflow.com/a/50981046/982195
+extension UIView {
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder!.next
+            if let viewController = parentResponder as? UIViewController {
+                return viewController
+            }
+        }
+        return nil
+    }
+}
+    
 class PostCellView: MessageUIView {
 
     let verticalSpace: CGFloat = 5
@@ -160,6 +174,12 @@ class PostCellView: MessageUIView {
     }
 
     override func layoutSubviews() {
+        if galleryViewController.parent == nil,
+            let parent = parentViewController {
+            parent.addChild(galleryViewController)
+            galleryViewController.didMove(toParent: parent)
+        }
+            
         super.layoutSubviews()
 
         // this busts the cache for the truncationData,
@@ -173,7 +193,7 @@ class PostCellView: MessageUIView {
     // the gallery view allows custom insets for the actual content
     // inside of it, and this value was chosen to allow for a specific
     // distance between the content top and the northern text view
-    private let galleryViewController = BlobGalleryViewController(blobs: [])
+    private let galleryViewController = BlobGalleryViewController(blobs: [], fullScreen: false)
     private var galleryViewZeroHeightConstraint: NSLayoutConstraint!
     private var galleryViewFullHeightConstraint: NSLayoutConstraint!
     private var galleryViewBottomConstraint: NSLayoutConstraint?
@@ -208,14 +228,10 @@ class PostCellView: MessageUIView {
         self.textViewZeroHeightConstraint.isActive = false
 
         // Gallery View
-        // Using AppController.shared here feels bad, but this class should be deleted soon and replaced with SwiftUI.
         if let galleryView = galleryViewController.view {
             galleryView.useAutoLayout()
             
-            AppController.shared.addChild(galleryViewController)
             addSubview(galleryView)
-            galleryViewController.didMove(toParent: AppController.shared)
-            
             galleryView.pinTop(toBottomOf: self.textView, constant: 5)
             galleryView.pinLeftToSuperview()
             galleryView.constrainWidth(to: self)

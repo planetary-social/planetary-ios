@@ -747,20 +747,36 @@ extension Bot {
         jpegOf image: UIImage,
         largestDimension: UInt?
     ) async throws -> ImageMetadata {
-            try await withCheckedThrowingContinuation { continuation in
-                addBlob(jpegOf: image, largestDimension: largestDimension) { result, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                        return
-                    }
-                    guard let result = result else {
-                        continuation.resume(throwing: GoBotError.unexpectedFault("Expected non-nil image"))
-                        return
-                    }
-                    continuation.resume(returning: result)
+        try await withCheckedThrowingContinuation { continuation in
+            addBlob(jpegOf: image, largestDimension: largestDimension) { result, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
                 }
+                guard let result = result else {
+                    continuation.resume(throwing: GoBotError.unexpectedFault("Expected non-nil image"))
+                    return
+                }
+                continuation.resume(returning: result)
             }
         }
+    }
+    
+    func data(for identifier: BlobIdentifier) async throws -> Data {
+        try await withCheckedThrowingContinuation { continuation in
+            data(for: identifier) { _, data, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let data = data else {
+                    continuation.resume(throwing: BotError.blobUnavailable)
+                    return
+                }
+                continuation.resume(returning: data)
+            }
+        }
+    }
 
     /// Fetch the message source of the given message
     ///

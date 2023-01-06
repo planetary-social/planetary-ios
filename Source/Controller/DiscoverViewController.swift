@@ -71,7 +71,7 @@ class DiscoverViewController: ContentViewController, UISearchResultsUpdating, UI
         return view
     }()
     
-    private lazy var searchController: UISearchController = {
+    private(set) lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
         controller.searchResultsUpdater = self
         controller.searchBar.delegate = self
