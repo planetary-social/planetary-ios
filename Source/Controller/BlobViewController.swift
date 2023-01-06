@@ -31,7 +31,7 @@ class BlobViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let blobView = BlobView(blob: blob) { self.dismiss(animated: true) }
+        let blobView = BlobView(blob: blob)
             .environmentObject(BotRepository.shared)
             .environmentObject(AppController.shared)
         

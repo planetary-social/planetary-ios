@@ -15,7 +15,7 @@ struct AvatarView: View {
 
     var body: some View {
         ZStack {
-            ImageMetadataView(blob: Blob(identifier: metadata?.id ?? .null), thumbnail: false)
+            BlobView(blob: Blob(identifier: metadata?.id ?? .null))
                 .scaledToFill()
         }
         .frame(width: size, height: size)
