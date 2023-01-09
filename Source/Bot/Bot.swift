@@ -164,6 +164,11 @@ protocol Bot: AnyObject, Sendable {
 
     // MARK: Contact
 
+    /// This fetches Identities whose names contain the given filter string.
+    /// - Parameter filter: A substring that you would like to search Identities for.
+    /// - Returns: The matching Identities.
+    func identities(matching filter: String) async throws -> [Identity]
+
     func follow(_ identity: Identity, completion: @escaping ContactCompletion)
     func unfollow(_ identity: Identity, completion: @escaping ContactCompletion)
 

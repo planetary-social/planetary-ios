@@ -398,3 +398,6 @@
 "YourNetwork.title" = "Els teus amics, connexions i pubs";
 "YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
 "YourNetwork.highlightedWord" = "xafarderia";
+
+"Search.all" = "All";
+"Search.people" = "People";

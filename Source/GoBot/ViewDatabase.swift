@@ -1125,6 +1125,15 @@ class ViewDatabase {
         }
         return abouts
     }
+
+    func identities(withNameLike queryString: String) throws -> [Identity] {
+        let db = try checkoutConnection()
+        let query = self.abouts
+            .join(self.authors, on: colID == self.abouts[colAboutID])
+            .order(self.abouts[colName])
+            .where(colName.like("%\(queryString)%"))
+        return try db.prepare(query).map { try $0.get(colAuthor) }
+    }
     
     // MARK: follows and blocks
     

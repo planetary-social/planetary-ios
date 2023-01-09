@@ -43,3 +43,19 @@ struct EmptyPostsView: View {
         }
     }
 }
+
+struct EmptyPostsView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VStack {
+                EmptyPostsView(description: Localized.Message.noPostsDescription)
+            }
+            VStack {
+                EmptyPostsView(description: Localized.Message.noPostsDescription)
+            }
+            .preferredColorScheme(.dark)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.appBg)
+    }
+}

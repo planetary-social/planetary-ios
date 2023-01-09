@@ -12,8 +12,16 @@ import Down
 class MarkdownStyler: DownStyler {
 
     enum FontStyle {
+        // Suitable for posts in Home
         case regular
+
+        // Suitable for bio and hashtags in Discover
+        case small
+
+        // Suitable for posts in Discover
         case compact
+
+        // Suitable for text-only posts in Discover
         case large
     }
 
@@ -81,6 +89,11 @@ class MarkdownStyler: DownStyler {
             heading1 = .title3
             heading2 = .headline
             heading3 = .subheadline
+        case .small:
+            body = .footnote
+            heading1 = .footnote
+            heading2 = .footnote
+            heading3 = .footnote
         case .compact:
             body = .body
             heading1 = .body
@@ -99,7 +112,7 @@ class MarkdownStyler: DownStyler {
             fonts.heading1 = UIFont.preferredFont(forTextStyle: heading1)
             fonts.heading2 = UIFont.preferredFont(forTextStyle: heading2)
             fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
-        case .compact, .large:
+        case .small, .compact, .large:
             let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1)
             if let descriptor = descriptor.withSymbolicTraits(.traitBold) {
                 fonts.heading1 = UIFont(descriptor: descriptor, size: 0)

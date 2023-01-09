@@ -1128,6 +1128,14 @@ class GoBot: Bot, @unchecked Sendable {
         return try await dbTask.value
     }
 
+    func identities(matching filter: String) async throws -> [Identity] {
+        let dbTask = Task.detached(priority: .high) {
+            try self.database.identities(withNameLike: filter)
+        }
+
+        return try await dbTask.value
+    }
+
     // MARK: Contacts
 
     func follow(_ identity: Identity, completion: @escaping ContactCompletion) {

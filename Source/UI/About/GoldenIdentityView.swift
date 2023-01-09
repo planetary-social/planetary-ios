@@ -67,6 +67,10 @@ struct GoldenIdentityView: View {
         return true
     }
 
+    private var bio: AttributedString {
+        about?.description?.parseMarkdown(fontStyle: .small) ?? AttributedString()
+    }
+
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             BlobGalleryView(blobs: [Blob(identifier: about?.image?.identifier ?? .null)])
@@ -74,27 +78,34 @@ struct GoldenIdentityView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .layoutPriority(1)
             Text(about?.nameOrIdentity ?? identity)
-                .padding(EdgeInsets(top: 9, leading: 0, bottom: 0, trailing: 0))
+                .padding(EdgeInsets(top: 9, leading: 10, bottom: 5, trailing: 10))
                 .lineLimit(1)
                 .foregroundColor(.primaryTxt)
-                .font(.headline)
+                .font(.subheadline)
+            Text(identity.prefix(7))
+                .foregroundColor(.secondaryTxt)
+                .font(.footnote)
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             if shouldShowBio {
-                BioView(bio: about?.description, lineLimit: 2, showReadMoreIfNeeded: false)
-                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 0))
+                Text(bio)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .multilineTextAlignment(.center)
+                    .allowsHitTesting(false)
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                    .placeholder(when: about == nil) {
+                        Text(String.loremIpsum(1))
+                            .padding(0)
+                            .redacted(reason: .placeholder)
+                    }
             }
             if let hashtags = hashtags, !hashtags.isEmpty {
-                Text(hashtags.map { $0.string }.joined(separator: " ").parseMarkdown())
-                    .font(.subheadline)
+                Text(hashtags.map { $0.string }.joined(separator: " ").parseMarkdown(fontStyle: .small))
                     .foregroundLinearGradient(.horizontalAccent)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                    .padding(EdgeInsets(top: 2, leading: 0, bottom: 0, trailing: 0))
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             }
-            Text(attributedSocialStats(from: socialStats ?? .zero))
-                .font(.footnote)
-                .foregroundColor(Color.secondaryTxt)
-                .redacted(reason: socialStats == nil ? .placeholder : [])
-                .padding(EdgeInsets(top: 5, leading: 0, bottom: 10, trailing: 0))
+            Spacer(minLength: 9)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .aspectRatio(goldenRatio, contentMode: ContentMode.fill)
@@ -116,7 +127,6 @@ struct GoldenIdentityView: View {
         .task {
             loadAbout()
             loadHashtags()
-            loadSocialStats()
         }
     }
 
@@ -153,25 +163,6 @@ struct GoldenIdentityView: View {
                 Log.shared.optional(error)
                 await MainActor.run {
                     hashtags = []
-                }
-            }
-        }
-    }
-
-    private func loadSocialStats() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.socialStats(for: identityToLoad)
-                await MainActor.run {
-                    socialStats = result
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    socialStats = .zero
                 }
             }
         }

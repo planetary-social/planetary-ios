@@ -398,3 +398,6 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios que sigues, aquellos que *ellos* siguen y los servidores de pub que usas para *chismear* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*chismes*";
+
+"Search.all" = "All";
+"Search.people" = "People";

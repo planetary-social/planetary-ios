@@ -12,10 +12,6 @@ struct BioView: View {
 
     var bio: String?
 
-    var lineLimit = 5
-
-    var showReadMoreIfNeeded = true
-
     @State
     private var showingBio = false
     
@@ -39,7 +35,7 @@ struct BioView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(markdown)
-                .lineLimit(lineLimit)
+                .lineLimit(5)
                 .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                 .background {
                     GeometryReader { geometryProxy in
@@ -91,7 +87,7 @@ struct BioView: View {
         }
         .placeholder(when: isLoading) {
             Text(String.loremIpsum(1))
-                .lineLimit(lineLimit)
+                .lineLimit(5)
                 .padding(EdgeInsets(top: 0, leading: 18, bottom: 9, trailing: 18))
                 .redacted(reason: .placeholder)
         }
@@ -116,9 +112,6 @@ struct BioView: View {
     }
 
     private func updateShouldShowReadMore() {
-        guard showReadMoreIfNeeded else {
-            return
-        }
         shouldShowReadMore = intrinsicSize != truncatedSize
     }
 
