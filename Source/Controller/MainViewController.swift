@@ -117,20 +117,24 @@ class MainViewController: UITabBarController {
     private var topBorder: UIView?
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        let homeViewController = UIHostingController(
+            rootView: HomeView(helpDrawerState: helpDrawerState)
+                .environmentObject(BotRepository.shared)
+                .environmentObject(AppController.shared)
+        )
+        homeViewController.navigationItem.title = Localized.home.text
         homeFeatureViewController = FeatureViewController(
-            rootViewController: UIHostingController(
-                rootView: HomeView(helpDrawerState: helpDrawerState)
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
-            ),
+            rootViewController: homeViewController,
             tabBarItemImageName: "tab-icon-home"
         )
+        let channelsViewController = UIHostingController(
+            rootView: HashtagListView(helpDrawerState: helpDrawerState)
+                .environmentObject(BotRepository.shared)
+                .environmentObject(AppController.shared)
+        )
+        channelsViewController.navigationItem.title = Localized.channels.text
         channelsFeatureViewController = FeatureViewController(
-            rootViewController: UIHostingController(
-                rootView: HashtagListView(helpDrawerState: helpDrawerState)
-                    .environmentObject(BotRepository.shared)
-                    .environmentObject(AppController.shared)
-            ),
+            rootViewController: channelsViewController,
             tabBarItemImageName: "tab-icon-channels"
         )
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -139,7 +143,7 @@ class MainViewController: UITabBarController {
     convenience init() {
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
-        self.view.backgroundColor = .cardBackground
+        self.view.backgroundColor = .navigationbarBg
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
         setNotificationsTabBarIcon()
@@ -163,10 +167,16 @@ class MainViewController: UITabBarController {
         DispatchQueue.main.async { [weak self] in
             let numberOfNotifications = UIApplication.shared.applicationIconBadgeNumber
             if numberOfNotifications > 0 {
-                self?.notificationsFeatureViewController.setTabBarItemImage("tab-icon-has-notifications")
+                self?.notificationsFeatureViewController.setTabBarItemImage(
+                    title: Localized.notifications.text,
+                    image: "tab-icon-has-notifications"
+                )
                 self?.notificationsFeatureViewController.setTabBarItemBadge(numberOfNotifications)
             } else {
-                self?.notificationsFeatureViewController.setTabBarItemImage("tab-icon-notifications")
+                self?.notificationsFeatureViewController.setTabBarItemImage(
+                    title: Localized.notifications.text,
+                    image: "tab-icon-notifications"
+                )
                 self?.notificationsFeatureViewController.setTabBarItemBadge(nil)
             }
         }

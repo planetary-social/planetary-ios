@@ -51,7 +51,6 @@ extension Color {
        static let screenOverlay = Color("screenOverlay", bundle: Bundle.current)
        static let secondaryAction = Color("secondaryAction", bundle: Bundle.current)
        static let secondaryText = Color("secondaryText", bundle: Bundle.current)
-       static let selectedTab = Color("selectedTab", bundle: Bundle.current)
        static let separatorDefault = Color("separator.default", bundle: Bundle.current)
        static let splashBackgroundColor = Color("splashBackgroundColor", bundle: Bundle.current)
        static let subheadlineText = Color("subheadlineText", bundle: Bundle.current)
@@ -59,10 +58,7 @@ extension Color {
        static let textColor = Color("textColor", bundle: Bundle.current)
        static let textInputBackground = Color("textInputBackground", bundle: Bundle.current)
        static let textInputBorder = Color("textInputBorder", bundle: Bundle.current)
-       static let textInputDropShadow = Color("textInputDropShadow", bundle: Bundle.current)
-       static let textInputInnerShadow = Color("textInputInnerShadow", bundle: Bundle.current)
-       static let unselectedTab = Color("unselectedTab", bundle: Bundle.current)
-       static let accentTxt = Color("accent-txt", bundle: Bundle.current)
+       static let accent = Color("accent", bundle: Bundle.current)
        static let appBg = Color("app-bg", bundle: Bundle.current)
        static let cardBgBottom = Color("card-bg-bottom", bundle: Bundle.current)
        static let cardBgTop = Color("card-bg-top", bundle: Bundle.current)
@@ -71,6 +67,7 @@ extension Color {
        static let cardDivider = Color("card-divider", bundle: Bundle.current)
        static let cardShadowBottom = Color("card-shadow-bottom", bundle: Bundle.current)
        static let hashtagBg = Color("hashtag-bg", bundle: Bundle.current)
+       static let navigationbarBg = Color("navigationbar-bg", bundle: Bundle.current)
        static let postareplyBackground = Color("postareply-background", bundle: Bundle.current)
        static let postareplyShadowBottom = Color("postareply-shadow-bottom", bundle: Bundle.current)
        static let postareplyShadowTop = Color("postareply-shadow-top", bundle: Bundle.current)
@@ -127,7 +124,6 @@ extension UIColor {
        static let screenOverlay = UIColor(named: "screenOverlay", in: Bundle.current, compatibleWith: nil)!
        static let secondaryAction = UIColor(named: "secondaryAction", in: Bundle.current, compatibleWith: nil)!
        static let secondaryText = UIColor(named: "secondaryText", in: Bundle.current, compatibleWith: nil)!
-       static let selectedTab = UIColor(named: "selectedTab", in: Bundle.current, compatibleWith: nil)!
        static let separatorDefault = UIColor(named: "separator.default", in: Bundle.current, compatibleWith: nil)!
        static let splashBackgroundColor = UIColor(named: "splashBackgroundColor", in: Bundle.current, compatibleWith: nil)!
        static let subheadlineText = UIColor(named: "subheadlineText", in: Bundle.current, compatibleWith: nil)!
@@ -135,10 +131,7 @@ extension UIColor {
        static let textColor = UIColor(named: "textColor", in: Bundle.current, compatibleWith: nil)!
        static let textInputBackground = UIColor(named: "textInputBackground", in: Bundle.current, compatibleWith: nil)!
        static let textInputBorder = UIColor(named: "textInputBorder", in: Bundle.current, compatibleWith: nil)!
-       static let textInputDropShadow = UIColor(named: "textInputDropShadow", in: Bundle.current, compatibleWith: nil)!
-       static let textInputInnerShadow = UIColor(named: "textInputInnerShadow", in: Bundle.current, compatibleWith: nil)!
-       static let unselectedTab = UIColor(named: "unselectedTab", in: Bundle.current, compatibleWith: nil)!
-       static let accentTxt = UIColor(named: "accent-txt", in: Bundle.current, compatibleWith: nil)!
+       static let accent = UIColor(named: "accent", in: Bundle.current, compatibleWith: nil)!
        static let appBg = UIColor(named: "app-bg", in: Bundle.current, compatibleWith: nil)!
        static let cardBgBottom = UIColor(named: "card-bg-bottom", in: Bundle.current, compatibleWith: nil)!
        static let cardBgTop = UIColor(named: "card-bg-top", in: Bundle.current, compatibleWith: nil)!
@@ -147,6 +140,7 @@ extension UIColor {
        static let cardDivider = UIColor(named: "card-divider", in: Bundle.current, compatibleWith: nil)!
        static let cardShadowBottom = UIColor(named: "card-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
        static let hashtagBg = UIColor(named: "hashtag-bg", in: Bundle.current, compatibleWith: nil)!
+       static let navigationbarBg = UIColor(named: "navigationbar-bg", in: Bundle.current, compatibleWith: nil)!
        static let postareplyBackground = UIColor(named: "postareply-background", in: Bundle.current, compatibleWith: nil)!
        static let postareplyShadowBottom = UIColor(named: "postareply-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
        static let postareplyShadowTop = UIColor(named: "postareply-shadow-top", in: Bundle.current, compatibleWith: nil)!

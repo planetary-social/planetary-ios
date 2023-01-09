@@ -143,11 +143,11 @@ class MarkdownStyler: DownStyler {
         colors.heading2 = UIColor.primaryTxt
         colors.heading3 = UIColor.primaryTxt
         colors.code = UIColor.secondaryTxt
-        colors.link = UIColor.accentTxt
-        colors.listItemPrefix = UIColor.accentTxt
+        colors.link = UIColor.accent
+        colors.listItemPrefix = UIColor.accent
         colors.quote = UIColor.secondaryTxt
         colors.quoteStripe = UIColor.secondaryTxt
-        colors.thematicBreak = UIColor.accentTxt
+        colors.thematicBreak = UIColor.accent
         return colors
     }
 

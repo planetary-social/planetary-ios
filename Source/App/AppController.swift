@@ -42,7 +42,7 @@ class AppController: UIViewController, ObservableObject {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .appBackground
+        self.view.backgroundColor = .appBg
         self.addObservers()
     }
     
