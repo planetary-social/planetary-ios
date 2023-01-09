@@ -1846,6 +1846,8 @@
 		C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotStatisticsServiceTests.swift; sourceTree = "<group>"; };
 		C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GoSSB.xcodeproj; path = GoSSB/GoSSB.xcodeproj; sourceTree = "<group>"; };
 		C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fix814AccountsHelper.swift; sourceTree = "<group>"; };
+		C9C9D653296C988400D584B8 /* Performance Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Performance Tests.xctestplan"; sourceTree = "<group>"; };
+		C9C9D655296C988400D584B8 /* Planetary Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Planetary Unit Tests.xctestplan"; sourceTree = "<group>"; };
 		C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabaseTestCase.swift; sourceTree = "<group>"; };
 		C9D1EAC02832A0220092E098 /* AttributedStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributedStringTests.swift; sourceTree = "<group>"; };
 		C9D1EAC12832A0220092E098 /* IdentifierTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentifierTests.swift; sourceTree = "<group>"; };
@@ -2115,6 +2117,8 @@
 		5308168621C46A53005C48ED /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C9C9D653296C988400D584B8 /* Performance Tests.xctestplan */,
+				C9C9D655296C988400D584B8 /* Planetary Unit Tests.xctestplan */,
 				C9134DDE28184B3B00595D49 /* Model */,
 				C9C3787A27C68DD200238B58 /* Controller */,
 				C98A013727907FF600E29A97 /* Resources */,
@@ -3622,7 +3626,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */;
+			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -6048,7 +6052,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */ = {
+		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5344D83B21C4649A00704A34 /* Debug */,
