@@ -203,6 +203,10 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
+		ModifyBadgerOptions: func(options di.BadgerOptions) {
+			options.SetNumGoroutines(2)
+			options.SetNumCompactors(2)
+		},
 	}
 
 	config.SetDefaults() // todo this should be automatic
