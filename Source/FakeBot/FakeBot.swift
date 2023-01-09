@@ -17,6 +17,10 @@ enum FakeBotError: Error {
 class FakeBot: Bot {
     
     var isRestoring = false
+
+    func setRestoring(_ value: Bool) {
+        isRestoring = value
+    }
     
     required init(
         userDefaults: UserDefaults,
@@ -74,7 +78,7 @@ class FakeBot: Bot {
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
     
-    func registeredAliases() async throws -> [RoomAlias] {
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
         throw FakeBotError.notImplemented
     }
     
@@ -176,7 +180,7 @@ class FakeBot: Bot {
         completion(nil, FakeBotError.runtimeError("TODO:createSecret"))
     }
 
-    func login(config: AppConfiguration) async throws {
+    func login(config: AppConfiguration, fromOnboarding: Bool) async throws {
         self._network = config.network?.string
         self._identity = config.secret.identity
     }
@@ -298,7 +302,12 @@ class FakeBot: Bot {
     }
     
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
-        completion([], nil)
+        do {
+            let messages = try strategy.fetchMessages(database: ViewDatabase(), userId: 0, limit: limit, offset: offset)
+            completion(messages, nil)
+        } catch {
+            completion([], error)
+        }
     }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {

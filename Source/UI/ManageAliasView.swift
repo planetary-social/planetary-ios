@@ -15,6 +15,15 @@ struct RoomAlias: Identifiable {
     var string: String {
         aliasURL.absoluteString
     }
+    var roomID: Int64?
+    var authorID: Int64
+    
+    var alias: String {
+        var components = string.replacingOccurrences(of: "https://", with: "")
+            .replacingOccurrences(of: "http://", with: "")
+            .components(separatedBy: ".")
+        return components.joined(separator: ".")
+    }
 }
 
 // A view model for the RoomListView
@@ -148,7 +157,7 @@ struct ManageAliasView<ViewModel>: View where ViewModel: ManageAliasViewModel {
         .refreshable {
             viewModel.refresh()
         }
-        .onAppear() {
+        .onAppear {
             viewModel.refresh()
         }
         .navigationBarTitle(Localized.Alias.roomAliases.text, displayMode: .inline)
@@ -187,18 +196,6 @@ fileprivate class PreviewViewModel: ManageAliasViewModel {
     
     func refresh() {}
     
-    func addAlias(from: String) {
-        if MultiserverAddress(string: from) != nil {
-            loadingMessage = "Registering alias..."
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                self.aliases.append(RoomAlias(id: 0, aliasURL: URL(string: "https://bob.civic.room")!))
-                self.loadingMessage = nil
-            }
-        } else {
-            errorMessage = "Error registering alias"
-        }
-    }
-    
     func open(_ alias: RoomAlias) {}
     
     func didDismissError() {
@@ -209,7 +206,7 @@ fileprivate class PreviewViewModel: ManageAliasViewModel {
 struct ManageAliasView_Previews: PreviewProvider {
     
     static let aliases = [
-        RoomAlias(id: 0, aliasURL: URL(string: "https://bob.civic.room")!)
+        RoomAlias(id: 0, aliasURL: URL(string: "https://bob.civic.room")!, roomID: 1, authorID: 1)
     ]
     
     static var previews: some View {

@@ -81,9 +81,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
     /// than the screen, with consideration for keyboard visibility.
     private func loadViewWithScrollView() {
         Layout.fill(scrollView: self.scrollView, with: self.contentView, scrollable: self.scrollable)
-        let (_, _, bottom, _) = Layout.fill(view: self.view,
-                                            with: scrollView,
-                                            respectSafeArea: false)
+        let (_, _, bottom, _) = Layout.fill(view: self.view, with: scrollView, respectSafeArea: true)
         bottom.priority = .required
         self.contentViewBottomConstraint = bottom
     }
@@ -93,9 +91,7 @@ class ContentViewController: UIViewController, KeyboardHandling {
     /// This is currently not used, but left in while loadViewWithScrollView()
     /// is perfected.
     private func loadViewWithContentView() {
-        let (_, _, bottom, _) = Layout.fill(view: self.view,
-                                            with: self.contentView,
-                                            respectSafeArea: false)
+        let (_, _, bottom, _) = Layout.fill(view: self.view, with: self.contentView, respectSafeArea: false)
         self.contentViewBottomConstraint = bottom
     }
 

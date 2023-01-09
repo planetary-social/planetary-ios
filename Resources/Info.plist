@@ -4,9 +4,9 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.planetary.scuttle.short_sync</string>
-		<string>com.planetary.scuttle.long_sync</string>
-		<string>com.planetary.scuttle.db_maintenance</string>
+		<string>com.planetary.short_sync</string>
+		<string>com.planetary.long_sync</string>
+		<string>com.planetary.db_maintenance</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -30,7 +30,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.planetary.ios-scuttlego</string>
+			<string>com.planetary.ios</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>planetary</string>
@@ -40,7 +40,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>CFBundleURLName</key>
-			<string>com.planetary.ios-scuttlego</string>
+			<string>com.planetary.ios</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ssb</string>
@@ -48,7 +48,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>388</string>
+	<string>393</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -66,6 +66,8 @@
 	<string>Planetary can download new posts from your friends directly if they are on your local network.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app allows you to select photos to share with friends or use as your profile image.</string>
+	<key>PLAliasServers</key>
+	<string>$(PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
 	<key>PLCommunities</key>
 	<string>$(COMMUNITIES)</string>
 	<key>PLConstellation</key>
@@ -90,6 +92,8 @@
 	<string>$(PLANETARY_NETWORK_NAME)</string>
 	<key>PLPlanetarySystem</key>
 	<string>$(PLANETARY_SYSTEM_PUBS)</string>
+	<key>PLTestAliasServers</key>
+	<string>$(TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
 	<key>PLTestNetworkCommunities</key>
 	<string>$(TEST_NETWORK_COMMUNITIES)</string>
 	<key>PLTestNetworkPubs</key>
@@ -99,7 +103,7 @@
 	<key>PLTestingNetworkKey</key>
 	<string>$(TESTING_NETWORK_KEY)</string>
 	<key>PLTestingNetworkName</key>
-	<string>$(TESTING_NETWORK_NAME)</string>
+	<string>$(TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

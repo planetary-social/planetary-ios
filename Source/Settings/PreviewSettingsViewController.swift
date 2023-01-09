@@ -53,7 +53,7 @@ class PreviewSettingsViewController: DebugTableViewController {
                     identities, _ in
                     cell.hideActivityIndicator(andShow: .disclosureIndicator)
                     cell.detailTextLabel?.text = "\(identities.count)"
-                }
+            }
             },
                                              actionClosure: {
                 [unowned self] _ in

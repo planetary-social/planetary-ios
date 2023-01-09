@@ -14,7 +14,11 @@ import SwiftUI
 struct EditIdentityButton: View {
 
     var about: About?
+
     var compact = false
+
+    @EnvironmentObject
+    private var appController: AppController
     
     var body: some View {
         Button {
@@ -25,14 +29,14 @@ struct EditIdentityButton: View {
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     if let error = error {
-                        AppController.shared.hideProgress()
-                        AppController.shared.alert(error: error)
+                        appController.hideProgress()
+                        appController.alert(error: error)
                     } else {
                         Analytics.shared.trackDidUpdateProfile()
                         Bots.current.about { (newAbout, error) in
                             Log.optional(error)
                             CrashReporting.shared.reportIfNeeded(error: error)
-                            AppController.shared.hideProgress()
+                            appController.hideProgress()
                             if let newAbout = newAbout {
                                 NotificationCenter.default.post(Notification.didUpdateAbout(newAbout))
                             }
@@ -41,7 +45,7 @@ struct EditIdentityButton: View {
                     }
                 }
             }
-            AppController.shared.present(UINavigationController(rootViewController: controller), animated: true)
+            appController.present(UINavigationController(rootViewController: controller), animated: true)
         } label: {
             HStack(alignment: .center) {
                 Image.buttonEditProfile
@@ -90,5 +94,6 @@ struct EditIdentityButton_Previews: PreviewProvider {
         .padding()
         .background(Color.cardBackground)
         .environmentObject(BotRepository.fake)
+        .environmentObject(AppController.shared)
     }
 }

@@ -76,7 +76,7 @@ class DoneOnboardingStep: OnboardingStep {
             constant: -Layout.verticalSpacing
         ).isActive = true
 
-        self.view.hintLabel.text = Localized.Onboarding.thanksForTrying.text
+        self.view.hintLabel.text = Localized.Onboarding.orUseTheDefaults.text
 
         self.view.primaryButton.setText(.doneOnboarding)
         self.view.bringSubviewToFront(view.buttonStack)
@@ -107,6 +107,8 @@ class DoneOnboardingStep: OnboardingStep {
             self.next()
             return
         }
+        
+        self.next()
     }
 
     override func didStart() {

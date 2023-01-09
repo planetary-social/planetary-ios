@@ -44,7 +44,7 @@ import UIKit
         loadingMessage = Localized.loading.text
         Task {
             do {
-                self.aliases = try await bot.registeredAliases()
+                self.aliases = try await bot.registeredAliases(nil)
             } catch {
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription
@@ -56,4 +56,3 @@ import UIKit
     func deleteAliases(at: IndexSet) {
     }
 }
-

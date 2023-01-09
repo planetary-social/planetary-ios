@@ -46,10 +46,17 @@ class AboutCellView: UIView {
         let targetHeight: CGFloat = 60
         let verticalMargin = floor((targetHeight - Layout.profileThumbSize) / 2)
 
-        Layout.fillLeft(of: self,
-                        with: self.imageView,
-                        insets: UIEdgeInsets(top: verticalMargin, left: Layout.horizontalSpacing, bottom: -verticalMargin, right: 0),
-                        respectSafeArea: false)
+        Layout.fillLeft(
+            of: self,
+            with: self.imageView,
+            insets: UIEdgeInsets(
+                top: verticalMargin,
+                left: Layout.horizontalSpacing,
+                bottom: -verticalMargin,
+                right: 0
+            ),
+            respectSafeArea: false
+        )
 
         self.addSubview(self.label)
         self.label.constrainLeading(toTrailingOf: self.imageView, constant: Layout.horizontalSpacing)
@@ -74,6 +81,7 @@ class AboutCellView: UIView {
         self.blockButton.alpha = 0
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -143,10 +151,11 @@ class AboutTableViewCell: UITableViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
         self.aboutView.reset()
     }
 
-    // TODO this is hack to ensure that the cells only show the
+    // This is hack to ensure that the cells only show the
     // block button and not the follow button, the other option
     // is to push a flag through the data source, cell, and about
     // view to do the same, but that is too messy right now
@@ -202,6 +211,7 @@ class MiniAboutCellView: UIView {
         self.nameLabel.constrainTrailing(toLeadingOf: self.shortcodeLabel, constant: 8)
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1410"
-   version = "1.3">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5344D82A21C4649700704A34"
-               BuildableName = "Planetary-scuttle.app"
-               BlueprintName = "Planetary-scuttle"
+               BuildableName = "Planetary.app"
+               BlueprintName = "Planetary"
                ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,11 +33,17 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary-scuttle.app"
-            BlueprintName = "Planetary-scuttle"
+            BuildableName = "Planetary.app"
+            BlueprintName = "Planetary"
             ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </CodeCoverageTargets>
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:UnitTests/Planetary Unit Tests.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -71,8 +77,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary-scuttle.app"
-            BlueprintName = "Planetary-scuttle"
+            BuildableName = "Planetary.app"
+            BlueprintName = "Planetary"
             ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -110,8 +116,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5344D82A21C4649700704A34"
-            BuildableName = "Planetary-scuttle.app"
-            BlueprintName = "Planetary-scuttle"
+            BuildableName = "Planetary.app"
+            BlueprintName = "Planetary"
             ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

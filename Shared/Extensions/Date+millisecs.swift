@@ -13,10 +13,10 @@ import Foundation
 
 extension Date {
     var millisecondsSince1970: Double {
-        self.timeIntervalSince1970 * 1_000.0
+        self.timeIntervalSince1970 * 1000
     }
     
     init(milliseconds: Double) {
-        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1_000)
+        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
     }
 }

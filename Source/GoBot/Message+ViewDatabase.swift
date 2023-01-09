@@ -72,7 +72,7 @@ extension Message {
         if hasReplies {
             let numberOfReplies = try row.get(Expression<Int>("replies_count"))
             let replies = try row.get(Expression<String?>("replies"))
-            let abouts = Set(replies?.split(separator: ";").map { About(about: String($0)) } ?? [])
+            let abouts = Set(replies?.split(separator: ";").map { About(about: .null, image: String($0)) } ?? [])
             message.metadata.replies.count = numberOfReplies
             message.metadata.replies.abouts = abouts
         }

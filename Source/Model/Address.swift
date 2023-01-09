@@ -130,19 +130,33 @@ struct MultiserverAddress: Codable, Hashable, Equatable {
 }
 
 struct KnownPub: Hashable {
-    let AddressID: Int64
+    let addressID: Int64
 
-    let ForFeed: Identifier
-    let Address: String // multiserver
+    let forFeed: Identifier
+    let address: String // multiserver
 
-    let InUse: Bool
-    let WorkedLast: String
-    let LastError: String
+    let inUse: Bool
+    let workedLast: String
+    let lastError: String
     let redeemed: Date?
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(self.AddressID)
+        hasher.combine(self.addressID)
     }
 }
 
 typealias KnownPubs = [KnownPub]
+
+/// A message type that announces the registering or revoking of an alias.
+struct RoomAliasAnnouncement: ContentCodable {
+    let type: ContentType
+    let action: RoomAliasActionType
+    let alias: String
+    let room: Identity
+    let aliasURL: String
+
+    enum RoomAliasActionType: String, Codable {
+        case registered
+        case revoked
+    }
+}

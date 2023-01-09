@@ -48,7 +48,6 @@ import CrashReporting
             }
             
             self?.data.context = context
-            Onboarding.set(status: .completed, for: context!.identity)
             self?.next()
         }
     }

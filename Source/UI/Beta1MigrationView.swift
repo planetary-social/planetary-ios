@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 protocol Beta1MigrationViewModel: ProgressButtonViewModel {
     var progress: Float { get }
     var shouldConfirmDismissal: Bool { get set }

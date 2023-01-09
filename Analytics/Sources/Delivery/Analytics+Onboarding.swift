@@ -27,6 +27,7 @@ public extension Analytics {
         case photoConfirm
         case resume
         case start
+        case rooms
 
         /// Used for safeguarding. Each onboarding step should be identified accordingly
         case unknown
@@ -47,6 +48,8 @@ public extension Analytics {
         var nameLength = 0
         var phone: String?
         var simulated = false
+        var aliasServerChosen = false
+        var aliasChosen = false
 
         public init(
             allowedBackup: Bool = false,
@@ -62,7 +65,9 @@ public extension Analytics {
             followPlanetary: Bool = false,
             nameLength: Int = 0,
             phone: String? = nil,
-            simulated: Bool = false
+            simulated: Bool = false,
+            aliasServerChosen: Bool = false,
+            aliasChosen: Bool = false
         ) {
             self.allowedBackup = allowedBackup
             self.allowedContacts = allowedContacts
@@ -78,6 +83,8 @@ public extension Analytics {
             self.nameLength = nameLength
             self.phone = phone
             self.simulated = simulated
+            self.aliasServerChosen = aliasServerChosen
+            self.aliasChosen = aliasChosen
         }
     }
 
@@ -100,7 +107,9 @@ public extension Analytics {
             "analytics": data.analytics,
             "followPlanetary": data.followPlanetary,
             "name_length": data.nameLength,
-            "simulated": data.simulated
+            "simulated": data.simulated,
+            "alias_server_chosen": data.aliasServerChosen,
+            "alias_chosen": data.aliasChosen
         ]
         service.track(event: .view, element: .screen, name: "onboarding", params: params)
     }

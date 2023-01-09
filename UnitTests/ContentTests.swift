@@ -8,6 +8,7 @@
 
 import XCTest
 
+// swiftlint:disable identifier_name
 class ContentTests: XCTestCase {
 
     func test_message() throws {
@@ -176,7 +177,7 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(b.name, "1614434_10206454331651096_887999461891506870_o.jpg")
         XCTAssertEqual(b.metadata?.numberOfBytes, 67_654)
         XCTAssertEqual(b.metadata?.dimensions?.height, 440)
-        XCTAssertEqual(b.metadata?.dimensions?.width, 1_024)
+        XCTAssertEqual(b.metadata?.dimensions?.width, 1024)
         XCTAssertEqual(b.metadata?.mimeType, "image/jpeg")
     }
 
@@ -212,7 +213,21 @@ class ContentTests: XCTestCase {
         XCTAssertEqual(pub.address.port, 8008)
         XCTAssertEqual(pub.address.multiserver.string, "net:two.planetary.pub:8008~shs:7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=")
     }
-
+    
+    func testRoomAliasAnnouncementParsing() throws {
+        let data = self.data(for: "RoomAliasAnnouncement_registered.json")
+        let msg = try JSONDecoder().decode(Message.self, from: data)
+        XCTAssertEqual(msg.content.type, .roomAliasAnnouncement)
+        XCTAssertEqual(msg.content.isValid, true)
+        XCTAssertEqual(msg.content.contentException, nil)
+        let roomAliasAnnouncement = try XCTUnwrap(msg.content.roomAliasAnnouncement)
+        XCTAssertEqual(roomAliasAnnouncement.action, RoomAliasAnnouncement.RoomAliasActionType.registered)
+        XCTAssertEqual(roomAliasAnnouncement.alias, "matt")
+        XCTAssertEqual(roomAliasAnnouncement.type, ContentType.roomAliasAnnouncement)
+        XCTAssertEqual(roomAliasAnnouncement.room, "@uMYDVPuEKftL4SzpRGVyQxLdyPkOiX7njit7+qT/7IQ=.ed25519")
+        XCTAssertEqual(roomAliasAnnouncement.aliasURL, "https://matt.hermies.club")
+    }
+    
     // TODO need to confirm string content to ensure everything was captured
     // prefix ![
     // suffix =.sha256)
@@ -318,7 +333,7 @@ class ContentTests: XCTestCase {
         let data = self.data(for: "ValueTimestamp.json")
         let val = try JSONDecoder().decode(MessageValue.self, from: data)
         XCTAssertTrue(val.content.type == .vote)
-        XCTAssertEqual(val.claimedTimestamp, 1_573_673_656_588.015_9)
+        XCTAssertEqual(val.claimedTimestamp, 1_573_673_656_588.0159)
         let kv = Message(key: "%test.msg", value: val, timestamp: 0)
         XCTAssertEqual(kv.claimedDate, Date(timeIntervalSince1970: 1_573_673_656.588_015_9))
     }
@@ -376,7 +391,6 @@ class ContentTests: XCTestCase {
                 let content = try? JSONDecoder().decode(Content.self, from: data)
                 XCTAssertTrue(content?.assertValid() ?? false)
                 break
-                
                     
             case .dropContentRequest:
                 let fakeHash = "%ifDrcOptVFcnYmXggTDnhIsux+J9VaiV0Tlgsh/My24=.ggfeed-v1"
@@ -406,7 +420,7 @@ class ContentTests: XCTestCase {
                 XCTAssertTrue(content?.assertValid() ?? false)
                 
                 // models that SHOULD NOT be encoded
-            case .pub, .address, .unknown, .unsupported: break
+            case .pub, .address, .roomAliasAnnouncement, .unknown, .unsupported: break
             }
         }
     }
@@ -432,15 +446,26 @@ fileprivate extension Content {
     /// should be read only which would negate the need for this.
     func assertValid() -> Bool {
         switch self.type {
-            case .about: return self.about != nil
-            case .address: return self.address != nil
-            case .contact: return self.contact != nil
-            case .dropContentRequest: return self.dropContentRequest != nil
-            case .pub: return self.pub != nil
-            case .post: return self.post != nil
-            case .vote: return self.vote != nil
-            case .unsupported: return false
-            case .unknown: return false
+        case .about:
+            return self.about != nil
+        case .address:
+            return self.address != nil
+        case .contact:
+            return self.contact != nil
+        case .dropContentRequest:
+            return self.dropContentRequest != nil
+        case .pub:
+            return self.pub != nil
+        case .post:
+            return self.post != nil
+        case .vote:
+            return self.vote != nil
+        case .roomAliasAnnouncement:
+            return self.roomAliasAnnouncement != nil
+        case .unsupported:
+            return false
+        case .unknown:
+            return false
         }
     }
 }

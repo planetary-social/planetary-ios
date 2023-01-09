@@ -29,7 +29,7 @@ struct MessageOptionsButton: View {
         Button {
             showingOptions = true
         } label: {
-            Image("icon-options-off")
+            Image.iconOptions
                 // This hack fixes a weird issue where the confirmationDialog wouldn't be shown sometimes. ¯\_(ツ)_/¯
                 .background(showingOptions == true ? .clear : .clear)
         }

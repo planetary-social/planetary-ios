@@ -21,7 +21,9 @@ class BenefitsOnboardingStep: OnboardingStep {
             markdown: Localized.Onboarding.benefits.text,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? NSMutableAttributedString(string: Localized.Onboarding.benefits.text)
-        text.addFontAttribute((self.view.hintLabel.font!), colorAttribute: UIColor.menuUnselectedItemText)
+        if let font = view.hintLabel.font {
+            text.addFontAttribute(font, colorAttribute: UIColor.menuUnselectedItemText)
+        }
         text.addLinkAttribute(
             value: SupportArticle.whatIsPlanetary.rawValue,
             to: Localized.Onboarding.findOutMore.text
@@ -43,10 +45,12 @@ class BenefitsOnboardingStep: OnboardingStep {
 
 extension BenefitsOnboardingStep: UITextViewDelegate {
 
-    func textView(_ textView: UITextView,
-                  shouldInteractWith URL: URL,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         guard let article = SupportArticle(rawValue: URL.absoluteString) else { return false }
         guard let controller = Support.shared.articleViewController(article) else {
             AppController.shared.alert(
@@ -56,8 +60,8 @@ extension BenefitsOnboardingStep: UITextViewDelegate {
             )
             return false
         }
-        let nc = UINavigationController(rootViewController: controller)
-        AppController.shared.present(nc, animated: true)
+        let navigationController = UINavigationController(rootViewController: controller)
+        AppController.shared.present(navigationController, animated: true)
         return false
     }
 }

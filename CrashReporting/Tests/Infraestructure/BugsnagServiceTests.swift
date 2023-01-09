@@ -88,7 +88,7 @@ final class BugsnagServiceTests: XCTestCase {
         let service = try XCTUnwrap(service)
         let expectedAppLog = "hello"
         service.onEventHandler = { _ in
-            return Logs(appLog: expectedAppLog, botLog: nil)
+            Logs(appLog: expectedAppLog, botLog: nil)
         }
         service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")
@@ -99,7 +99,7 @@ final class BugsnagServiceTests: XCTestCase {
         let service = try XCTUnwrap(service)
         let expectedBotLog = "hello"
         service.onEventHandler = { _ in
-            return Logs(appLog: nil, botLog: expectedBotLog)
+            Logs(appLog: nil, botLog: expectedBotLog)
         }
         service.report(error: error, metadata: nil)
         XCTAssertEqual(Bugsnag.breadcrumbs().last?.message, "NSError")

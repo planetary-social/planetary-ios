@@ -93,6 +93,9 @@ private struct GoBotConfig: Encodable {
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
+    
+    /// Disables EBT replication if true. Part of a workaround for #847.
+    let DisableEBT: Bool
 
     #if DEBUG
     let Testing = true
@@ -134,7 +137,7 @@ class GoBotInternal {
 
     // MARK: login / logout
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String) throws {
+    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String, disableEBT: Bool) throws {
         if self.isRunning {
             guard self.logout() == true else {
                 throw GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
@@ -159,7 +162,9 @@ class GoBotInternal {
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
-            ServicePubs: servicePubs)
+            ServicePubs: servicePubs,
+            DisableEBT: disableEBT
+        )
         
         let enc = JSONEncoder()
         var cfgStr: String
@@ -205,9 +210,8 @@ class GoBotInternal {
     // MARK: planetary services
 
     // TODO: deprecated
-    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = { cstr, expires in
-        return
-    }
+    private lazy var notifyNewBearerToken: CPlanetaryBearerTokenCallback = { _, _ in
+        }
 
     // MARK: connections
 
@@ -620,7 +624,7 @@ class GoBotInternal {
     
     // MARK: Aliases
     
-    func register(alias: String, in room: Room) -> Bool {
+    func register(alias: String, in room: Room) throws -> String {
         Log.debug("Registering room alias: \(alias) at \(room.address.string)")
         let result: ssbRoomsAliasRegisterReturn_t = room.address.string.withGoString { roomAddress in
             alias.withGoString { alias in
@@ -631,14 +635,18 @@ class GoBotInternal {
         if result.alias != nil {
             let aliasURLString = String(cString: result.alias)
             if aliasURLString.isEmpty == false {
-                // TODO: return alias or error
-                return true
+                return aliasURLString
             }
         }
-            return false
+        
+        switch result.err {
+        case 2:
+            throw RoomRegistrationError.aliasTaken
+        default:
+            throw RoomRegistrationError.unknownError
+        }
     }
     
     func revoke(alias: RoomAlias) async throws {
-        
     }
 }

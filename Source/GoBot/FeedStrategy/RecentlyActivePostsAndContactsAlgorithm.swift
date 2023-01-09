@@ -118,11 +118,18 @@ final class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
                 FROM tangles
                 WHERE root == messages.msg_id
                ) as replies_count,
-               (SELECT GROUP_CONCAT(authors.author, ';')
-                FROM tangles
-                JOIN messages AS tangled_message ON tangled_message.msg_id == tangles.msg_ref
-                JOIN authors ON authors.id == tangled_message.author_id
-                WHERE tangles.root == messages.msg_id LIMIT 3
+               (
+                 SELECT
+                   GROUP_CONCAT(abouts.image, ';')
+                 FROM
+                   tangles
+                   JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
+                   JOIN abouts ON abouts.about_id = tangled_message.author_id
+                 WHERE
+                   tangles.root = messages.msg_id
+                   AND abouts.image IS NOT NULL
+                 LIMIT
+                   2
                ) as replies
         FROM messages
         LEFT JOIN posts ON messages.msg_id == posts.msg_ref

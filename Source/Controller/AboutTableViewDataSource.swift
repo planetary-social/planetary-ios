@@ -12,7 +12,7 @@ import Analytics
 import CrashReporting
 import SwiftUI
 
-protocol AboutTableViewDelegate {
+protocol AboutTableViewDelegate: AnyObject {
     func reload()
     var navigationController: UINavigationController? { get }
 }
@@ -43,15 +43,13 @@ class AboutTableViewDataSource: NSObject {
 
     private func load() {
         let identities = Array(self.identities.prefix(10))
-        self.loadAbouts(for: identities) {
-            [weak self] in
+        self.loadAbouts(for: identities) { [weak self] in
             self?.delegate?.reload()
         }
     }
 
     private func loadAbouts(for identities: [Identity], completion: (() -> Void)? = nil) {
-        Bots.current.abouts(identities: identities) {
-            [weak self] abouts, error in
+        Bots.current.abouts(identities: identities) { [weak self] abouts, error in
             CrashReporting.shared.reportIfNeeded(error: error)
             if Log.optional(error) { return }
             for about in abouts { self?.abouts[about.identity] = about }
@@ -67,7 +65,9 @@ extension AboutTableViewDataSource: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = (tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell) ?? AboutTableViewCell()
+        let cell = (
+            tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
+        ) ?? AboutTableViewCell()
         let identity = self.identities[indexPath.row]
         cell.aboutView.update(with: identity, about: self.abouts[identity])
         return cell
@@ -95,7 +95,9 @@ extension AboutTableViewDataSource: UITableViewDelegate {
         Analytics.shared.trackDidSelectItem(kindName: "identity")
         let identity = self.identities[indexPath.row]
         let controller = UIHostingController(
-            rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
+            rootView: IdentityView(identity: identity)
+                .environmentObject(BotRepository.shared)
+                .environmentObject(AppController.shared)
         )
         let targetController = self.delegate?.navigationController
         targetController?.pushViewController(controller, animated: true)

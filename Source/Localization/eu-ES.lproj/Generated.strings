@@ -6,6 +6,7 @@
 "Localized.skip" = "Skip";
 "Localized.ok" = "OK";
 "Localized.next" = "Next";
+"Localized.back" = "Back";
 "Localized.done" = "Done";
 "Localized.save" = "Save";
 "Localized.yes" = "Yes";
@@ -19,6 +20,7 @@
 "Localized.daysAgo" = "{{ days }} days ago";
 "Localized.atDayTime" = "{{ day }} at {{ time }}";
 "Localized.minutesAbbreviated" = "{{ numberOfMinutes }} mins";
+"Localized.profile" = "Profile";
 "Localized.yourProfile" = "Your Profile";
 "Localized.helpAndSupport" = "Help and Support";
 "Localized.reportBug" = "Report a Bug";
@@ -28,10 +30,12 @@
 "Localized.usersInYourNetwork" = "Users in your network";
 "Localized.goToYourNetwork" = "Go to Your Network";
 "Localized.emptyHomeFeedMessage" = "And it is rather bare! Have you considered following a few users or topics?";
+"Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} replied";
 "Localized.liked" = "{{somebody}} liked";
 "Localized.startedFollowing" = "{{somebody}} started following";
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
+"Localized.startedBlocking" = "{{somebody}} blocked";
 "Localized.followStats" = "Following {{numberOfFollows}} • Followed by {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "This user is outside your network";
 "Localized.showMeInDirectory" = "Show me in the directory";
@@ -50,6 +54,7 @@
 "Localized.deletePost" = "Delete this post";
 "Localized.editPost" = "Edit this post";
 "Localized.confirmDeletePost" = "Are you sure you want to delete this post?";
+"Localized.readMore" = "Read more";
 "Localized.postReply" = "Post Reply";
 "Localized.postAReply" = "Post a reply";
 "Localized.createProfile" = "Create Profile";
@@ -62,13 +67,17 @@
 "Localized.dislikesThis" = "dislikes this";
 "Localized.block" = "Ignore";
 "Localized.blocked" = "Ignored";
+"Localized.blocking" = "Ignoring";
 "Localized.deleteSecretAndIdentity" = "Delete this secret and identity";
+"Localized.followBack" = "Follow back";
 "Localized.follow" = "Follow";
 "Localized.following" = "Following";
 "Localized.followedBy" = "Followed By";
 "Localized.isFollowingYou" = "is currently following you";
 "Localized.followedByCount" = "Followed by {{ count }}";
 "Localized.followingCount" = "Following {{ count }}";
+"Localized.blockingCount" = "Ignoring {{ count }}";
+"Localized.joinedCount" = "Joined {{ count }}";
 "Localized.inYourNetwork" = " in your network";
 "Localized.followedByShortCount" = "{{ count }} Followers";
 "Localized.unfollow" = "Stop following";
@@ -116,6 +125,7 @@
 "Localized.like" = "Like";
 "Localized.debug" = "Debug";
 "Localized.join" = "Join";
+"Localized.joined" = "Joined";
 "Localized.redeemInvitation" = "Redeem an invitation";
 "Localized.pasteAddress" = "Token";
 "Localized.invitationRedeemed" = "Invitation redeemed!";
@@ -135,6 +145,7 @@
 "Localized.searchingLocally" = "Searching for posts in your local database";
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
+"Localized.rooms" = "Rooms";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -201,7 +212,7 @@
 "Onboarding.contactsWIP" = "Apologies, this feature is a work in progress. Tap 'OK' to see a list of recommended users to follow.";
 "Onboarding.listMeTitle" = "List me in the user directory";
 "Onboarding.listMeMessage" = "This allows people to find you if they know your name or phone number";
-"Onboarding.thanksForTrying" = "Thanks for trying Planetary! It's customary to use the #newpeople hashtag to introduce yourself.";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
 "Onboarding.doneOnboarding" = "Phew! I'm done!";
 "Onboarding.earlyAccess" = "This app is at an early stage. We've been focusing our time on the foundations, so there are gaps and rough bits in the UI. Bear with us!";
 "Onboarding.iUnderstand" = "Yes, I understand";
@@ -226,6 +237,17 @@
 "Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
 "Onboarding.useTestNetwork" = "Use Test Network";
 "Onboarding.useTestNetworkDescription" = "This will create your identity with an alternate network key that will not replicate with the main SSB network. This cannot be changed later.";
+"Onboarding.changeAlias" = "You'll be able to change this alias from Settings.";
+"Onboarding.aliasServerInformation" = "Alias servers are like email servers, where you can define how others will find you on Planetary.\n\nyouralias.planetary.name is a great start, but you can choose your alias on other servers:";
+"Onboarding.yourAlias" = "youralias";
+"Onboarding.yourAliasPlanetary" = "youralias.planetary.name";
+"Onboarding.aliasSkip" = "Skip choosing an alias";
+"Onboarding.aliasServerSkip" = "Skip choosing a server";
+"Onboarding.aliasTaken" = "This alias is taken already";
+"Onboarding.invalidAliasFormat" = "Incorrect format for alias";
+"Onboarding.unknownAliasRegistrationError" = "There was a problem registering this alias";
+"Onboarding.typeYourAlias" = "Type your alias";
+"Onboarding.registeringAlias" = "Registering Alias...";
 
 "OnboardingStepTitle.backup" = "Okay, we've created your identity - would you like to back it up?";
 "OnboardingStepTitle.benefits" = "Planetary is a healthier way to be social";
@@ -233,7 +255,7 @@
 "OnboardingStepTitle.birthday" = "Before we start, when's your birthday?";
 "OnboardingStepTitle.contacts" = "You can connect your address book to see which of your friends are using Planetary";
 "OnboardingStepTitle.directory" = "People you might know";
-"OnboardingStepTitle.done" = "Well done, you made it through in one piece";
+"OnboardingStepTitle.done" = "Customize your settings";
 "OnboardingStepTitle.earlyAccess" = "Gentle reminder: This is early access software";
 "OnboardingStepTitle.join" = "Creating your identity on Planetary...";
 "OnboardingStepTitle.name" = "Now, what would you like to be called?";
@@ -243,6 +265,8 @@
 "OnboardingStepTitle.photoConfirm" = "Profile photo added";
 "OnboardingStepTitle.resume" = "Resuming set up of your identity on Planetary...";
 "OnboardingStepTitle.start" = "\nSocial media for humans, not algorithms.";
+"OnboardingStepTitle.aliasServer" = "Choose an alias server";
+"OnboardingStepTitle.alias" = "Now choose your alias";
 
 "ManageRelays.relayServers" = "Relay Servers";
 "ManageRelays.managePubs" = "Manage Pubs";
@@ -257,6 +281,11 @@
 "ManageRelays.loadingRooms" = "Loading rooms...";
 "ManageRelays.invalidRoomURL" = "Invalid room URL";
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
+"ManageRelays.deleteRoom" = "Delete";
+"ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
+
+"Message.noPostsTitle" = "No posts here yet";
+"Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";
@@ -325,6 +354,7 @@
 "Error.invalidRoomURL" = "Could not parse invitation.";
 "Error.invalidRoomInvitationOrAddress" = "Planetary does not recognize this as a valid room invitation or address.";
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
+"Error.alreadyJoinedRoom" = "You are already a member of this room";
 
 "Channel.one" = "channel";
 "Channel.many" = "channels";
@@ -334,7 +364,7 @@
 
 "Report.somebody" = "Somebody";
 "Report.feedFollowed" = "%@ started following you";
-"Report.postReplied" = "%@ replied to your post";
+"Report.postReplied" = "%@ replied to a post you commented on";
 "Report.feedMentioned" = "%@ mentioned you in a post";
 "Report.messageLiked" = "%@ liked your post";
 
@@ -361,3 +391,9 @@
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
 "YourNetwork.highlightedWord" = "*gossip*";
+
+/* Reply.one */
+"Reply.one" = "{{ count }} reply";
+
+/* Reply.many */
+"Reply.many" = "{{ count }} replies";
