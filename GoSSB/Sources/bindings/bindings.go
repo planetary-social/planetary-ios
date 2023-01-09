@@ -91,8 +91,8 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 
 	if swiftConfig.Testing {
 		go n.printStats(ctx, config.Logger, service)
-		go n.captureProfileCPU(ctx, config)
-		go n.captureProfileMemory(ctx, config)
+		//go n.captureProfileCPU(ctx, config)
+		//go n.captureProfileMemory(ctx, config)
 	}
 
 	go func() {
@@ -300,17 +300,22 @@ func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
 			panic(err)
 		}
 
+		cleanup := func() {
+			pprof.StopCPUProfile()
+
+			if err := f.Close(); err != nil {
+				panic(err)
+			}
+		}
+
 		select {
 		case <-time.After(30 * time.Second):
 		case <-ctx.Done():
+			cleanup()
 			return
 		}
 
-		pprof.StopCPUProfile()
-
-		if err := f.Close(); err != nil {
-			panic(err)
-		}
+		cleanup()
 	}
 }
 
