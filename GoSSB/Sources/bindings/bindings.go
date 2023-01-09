@@ -89,9 +89,11 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	n.cleanup = cleanup
 	n.repository = config.DataDirectory
 
-	go n.printStats(ctx, config.Logger, service)
-	//go n.captureProfileCPU(ctx, config)
-	//go n.captureProfileMemory(ctx, config)
+	if swiftConfig.Testing {
+		go n.printStats(ctx, config.Logger, service)
+		go n.captureProfileCPU(ctx, config)
+		go n.captureProfileMemory(ctx, config)
+	}
 
 	go func() {
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
