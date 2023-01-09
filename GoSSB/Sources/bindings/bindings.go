@@ -189,8 +189,6 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	logger := NewKitlogLogger(kitlogLogger, "gossb", logging.LevelTrace) // todo set level to debug
-
 	// todo do something with hops
 	// todo do something service pubs?
 	// todo use the testing option to change log level?
@@ -201,7 +199,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		Logger:             logger,
+		Logger:             n.newLogger(swiftConfig, kitlogLogger),
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
@@ -214,6 +212,14 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 	config.SetDefaults() // todo this should be automatic
 
 	return config, nil
+}
+
+func (n *Node) newLogger(swiftConfig BotConfig, kitlogLogger kitlog.Logger) KitlogLogger {
+	if swiftConfig.Testing {
+		return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelTrace)
+	} else {
+		return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug)
+	}
 }
 
 func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
@@ -281,10 +287,6 @@ func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di
 	}
 }
 
-func bToMb(b uint64) uint64 {
-	return b / 1000 / 1000
-}
-
 func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
 	for {
 		name := path.Join(config.DataDirectory, fmt.Sprintf("%d.cpuprofile", time.Now().Unix()))
@@ -335,6 +337,10 @@ func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
 			return
 		}
 	}
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1000 / 1000
 }
 
 type identityBlob struct {
