@@ -4,7 +4,7 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/go-kit/kit v0.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230106142603-fa70ff0081c5
+	github.com/planetary-social/scuttlego v0.0.0-20230109172552-243723d1cdfa
 	github.com/stretchr/testify v1.8.1
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
@@ -53,10 +53,10 @@ require (
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2 // indirect
 	golang.org/x/exp v0.0.0-20190912063710-ac5d2bfcbfe0 // indirect
-	golang.org/x/net v0.3.0 // indirect
+	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	gonum.org/v1/gonum v0.0.0-20190911200027-40d3308efe80 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
