@@ -18,6 +18,7 @@ import (
 // the sequence field of Scuttlebutt messages and is simply an index of a
 // message in a list of all received messages. This sequence starts at 0.
 // Number of returned messages can be limited. Limit must be a positive number.
+//
 //export ssbStreamRootLog
 func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 	var err error
@@ -76,6 +77,7 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 // messages. This means that receive log and published log share the sequence numbers. This
 // sequence starts at 0. In order to get the first message you need to pass -1 to this function.
 // The provided sequence must be a sequence of a message belonging to the feed of the currently active local identity.
+//
 //export ssbStreamPublishedLog
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	var err error
@@ -106,6 +108,13 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	if err != nil {
 		err = errors.Wrap(err, "command failed")
 		return nil
+	}
+
+	// query returns messages with "sequence >= given" but this function returns messages with "sequence > given"
+	for i := len(msgs) - 1; i >= 0; i-- {
+		if query.StartSeq != nil && msgs[i].Sequence.Int() <= query.StartSeq.Int() {
+			msgs = append(msgs[:i], msgs[i+1:]...)
+		}
 	}
 
 	level.Debug(log).Log("event", "returning new messages in ssbStreamPublishedLog", "n", len(msgs), "duration", time.Since(start).Seconds())
