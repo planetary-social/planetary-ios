@@ -48,6 +48,7 @@ type Node struct {
 	cancel     context.CancelFunc
 	cleanup    func()
 	repository string
+	wg         *sync.WaitGroup
 }
 
 func NewNode() *Node {
@@ -88,6 +89,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	n.cancel = cancel
 	n.cleanup = cleanup
 	n.repository = config.DataDirectory
+	n.wg = &sync.WaitGroup{}
 
 	if swiftConfig.Testing {
 		go n.printStats(ctx, config.Logger, service)
@@ -95,7 +97,10 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 		//go n.captureProfileMemory(ctx, config)
 	}
 
+	n.wg.Add(1)
 	go func() {
+		defer n.wg.Done()
+
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
 			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
@@ -106,7 +111,10 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 		}
 	}()
 
+	n.wg.Add(1)
 	go func() {
+		defer n.wg.Done()
+
 		if err := service.Run(ctx); err != nil {
 			fmt.Println("service has terminated with an error", err)
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
@@ -127,10 +135,13 @@ func (n *Node) Stop() error {
 	n.cancel()
 	n.cleanup()
 
+	n.wg.Wait()
+
 	n.service = nil
 	n.cancel = nil
 	n.repository = ""
 	n.cleanup = nil
+	n.wg = nil
 
 	return nil
 }

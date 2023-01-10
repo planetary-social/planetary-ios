@@ -33,7 +33,7 @@ func ssbTestingMakeNamedKey(name string) int {
 		return -1
 	}
 
-	level.Error(log).Log("function", "ssbTestingMakeNamedKey", "action", "created key", "name", name)
+	level.Info(log).Log("function", "ssbTestingMakeNamedKey", "action", "created key", "name", name)
 
 	return 0
 }
