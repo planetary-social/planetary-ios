@@ -1065,6 +1065,16 @@ class GoBotOrderedTests: XCTestCase {
         }
         self.wait(for: [ex], timeout: 10)
     }
+    
+    func test999_teardown() async throws {
+            do {
+                try await GoBotOrderedTests.shared.logout()
+            } catch {
+                guard case BotError.notLoggedIn = error else {
+                    throw error
+                }
+            }
+    }
 
     // MARK: TODOS
 
