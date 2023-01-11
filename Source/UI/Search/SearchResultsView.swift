@@ -36,21 +36,31 @@ struct SearchResultsView: View {
                         switch selectedSection {
                         case .all:
                             if searchResults.isEmpty {
-                                EmptyHomeView()
+                                EmptyPostsView(title: Localized.noResultsFound, description: Localized.noResultsHelp)
                             } else {
                                 SearchResultsGrid {
                                     ForEach(searchResults.posts) { message in
                                         MessageButton(message: message, type: .golden)
                                     }
-                                    ForEach(searchResults.users, id: \.self) { identities in
-                                        IdentityButton(identity: identities, type: .golden)
+                                    ForEach(searchResults.users) { identityOrAbout in
+                                        switch identityOrAbout {
+                                        case .left(let identity):
+                                            IdentityButton(identity: identity, type: .golden)
+                                        case .right(let about):
+                                            IdentityButton(identity: about.identity, type: .golden)
+                                        }
                                     }
                                 }
                             }
                         case .people:
                             SearchResultsGrid {
-                                ForEach(searchResults.users, id: \.self) { identities in
-                                    IdentityButton(identity: identities, type: .golden)
+                                ForEach(searchResults.users) { identityOrAbout in
+                                    switch identityOrAbout {
+                                    case .left(let identity):
+                                        IdentityButton(identity: identity, type: .golden)
+                                    case .right(let about):
+                                        IdentityButton(identity: about.identity, type: .golden)
+                                    }
                                 }
                             }
                         }
@@ -86,15 +96,15 @@ struct SearchResultsView: View {
         } else if isMessageIdentifier {
             return SearchResults(data: .messageID(await loadMessage(with: identifier)), query: query)
         } else {
-            async let identities = loadIdentities(matching: normalizedQuery)
+            async let abouts = loadAbouts(matching: normalizedQuery)
             async let posts = loadPosts(matching: normalizedQuery)
-            return SearchResults(data: .universal(people: await identities, posts: await posts), query: query)
+            return SearchResults(data: .universal(people: await abouts, posts: await posts), query: query)
         }
     }
 
-    func loadIdentities(matching filter: String) async -> [Identity] {
+    func loadAbouts(matching filter: String) async -> [About] {
         do {
-            return try await Bots.current.identities(matching: filter)
+            return try await Bots.current.abouts(matching: filter)
         } catch {
             Log.optional(error)
             return []
@@ -126,7 +136,7 @@ struct SearchResultsView: View {
 /// A model for all the different types of results that can be displayed.
 fileprivate struct SearchResults {
     enum ResultData {
-        case universal(people: [Identity], posts: [Message])
+        case universal(people: [About], posts: [Message])
         case feedID(FeedIdentifier)
         case messageID(Either<Message, MessageIdentifier>)
         case loading
@@ -186,12 +196,12 @@ fileprivate struct SearchResults {
         }
     }
 
-    var users: [FeedIdentifier] {
+    var users: [Either<FeedIdentifier, About>] {
         switch data {
         case .feedID(let identity):
-            return [identity]
-        case .universal(let identities, _):
-            return identities
+            return [.left(identity)]
+        case .universal(let abouts, _):
+            return abouts.map { Either<FeedIdentifier, About>.right($0) }
         default:
             return []
         }
@@ -205,5 +215,22 @@ fileprivate struct SearchResults {
 struct SearchResultsView_Previews: PreviewProvider {
     static var previews: some View {
         SearchResultsView(searchText: "Hello")
+    }
+}
+
+extension Either: Identifiable, Equatable, Hashable where Left == FeedIdentifier, Right == About {
+    var id: Identity {
+        switch self {
+        case .left(let identity):
+            return identity
+        case .right(let about):
+            return about.identity
+        }
+    }
+    static func == (lhs: Either, rhs: Either) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

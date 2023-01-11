@@ -15,6 +15,24 @@ struct GoldenIdentityView: View {
 
     var identity: Identity
 
+    init(identity: Identity) {
+        self.init(identityOrAbout: .left(identity))
+    }
+
+    init(about: About) {
+        self.init(identityOrAbout: .right(about))
+    }
+
+    init(identityOrAbout: Either<Identity, About>) {
+        switch identityOrAbout {
+        case .left(let identity):
+            self.identity = identity
+        case .right(let about):
+            self.identity = about.identity
+            self._about = State(initialValue: about)
+        }
+    }
+
     @EnvironmentObject
     private var botRepository: BotRepository
 
@@ -27,38 +45,7 @@ struct GoldenIdentityView: View {
     @State
     private var hashtags: [Hashtag]?
 
-    @State
-    private var relationship: Relationship?
-
-    private var isSelf: Bool {
-        botRepository.current.identity == identity
-    }
-
     private let goldenRatio: CGFloat = 0.618
-
-    private func attributedSocialStats(from socialStats: SocialStats) -> AttributedString {
-        let numberOfFollowers = socialStats.numberOfFollowers
-        let numberOfFollows = socialStats.numberOfFollows
-        let string = Localized.followStats.text
-
-        var attributeContainer = AttributeContainer()
-        attributeContainer.foregroundColor = .primaryTxt
-
-        var attributedString = AttributedString(string)
-        if let range = attributedString.range(of: "{{numberOfFollows}}") {
-            attributedString.replaceSubrange(
-                range,
-                with: AttributedString("\(numberOfFollows)", attributes: attributeContainer)
-            )
-        }
-        if let range = attributedString.range(of: "{{numberOfFollowers}}") {
-            attributedString.replaceSubrange(
-                range,
-                with: AttributedString("\(numberOfFollowers)", attributes: attributeContainer)
-            )
-        }
-        return attributedString
-    }
 
     private var shouldShowBio: Bool {
         if let about = about {
@@ -118,19 +105,16 @@ struct GoldenIdentityView: View {
         )
         .cornerRadius(15)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { output in
-            guard let notifiedRelationship = output.relationship, notifiedRelationship.other == identity else {
-                return
-            }
-            relationship = notifiedRelationship
-        }
         .task {
-            loadAbout()
+            loadAboutIfNeeded()
             loadHashtags()
         }
     }
 
-    private func loadAbout() {
+    private func loadAboutIfNeeded() {
+        guard about == nil else {
+            return
+        }
         Task.detached {
             let identityToLoad = await identity
             let bot = await botRepository.current

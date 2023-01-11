@@ -9,17 +9,30 @@
 import SwiftUI
 
 struct IdentityButton: View {
-    var identity: Identity
+    var identityOrAbout: Either<Identity, About>
     var type: MessageView.`Type` = .compact
+
+    init(identity: Identity, type: MessageView.`Type` = .compact) {
+        self.init(identityOrAbout: .left(identity), type: type)
+    }
+
+    init(about: About, type: MessageView.`Type` = .compact) {
+        self.init(identityOrAbout: .right(about), type: type)
+    }
+
+    init(identityOrAbout: Either<Identity, About>, type: MessageView.`Type` = .compact) {
+        self.identityOrAbout = identityOrAbout
+        self.type = type
+    }
 
     @EnvironmentObject
     private var appController: AppController
 
     var body: some View {
         Button {
-            appController.open(identity: identity)
+            appController.open(identity: identityOrAbout.id)
         } label: {
-            GoldenIdentityView(identity: identity)
+            GoldenIdentityView(identityOrAbout: identityOrAbout)
         }
         .buttonStyle(IdentityButtonStyle())
     }

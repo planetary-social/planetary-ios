@@ -122,7 +122,7 @@ struct MessageView: View {
                 }
             case .golden:
                 if let contact = message.content.contact {
-                    CompactIdentityView(identity: contact.contact)
+                    GoldenIdentityView(identity: contact.contact)
                 } else if let post = message.content.post {
                     GoldenPostView(identifier: message.id, post: post, author: author)
                 }

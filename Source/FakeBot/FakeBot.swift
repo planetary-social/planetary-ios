@@ -273,10 +273,6 @@ class FakeBot: Bot {
         []
     }
 
-    func identities(matching filter: String) async throws -> [Identity] {
-        []
-    }
-
     // MARK: Feed content
 
     func numberOfRecentItems(since message: MessageIdentifier, completion: @escaping CountCompletion) {

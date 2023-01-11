@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct EmptyPostsView: View {
+    var title: Localizable = Localized.Message.noPostsTitle
     var description: Localizable
     var body: some View {
         VStack {
@@ -16,7 +17,7 @@ struct EmptyPostsView: View {
                 .font(.system(size: 68))
                 .padding()
                 .padding(.top, 35)
-            Text(Localized.Message.noPostsTitle.text)
+            Text(title.text)
                 .font(.title3.weight(.semibold))
                 .foregroundColor(.primaryTxt)
             Text(noPostsDescription)
