@@ -40,14 +40,14 @@ struct SearchResultsView: View {
                             } else {
                                 SearchResultsGrid {
                                     ForEach(searchResults.posts) { message in
-                                        MessageButton(message: message, type: .golden)
+                                        MessageButton(message: message, style: .golden)
                                     }
                                     ForEach(searchResults.users) { identityOrAbout in
                                         switch identityOrAbout {
                                         case .left(let identity):
-                                            IdentityButton(identity: identity, type: .golden)
+                                            IdentityButton(identity: identity, style: .golden)
                                         case .right(let about):
-                                            IdentityButton(identity: about.identity, type: .golden)
+                                            IdentityButton(identity: about.identity, style: .golden)
                                         }
                                     }
                                 }
@@ -57,9 +57,9 @@ struct SearchResultsView: View {
                                 ForEach(searchResults.users) { identityOrAbout in
                                     switch identityOrAbout {
                                     case .left(let identity):
-                                        IdentityButton(identity: identity, type: .golden)
+                                        IdentityButton(identity: identity, style: .golden)
                                     case .right(let about):
-                                        IdentityButton(identity: about.identity, type: .golden)
+                                        IdentityButton(identity: about.identity, style: .golden)
                                     }
                                 }
                             }

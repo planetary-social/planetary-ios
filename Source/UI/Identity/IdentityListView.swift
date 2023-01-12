@@ -19,7 +19,7 @@ struct IdentityListView: View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 1) {
                 ForEach(identities, id: \.self) { identity in
-                    CompactIdentityView(identity: identity)
+                    IdentityCard(identity: identity, style: .compact)
                         .onTapGesture {
                             appController.open(identity: identity)
                         }

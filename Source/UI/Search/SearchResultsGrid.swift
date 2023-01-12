@@ -31,7 +31,7 @@ struct SearchResultsGrid<Content>: View where Content: View {
 struct SearchResultsGrid_Previews: PreviewProvider {
     static var previews: some View {
         SearchResultsGrid {
-            IdentityButton(identity: .null, type: .golden)
+            IdentityButton(identity: .null, style: .golden)
         }
         .background(Color.appBg)
         .injectAppEnvironment(botRepository: .fake, appController: .shared)

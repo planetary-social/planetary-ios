@@ -1,5 +1,5 @@
 //
-//  MessageView.swift
+//  MessageCard.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 25/10/22.
@@ -8,15 +8,10 @@
 
 import SwiftUI
 
-struct MessageView: View {
-
-    enum `Type` {
-        case compact
-        case golden
-    }
+struct MessageCard: View {
 
     var message: Message
-    var type: `Type` = .compact
+    var style = CardStyle.compact
 
     @EnvironmentObject
     private var appController: AppController
@@ -29,6 +24,68 @@ struct MessageView: View {
             image: message.metadata.author.about?.image,
             publicWebHosting: nil
         )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            switch style {
+            case .compact:
+                HStack(alignment: .center) {
+                    Button {
+                        appController.open(identity: author.identity)
+                    } label: {
+                        HStack(alignment: .center) {
+                            AvatarView(metadata: author.image, size: 24)
+                            if let header = attributedHeader {
+                                Text(header)
+                                    .lineLimit(1)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondaryTxt)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                    }
+                    MessageOptionsButton(message: message)
+                }
+                .padding(10)
+                Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                if let contact = message.content.contact {
+                    IdentityCard(identity: contact.contact, style: .compact)
+                } else if let post = message.content.post {
+                    Group {
+                        CompactPostView(identifier: message.id, post: post)
+                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                        HStack {
+                            StackedAvatarsView(avatars: replies, size: 20, border: 0)
+                            if let replies = attributedReplies {
+                                Text(replies)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondaryTxt)
+                            }
+                            Spacer()
+                            Image.buttonReply
+                        }
+                        .padding(15)
+                    }
+                }
+            case .golden:
+                if let contact = message.content.contact {
+                    GoldenIdentityView(identity: contact.contact)
+                } else if let post = message.content.post {
+                    GoldenPostView(identifier: message.id, post: post, author: author)
+                }
+            }
+        }
+        .background(
+            LinearGradient(
+                colors: [Color.cardBgTop, Color.cardBgBottom],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .cornerRadius(cornerRadius)
+        .padding(padding)
     }
 
     private var attributedHeader: AttributedString? {
@@ -70,73 +127,21 @@ struct MessageView: View {
     }
 
     var padding: EdgeInsets {
-        if type == .golden {
+        switch style {
+        case .golden:
             return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        } else {
+        case .compact:
             return EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15)
         }
     }
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            switch type {
-            case .compact:
-                HStack(alignment: .center) {
-                    Button {
-                        appController.open(identity: author.identity)
-                    } label: {
-                        HStack(alignment: .center) {
-                            AvatarView(metadata: author.image, size: 24)
-                            if let header = attributedHeader {
-                                Text(header)
-                                    .lineLimit(1)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                    }
-                    MessageOptionsButton(message: message)
-                }
-                .padding(10)
-                Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                if let contact = message.content.contact {
-                    CompactIdentityView(identity: contact.contact)
-                } else if let post = message.content.post {
-                    Group {
-                        CompactPostView(identifier: message.id, post: post)
-                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                        HStack {
-                            StackedAvatarsView(avatars: replies, size: 20, border: 0)
-                            if let replies = attributedReplies {
-                                Text(replies)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                            }
-                            Spacer()
-                            Image.buttonReply
-                        }
-                        .padding(15)
-                    }
-                }
-            case .golden:
-                if let contact = message.content.contact {
-                    GoldenIdentityView(identity: contact.contact)
-                } else if let post = message.content.post {
-                    GoldenPostView(identifier: message.id, post: post, author: author)
-                }
-            }
+    var cornerRadius: CGFloat {
+        switch style {
+        case .golden:
+            return 15
+        case .compact:
+            return 20
         }
-        .background(
-            LinearGradient(
-                colors: [Color.cardBgTop, Color.cardBgBottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .cornerRadius(type == .compact ? 20 : 15)
-        .padding(padding)
     }
 
     private var replies: [ImageMetadata] {
@@ -162,7 +167,7 @@ struct MessageView: View {
     }
 }
 
-struct MessageView_Previews: PreviewProvider {
+struct MessageCard_Previews: PreviewProvider {
     static var messageValue: MessageValue {
         MessageValue(
             author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
@@ -257,29 +262,29 @@ struct MessageView_Previews: PreviewProvider {
         Group {
             ScrollView {
                 VStack {
-                    MessageView(message: message)
-                    MessageView(message: messageWithOneReply)
-                    MessageView(message: messageWithReplies)
-                    MessageView(message: messageWithLongAuthor)
-                    MessageView(message: messageWithUnknownAuthor)
+                    MessageCard(message: message)
+                    MessageCard(message: messageWithOneReply)
+                    MessageCard(message: messageWithReplies)
+                    MessageCard(message: messageWithLongAuthor)
+                    MessageCard(message: messageWithUnknownAuthor)
                 }
             }
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
-                    MessageView(message: message, type: .golden)
-                    MessageView(message: messageWithOneReply, type: .golden)
-                    MessageView(message: messageWithReplies, type: .golden)
-                    MessageView(message: messageWithLongAuthor, type: .golden)
-                    MessageView(message: messageWithUnknownAuthor, type: .golden)
+                    MessageCard(message: message, style: .golden)
+                    MessageCard(message: messageWithOneReply, style: .golden)
+                    MessageCard(message: messageWithReplies, style: .golden)
+                    MessageCard(message: messageWithLongAuthor, style: .golden)
+                    MessageCard(message: messageWithUnknownAuthor, style: .golden)
                 }
             }
             ScrollView {
                 VStack {
-                    MessageView(message: message)
-                    MessageView(message: messageWithOneReply)
-                    MessageView(message: messageWithReplies)
-                    MessageView(message: messageWithLongAuthor)
-                    MessageView(message: messageWithUnknownAuthor)
+                    MessageCard(message: message)
+                    MessageCard(message: messageWithOneReply)
+                    MessageCard(message: messageWithReplies)
+                    MessageCard(message: messageWithLongAuthor)
+                    MessageCard(message: messageWithUnknownAuthor)
                 }
             }
             .preferredColorScheme(.dark)

@@ -15,20 +15,16 @@ struct CompactIdentityView: View {
 
     var identity: Identity
 
+    var about: About?
+
+    var socialStats: SocialStats?
+
+    var hashtags: [Hashtag]?
+
+    var relationship: Relationship?
+
     @EnvironmentObject
     private var botRepository: BotRepository
-
-    @State
-    private var about: About?
-
-    @State
-    private var socialStats: SocialStats?
-
-    @State
-    private var hashtags: [Hashtag]?
-
-    @State
-    private var relationship: Relationship?
 
     private var isSelf: Bool {
         botRepository.current.identity == identity
@@ -96,108 +92,45 @@ struct CompactIdentityView: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .topLeading)
-        .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { output in
-            guard let notifiedRelationship = output.relationship, notifiedRelationship.other == identity else {
-                return
-            }
-            relationship = notifiedRelationship
-        }
-        .task {
-            loadAbout()
-            loadRelationship()
-            loadHashtags()
-            loadSocialStats()
-        }
-    }
-
-    private func loadAbout() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.about(identity: identityToLoad)
-                await MainActor.run {
-                    about = result
-                }
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                await MainActor.run {
-                    about = About(about: identity)
-                }
-            }
-        }
-    }
-
-    private func loadRelationship() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            if let currentIdentity = bot.identity {
-                do {
-                    let result = try await bot.relationship(from: currentIdentity, to: identityToLoad)
-                    await MainActor.run {
-                        relationship = result
-                    }
-                } catch {
-                    CrashReporting.shared.reportIfNeeded(error: error)
-                    Log.shared.optional(error)
-                }
-            }
-        }
-    }
-
-    private func loadHashtags() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.hashtags(usedBy: identityToLoad, limit: 3)
-                await MainActor.run {
-                    hashtags = result
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    hashtags = []
-                }
-            }
-        }
-    }
-
-    private func loadSocialStats() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.socialStats(for: identityToLoad)
-                await MainActor.run {
-                    socialStats = result
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    socialStats = .zero
-                }
-            }
-        }
     }
 }
 
 struct CompactIdentityView_Previews: PreviewProvider {
+    static var about: About {
+        About(about: .null, name: "Mario")
+    }
+    static var socialStats: SocialStats {
+        SocialStats(numberOfFollowers: 24, numberOfFollows: 12)
+    }
+    static var hashtags: [Hashtag] {
+        [Hashtag(name: "Design"), Hashtag(name: "Architecture"), Hashtag(name: "Retro")]
+    }
+    static var relationship: Relationship {
+        Relationship(from: .null, to: .null)
+    }
+    static var view: some View {
+        ScrollView {
+            VStack {
+                CompactIdentityView(identity: "@unset")
+                CompactIdentityView(identity: "@unset", about: about)
+                CompactIdentityView(identity: "@unset", socialStats: socialStats)
+                CompactIdentityView(identity: "@unset", hashtags: hashtags)
+                CompactIdentityView(identity: "@unset", relationship: relationship)
+                CompactIdentityView(
+                    identity: "@unset",
+                    about: about,
+                    socialStats: socialStats,
+                    hashtags: hashtags,
+                    relationship: relationship
+                )
+                CompactIdentityView(identity: .null)
+            }
+        }
+    }
     static var previews: some View {
         Group {
-            VStack {
-                CompactIdentityView(identity: "@unset")
-                CompactIdentityView(identity: .null)
-            }
-            VStack {
-                CompactIdentityView(identity: "@unset")
-                CompactIdentityView(identity: .null)
-            }
-            .preferredColorScheme(.dark)
+            view
+            view.preferredColorScheme(.dark)
         }
         .padding()
         .background(Color.cardBackground)

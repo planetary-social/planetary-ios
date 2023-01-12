@@ -15,48 +15,14 @@ struct GoldenIdentityView: View {
 
     var identity: Identity
 
-    init(identity: Identity) {
-        self.init(identityOrAbout: .left(identity))
-    }
+    var about: About?
 
-    init(about: About) {
-        self.init(identityOrAbout: .right(about))
-    }
+    var socialStats: SocialStats?
 
-    init(identityOrAbout: Either<Identity, About>) {
-        switch identityOrAbout {
-        case .left(let identity):
-            self.identity = identity
-        case .right(let about):
-            self.identity = about.identity
-            self._about = State(initialValue: about)
-        }
-    }
+    var hashtags: [Hashtag]?
 
     @EnvironmentObject
     private var botRepository: BotRepository
-
-    @State
-    private var about: About?
-
-    @State
-    private var socialStats: SocialStats?
-
-    @State
-    private var hashtags: [Hashtag]?
-
-    private let goldenRatio: CGFloat = 0.618
-
-    private var shouldShowBio: Bool {
-        if let about = about {
-            return about.description?.isEmpty == false
-        }
-        return true
-    }
-
-    private var bio: AttributedString {
-        about?.description?.parseMarkdown(fontStyle: .small) ?? AttributedString()
-    }
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -81,7 +47,7 @@ struct GoldenIdentityView: View {
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                     .placeholder(when: about == nil) {
                         Text(String.loremIpsum(1))
-                            .padding(0)
+                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                             .redacted(reason: .placeholder)
                     }
             }
@@ -105,69 +71,46 @@ struct GoldenIdentityView: View {
         )
         .cornerRadius(15)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-        .task {
-            loadAboutIfNeeded()
-            loadHashtags()
-        }
     }
 
-    private func loadAboutIfNeeded() {
-        guard about == nil else {
-            return
+    private let goldenRatio: CGFloat = 0.618
+
+    private var shouldShowBio: Bool {
+        if let about = about {
+            return about.description?.isEmpty == false
         }
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.about(identity: identityToLoad)
-                await MainActor.run {
-                    about = result
-                }
-            } catch {
-                Log.optional(error)
-                CrashReporting.shared.reportIfNeeded(error: error)
-                await MainActor.run {
-                    about = About(about: identity)
-                }
-            }
-        }
+        return true
     }
 
-    private func loadHashtags() {
-        Task.detached {
-            let identityToLoad = await identity
-            let bot = await botRepository.current
-            do {
-                let result = try await bot.hashtags(usedBy: identityToLoad, limit: 3)
-                await MainActor.run {
-                    hashtags = result
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    hashtags = []
-                }
-            }
-        }
+    private var bio: AttributedString {
+        about?.description?.parseMarkdown(fontStyle: .small) ?? AttributedString()
     }
 }
 
 struct GoldenIdentityView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
+    static var about: About {
+        About(about: .null, name: "Mario", description: .loremIpsum(1), imageLink: nil)
+    }
+    static var hashtags: [Hashtag] {
+        [Hashtag(name: "Design"), Hashtag(name: "Architecture"), Hashtag(name: "Retro")]
+    }
+    static var view: some View {
+        ScrollView {
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
                 Group {
                     GoldenIdentityView(identity: "@unset")
-                    GoldenIdentityView(identity: .null)
+                    GoldenIdentityView(identity: "@unset", about: about)
+                    GoldenIdentityView(identity: "@unset", hashtags: hashtags)
+                    GoldenIdentityView(identity: "@unset", about: about, hashtags: hashtags)
                 }
                 .background(Color.cardBackground)
             }
-            VStack {
-                GoldenIdentityView(identity: "@unset")
-                GoldenIdentityView(identity: .null)
-            }
-            .preferredColorScheme(.dark)
+        }
+    }
+    static var previews: some View {
+        Group {
+            view
+            view.preferredColorScheme(.dark)
         }
         .padding(10)
         .background(Color.appBg)

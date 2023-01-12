@@ -220,7 +220,7 @@ struct InfiniteGrid_Previews: PreviewProvider {
     }
     static var previews: some View {
         InfiniteGrid(dataSource: StaticMessageDataSource(messages: [message, second, third, fourth])) { message in
-            MessageButton(message: message, type: .golden)
+            MessageButton(message: message, style: .golden)
         }
         .injectAppEnvironment(botRepository: .fake, appController: .shared)
     }
