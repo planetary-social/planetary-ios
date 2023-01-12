@@ -71,9 +71,11 @@ struct HashtagListView: View, HelpDrawerHost {
                     LazyVStack(alignment: .leading, spacing: 1) {
                         ForEach(hashtags) { hashtag in
                             NavigationLink {
-                                HashtagView(hashtag: hashtag)
-                                    .environmentObject(botRepository)
-                                    .environmentObject(appController)
+                                HashtagView(
+                                    hashtag: hashtag,
+                                    bot: botRepository.current
+                                )
+                                .injectAppEnvironment(botRepository: botRepository, appController: appController)
                             } label: {
                                 CompactHashtagView(hashtag: hashtag)
                             }
@@ -196,8 +198,6 @@ struct HashtagListView_Previews: PreviewProvider {
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(HelpDrawerState())
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }
