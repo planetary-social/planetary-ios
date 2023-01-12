@@ -5622,7 +5622,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -5645,7 +5645,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -5679,7 +5679,7 @@
 					"\"Multipart\"",
 					"-lssb-go",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D UNIT_TESTS -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D UNIT_TESTS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.UnitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5744,7 +5744,7 @@
 					"\"SQLite\"",
 					"-lssb-go",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.APITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "${PROJECT_DIR}/Source/GoBot/GoBotBridge.h";
@@ -5779,7 +5779,7 @@
 					"\"SQLite\"",
 					"-lssb-go",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -enable-actor-data-race-checks";
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios.APITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "${PROJECT_DIR}/Source/GoBot/GoBotBridge.h";
