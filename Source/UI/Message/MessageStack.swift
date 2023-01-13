@@ -1,31 +1,30 @@
 //
-//  MessageButtonStyle.swift
+//  MessageStack.swift
 //  Planetary
 //
-//  Created by Martin Dutra on 9/12/22.
+//  Created by Martin Dutra on 19/12/22.
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
 import SwiftUI
 
-/// Use this button style when using a MessageView as a Button label
-/// It will give it the shadows and a pressed state
-struct MessageButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .offset(y: configuration.isPressed ? 3 : 0)
-            .compositingGroup()
-            .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-            .shadow(
-                color: .cardShadowBottom,
-                radius: configuration.isPressed ? 5 : 10,
-                x: 0,
-                y: configuration.isPressed ? 1 : 4
-            )
+/// A stack of messages. The primary purpose of this view is to be used in the Profile screen
+/// inside the ScrollView defined in that screen. For most cases, consider using MessageList instead
+/// that already integrates a ScrollView.
+struct MessageStack<DataSource>: View where DataSource: MessageDataSource {
+    @ObservedObject
+    var dataSource: DataSource
+
+    var body: some View {
+        InfiniteStack(dataSource: dataSource) { message in
+            if let message = message as? Message {
+                MessageButton(message: message)
+            }
+        }
     }
 }
 
-struct MessageButtonStyle_Previews: PreviewProvider {
+struct MessageStack_Previews: PreviewProvider {
     static var messageValue: MessageValue {
         MessageValue(
             author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
@@ -46,7 +45,6 @@ struct MessageButtonStyle_Previews: PreviewProvider {
             claimedTimestamp: 0
         )
     }
-
     static var message: Message {
         var message = Message(
             key: "@unset",
@@ -60,13 +58,7 @@ struct MessageButtonStyle_Previews: PreviewProvider {
         )
         return message
     }
-
     static var previews: some View {
-        Button {
-            print("Clicked")
-        } label: {
-            MessageView(message: message)
-        }
-        .buttonStyle(MessageButtonStyle())
+        MessageStack(dataSource: StaticMessageDataSource(messages: [message]))
     }
 }

@@ -10,9 +10,38 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+enum IdentityViewBuilder {
+    static func build(
+        identity: Identity,
+        botRepository: BotRepository = BotRepository.shared,
+        appController: AppController = AppController.shared
+    ) -> UIHostingController<some View> {
+        UIHostingController(
+            rootView: IdentityView(identity: identity, bot: botRepository.current)
+                .injectAppEnvironment(botRepository: botRepository, appController: appController)
+        )
+    }
+}
+
 struct IdentityView: View {
 
     var identity: Identity
+
+    init(identity: Identity, bot: Bot) {
+        self.identity = identity
+        self.dataSource = FeedStrategyMessageDataSource(
+            strategy: ProfileStrategy(identity: identity),
+            bot: bot
+        )
+    }
+
+    fileprivate init(identity: Identity, dataSource: FeedStrategyMessageDataSource) {
+        self.identity = identity
+        self.dataSource = dataSource
+    }
+
+    @ObservedObject
+    private var dataSource: FeedStrategyMessageDataSource
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -60,16 +89,6 @@ struct IdentityView: View {
             errorMessage = nil
             appController.dismiss(animated: true)
         }
-    }
-
-    private var isStar: Bool {
-        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
-            (AppConfiguration.current?.systemPubs ?? [])
-        return pubs.contains { $0.feed == identity }
-    }
-
-    private var strategy: FeedStrategy {
-        isStar ? OneHopFeedAlgorithm(identity: identity) : NoHopFeedAlgorithm(identity: identity)
     }
 
     private func header(extendedHeader: Bool) -> some View {
@@ -130,7 +149,10 @@ struct IdentityView: View {
                     }
                     .zIndex(extendedHeader ? 500 : 1000)
                     .offset(y: headerOffset)
-                MessageListView(strategy: strategy)
+                MessageStack(dataSource: dataSource)
+                    .placeholder(when: dataSource.isEmpty, alignment: .top) {
+                        EmptyPostsView(description: Localized.Message.noPostsDescription)
+                    }
                     .background(Color.appBg)
                     .zIndex(extendedHeader ? 1000 : 500)
                     .offset(y: contentOffset)
@@ -337,19 +359,78 @@ fileprivate struct ScrollViewOffsetPreferenceKey: PreferenceKey {
 }
 
 struct IdentityView_Previews: PreviewProvider {
+    static var messageValue: MessageValue {
+        MessageValue(
+            author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
+            content: Content(
+                from: Post(
+                    blobs: nil,
+                    branches: nil,
+                    hashtags: nil,
+                    mentions: nil,
+                    root: nil,
+                    text: .loremIpsum(words: 10)
+                )
+            ),
+            hash: "",
+            previous: nil,
+            sequence: 0,
+            signature: .null,
+            claimedTimestamp: 0
+        )
+    }
+    static var message: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
+    static var dataSource: FeedStrategyMessageDataSource {
+        var dataSource = FeedStrategyMessageDataSource(
+            strategy: StaticAlgorithm(messages: [message]),
+            bot: FakeBot.shared
+        )
+        return dataSource
+    }
+    static var loadingDataSource: FeedStrategyMessageDataSource {
+        var dataSource = FeedStrategyMessageDataSource(
+            strategy: StaticAlgorithm(messages: []),
+            bot: FakeBot.shared
+        )
+        dataSource.isLoadingFromScratch = true
+        return dataSource
+    }
+    static var loadingMoreDataSource: FeedStrategyMessageDataSource {
+        var dataSource = FeedStrategyMessageDataSource(
+            strategy: StaticAlgorithm(messages: [message]),
+            bot: FakeBot.shared
+        )
+        dataSource.isLoadingMore = true
+        return dataSource
+    }
     static var previews: some View {
         Group {
             NavigationView {
-                IdentityView(identity: .null)
+                IdentityView(identity: .null, dataSource: dataSource)
             }
-            .preferredColorScheme(.light)
-
             NavigationView {
-                IdentityView(identity: .null)
+                IdentityView(identity: .null, dataSource: loadingDataSource)
+            }
+            NavigationView {
+                IdentityView(identity: .null, dataSource: loadingMoreDataSource)
+            }
+            NavigationView {
+                IdentityView(identity: .null, dataSource: dataSource)
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }
