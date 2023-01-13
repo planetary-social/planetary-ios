@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/boreq/errors"
+	badgeroptions "github.com/dgraph-io/badger/v3/options"
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/planetary-social/scuttlego/di"
 	"github.com/planetary-social/scuttlego/logging"
+	"github.com/planetary-social/scuttlego/service/adapters/badger"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
@@ -22,6 +24,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+)
+
+const (
+	kibibyte = 1024
+	mebibyte = 1024 * kibibyte
 )
 
 type OnBlobDownloadedFn func(downloaded queries.BlobDownloaded) error
@@ -91,11 +98,9 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	n.repository = config.DataDirectory
 	n.wg = &sync.WaitGroup{}
 
-	if swiftConfig.Testing {
-		go n.printStats(ctx, config.Logger, service)
-		//go n.captureProfileCPU(ctx, config)
-		//go n.captureProfileMemory(ctx, config)
-	}
+	go n.printStats(ctx, config.Logger, service)
+	//go n.captureProfileCPU(ctx, config)
+	//go n.captureProfileMemory(ctx, config)
 
 	n.wg.Add(1)
 	go func() {
@@ -204,19 +209,26 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 	// todo do something service pubs?
 	// todo use the testing option to change log level?
 
+	logger := n.newLogger(kitlogLogger)
+
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
 		GoSSBDataDirectory: swiftConfig.OldRepo,
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		Logger:             n.newLogger(swiftConfig, kitlogLogger),
+		Logger:             logger,
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
 		ModifyBadgerOptions: func(options di.BadgerOptions) {
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
+			options.SetCompression(badgeroptions.ZSTD)
+			options.SetLogger(badger.NewLogger(logger.New("badger"), badger.LoggerLevelInfo))
+			options.SetValueLogFileSize(32 * mebibyte)
+			options.SetBlockCacheSize(32 * mebibyte)
+			options.SetIndexCacheSize(0)
 		},
 	}
 
@@ -225,12 +237,8 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 	return config, nil
 }
 
-func (n *Node) newLogger(swiftConfig BotConfig, kitlogLogger kitlog.Logger) KitlogLogger {
-	if swiftConfig.Testing {
-		return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelTrace)
-	} else {
-		return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug)
-	}
+func (n *Node) newLogger(kitlogLogger kitlog.Logger) KitlogLogger {
+	return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug)
 }
 
 func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
