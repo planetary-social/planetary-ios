@@ -53,7 +53,7 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 		return nil
 	}
 
-	level.Debug(log).Log("event", "returning new messages in ssbStreamRootLog", "n", len(msgs), "duration", time.Since(start).Seconds())
+	level.Debug(log).Log("event", "returning new messages in ssbStreamRootLog", "n", len(msgs), "duration", time.Since(start).String())
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
