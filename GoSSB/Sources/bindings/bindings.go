@@ -373,6 +373,36 @@ func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
 	}
 }
 
+func (n *Node) captureProfileGoroutines(ctx context.Context, config di.Config) {
+	for {
+		dir := path.Join(config.DataDirectory, "debug", "profiles")
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			panic(err)
+		}
+
+		name := path.Join(dir, fmt.Sprintf("%s.goroutines", nowAsString()))
+		f, err := os.Create(name)
+		if err != nil {
+			panic(err)
+		}
+
+		p := pprof.Lookup("goroutine")
+		if p == nil {
+			panic("missing goroutine profile")
+		}
+
+		if err := p.WriteTo(f, 2); err != nil {
+			panic(err)
+		}
+
+		select {
+		case <-time.After(30 * time.Second):
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
 func nowAsString() string {
 	return time.Now().Format(time.RFC3339)
 }
