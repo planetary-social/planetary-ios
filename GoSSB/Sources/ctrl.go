@@ -4,16 +4,16 @@ import "C"
 import (
 	"context"
 	"encoding/json"
-	"github.com/planetary-social/scuttlego/service/app/queries"
-	"github.com/planetary-social/scuttlego/service/domain/network"
-	"github.com/planetary-social/scuttlego/service/domain/refs"
-	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
-	multiserver "go.mindeco.de/ssb-multiserver"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/commands"
+	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain/invites"
+	"github.com/planetary-social/scuttlego/service/domain/network"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
+	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
+	multiserver "go.mindeco.de/ssb-multiserver"
 )
 
 // typedef struct ssbRoomsAliasRegisterReturn {
@@ -75,6 +75,7 @@ func ssbDisconnectAllPeers() bool {
 
 // ssbFeedReplicate temporarily adds a feed to the list of replicated feeds. This can be useful to for example add
 // a specific feed to the list of replicated feeds when a user views it.
+//
 //export ssbFeedReplicate
 func ssbFeedReplicate(ref string) {
 	var err error

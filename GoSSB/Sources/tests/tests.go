@@ -1,12 +1,13 @@
 package tests
 
 import (
-	"github.com/pkg/errors"
-	"github.com/planetary-social/scuttlego/service/domain/identity"
-	"github.com/planetary-social/scuttlego/service/domain/refs"
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
+	"github.com/planetary-social/scuttlego/service/domain/identity"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
 )
 
 const everyone = 0777

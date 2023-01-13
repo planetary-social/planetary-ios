@@ -11,7 +11,7 @@ on:
 env:
   SIMULATOR: platform=iOS Simulator,name=iPhone 14,OS=16.0
   DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
-    
+
 jobs:
   unit_test:
     name : Unit Tests
@@ -97,3 +97,38 @@ jobs:
         lfs: true
     - name: Run gif lfs fsck
       run: git lfs fsck
+
+
+  test_golang_bindings:
+    name: Test Go bindings
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.19
+        id: go
+
+    - name: Determine Go cache paths
+      id: golang-path
+      run: |
+        echo "build=$(go env GOCACHE)" >>"$GITHUB_OUTPUT"
+        echo "module=$(go env GOMODCACHE)" >>"$GITHUB_OUTPUT"
+      shell: bash
+
+    - name: Setup Go cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ${{ steps.golang-path.outputs.build }}
+          ${{ steps.golang-path.outputs.module }}
+        key: ${{ runner.os }}-golang
+        restore-keys: |
+          ${{ runner.os }}-golang
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Run tests
+      run: make -f Makefile.ci ci
+      working-directory: GoSSB/Sources/

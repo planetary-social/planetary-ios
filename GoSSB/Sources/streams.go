@@ -6,11 +6,12 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/common"
 	"github.com/planetary-social/scuttlego/service/app/queries"
-	"time"
 )
 
 // ssbStreamRootLog returns received messages. Only messages with a sequence

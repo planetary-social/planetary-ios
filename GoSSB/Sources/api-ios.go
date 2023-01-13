@@ -21,7 +21,6 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/planetary-social/scuttlego/service/app/queries"
 	"io"
 	"os"
 	"path/filepath"
@@ -33,6 +32,7 @@ import (
 
 	kitlog "github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
+	"github.com/planetary-social/scuttlego/service/app/queries"
 )
 
 const (

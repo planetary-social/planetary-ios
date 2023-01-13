@@ -1,0 +1,28 @@
+.PHONY: ci
+ci: tools test lint fmt tidy check_repository_unchanged
+
+.PHONY: check_repository_unchanged
+check_repository_unchanged:
+	_tools/check_repository_unchanged.sh
+
+.PHONY: fmt
+fmt:
+	gosimports -l -w $(shell find . -type f -name '*.go' -not -path './.goroot/*')
+
+.PHONY: test
+test:
+	go test -race ./...
+
+.PHONY: tidy
+tidy:
+	go mod tidy
+
+.PHONY: lint
+lint:
+	#go vet ./... # disable due to complaints about unsafe.Pointer misuse
+	#golangci-lint run ./... # disable till errors are fixed
+
+.PHONY: tools
+tools:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
+	go install github.com/rinchsan/gosimports/cmd/gosimports@latest # https://github.com/golang/go/issues/20818

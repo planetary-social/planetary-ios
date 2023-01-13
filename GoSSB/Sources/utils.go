@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"runtime/debug"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
 	refs "go.mindeco.de/ssb-refs"
-	"runtime/debug"
 )
 
 import "C"
