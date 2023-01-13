@@ -98,7 +98,7 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 
 	fn := func(event queries.BlobDownloaded) error {
 		ref := C.CString(event.Id.String())
-		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.longlong(event.Size.InBytes()), ref)
+		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
 		C.free(unsafe.Pointer(ref))
 		if !ret {
 			return errors.New("calling C function failed")
