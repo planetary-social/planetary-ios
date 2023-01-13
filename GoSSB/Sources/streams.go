@@ -95,7 +95,8 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	}
 
 	if afterSeq >= 0 {
-		sequence, err := common.NewReceiveLogSequence(int(afterSeq))
+		var sequence common.ReceiveLogSequence
+		sequence, err = common.NewReceiveLogSequence(int(afterSeq))
 		if err != nil {
 			err = errors.Wrap(err, "failed to create a message sequence")
 			return nil
