@@ -5,6 +5,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path"
+	"runtime"
+	"runtime/pprof"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
 	kitlog "github.com/go-kit/kit/log"
@@ -17,13 +25,6 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
 	refs "go.mindeco.de/ssb-refs"
-	"os"
-	"path"
-	"runtime"
-	"runtime/pprof"
-	"strings"
-	"sync"
-	"time"
 )
 
 const (

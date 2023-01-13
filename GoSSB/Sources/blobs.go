@@ -2,10 +2,11 @@ package main
 
 import "C"
 import (
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/domain/refs"
-	"os"
 )
 
 //export ssbBlobsWant

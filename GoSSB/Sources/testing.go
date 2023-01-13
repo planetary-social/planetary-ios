@@ -7,11 +7,12 @@ import "C"
 
 import (
 	"encoding/json"
+	"path/filepath"
+	"verseproj/scuttlegobridge/tests"
+
 	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/commands"
-	"path/filepath"
-	"verseproj/scuttlegobridge/tests"
 )
 
 //export ssbTestingMakeNamedKey
