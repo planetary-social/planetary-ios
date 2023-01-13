@@ -308,7 +308,12 @@ func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di
 
 func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
 	for {
-		name := path.Join(config.DataDirectory, fmt.Sprintf("%d.cpuprofile", time.Now().Unix()))
+		dir := path.Join(config.DataDirectory, "debug", "profiles")
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			panic(err)
+		}
+
+		name := path.Join(dir, fmt.Sprintf("%s.cpuprofile", nowAsString()))
 		f, err := os.Create(name)
 		if err != nil {
 			panic(err)
@@ -340,7 +345,12 @@ func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
 
 func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
 	for {
-		name := path.Join(config.DataDirectory, fmt.Sprintf("%d.heapprofile", time.Now().Unix()))
+		dir := path.Join(config.DataDirectory, "debug", "profiles")
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			panic(err)
+		}
+
+		name := path.Join(dir, fmt.Sprintf("%s.heapprofile", nowAsString()))
 		f, err := os.Create(name)
 		if err != nil {
 			panic(err)
@@ -361,6 +371,10 @@ func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
 			return
 		}
 	}
+}
+
+func nowAsString() string {
+	return time.Now().Format(time.RFC3339)
 }
 
 func bToMb(b uint64) uint64 {

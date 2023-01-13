@@ -5,7 +5,7 @@ require (
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/go-kit/kit v0.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230113125315-1b9b76c52e1d
+	github.com/planetary-social/scuttlego v0.0.0-20230113143532-f4bd8320a18c
 	github.com/stretchr/testify v1.8.1
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
