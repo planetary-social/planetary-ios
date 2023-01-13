@@ -12,10 +12,17 @@ import Logger
 import SwiftUI
 
 struct HomeView: View, HelpDrawerHost {
-    init(helpDrawerState: HelpDrawerState) {
+    init(helpDrawerState: HelpDrawerState, bot: Bot) {
         self.helpDrawerState = helpDrawerState
+        self.dataSource = FeedStrategyMessageDataSource(
+            strategy: HomeStrategy(),
+            bot: bot
+        )
     }
 
+    @ObservedObject
+    private var dataSource: FeedStrategyMessageDataSource
+    
     @ObservedObject
     private var helpDrawerState: HelpDrawerState
 
@@ -63,67 +70,16 @@ struct HomeView: View, HelpDrawerHost {
     @State
     private var lastTimeNewFeedUpdatesWasChecked = Date()
 
-    @State
-    private var errorMessage: String?
-
-    private var shouldShowAlert: Binding<Bool> {
-        Binding {
-            errorMessage != nil
-        } set: { _ in
-            errorMessage = nil
-        }
-    }
-
     private var shouldShowFloatingButton: Bool {
         numberOfNewItems > 0
     }
 
     var body: some View {
         ZStack(alignment: .top) {
-            Group {
-                if let messages = messages {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        ZStack {
-                            LazyVStack(alignment: .center) {
-                                if messages.isEmpty {
-                                    EmptyHomeView()
-                                } else {
-                                    ForEach(messages) { message in
-                                        Button {
-                                            if let contact = message.content.contact {
-                                                appController.open(identity: contact.contact)
-                                            } else {
-                                                appController.open(identifier: message.id)
-                                            }
-                                        } label: {
-                                            MessageView(message: message)
-                                                .onAppear {
-                                                    if message == messages.last {
-                                                        loadMore()
-                                                    }
-                                                }
-                                        }
-                                        .buttonStyle(MessageButtonStyle())
-                                    }
-                                }
-                            }
-                            .frame(maxWidth: 500)
-                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0))
-                            if isLoadingMoreMessages, !noMoreMessages {
-                                HStack {
-                                    ProgressView().frame(maxWidth: .infinity, alignment: .center).padding()
-                                }
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .refreshable {
-                        await loadFromScratch()
-                    }
-                } else {
-                    LoadingView()
+            MessageList(dataSource: dataSource)
+                .placeholder(when: dataSource.isEmpty) {
+                    EmptyHomeView()
                 }
-            }
             if shouldShowFloatingButton {
                 FloatingButton(count: numberOfNewItems, isLoading: isLoadingFromScratch)
             }
@@ -163,46 +119,29 @@ struct HomeView: View, HelpDrawerHost {
                 }
             }
         }
-        .alert(
-            Localized.error.text,
-            isPresented: shouldShowAlert,
-            actions: {
-                Button(Localized.tryAgain.text) {
-                    Task {
-                        await loadFromScratch()
-                    }
-                }
-                Button(Localized.cancel.text, role: .cancel) {
-                    shouldShowAlert.wrappedValue = false
-                }
-            },
-            message: {
-                Text(errorMessage ?? "")
-            }
-        )
-        .task {
-            if messages == nil {
-                await loadFromScratch()
-            }
-        }
         .onReceive(NotificationCenter.default.publisher(for: .didChangeHomeFeedAlgorithm)) { _ in
-            Task.detached {
-                await loadFromScratch()
+            Task {
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didUpdateRelationship)) { _ in
-            Task.detached {
-                await loadFromScratch()
+            Task {
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didPublishPost)) { _ in
-            Task.detached {
-                await loadFromScratch()
+            Task {
+                await dataSource.loadFromScratch()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didRefresh)) { _ in
-            Task.detached {
+            Task {
                 await checkNewItemsIfNeeded()
+            }
+        }
+        .onReceive(dataSource.$pages) { pages in
+            if pages == 1 {
+                updateBadgeNumber(value: 0)
             }
         }
         .onAppear {
@@ -221,67 +160,9 @@ struct HomeView: View, HelpDrawerHost {
         appController.present(navController, animated: true)
     }
 
-    func loadFromScratch() async {
-        guard !isLoadingFromScratch else {
-            return
-        }
-        isLoadingFromScratch = true
-        let strategy = feedStrategyStore.homeFeedStrategy
-        let bot = botRepository.current
-        let pageSize = 50
-        do {
-            let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: 0)
-            await MainActor.run {
-                messages = newMessages
-                offset = newMessages.count
-                noMoreMessages = newMessages.count < pageSize
-                isLoadingFromScratch = false
-                numberOfNewItems = 0
-                updateBadgeNumber(value: 0)
-            }
-        } catch {
-            CrashReporting.shared.reportIfNeeded(error: error)
-            Log.shared.optional(error)
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                isLoadingFromScratch = false
-                messages = []
-                offset = 0
-                noMoreMessages = true
-                numberOfNewItems = 0
-                updateBadgeNumber(value: 0)
-            }
-        }
-    }
-
-    func loadMore() {
-        guard !isLoadingMoreMessages, !noMoreMessages else {
-            return
-        }
-        isLoadingMoreMessages = true
-        Task.detached {
-            let strategy = await feedStrategyStore.homeFeedStrategy
-            let bot = await botRepository.current
-            let pageSize = 50
-            do {
-                let newMessages = try await bot.feed(strategy: strategy, limit: pageSize, offset: offset)
-                await MainActor.run {
-                    messages?.append(contentsOf: newMessages)
-                    offset += newMessages.count
-                    noMoreMessages = newMessages.count < pageSize
-                    isLoadingMoreMessages = false
-                }
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
-                Log.shared.optional(error)
-                await MainActor.run {
-                    isLoadingMoreMessages = false
-                }
-            }
-        }
-    }
-
     private func updateBadgeNumber(value: Int) {
+        numberOfNewItems = 0
+        lastTimeNewFeedUpdatesWasChecked = Date()
         let navigationController = appController.mainViewController?.homeFeatureViewController
         if value > 0 {
             navigationController?.tabBarItem.badgeValue = "\(value)"
@@ -290,6 +171,7 @@ struct HomeView: View, HelpDrawerHost {
         }
     }
 
+    @MainActor
     private func checkNewItemsIfNeeded() async {
         // Check that more than a minute passed since the last time we checked for new updates
         let elapsed = Date().timeIntervalSince(lastTimeNewFeedUpdatesWasChecked)
@@ -301,7 +183,6 @@ struct HomeView: View, HelpDrawerHost {
             do {
                 let result = try await bot.numberOfRecentItems(since: lastMessage)
                 await MainActor.run {
-                    lastTimeNewFeedUpdatesWasChecked = Date()
                     numberOfNewItems = result
                     updateBadgeNumber(value: result)
                 }
@@ -329,14 +210,13 @@ struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                HomeView(helpDrawerState: HelpDrawerState())
+                HomeView(helpDrawerState: HelpDrawerState(), bot: FakeBot.shared)
             }
             NavigationView {
-                HomeView(helpDrawerState: HelpDrawerState())
+                HomeView(helpDrawerState: HelpDrawerState(), bot: FakeBot.shared)
             }
             .preferredColorScheme(.dark)
         }
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: .fake)
     }
 }

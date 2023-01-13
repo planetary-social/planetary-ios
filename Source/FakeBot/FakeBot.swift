@@ -79,7 +79,7 @@ class FakeBot: Bot {
     func delete(room: Room) async throws { }
     
     func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
-        throw FakeBotError.notImplemented
+        return []
     }
     
     func register(alias: String, in: Room) async throws -> RoomAlias {
