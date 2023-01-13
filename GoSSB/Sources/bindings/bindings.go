@@ -101,6 +101,7 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	go n.printStats(ctx, config.Logger, service)
 	//go n.captureProfileCPU(ctx, config)
 	//go n.captureProfileMemory(ctx, config)
+	//go n.captureProfileGoroutines(ctx, config)
 
 	n.wg.Add(1)
 	go func() {
