@@ -6,6 +6,7 @@
 //  Copyright © 2023 Verse Communications Inc. All rights reserved.
 //
 
+import CrashReporting
 import SwiftUI
 import Logger
 
@@ -107,6 +108,7 @@ struct SearchResultsView: View {
             return try await Bots.current.abouts(matching: filter)
         } catch {
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             return []
         }
     }
@@ -116,6 +118,7 @@ struct SearchResultsView: View {
             return try await Bots.current.posts(matching: filter)
         } catch {
             Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
             return []
         }
     }
