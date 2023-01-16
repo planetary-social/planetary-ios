@@ -45,15 +45,16 @@ import UIKit
     }
     
     func addRoom(from string: String) {
+        let sanitizedString = string.trimmed
         // Check if this is an invitation
-        if let url = URL(string: string), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
+        if let url = URL(string: sanitizedString), RoomInvitationRedeemer.canRedeem(inviteURL: url) {
             loadingMessage = Localized.joiningRoom.text
             Task {
                 try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
                 self.finishAddingRoom()
             }
         // Check if this is an address
-        } else if let address = MultiserverAddress(string: string) {
+        } else if let address = MultiserverAddress(string: sanitizedString) {
             loadingMessage = Localized.joiningRoom.text
             Task {
                 do {

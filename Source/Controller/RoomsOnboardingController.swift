@@ -66,7 +66,7 @@ import Logger
     }
     
     func addRoom(from string: String, token: String?) async throws {
-        if let address = MultiserverAddress(string: string) {
+        if let address = MultiserverAddress(string: string.trimmed) {
             do {
                 if let token {
                     try await RoomInvitationRedeemer.redeem(
