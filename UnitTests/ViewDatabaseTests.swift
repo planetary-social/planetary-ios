@@ -30,7 +30,7 @@ class ViewDatabaseTests: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -Double.infinity)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([Message].self, from: data)
