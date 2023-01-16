@@ -114,7 +114,7 @@ class MarkdownStyler: DownStyler {
         fonts.body = UIFont.preferredFont(forTextStyle: .body)
         fonts.heading1 = UIFont.preferredFont(forTextStyle: .title3)
         fonts.heading2 = UIFont.preferredFont(forTextStyle: .headline)
-        fonts.heading3 = UIFont.preferredFont(forTextStyle: .subheadline)
+        fonts.heading3 = UIFont.preferredFont(forTextStyle: .headline)
         if let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withDesign(.monospaced) {
             fonts.code = UIFont(descriptor: descriptor, size: 0)
             fonts.listItemPrefix = UIFont(descriptor: descriptor, size: 0)
