@@ -305,8 +305,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7 h1:1S33MMjKxP3XvQATW0N28OnY3Y02L5/21lrx1pwdc0Q=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7/go.mod h1:dZty08izAk/rSX8wSLen4gMR4WDPYmA6vUTE0QtepHA=
-github.com/planetary-social/scuttlego v0.0.0-20230113164435-a59c3054718b h1:3fn+fuDlFnODRz4sAS5du9QEfrS+ekhcjj7Fjh8/HuY=
-github.com/planetary-social/scuttlego v0.0.0-20230113164435-a59c3054718b/go.mod h1:cVTwHoMDGlIBhva7eVLI+KVYT35QTUSAX65SBvgoCVA=
+github.com/planetary-social/scuttlego v0.0.0-20230116145017-34ea0269031d h1:Drm9SHOAjhHxX2cThsYMuWnbzNBLmFcUCP6aiwKyz2M=
+github.com/planetary-social/scuttlego v0.0.0-20230116145017-34ea0269031d/go.mod h1:SC0gHNksP35qpAjYKTsbJiB49BtDWCXlVSNqIk95d/s=
 github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2 h1:XK35Z3s3TXPS+hn27E9SHwGsJMVJkq3tlfDNMKX5uKI=
 github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
@@ -421,8 +421,6 @@ go.cryptoscope.co/secretstream v1.2.9/go.mod h1:loRL5ujcD9NYZWYg020PDdYD5bSoV08v
 go.cryptoscope.co/secretstream v1.2.10 h1:6OoBWBgqPCbrJw4mQJxYTTbF8cTeljqPVsUcg2C+QkU=
 go.cryptoscope.co/secretstream v1.2.10/go.mod h1:FNk6U60ZoEpTXomRKIRwc/7/CIS6u1Gz0we/vY+KDH4=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
-go.etcd.io/bbolt v1.3.6 h1:/ecaJf0sk1l4l6V4awd65v2C3ILy7MSj+s/x1ADCIMU=
-go.etcd.io/bbolt v1.3.6/go.mod h1:qXsaaIqmgQH0T+OPdb99Bf+PKfBBQVAdyD6TY9G8XM4=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
 go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd h1:vjxqEG86sq0U+c4z053+yeic+Z4PQXH6JFAh90P5QYA=
 go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd/go.mod h1:R8ur2+eqUC7QzpyApQR67lt3ksewmQdQORuIgXSBdQw=
@@ -531,7 +529,6 @@ golang.org/x/sys v0.0.0-20190826190057-c7b8b68b1456/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20191220142924-d4481acd189f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-golang.org/x/sys v0.0.0-20200923182605-d9f96fdee20d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

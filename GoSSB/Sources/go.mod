@@ -5,7 +5,7 @@ require (
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/go-kit/kit v0.10.0
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230113164435-a59c3054718b
+	github.com/planetary-social/scuttlego v0.0.0-20230116145017-34ea0269031d
 	github.com/stretchr/testify v1.8.1
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
@@ -47,7 +47,6 @@ require (
 	go.cryptoscope.co/netwrap v0.1.1 // indirect
 	go.cryptoscope.co/nocomment v0.0.0-20210520094614-fb744e81f810 // indirect
 	go.cryptoscope.co/secretstream v1.2.10 // indirect
-	go.etcd.io/bbolt v1.3.6 // indirect
 	go.mindeco.de v1.12.0 // indirect
 	go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd // indirect
 	go.opencensus.io v0.22.5 // indirect
