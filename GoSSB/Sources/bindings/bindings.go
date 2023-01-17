@@ -6,9 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path"
 	"runtime"
-	"runtime/pprof"
 	"strings"
 	"sync"
 	"time"
@@ -100,9 +98,6 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	n.wg = &sync.WaitGroup{}
 
 	go n.printStats(ctx, config.Logger, service)
-	//go n.captureProfileCPU(ctx, config)
-	//go n.captureProfileMemory(ctx, config)
-	//go n.captureProfileGoroutines(ctx, config)
 
 	n.wg.Add(1)
 	go func() {
@@ -306,107 +301,6 @@ func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di
 			return
 		}
 	}
-}
-
-func (n *Node) captureProfileCPU(ctx context.Context, config di.Config) {
-	for {
-		dir := path.Join(config.DataDirectory, "debug", "profiles")
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			panic(err)
-		}
-
-		name := path.Join(dir, fmt.Sprintf("%s.cpuprofile", nowAsString()))
-		f, err := os.Create(name)
-		if err != nil {
-			panic(err)
-		}
-
-		err = pprof.StartCPUProfile(f)
-		if err != nil {
-			panic(err)
-		}
-
-		cleanup := func() {
-			pprof.StopCPUProfile()
-
-			if err := f.Close(); err != nil {
-				panic(err)
-			}
-		}
-
-		select {
-		case <-time.After(30 * time.Second):
-		case <-ctx.Done():
-			cleanup()
-			return
-		}
-
-		cleanup()
-	}
-}
-
-func (n *Node) captureProfileMemory(ctx context.Context, config di.Config) {
-	for {
-		dir := path.Join(config.DataDirectory, "debug", "profiles")
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			panic(err)
-		}
-
-		name := path.Join(dir, fmt.Sprintf("%s.heapprofile", nowAsString()))
-		f, err := os.Create(name)
-		if err != nil {
-			panic(err)
-		}
-
-		err = pprof.WriteHeapProfile(f)
-		if err != nil {
-			panic(err)
-		}
-
-		if err := f.Close(); err != nil {
-			panic(err)
-		}
-
-		select {
-		case <-time.After(30 * time.Second):
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
-func (n *Node) captureProfileGoroutines(ctx context.Context, config di.Config) {
-	for {
-		dir := path.Join(config.DataDirectory, "debug", "profiles")
-		if err := os.MkdirAll(dir, 0700); err != nil {
-			panic(err)
-		}
-
-		name := path.Join(dir, fmt.Sprintf("%s.goroutines", nowAsString()))
-		f, err := os.Create(name)
-		if err != nil {
-			panic(err)
-		}
-
-		p := pprof.Lookup("goroutine")
-		if p == nil {
-			panic("missing goroutine profile")
-		}
-
-		if err := p.WriteTo(f, 2); err != nil {
-			panic(err)
-		}
-
-		select {
-		case <-time.After(30 * time.Second):
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
-func nowAsString() string {
-	return time.Now().Format(time.RFC3339)
 }
 
 func bToMb(b uint64) uint64 {

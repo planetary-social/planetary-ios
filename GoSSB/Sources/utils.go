@@ -38,7 +38,7 @@ func ssbGenKey() *C.char {
 		return nil
 	}
 
-	return C.CString(string(buf.Bytes()))
+	return C.CString(buf.String())
 }
 
 //export ssbOffsetFSCK
