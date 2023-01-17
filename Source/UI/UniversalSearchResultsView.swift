@@ -474,7 +474,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         switch section {
         case .users:
             let identity = searchQuery
-            let controller = UIHostingController(rootView: IdentityViewBuilder.build(identity: identity))
+            let controller = IdentityViewBuilder.build(identity: identity)
             delegate?.present(controller)
         case .posts:
             guard let posts = searchResults.posts else {
@@ -489,7 +489,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             }
             let about = inNetworkPeople[indexPath.row]
             let identity = about.identity
-            let controller = UIHostingController(rootView: IdentityViewBuilder.build(identity: identity))
+            let controller = IdentityViewBuilder.build(identity: identity)
             delegate?.present(controller)
         }
     }
