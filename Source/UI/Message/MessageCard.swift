@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+/// This view displays the information we have for an message suitable for being used in a list or grid.
+///
+/// Use this view inside MessageButton to have nice borders.
 struct MessageCard: View {
 
     var message: Message

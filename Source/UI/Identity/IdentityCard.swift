@@ -10,8 +10,18 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+/// This view displays the information we have for an identity suitable for being used in a list or grid.
+///
+/// Use this view inside IdentityButton to have nice borders.
 struct IdentityCard: View {
+    /// The Identity or the About it will show information for.
+    ///
+    /// This view will load the About if not present, or use the About (and save a database call) if it is.
     var identityOrAbout: Either<Identity, About>
+
+    /// The card's style.
+    ///
+    /// This view will use GoldenIdentityView or CompactIdentityView depending on the value of `style`.
     var style = CardStyle.compact
 
     @EnvironmentObject

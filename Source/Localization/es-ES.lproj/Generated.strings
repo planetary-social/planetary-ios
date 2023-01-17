@@ -401,3 +401,6 @@
 
 "Search.all" = "All";
 "Search.people" = "People";
+
+"Discover.emptyTitle" = "Discover Planetary";
+"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";

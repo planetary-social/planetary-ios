@@ -35,6 +35,7 @@ extension Localized {
             Localized.Help.Hashtags.self,
             Localized.Help.YourNetwork.self,
             Localized.Search.self,
+            Localized.Discover.self,
         ]
     }
 }
@@ -249,6 +250,16 @@ start using Planetary right away, but:
     // MARK: - 814 fix strings
     case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."
     case confirmSkipCopyToMainNetwork = "You will not be prompted to run this fix again. Are you sure you want to skip it?"
+}
+
+// MARK: - Discover
+
+extension Localized {
+
+    enum Discover: String, Localizable, CaseIterable {
+        case emptyTitle = "Discover Planetary"
+        case emptyDescription = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following."
+    }
 }
 
 // MARK: - ImagePicker

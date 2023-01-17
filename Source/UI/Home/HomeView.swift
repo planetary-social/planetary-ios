@@ -11,6 +11,10 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+/// This view is the main view that is displayed when selecting the Home tab.
+///
+/// It displays a feed of messages in a list taking into account the feed strategy that the user selected in
+/// Preferences.
 struct HomeView: View, HelpDrawerHost {
     init(helpDrawerState: HelpDrawerState, bot: Bot) {
         self.helpDrawerState = helpDrawerState

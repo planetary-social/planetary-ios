@@ -6,11 +6,11 @@
 //  Copyright © 2022 Verse Communications Inc. All rights reserved.
 //
 
-import Analytics
-import CrashReporting
-import Logger
 import SwiftUI
 
+/// This view displays the information for an identity in a rectangle.
+///
+/// IdentityCard uses this view when the card's style is set to compact.
 struct CompactIdentityView: View {
 
     var identity: Identity

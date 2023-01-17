@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+/// This view displays the a button with the information we have for an identity suitable for being used in a list
+/// or grid.
+///
+/// The button opens IdentityView when tapped.
 struct IdentityButton: View {
     var identityOrAbout: Either<Identity, About>
     var style = CardStyle.compact

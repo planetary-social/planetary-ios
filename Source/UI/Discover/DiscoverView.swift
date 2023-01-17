@@ -12,6 +12,10 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+/// This view is the main view that is displayed when selecting the Discover tab.
+///
+/// It displays a feed of messages in a grid taking into account the feed strategy that the user selected in
+/// Preferences.
 struct DiscoverView: View, HelpDrawerHost {
 
     init(helpDrawerState: HelpDrawerState, bot: Bot) {
@@ -32,7 +36,7 @@ struct DiscoverView: View, HelpDrawerHost {
     private var appController: AppController
 
     @StateObject
-    private var searchText = SearchTextFieldObserver()
+    private var searchTextObserver = SearchTextFieldObserver()
 
     let helpDrawerType = HelpDrawer.discover
 
@@ -53,8 +57,8 @@ struct DiscoverView: View, HelpDrawerHost {
 
     var body: some View {
         ZStack(alignment: .top) {
-            if !searchText.debouncedText.isEmpty {
-                SearchResultsView(searchText: searchText.debouncedText)
+            if !searchTextObserver.debouncedText.isEmpty {
+                SearchResultsView(searchText: searchTextObserver.debouncedText)
             } else {
                 MessageGrid(dataSource: dataSource)
                     .placeholder(when: dataSource.isEmpty) {
@@ -62,7 +66,7 @@ struct DiscoverView: View, HelpDrawerHost {
                     }
             }
         }
-        .searchable(text: $searchText.text, placement: .navigationBarDrawer(displayMode: (.always)))
+        .searchable(text: $searchTextObserver.text, placement: .navigationBarDrawer(displayMode: (.always)))
         .disableAutocorrection(true)
         .background(Color.appBg)
         .navigationTitle(Localized.explore.text)

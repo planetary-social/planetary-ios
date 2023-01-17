@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+/// This view is used when the DiscoverView feed doesn't have messages to show.
+///
+/// It displays an explanation on what DiscoverView is for.
 struct EmptyDiscoverView: View {
 
     @EnvironmentObject
@@ -16,11 +19,11 @@ struct EmptyDiscoverView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
             Image.iconPlanetary4
-            Text("Explore Planetary")
+            Localized.Discover.emptyTitle.view
                 .font(.headline)
                 .foregroundColor(.primaryTxt)
                 .multilineTextAlignment(.center)
-            Text("The expore tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.")
+            Localized.Discover.emptyDescription.view
                 .foregroundColor(.primaryTxt)
                 .multilineTextAlignment(.center)
         }

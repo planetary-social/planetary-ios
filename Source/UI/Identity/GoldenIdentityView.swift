@@ -6,13 +6,13 @@
 //  Copyright © 2023 Verse Communications Inc. All rights reserved.
 //
 
-import Analytics
-import CrashReporting
-import Logger
 import SwiftUI
 
+/// This view displays the information for an identity in a rectangle in which its sides respect the golden ratio.
+///
+/// IdentityCard uses this view when the card's style is set to golden.
 struct GoldenIdentityView: View {
-
+    
     var identity: Identity
 
     var about: About?

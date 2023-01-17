@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+/// This view displays the a button with the information we have for an message suitable for being used in a list
+/// or grid.
+///
+/// The button opens ThreadViewController when tapped.
 struct MessageButton: View {
     var message: Message
     var style = CardStyle.compact

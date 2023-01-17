@@ -56,7 +56,7 @@ struct SearchResultsTab_Previews: PreviewProvider {
             VStack(spacing: 20) {
                 SearchResultsTab(
                     sections: SearchResultsSection.allCases,
-                    selectedSection: Binding { SearchResultsSection.all } set: { _ in }
+                    selectedSection: Binding { SearchResultsSection.allResults } set: { _ in }
                 )
                 SearchResultsTab(
                     sections: SearchResultsSection.allCases,
@@ -66,7 +66,7 @@ struct SearchResultsTab_Previews: PreviewProvider {
             VStack(spacing: 20) {
                 SearchResultsTab(
                     sections: SearchResultsSection.allCases,
-                    selectedSection: Binding { SearchResultsSection.all } set: { _ in }
+                    selectedSection: Binding { SearchResultsSection.allResults } set: { _ in }
                 )
                 SearchResultsTab(
                     sections: SearchResultsSection.allCases,

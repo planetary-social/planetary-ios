@@ -8,31 +8,27 @@
 
 import SwiftUI
 
+/// A model for all the different types of sections that can be displayed when searching.
 enum SearchResultsSection: Int, CaseIterable, Identifiable {
-    case all, people
+    /// Shows all elements the search found (posts, people, etc).
+    case allResults
+
+    /// Shows only identities.
+    case people
+
     var id: Int {
         rawValue
     }
+    
     var label: some View {
         Group {
             switch self {
-            case .all:
+            case .allResults:
                 Text(Localized.Search.all.text)
             case .people:
                 Text(Localized.Search.people.text)
             }
         }
         .padding(EdgeInsets(top: 6, leading: 12, bottom: 5, trailing: 14))
-    }
-}
-
-struct SearchResultsSection_Previews: PreviewProvider {
-    static var previews: some View {
-        HStack {
-            ForEach(SearchResultsSection.allCases) { section in
-                section.label
-            }
-        }
-        .background(Color.appBg)
     }
 }

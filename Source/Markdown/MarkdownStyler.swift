@@ -113,26 +113,29 @@ class MarkdownStyler: DownStyler {
             fonts.heading2 = UIFont.preferredFont(forTextStyle: heading2)
             fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
         case .small, .compact, .large:
-            let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1)
-            if let descriptor = descriptor.withSymbolicTraits(.traitBold) {
-                fonts.heading1 = UIFont(descriptor: descriptor, size: 0)
-                fonts.heading2 = UIFont(descriptor: descriptor, size: 0)
-                fonts.heading3 = UIFont(descriptor: descriptor, size: 0)
-            } else {
-                fonts.heading1 = UIFont.preferredFont(forTextStyle: heading1)
-                fonts.heading2 = UIFont.preferredFont(forTextStyle: heading2)
-                fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
-            }
+            let heading = font(
+                for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1),
+                fallback: UIFont.preferredFont(forTextStyle: heading1)
+            )
+            fonts.heading1 = heading
+            fonts.heading2 = heading
+            fonts.heading3 = heading
         }
-
-        if let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: body).withDesign(.monospaced) {
-            fonts.code = UIFont(descriptor: descriptor, size: 0)
-            fonts.listItemPrefix = UIFont(descriptor: descriptor, size: 0)
-        } else {
-            fonts.code = UIFont.preferredFont(forTextStyle: body)
-            fonts.listItemPrefix = UIFont.preferredFont(forTextStyle: body)
-        }
+        let monospaced = font(
+            for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: body).withDesign(.monospaced),
+            fallback: UIFont.preferredFont(forTextStyle: body)
+        )
+        fonts.code = monospaced
+        fonts.listItemPrefix = monospaced
         return fonts
+    }
+
+    private static func font(for descriptor: UIFontDescriptor?, fallback fallbackFont: UIFont) -> UIFont {
+        if let descriptor = descriptor {
+            return UIFont(descriptor: descriptor, size: 0)
+        } else {
+            return fallbackFont
+        }
     }
 
     static var colorCollection: ColorCollection {
