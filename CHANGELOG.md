@@ -8,10 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added new redesigned Discover screen. #587
-## [Unrelelased]
-
 - Fixed an issue where room names would not show up in the connected peers list.
+- Added new redesigned Discover screen. #587
 
 ## [1.3.12] 2022-12-13
 
