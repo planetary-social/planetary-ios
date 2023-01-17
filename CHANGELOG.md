@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Updated font of level 3 Headings in Posts to stand out from the body. #1034 
-## [Unrelelased]
-
 - Fixed an issue where room names would not show up in the connected peers list.
 
 ## [1.3.12] 2022-12-13
