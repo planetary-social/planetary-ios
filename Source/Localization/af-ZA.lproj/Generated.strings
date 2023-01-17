@@ -148,6 +148,7 @@
 "Localized.noResultsFound" = "No results found.";
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Localized.rooms" = "Rooms";
+"Localized.allCapsCopy" = "COPY";
 "Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
 "Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
 "Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
@@ -288,6 +289,7 @@
 
 "Message.noPostsTitle" = "No posts here yet";
 "Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 
 "Alias.manageAliases" = "Manage Aliases (beta)";
 "Alias.addAlias" = "Register a new alias";
@@ -358,6 +360,9 @@
 "Error.notLoggedIn" = "The operation could not be completed because no user is logged in.";
 "Error.alreadyJoinedRoom" = "You are already a member of this room";
 
+"Reply.one" = "{{ count }} reply";
+"Reply.many" = "{{ count }} replies";
+
 "Channel.one" = "channel";
 "Channel.many" = "channels";
 
@@ -393,3 +398,9 @@
 "YourNetwork.title" = "Your friends, connections and pubs";
 "YourNetwork.body" = "Your network is unique: it's made by the users you follow, those who *they* follow and the Pub servers you use to *gossip* messages with all of them.";
 "YourNetwork.highlightedWord" = "*gossip*";
+
+"Search.all" = "All";
+"Search.people" = "People";
+
+"Discover.emptyTitle" = "Discover Planetary";
+"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";

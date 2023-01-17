@@ -12,7 +12,7 @@ import Analytics
 import CrashReporting
 import SwiftUI
 
-class DirectoryViewController: ContentViewController, AboutTableViewDelegate, HelpDrawerHost {
+class DirectoryViewController: ContentViewController, AboutTableViewDelegate, HelpDrawerViewControllerHost {
     
     /// A model for the various table view sections
     enum Section: Int, CaseIterable {
@@ -345,13 +345,11 @@ extension DirectoryViewController: UITableViewDelegate {
         switch section {
         case .communityPubs:
             let star = communityPubs[indexPath.row]
-            let view = IdentityView(identity: star.feed).environmentObject(BotRepository.shared)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
         case .users:
             let identity = searchFilter
-            let view = IdentityView(identity: identity).environmentObject(BotRepository.shared)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: identity)
             self.navigationController?.pushViewController(controller, animated: true)
         case .posts:
             guard let post = searchedPost else {
@@ -364,8 +362,7 @@ extension DirectoryViewController: UITableViewDelegate {
             )
         case .network:
             let identity = self.people[indexPath.row].identity
-            let view = IdentityView(identity: identity).environmentObject(BotRepository.shared)
-            let controller = UIHostingController(rootView: view)
+            let controller = IdentityViewBuilder.build(identity: identity)
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }

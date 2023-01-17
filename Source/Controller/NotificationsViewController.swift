@@ -13,7 +13,7 @@ import Analytics
 import CrashReporting
 import SwiftUI
 
-class NotificationsViewController: ContentViewController, HelpDrawerHost {
+class NotificationsViewController: ContentViewController, HelpDrawerViewControllerHost {
 
     private let dataSource = NotificationsTableViewDataSource()
     private lazy var delegate = NotificationsTableViewDelegate(on: self)
@@ -288,9 +288,7 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
         if message.contentType == .contact {
             Analytics.shared.trackDidSelectItem(kindName: "identity")
             let identity = message.author
-            let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
-            )
+            let controller = IdentityViewBuilder.build(identity: identity)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         } else if message.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")

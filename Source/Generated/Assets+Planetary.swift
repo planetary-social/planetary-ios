@@ -8,8 +8,10 @@ import SwiftUI
 
 extension Color {
 
+       static let aliasCountButtonBackground = Color("aliasCountButtonBackground", bundle: Bundle.current)
        static let appBackground = Color("appBackground", bundle: Bundle.current)
        static let avatarRing = Color("avatarRing", bundle: Bundle.current)
+       static let buttonShadow = Color("button-shadow", bundle: Bundle.current)
        static let cardBackground = Color("cardBackground", bundle: Bundle.current)
        static let cardBorder = Color("cardBorder", bundle: Bundle.current)
        static let cardDropShadow = Color("cardDropShadow", bundle: Bundle.current)
@@ -78,12 +80,19 @@ extension Color {
        static let profileShadow = Color("profile-shadow", bundle: Bundle.current)
        static let relationshipViewBg = Color("relationship-view-bg", bundle: Bundle.current)
        static let secondaryTxt = Color("secondary-txt", bundle: Bundle.current)
+       static let selectedtabBg = Color("selectedtab-bg", bundle: Bundle.current)
+       static let tabBgBottom = Color("tab-bg-bottom", bundle: Bundle.current)
+       static let tabBgTop = Color("tab-bg-top", bundle: Bundle.current)
+       static let tabBorderBottom = Color("tab-border-bottom", bundle: Bundle.current)
+       static let tabShadowBottom = Color("tab-shadow-bottom", bundle: Bundle.current)
 }
 
 extension UIColor {
 
+       static let aliasCountButtonBackground = UIColor(named: "aliasCountButtonBackground", in: Bundle.current, compatibleWith: nil)!
        static let appBackground = UIColor(named: "appBackground", in: Bundle.current, compatibleWith: nil)!
        static let avatarRing = UIColor(named: "avatarRing", in: Bundle.current, compatibleWith: nil)!
+       static let buttonShadow = UIColor(named: "button-shadow", in: Bundle.current, compatibleWith: nil)!
        static let cardBackground = UIColor(named: "cardBackground", in: Bundle.current, compatibleWith: nil)!
        static let cardBorder = UIColor(named: "cardBorder", in: Bundle.current, compatibleWith: nil)!
        static let cardDropShadow = UIColor(named: "cardDropShadow", in: Bundle.current, compatibleWith: nil)!
@@ -152,6 +161,11 @@ extension UIColor {
        static let profileShadow = UIColor(named: "profile-shadow", in: Bundle.current, compatibleWith: nil)!
        static let relationshipViewBg = UIColor(named: "relationship-view-bg", in: Bundle.current, compatibleWith: nil)!
        static let secondaryTxt = UIColor(named: "secondary-txt", in: Bundle.current, compatibleWith: nil)!
+       static let selectedtabBg = UIColor(named: "selectedtab-bg", in: Bundle.current, compatibleWith: nil)!
+       static let tabBgBottom = UIColor(named: "tab-bg-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let tabBgTop = UIColor(named: "tab-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let tabBorderBottom = UIColor(named: "tab-border-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let tabShadowBottom = UIColor(named: "tab-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
 }
 
 extension Image {
@@ -171,6 +185,7 @@ extension Image {
        static let buttonFollowingBig = Image("button-following-big", bundle: Bundle.current)
        static let buttonFollowing = Image("button-following", bundle: Bundle.current)
        static let buttonPencil = Image("button-pencil", bundle: Bundle.current)
+       static let buttonReply = Image("button-reply", bundle: Bundle.current)
        static let buttonShare = Image("button-share", bundle: Bundle.current)
        static let cameraLarge = Image("camera-large", bundle: Bundle.current)
        static let cellChevron = Image("cell-chevron", bundle: Bundle.current)
@@ -182,8 +197,10 @@ extension Image {
        static let iconLiked = Image("icon-liked", bundle: Bundle.current)
        static let iconOptionsOff = Image("icon-options-off", bundle: Bundle.current)
        static let iconOptionsOn = Image("icon-options-on", bundle: Bundle.current)
+       static let iconOptions = Image("icon-options", bundle: Bundle.current)
        static let iconPlanetary2 = Image("icon-planetary-2", bundle: Bundle.current)
        static let iconPlanetary3 = Image("icon-planetary-3", bundle: Bundle.current)
+       static let iconPlanetary4 = Image("icon-planetary-4", bundle: Bundle.current)
        static let iconPlanetarySmall = Image("icon-planetary-small", bundle: Bundle.current)
        static let iconPlanetary = Image("icon-planetary", bundle: Bundle.current)
        static let iconProfile = Image("icon-profile", bundle: Bundle.current)
@@ -201,6 +218,7 @@ extension Image {
        static let missingAboutIcon = Image("missing-about-icon", bundle: Bundle.current)
        static let navIconCamera = Image("nav-icon-camera", bundle: Bundle.current)
        static let navIconDismiss = Image("nav-icon-dismiss", bundle: Bundle.current)
+       static let navIconHelp = Image("nav-icon-help", bundle: Bundle.current)
        static let navIconWrite = Image("nav-icon-write", bundle: Bundle.current)
        static let onboardingButton = Image("onboarding-button", bundle: Bundle.current)
        static let splash = Image("splash", bundle: Bundle.current)
@@ -238,6 +256,7 @@ extension UIImage {
        static let buttonFollowingBig = UIImage(named: "button-following-big", in: Bundle.current, with: nil)!
        static let buttonFollowing = UIImage(named: "button-following", in: Bundle.current, with: nil)!
        static let buttonPencil = UIImage(named: "button-pencil", in: Bundle.current, with: nil)!
+       static let buttonReply = UIImage(named: "button-reply", in: Bundle.current, with: nil)!
        static let buttonShare = UIImage(named: "button-share", in: Bundle.current, with: nil)!
        static let cameraLarge = UIImage(named: "camera-large", in: Bundle.current, with: nil)!
        static let cellChevron = UIImage(named: "cell-chevron", in: Bundle.current, with: nil)!
@@ -249,8 +268,10 @@ extension UIImage {
        static let iconLiked = UIImage(named: "icon-liked", in: Bundle.current, with: nil)!
        static let iconOptionsOff = UIImage(named: "icon-options-off", in: Bundle.current, with: nil)!
        static let iconOptionsOn = UIImage(named: "icon-options-on", in: Bundle.current, with: nil)!
+       static let iconOptions = UIImage(named: "icon-options", in: Bundle.current, with: nil)!
        static let iconPlanetary2 = UIImage(named: "icon-planetary-2", in: Bundle.current, with: nil)!
        static let iconPlanetary3 = UIImage(named: "icon-planetary-3", in: Bundle.current, with: nil)!
+       static let iconPlanetary4 = UIImage(named: "icon-planetary-4", in: Bundle.current, with: nil)!
        static let iconPlanetarySmall = UIImage(named: "icon-planetary-small", in: Bundle.current, with: nil)!
        static let iconPlanetary = UIImage(named: "icon-planetary", in: Bundle.current, with: nil)!
        static let iconProfile = UIImage(named: "icon-profile", in: Bundle.current, with: nil)!
@@ -268,6 +289,7 @@ extension UIImage {
        static let missingAboutIcon = UIImage(named: "missing-about-icon", in: Bundle.current, with: nil)!
        static let navIconCamera = UIImage(named: "nav-icon-camera", in: Bundle.current, with: nil)!
        static let navIconDismiss = UIImage(named: "nav-icon-dismiss", in: Bundle.current, with: nil)!
+       static let navIconHelp = UIImage(named: "nav-icon-help", in: Bundle.current, with: nil)!
        static let navIconWrite = UIImage(named: "nav-icon-write", in: Bundle.current, with: nil)!
        static let onboardingButton = UIImage(named: "onboarding-button", in: Bundle.current, with: nil)!
        static let splash = UIImage(named: "splash", in: Bundle.current, with: nil)!

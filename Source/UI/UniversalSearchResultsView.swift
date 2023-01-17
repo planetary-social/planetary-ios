@@ -19,7 +19,7 @@ protocol UniversalSearchDelegate: AnyObject {
 // MARK: - Internal Models
 
 /// A model for all the different types of results that can be displayed.
-fileprivate struct SearchResults {
+fileprivate struct SearchResultsUI {
     enum ResultData {
         case universal(people: [About], posts: [Message])
         case feedID(Either<About, FeedIdentifier>)
@@ -133,7 +133,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     private let communityPubs = AppConfiguration.current?.communityPubs ?? []
     private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
     
-    @Published private var searchResults = SearchResults(data: .none, query: "")
+    @Published private var searchResults = SearchResultsUI(data: .none, query: "")
     private var cancellables = [AnyCancellable]()
     private let searchQueue = DispatchQueue(label: "searchQueue", qos: .userInitiated)
     private var latestQuery = ""
@@ -245,7 +245,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             .sink { searchQuery in
                 self.latestQuery = searchQuery
                 // side effect to show loading indicator
-                self.display(searchResults: SearchResults(data: .loading, query: searchQuery))
+                self.display(searchResults: SearchResultsUI(data: .loading, query: searchQuery))
             }
             .store(in: &cancellables)
         
@@ -253,7 +253,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             .removeDuplicates()
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .receive(on: searchQueue)
-            .asyncFlatMap { searchQuery -> SearchResults in
+            .asyncFlatMap { searchQuery -> SearchResultsUI in
                 await self.fetchSearchResults(for: searchQuery)
             }
             .receive(on: DispatchQueue.main)
@@ -266,9 +266,9 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     
     // MARK: - Loading Search Results
     
-    private func fetchSearchResults(for query: String) async -> SearchResults {
+    private func fetchSearchResults(for query: String) async -> SearchResultsUI {
         guard !query.isEmpty else {
-            return SearchResults(data: .none, query: query)
+            return SearchResultsUI(data: .none, query: query)
         }
         
         let normalizedQuery = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -277,13 +277,13 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         let isMessageIdentifier = identifier.isValidIdentifier && identifier.sigil == .message
         
         if isFeedIdentifier {
-            return SearchResults(data: .feedID(await loadPerson(with: identifier)), query: query)
+            return SearchResultsUI(data: .feedID(await loadPerson(with: identifier)), query: query)
         } else if isMessageIdentifier {
-            return SearchResults(data: .messageID(await loadMessage(with: identifier)), query: query)
+            return SearchResultsUI(data: .messageID(await loadMessage(with: identifier)), query: query)
         } else {
             async let people = loadPeople(matching: normalizedQuery)
             async let posts = loadPosts(matching: normalizedQuery)
-            return SearchResults(data: .universal(people: await people, posts: await posts), query: query)
+            return SearchResultsUI(data: .universal(people: await people, posts: await posts), query: query)
         }
     }
     
@@ -335,7 +335,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     
     // MARK: - View Manipulation
     
-    private func display(searchResults: SearchResults) {
+    private func display(searchResults: SearchResultsUI) {
         // Discard results if the user has already searched for another query.
         guard searchResults.query == latestQuery else {
             return
@@ -474,9 +474,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
         switch section {
         case .users:
             let identity = searchQuery
-            let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
-            )
+            let controller = IdentityViewBuilder.build(identity: identity)
             delegate?.present(controller)
         case .posts:
             guard let posts = searchResults.posts else {
@@ -491,9 +489,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             }
             let about = inNetworkPeople[indexPath.row]
             let identity = about.identity
-            let controller = UIHostingController(
-                rootView: IdentityView(identity: identity).environmentObject(BotRepository.shared)
-            )
+            let controller = IdentityViewBuilder.build(identity: identity)
             delegate?.present(controller)
         }
     }

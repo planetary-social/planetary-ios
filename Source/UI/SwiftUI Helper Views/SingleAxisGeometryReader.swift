@@ -27,7 +27,9 @@ struct SingleAxisGeometryReader<Content: View>: View {
     var body: some View {
         content(size)
             .frame(
+                minWidth: axis == .horizontal ? 0 : nil,
                 maxWidth: axis == .horizontal ? .infinity : nil,
+                minHeight: axis == .vertical ? 0 : nil,
                 maxHeight: axis == .vertical   ? .infinity : nil,
                 alignment: alignment
             )

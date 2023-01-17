@@ -164,10 +164,10 @@ class ConnectedPeerListController: ConnectedPeerListViewModel {
             // See https://github.com/planetary-social/planetary-ios/issues/400
             let identity = "@\(publicKey).ed25519"
             
-            if let about = try? await bot.about(identity: identity) {
-                peerConnectionInfo.append(PeerConnectionInfo(about: about))
-            } else if let room = roomServers.first(where: { $0.address.keyID == publicKey }) {
+            if let room = roomServers.first(where: { $0.address.keyID == publicKey }) {
                 peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: room.address.host))
+            } else if let about = try? await bot.about(identity: identity) {
+                peerConnectionInfo.append(PeerConnectionInfo(about: about))
             } else {
                 peerConnectionInfo.append(PeerConnectionInfo(id: publicKey, name: publicKey))
             }
