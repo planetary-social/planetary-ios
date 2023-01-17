@@ -398,3 +398,9 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios a los que sigues, aquellos que *ellos* siguen y los servidores Pub que usas para *susurrar* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*susurro*";
+
+"Search.all" = "All";
+"Search.people" = "People";
+
+"Discover.emptyTitle" = "Discover Planetary";
+"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";

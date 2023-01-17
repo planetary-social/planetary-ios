@@ -1,5 +1,5 @@
 //
-//  MessageView.swift
+//  MessageCard.swift
 //  Planetary
 //
 //  Created by Martin Dutra on 25/10/22.
@@ -8,15 +8,90 @@
 
 import SwiftUI
 
-struct MessageView: View {
+/// This view displays the information we have for an message suitable for being used in a list or grid.
+///
+/// Use this view inside MessageButton to have nice borders.
+struct MessageCard: View {
 
     var message: Message
+    var style = CardStyle.compact
 
     @EnvironmentObject
     private var appController: AppController
 
+    private var author: About {
+        About(
+            identity: message.author,
+            name: message.metadata.author.about?.name,
+            description: nil,
+            image: message.metadata.author.about?.image,
+            publicWebHosting: nil
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            switch style {
+            case .compact:
+                HStack(alignment: .center) {
+                    Button {
+                        appController.open(identity: author.identity)
+                    } label: {
+                        HStack(alignment: .center) {
+                            AvatarView(metadata: author.image, size: 24)
+                            if let header = attributedHeader {
+                                Text(header)
+                                    .lineLimit(1)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondaryTxt)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                    }
+                    MessageOptionsButton(message: message)
+                }
+                .padding(10)
+                Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                if let contact = message.content.contact {
+                    IdentityCard(identity: contact.contact, style: .compact)
+                } else if let post = message.content.post {
+                    Group {
+                        CompactPostView(identifier: message.id, post: post)
+                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                        HStack {
+                            StackedAvatarsView(avatars: replies, size: 20, border: 0)
+                            if let replies = attributedReplies {
+                                Text(replies)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.secondaryTxt)
+                            }
+                            Spacer()
+                            Image.buttonReply
+                        }
+                        .padding(15)
+                    }
+                }
+            case .golden:
+                if let contact = message.content.contact {
+                    GoldenIdentityView(identity: contact.contact)
+                } else if let post = message.content.post {
+                    GoldenPostView(identifier: message.id, post: post, author: author)
+                }
+            }
+        }
+        .background(
+            LinearGradient(
+                colors: [Color.cardBgTop, Color.cardBgBottom],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+        .cornerRadius(cornerRadius)
+        .padding(padding)
+    }
+
     private var attributedHeader: AttributedString? {
-        let name = message.metadata.author.about?.name?.trimmedForSingleLine ?? String(message.author.prefix(7))
         var localized: Localized
         switch message.contentType {
         case .post:
@@ -42,10 +117,10 @@ struct MessageView: View {
         default:
             return nil
         }
-        let string = localized.text(["somebody": "**\(name)**"])
+        let string = localized.text(["somebody": "**\(author.displayName)**"])
         do {
             var attributed = try AttributedString(markdown: string)
-            if let range = attributed.range(of: name) {
+            if let range = attributed.range(of: author.displayName) {
                 attributed[range].foregroundColor = .primaryTxt
             }
             return attributed
@@ -54,57 +129,22 @@ struct MessageView: View {
         }
     }
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center) {
-                Button {
-                    appController.open(identity: message.author)
-                } label: {
-                    HStack(alignment: .center) {
-                        AvatarView(metadata: message.metadata.author.about?.image, size: 24)
-                        if let header = attributedHeader {
-                            Text(header)
-                                .lineLimit(2)
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondaryTxt)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                }
-                MessageOptionsButton(message: message)
-            }
-            .padding(10)
-            Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-            if let contact = message.content.contact {
-                CompactIdentityView(identity: contact.contact)
-            } else if let post = message.content.post {
-                Group {
-                    CompactPostView(identifier: message.id, post: post)
-                    Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                    HStack {
-                        StackedAvatarsView(avatars: replies, size: 20, border: 0)
-                        if let replies = attributedReplies {
-                            Text(replies)
-                                .font(.subheadline)
-                                .foregroundColor(Color.secondaryTxt)
-                        }
-                        Spacer()
-                        Image.buttonReply
-                    }
-                    .padding(15)
-                }
-            }
+    var padding: EdgeInsets {
+        switch style {
+        case .golden:
+            return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        case .compact:
+            return EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15)
         }
-        .background(
-            LinearGradient(
-                colors: [Color.cardBgTop, Color.cardBgBottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .cornerRadius(20)
-        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+    }
+
+    var cornerRadius: CGFloat {
+        switch style {
+        case .golden:
+            return 15
+        case .compact:
+            return 20
+        }
     }
 
     private var replies: [ImageMetadata] {
@@ -130,7 +170,7 @@ struct MessageView: View {
     }
 }
 
-struct MessageView_Previews: PreviewProvider {
+struct MessageCard_Previews: PreviewProvider {
     static var messageValue: MessageValue {
         MessageValue(
             author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
@@ -225,20 +265,29 @@ struct MessageView_Previews: PreviewProvider {
         Group {
             ScrollView {
                 VStack {
-                    MessageView(message: message)
-                    MessageView(message: messageWithOneReply)
-                    MessageView(message: messageWithReplies)
-                    MessageView(message: messageWithLongAuthor)
-                    MessageView(message: messageWithUnknownAuthor)
+                    MessageCard(message: message)
+                    MessageCard(message: messageWithOneReply)
+                    MessageCard(message: messageWithReplies)
+                    MessageCard(message: messageWithLongAuthor)
+                    MessageCard(message: messageWithUnknownAuthor)
+                }
+            }
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
+                    MessageCard(message: message, style: .golden)
+                    MessageCard(message: messageWithOneReply, style: .golden)
+                    MessageCard(message: messageWithReplies, style: .golden)
+                    MessageCard(message: messageWithLongAuthor, style: .golden)
+                    MessageCard(message: messageWithUnknownAuthor, style: .golden)
                 }
             }
             ScrollView {
                 VStack {
-                    MessageView(message: message)
-                    MessageView(message: messageWithOneReply)
-                    MessageView(message: messageWithReplies)
-                    MessageView(message: messageWithLongAuthor)
-                    MessageView(message: messageWithUnknownAuthor)
+                    MessageCard(message: message)
+                    MessageCard(message: messageWithOneReply)
+                    MessageCard(message: messageWithReplies)
+                    MessageCard(message: messageWithLongAuthor)
+                    MessageCard(message: messageWithUnknownAuthor)
                 }
             }
             .preferredColorScheme(.dark)

@@ -1134,7 +1134,7 @@ class GoBot: Bot, @unchecked Sendable {
     
     func abouts(matching filter: String) async throws -> [About] {
         let dbTask = Task.detached(priority: .high) {
-            try self.database.abouts(withNameLike: filter)
+            try self.database.abouts(filter: filter)
         }
         
         return try await dbTask.value

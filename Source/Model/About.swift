@@ -159,6 +159,11 @@ extension About {
         self.name?.trimmedForSingleLine ?? self.identity
     }
 
+    /// Returns a suitable string for displaying as this Identity name on most UI elements
+    var displayName: String {
+        name?.trimmedForSingleLine ?? String(identity.prefix(7))
+    }
+
     // this is not performant, need to cache md results (MD: this should be removed after we stop using AboutView)
     var attributedDescription: NSMutableAttributedString {
         NSMutableAttributedString(attributedString: self.description?.decodeMarkdown() ?? NSAttributedString())
@@ -174,6 +179,12 @@ extension About {
         if let name = self.name?.withoutSpaces, name.localizedCaseInsensitiveContains(string) { return true }
         if let code = self.shortcode, code.localizedCaseInsensitiveContains(string) { return true }
         return false
+    }
+}
+
+extension About: Identifiable {
+    var id: String {
+        identity
     }
 }
 

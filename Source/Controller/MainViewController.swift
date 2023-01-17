@@ -108,10 +108,7 @@ class MainViewController: UITabBarController {
         tabBarItemImageName: "tab-icon-directory"
     )
 
-    let everyoneViewController = FeatureViewController(
-        rootViewController: DiscoverViewController(),
-        tabBarItemImageName: "tab-icon-everyone"
-    )
+    let everyoneViewController: FeatureViewController
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
@@ -122,6 +119,12 @@ class MainViewController: UITabBarController {
                 rootView: HomeView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
             ),
             tabBarItemImageName: "tab-icon-home"
+        )
+        everyoneViewController = FeatureViewController(
+            rootViewController: UIHostingController(
+                rootView: DiscoverView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
+            ),
+            tabBarItemImageName: "tab-icon-everyone"
         )
         channelsFeatureViewController = FeatureViewController(
             rootViewController: UIHostingController(
