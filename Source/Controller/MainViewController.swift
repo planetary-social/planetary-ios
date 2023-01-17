@@ -65,7 +65,7 @@ enum MainTab {
         case .discover:
             return {
                 tabBar?.selectedViewController?.dismiss(animated: true)
-                let featureVC = tabBar?.everyoneViewController
+                let featureVC = tabBar?.everyoneFeatureViewController
                 tabBar?.selectedViewController = featureVC
             }
         case .notifications:
@@ -108,10 +108,7 @@ class MainViewController: UITabBarController {
         tabBarItemImageName: "tab-icon-directory"
     )
 
-    let everyoneViewController = FeatureViewController(
-        rootViewController: DiscoverViewController(),
-        tabBarItemImageName: "tab-icon-everyone"
-    )
+    let everyoneFeatureViewController: FeatureViewController
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
@@ -124,6 +121,14 @@ class MainViewController: UITabBarController {
         homeFeatureViewController = FeatureViewController(
             rootViewController: homeViewController,
             tabBarItemImageName: "tab-icon-home"
+        )
+        let everyoneViewController = UIHostingController(
+            rootView: DiscoverView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
+        )
+        everyoneViewController.navigationItem.title = Localized.explore.text
+        everyoneFeatureViewController = FeatureViewController(
+            rootViewController: everyoneViewController,
+            tabBarItemImageName: "tab-icon-everyone"
         )
         let channelsViewController = UIHostingController(
             rootView: HashtagListView(helpDrawerState: helpDrawerState).injectAppEnvironment()
@@ -145,7 +150,7 @@ class MainViewController: UITabBarController {
         setNotificationsTabBarIcon()
         let controllers = [
             self.homeFeatureViewController,
-            self.everyoneViewController,
+            self.everyoneFeatureViewController,
             self.notificationsFeatureViewController,
             self.channelsFeatureViewController,
             self.directoryFeatureViewController

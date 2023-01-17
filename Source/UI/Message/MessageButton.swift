@@ -8,8 +8,13 @@
 
 import SwiftUI
 
+/// This view displays the a button with the information we have for an message suitable for being used in a list
+/// or grid.
+///
+/// The button opens ThreadViewController when tapped.
 struct MessageButton: View {
     var message: Message
+    var style = CardStyle.compact
 
     @EnvironmentObject
     private var appController: AppController
@@ -22,24 +27,9 @@ struct MessageButton: View {
                 appController.open(identifier: message.id)
             }
         } label: {
-            MessageView(message: message)
+            MessageCard(message: message, style: style)
         }
-        .buttonStyle(MessageButtonStyle())
-    }
-}
-
-fileprivate struct MessageButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .offset(y: configuration.isPressed ? 3 : 0)
-            .compositingGroup()
-            .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-            .shadow(
-                color: .cardShadowBottom,
-                radius: configuration.isPressed ? 5 : 10,
-                x: 0,
-                y: configuration.isPressed ? 1 : 4
-            )
+        .buttonStyle(CardButtonStyle())
     }
 }
 
@@ -82,6 +72,7 @@ struct MessageButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MessageButton(message: message)
+            MessageButton(message: message, style: .golden)
             MessageButton(message: message)
                 .preferredColorScheme(.dark)
         }

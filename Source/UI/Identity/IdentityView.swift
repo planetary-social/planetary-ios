@@ -393,14 +393,14 @@ struct IdentityView_Previews: PreviewProvider {
         return message
     }
     static var dataSource: FeedStrategyMessageDataSource {
-        var dataSource = FeedStrategyMessageDataSource(
+        let dataSource = FeedStrategyMessageDataSource(
             strategy: StaticAlgorithm(messages: [message]),
             bot: FakeBot.shared
         )
         return dataSource
     }
     static var loadingDataSource: FeedStrategyMessageDataSource {
-        var dataSource = FeedStrategyMessageDataSource(
+        let dataSource = FeedStrategyMessageDataSource(
             strategy: StaticAlgorithm(messages: []),
             bot: FakeBot.shared
         )
@@ -408,7 +408,7 @@ struct IdentityView_Previews: PreviewProvider {
         return dataSource
     }
     static var loadingMoreDataSource: FeedStrategyMessageDataSource {
-        var dataSource = FeedStrategyMessageDataSource(
+        let dataSource = FeedStrategyMessageDataSource(
             strategy: StaticAlgorithm(messages: [message]),
             bot: FakeBot.shared
         )

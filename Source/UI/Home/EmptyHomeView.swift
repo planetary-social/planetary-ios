@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+/// This view is used when the HomeView feed doesn't have messages to show.
+///
+/// It displays an explanation on what HomeView is for.
 struct EmptyHomeView: View {
 
     @EnvironmentObject

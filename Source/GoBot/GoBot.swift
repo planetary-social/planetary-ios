@@ -403,11 +403,23 @@ class GoBot: Bot, @unchecked Sendable {
             guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
                 throw GoBotError.unexpectedFault("Invalid URL")
             }
-            return try self.database.insertRoomAlias(
+            
+            let aliasModel = try self.database.insertRoomAlias(
                 url: url,
                 room: room,
                 user: identity
             )
+            
+            let messageID = try await self.publish(
+                content: RoomAliasAnnouncement(
+                    action: .registered,
+                    alias: alias,
+                    room: room.id,
+                    aliasURL: url.absoluteString
+                )
+            )
+            
+            return aliasModel
         }
         return try await task.value
     }
@@ -1122,7 +1134,7 @@ class GoBot: Bot, @unchecked Sendable {
     
     func abouts(matching filter: String) async throws -> [About] {
         let dbTask = Task.detached(priority: .high) {
-            try self.database.abouts(withNameLike: filter)
+            try self.database.abouts(filter: filter)
         }
         
         return try await dbTask.value

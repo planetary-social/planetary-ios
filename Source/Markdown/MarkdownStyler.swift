@@ -11,7 +11,21 @@ import Down
 
 class MarkdownStyler: DownStyler {
 
-    init() {
+    enum FontStyle {
+        // Suitable for posts in Home
+        case regular
+
+        // Suitable for bio and hashtags in Discover
+        case small
+
+        // Suitable for posts in Discover
+        case compact
+
+        // Suitable for text-only posts in Discover
+        case large
+    }
+
+    init(fontStyle: FontStyle) {
         var paragraphStyles = StaticParagraphStyleCollection()
         let headingStyle = NSMutableParagraphStyle()
         let bodyStyle = NSMutableParagraphStyle()
@@ -20,6 +34,9 @@ class MarkdownStyler: DownStyler {
         headingStyle.paragraphSpacing = 0
 
         bodyStyle.lineSpacing = 0
+        if fontStyle == .large {
+            bodyStyle.lineHeightMultiple = 0.9
+        }
         bodyStyle.paragraphSpacing = 0
 
         codeStyle.lineSpacing = 0
@@ -49,7 +66,7 @@ class MarkdownStyler: DownStyler {
         codeBlockOptions.containerInset = 0
 
         let downStylerConfiguration = DownStylerConfiguration(
-            fonts: MarkdownStyler.fontCollection,
+            fonts: MarkdownStyler.fontCollection(fontStyle: fontStyle),
             colors: MarkdownStyler.colorCollection,
             paragraphStyles: paragraphStyles,
             listItemOptions: listItemOptions,
@@ -61,79 +78,64 @@ class MarkdownStyler: DownStyler {
         super.init(configuration: downStylerConfiguration)
     }
 
-    init(small: Bool) {
-        let headingStyle = NSMutableParagraphStyle()
-        headingStyle.paragraphSpacingBefore = small ? 4 : 16
-        headingStyle.paragraphSpacing = small ? 4 : 8
-        let bodyStyle = NSMutableParagraphStyle()
-        bodyStyle.lineSpacing = 1
-        bodyStyle.paragraphSpacing = small ? 8 : 12
-        let codeStyle = NSMutableParagraphStyle()
-        codeStyle.lineSpacing = small ? 0 : 1
-        codeStyle.paragraphSpacing = 8
-
-        var paragraphStyles = StaticParagraphStyleCollection()
-        paragraphStyles.body = bodyStyle
-        paragraphStyles.heading1 = headingStyle
-        paragraphStyles.heading2 = headingStyle
-        paragraphStyles.heading3 = headingStyle
-        paragraphStyles.code = codeStyle
-        
-        var listItemOptions = ListItemOptions()
-        listItemOptions.maxPrefixDigits = small ? 1 : 2
-        listItemOptions.spacingAfterPrefix = small ? 4 : 8
-        listItemOptions.spacingAbove = small ? 2 : 8
-        listItemOptions.spacingBelow = small ? 4 : 8
-
-        var quoteStripeOptions = QuoteStripeOptions()
-        quoteStripeOptions.thickness = small ? 1 : 2
-        quoteStripeOptions.spacingAfter = small ? 4 : 8
-
-        var thematicBreakOptions = ThematicBreakOptions()
-        thematicBreakOptions.thickness = 1
-        thematicBreakOptions.indentation = 0
-        
-        var codeBlockOptions = CodeBlockOptions()
-        codeBlockOptions.containerInset = small ? 4 : 8
-
-        let downStylerConfiguration = DownStylerConfiguration(
-            fonts: MarkdownStyler.fontCollection(small: small),
-            colors: MarkdownStyler.collorCollection(small: small),
-            paragraphStyles: paragraphStyles,
-            listItemOptions: listItemOptions,
-            quoteStripeOptions: quoteStripeOptions,
-            thematicBreakOptions: thematicBreakOptions,
-            codeBlockOptions: codeBlockOptions
-        )
-        
-        super.init(configuration: downStylerConfiguration)
-    }
-
-    static var fontCollection: FontCollection {
-        var fonts = StaticFontCollection()
-        fonts.body = UIFont.preferredFont(forTextStyle: .body)
-        fonts.heading1 = UIFont.preferredFont(forTextStyle: .title3)
-        fonts.heading2 = UIFont.preferredFont(forTextStyle: .headline)
-        fonts.heading3 = UIFont.preferredFont(forTextStyle: .subheadline)
-        if let descriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body).withDesign(.monospaced) {
-            fonts.code = UIFont(descriptor: descriptor, size: 0)
-            fonts.listItemPrefix = UIFont(descriptor: descriptor, size: 0)
-        } else {
-            fonts.code = UIFont.preferredFont(forTextStyle: .body)
-            fonts.listItemPrefix = UIFont.preferredFont(forTextStyle: .body)
+    static func fontCollection(fontStyle: FontStyle) -> FontCollection {
+        var body: UIFont.TextStyle
+        var heading1: UIFont.TextStyle
+        var heading2: UIFont.TextStyle
+        var heading3: UIFont.TextStyle
+        switch fontStyle {
+        case .regular:
+            body = .body
+            heading1 = .title3
+            heading2 = .headline
+            heading3 = .subheadline
+        case .small:
+            body = .footnote
+            heading1 = .footnote
+            heading2 = .footnote
+            heading3 = .footnote
+        case .compact:
+            body = .body
+            heading1 = .body
+            heading2 = .body
+            heading3 = .body
+        case .large:
+            body = .title3
+            heading1 = .title3
+            heading2 = .title3
+            heading3 = .title3
         }
+        var fonts = StaticFontCollection()
+        fonts.body = UIFont.preferredFont(forTextStyle: body)
+        switch fontStyle {
+        case .regular:
+            fonts.heading1 = UIFont.preferredFont(forTextStyle: heading1)
+            fonts.heading2 = UIFont.preferredFont(forTextStyle: heading2)
+            fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
+        case .small, .compact, .large:
+            let heading = font(
+                for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1),
+                fallback: UIFont.preferredFont(forTextStyle: heading1)
+            )
+            fonts.heading1 = heading
+            fonts.heading2 = heading
+            fonts.heading3 = heading
+        }
+        let monospaced = font(
+            for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: body).withDesign(.monospaced),
+            fallback: UIFont.preferredFont(forTextStyle: body)
+        )
+        fonts.code = monospaced
+        fonts.listItemPrefix = monospaced
         return fonts
     }
 
-    static func fontCollection(small: Bool) -> FontCollection {
-        var fonts = StaticFontCollection()
-        fonts.body = small ? UIFont.smallPost.body : UIFont.post.body
-        fonts.heading1 = small ? UIFont.smallPost.heading1 : UIFont.post.heading1
-        fonts.heading2 = small ? UIFont.smallPost.heading2 : UIFont.post.heading2
-        fonts.heading3 = small ? UIFont.smallPost.heading3 : UIFont.post.heading3
-        fonts.code = small ? UIFont.smallPost.code : UIFont.post.code
-        fonts.listItemPrefix = small ? UIFont.smallPost.listItemPrefix : UIFont.post.listItemPrefix
-        return fonts
+    private static func font(for descriptor: UIFontDescriptor?, fallback fallbackFont: UIFont) -> UIFont {
+        if let descriptor = descriptor {
+            return UIFont(descriptor: descriptor, size: 0)
+        } else {
+            return fallbackFont
+        }
     }
 
     static var colorCollection: ColorCollection {
@@ -148,21 +150,6 @@ class MarkdownStyler: DownStyler {
         colors.quote = UIColor.secondaryTxt
         colors.quoteStripe = UIColor.secondaryTxt
         colors.thematicBreak = UIColor.accent
-        return colors
-    }
-
-    static func collorCollection(small: Bool) -> ColorCollection {
-        var colors = StaticColorCollection()
-        colors.body = UIColor.text.default
-        colors.heading1 = UIColor.secondaryText
-        colors.heading2 = UIColor.secondaryText
-        colors.heading3 = UIColor.secondaryText
-        colors.code = UIColor.secondaryText
-        colors.link = UIColor.tint.default
-        colors.listItemPrefix = UIColor.tint.default
-        colors.quote = UIColor.secondaryText
-        colors.quoteStripe = UIColor.secondaryText
-        colors.thematicBreak = UIColor.tint.default
         return colors
     }
 

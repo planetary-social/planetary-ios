@@ -11,6 +11,7 @@ import SwiftUI
 struct BlobGalleryView: View {
 
     var blobs: [Blob]
+    var aspectRatio: CGFloat
 
     @State
     private var selectedBlob: Blob
@@ -18,9 +19,10 @@ struct BlobGalleryView: View {
     @EnvironmentObject
     private var appController: AppController
 
-    init(blobs: [Blob]) {
+    init(blobs: [Blob], aspectRatio: CGFloat = 1) {
         self.blobs = blobs
         self.selectedBlob = blobs.first ?? Blob(identifier: .null)
+        self.aspectRatio = aspectRatio
     }
     
     var body: some View {
@@ -39,7 +41,7 @@ struct BlobGalleryView: View {
             appController.open(string: selectedBlob.identifier)
         }
         .tabViewStyle(.page)
-        .aspectRatio(1, contentMode: .fit)
+        .aspectRatio(aspectRatio, contentMode: .fit)
     }
 }
 
