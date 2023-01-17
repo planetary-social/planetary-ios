@@ -583,8 +583,11 @@ class ViewDatabaseTests: XCTestCase {
     }
     
     /// Verify that fillMessages does not fill messages older than 6 months.
-    func testFillMessagesGivenOldMessage() throws {
+    func testFillMessagesGivenOldMessage() async throws {
         // Arrange
+        await vdb.close()
+        let dbPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
+        try self.vdb.open(path: dbPath, user: currentUser, maxAge: 0)
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 5)
         let testMessage = MessageFixtures.post(
