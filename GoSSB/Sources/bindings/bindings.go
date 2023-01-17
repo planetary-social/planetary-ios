@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/planetary-social/scuttlego/service/app/commands"
 	"os"
 	"runtime"
 	"strings"
@@ -89,6 +90,17 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
+	}
+
+	migrationsCmd, err := commands.NewRunMigrations(NewLogProgressCallback(config.Logger))
+	if err != nil {
+		cancel()
+		return errors.Wrap(err, "error creating the migration command")
+	}
+
+	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
+		cancel()
+		return errors.Wrap(err, "error running migrations")
 	}
 
 	n.service = &service
