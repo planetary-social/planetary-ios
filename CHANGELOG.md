@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Fixed an issue where room names would not show up in the connected peers list.
+- Publish announcement messages of newly registered room aliases on the SSB log. #899
 - Update the color palette used in the navigation bars and the main tab bar. #1059
 
 ## [1.3.12] 2022-12-13
