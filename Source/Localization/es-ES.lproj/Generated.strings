@@ -160,6 +160,7 @@
 "Localized.beta1Disclaimers" = "\n• no podrás publicar o seguir hasta que todo tu feed se halla descargado\n\n• puede que no veas todos los mensajes previos hasta que se descarguen.";
 "Localized.areYouSure" = "¿Estás seguro?";
 "Localized.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
+"Localized.botMigrationBodyText" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
 "Localized.confirmCopyToMainNetwork" = "Debido a un error tu perfil fue creado en la red de pruebas de Planetary en vez de la red SSB principal. La aplicación copiará tu perfil a la red principal.";
 "Localized.confirmSkipCopyToMainNetwork" = "No se te pedirá que ejecutes esta solución de nuevo. ¿Estás seguro de que quieres omitirlo?";
 

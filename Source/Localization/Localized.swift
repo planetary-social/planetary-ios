@@ -245,6 +245,14 @@ start using Planetary right away, but:
     case areYouSure = "Are you sure?"
     case dismissMigrationEarlyMessage = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?"
     
+    // MARK: - Bot migration
+    case botMigrationBodyText =
+"""
+Planetary needs to upgrade to give you a better user experience.
+
+This can take a few minutes. Keep the app open until it’s complete.
+"""
+    
     // MARK: - 814 fix strings
     case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."
     case confirmSkipCopyToMainNetwork = "You will not be prompted to run this fix again. Are you sure you want to skip it?"

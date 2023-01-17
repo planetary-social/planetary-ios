@@ -160,6 +160,7 @@
 "Localized.beta1Disclaimers" = "\n• no pots publicar ni seguir fins que no es baixi tot el vostre canal\n\n• és possible que no vegis tots els missatges anteriors fins que no es baixin.";
 "Localized.areYouSure" = "Estàs segur?";
 "Localized.dismissMigrationEarlyMessage" = "Aquesta pantalla s'eliminarà i podràs utilitzar Planetary mentre les teves dades es continuen descarregant en segon pla. Estàs segur?";
+"Localized.botMigrationBodyText" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
 "Localized.confirmCopyToMainNetwork" = "A causa d'un error, el teu perfil es va crear a la xarxa de proves de Planetary en lloc de la xarxa principal SSB. Ara l'aplicació copiarà el teu perfil a la xarxa principal.";
 "Localized.confirmSkipCopyToMainNetwork" = "No se't demanarà que tornis a executar aquesta correcció. Estàs segur que vols saltar-la?";
 
