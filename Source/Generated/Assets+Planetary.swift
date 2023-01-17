@@ -212,8 +212,6 @@ extension Image {
        static let tabIconDirectory = Image("tab-icon-directory", bundle: Bundle.current)
        static let tabIconEveryoneSelected = Image("tab-icon-everyone-selected", bundle: Bundle.current)
        static let tabIconEveryone = Image("tab-icon-everyone", bundle: Bundle.current)
-       static let tabIconHasNotificationsSelected = Image("tab-icon-has-notifications-selected", bundle: Bundle.current)
-       static let tabIconHasNotifications = Image("tab-icon-has-notifications", bundle: Bundle.current)
        static let tabIconHomeSelected = Image("tab-icon-home-selected", bundle: Bundle.current)
        static let tabIconHome = Image("tab-icon-home", bundle: Bundle.current)
        static let tabIconNotificationsSelected = Image("tab-icon-notifications-selected", bundle: Bundle.current)
@@ -283,8 +281,6 @@ extension UIImage {
        static let tabIconDirectory = UIImage(named: "tab-icon-directory", in: Bundle.current, with: nil)!
        static let tabIconEveryoneSelected = UIImage(named: "tab-icon-everyone-selected", in: Bundle.current, with: nil)!
        static let tabIconEveryone = UIImage(named: "tab-icon-everyone", in: Bundle.current, with: nil)!
-       static let tabIconHasNotificationsSelected = UIImage(named: "tab-icon-has-notifications-selected", in: Bundle.current, with: nil)!
-       static let tabIconHasNotifications = UIImage(named: "tab-icon-has-notifications", in: Bundle.current, with: nil)!
        static let tabIconHomeSelected = UIImage(named: "tab-icon-home-selected", in: Bundle.current, with: nil)!
        static let tabIconHome = UIImage(named: "tab-icon-home", in: Bundle.current, with: nil)!
        static let tabIconNotificationsSelected = UIImage(named: "tab-icon-notifications-selected", in: Bundle.current, with: nil)!

@@ -166,17 +166,13 @@ class MainViewController: UITabBarController {
     func setNotificationsTabBarIcon() {
         DispatchQueue.main.async { [weak self] in
             let numberOfNotifications = UIApplication.shared.applicationIconBadgeNumber
+            self?.notificationsFeatureViewController.setTabBarItemImage(
+                title: Localized.notifications.text,
+                image: "tab-icon-notifications"
+            )
             if numberOfNotifications > 0 {
-                self?.notificationsFeatureViewController.setTabBarItemImage(
-                    title: Localized.notifications.text,
-                    image: "tab-icon-has-notifications"
-                )
                 self?.notificationsFeatureViewController.setTabBarItemBadge(numberOfNotifications)
             } else {
-                self?.notificationsFeatureViewController.setTabBarItemImage(
-                    title: Localized.notifications.text,
-                    image: "tab-icon-notifications"
-                )
                 self?.notificationsFeatureViewController.setTabBarItemBadge(nil)
             }
         }
