@@ -41,7 +41,7 @@ struct DiscoverView: View, HelpDrawerHost {
     let helpDrawerType = HelpDrawer.discover
 
     func dismissDrawer(completion: (() -> Void)?) {
-        helpDrawerState.isShowingHomeHelpDrawer = false
+        helpDrawerState.isShowingDiscoverHelpDrawer = false
         // Unfortunately, there is no good way to know when the popover dismissed in SwiftUI
         // So here I use a nasty simple trick to let the completion open the next drawer.
         // Fortunately, we can get rid of this after we migrate the remaining screens to SwiftUI.
