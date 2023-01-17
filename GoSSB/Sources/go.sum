@@ -305,8 +305,8 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/profile v1.2.1/go.mod h1:hJw3o1OdXxsrSjjVksARp5W95eeEaEfptyVZyv6JUPA=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7 h1:1S33MMjKxP3XvQATW0N28OnY3Y02L5/21lrx1pwdc0Q=
 github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7/go.mod h1:dZty08izAk/rSX8wSLen4gMR4WDPYmA6vUTE0QtepHA=
-github.com/planetary-social/scuttlego v0.0.0-20230117152854-93f94ebd082c h1:HfYxDku4r7ZsMk9T2yMdzm+zNGYUjZ3ko+tC0K80mQI=
-github.com/planetary-social/scuttlego v0.0.0-20230117152854-93f94ebd082c/go.mod h1:SC0gHNksP35qpAjYKTsbJiB49BtDWCXlVSNqIk95d/s=
+github.com/planetary-social/scuttlego v0.0.0-20230117190258-66b396b0f2e0 h1:fxnUYmh4XtB3ZxtUak8VF/21oA7YbEOg8oYDr9yEokE=
+github.com/planetary-social/scuttlego v0.0.0-20230117190258-66b396b0f2e0/go.mod h1:SC0gHNksP35qpAjYKTsbJiB49BtDWCXlVSNqIk95d/s=
 github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2 h1:XK35Z3s3TXPS+hn27E9SHwGsJMVJkq3tlfDNMKX5uKI=
 github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2/go.mod h1:aVHa4tYy6ucGATXL2YvKGFR7nFrzqKuhFeMyA0XRI0s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
