@@ -80,6 +80,11 @@ extension Color {
        static let profileShadow = Color("profile-shadow", bundle: Bundle.current)
        static let relationshipViewBg = Color("relationship-view-bg", bundle: Bundle.current)
        static let secondaryTxt = Color("secondary-txt", bundle: Bundle.current)
+       static let selectedtabBg = Color("selectedtab-bg", bundle: Bundle.current)
+       static let tabBgBottom = Color("tab-bg-bottom", bundle: Bundle.current)
+       static let tabBgTop = Color("tab-bg-top", bundle: Bundle.current)
+       static let tabBorderBottom = Color("tab-border-bottom", bundle: Bundle.current)
+       static let tabShadowBottom = Color("tab-shadow-bottom", bundle: Bundle.current)
 }
 
 extension UIColor {
@@ -156,6 +161,11 @@ extension UIColor {
        static let profileShadow = UIColor(named: "profile-shadow", in: Bundle.current, compatibleWith: nil)!
        static let relationshipViewBg = UIColor(named: "relationship-view-bg", in: Bundle.current, compatibleWith: nil)!
        static let secondaryTxt = UIColor(named: "secondary-txt", in: Bundle.current, compatibleWith: nil)!
+       static let selectedtabBg = UIColor(named: "selectedtab-bg", in: Bundle.current, compatibleWith: nil)!
+       static let tabBgBottom = UIColor(named: "tab-bg-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let tabBgTop = UIColor(named: "tab-bg-top", in: Bundle.current, compatibleWith: nil)!
+       static let tabBorderBottom = UIColor(named: "tab-border-bottom", in: Bundle.current, compatibleWith: nil)!
+       static let tabShadowBottom = UIColor(named: "tab-shadow-bottom", in: Bundle.current, compatibleWith: nil)!
 }
 
 extension Image {
