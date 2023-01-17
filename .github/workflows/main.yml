@@ -124,7 +124,7 @@ jobs:
           path: |
             ${{ steps.golang-path.outputs.build }}
             ${{ steps.golang-path.outputs.module }}
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-golang-${{ hashFiles('GoSSB/Sources/go.sum', 'GoSSB/Sources/Makefile.ci') }}
           restore-keys: |
             ${{ runner.os }}-golang-
 
