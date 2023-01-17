@@ -26,6 +26,7 @@ struct EmptyPostsView: View {
                 .multilineTextAlignment(.center)
                 .padding()
         }
+        .frame(maxWidth: .infinity)
     }
     
     private let howGossippingWorks = "https://github.com/planetary-social/planetary-ios/wiki/Distributed-Social-Network"

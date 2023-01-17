@@ -113,10 +113,7 @@ extension AppController {
     // reset the root controller, not push into a child feature controller
     func pushViewController(for contentType: ContentType, with identity: Identity) {
         guard contentType == .about else { return }
-        let view = IdentityView(identity: identity)
-            .environmentObject(BotRepository.shared)
-            .environmentObject(AppController.shared)
-        let controller = UIHostingController(rootView: view)
+        let controller = IdentityViewBuilder.build(identity: identity)
         self.push(controller, animated: true)
     }
 
@@ -137,9 +134,8 @@ extension AppController {
     }
 
     func pushChannelViewController(for hashtag: String) {
-        let view = HashtagView(hashtag: Hashtag.named(hashtag))
-            .environmentObject(BotRepository.shared)
-            .environmentObject(AppController.shared)
+        let view = HashtagView(hashtag: Hashtag.named(hashtag), bot: Bots.current)
+            .injectAppEnvironment()
         self.push(UIHostingController(rootView: view))
     }
 

@@ -118,9 +118,7 @@ class MainViewController: UITabBarController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         let homeViewController = UIHostingController(
-            rootView: HomeView(helpDrawerState: helpDrawerState)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            rootView: HomeView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
         )
         homeViewController.navigationItem.title = Localized.home.text
         homeFeatureViewController = FeatureViewController(
@@ -128,9 +126,7 @@ class MainViewController: UITabBarController {
             tabBarItemImageName: "tab-icon-home"
         )
         let channelsViewController = UIHostingController(
-            rootView: HashtagListView(helpDrawerState: helpDrawerState)
-                .environmentObject(BotRepository.shared)
-                .environmentObject(AppController.shared)
+            rootView: HashtagListView(helpDrawerState: helpDrawerState).injectAppEnvironment()
         )
         channelsViewController.navigationItem.title = Localized.channels.text
         channelsFeatureViewController = FeatureViewController(
