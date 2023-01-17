@@ -8,16 +8,14 @@
 
 import SwiftUI
 
-struct FloatingButton: View {
+struct FloatingButton<DataSource>: View where DataSource: MessageDataSource {
 
     var count: Int
 
-    var isLoading: Bool
+    @ObservedObject
+    var dataSource: DataSource
 
     var proxy: ScrollViewProxy?
-
-    @SwiftUI.Environment(\.refresh)
-    private var refresh
 
     private var title: AttributedString {
         let countString = "\(count)"
@@ -32,11 +30,12 @@ struct FloatingButton: View {
     
     var body: some View {
         Button {
+            proxy?.scrollTo(dataSource.cache?.first, anchor: .top)
             Task {
-                await refresh?()
+                await dataSource.loadFromScratch()
             }
         } label: {
-            if isLoading {
+            if dataSource.isLoadingFromScratch {
                 HStack(alignment: .center) {
                     ProgressView().tint(Color.white).frame(width: 18, height: 18)
                     Text(Localized.loading.text)
@@ -60,7 +59,7 @@ struct FloatingButton: View {
                     )
             }
         }
-        .disabled(isLoading)
+        .disabled(dataSource.isLoadingFromScratch)
         .padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
         .shadow(color: .buttonShadow, radius: 10, x: 0, y: 4)
         .offset(y: 10)
@@ -68,11 +67,19 @@ struct FloatingButton: View {
 }
 
 struct FloatingButton_Previews: PreviewProvider {
+    static var dataSource: StaticMessageDataSource {
+        StaticMessageDataSource(messages: [])
+    }
+    static var loadingDataSource: StaticMessageDataSource {
+        let dataSource = StaticMessageDataSource(messages: [])
+        dataSource.isLoadingFromScratch = true
+        return dataSource
+    }
     static var previews: some View {
         VStack {
-            FloatingButton(count: 1, isLoading: false)
-            FloatingButton(count: 2, isLoading: false)
-            FloatingButton(count: 1, isLoading: true)
+            FloatingButton(count: 1, dataSource: dataSource)
+            FloatingButton(count: 2, dataSource: dataSource)
+            FloatingButton(count: 1, dataSource: loadingDataSource)
         }
     }
 }
