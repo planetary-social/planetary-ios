@@ -148,7 +148,6 @@
 "Localized.noResultsFound" = "No se encontraron resultados.";
 "Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
 "Localized.rooms" = "Salas";
-/* action/verb form of the word. All caps. */
 "Localized.allCapsCopy" = "COPIAR";
 "Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
 "Localized.beta1MigrationComplete" = "Toca en el siguiente botón para cerrar esta pantalla y volver a tu feed.";
@@ -399,3 +398,9 @@
 "YourNetwork.title" = "Tus amigos, conexiones y pubs";
 "YourNetwork.body" = "Tu red es única: está hecha por los usuarios a los que sigues, aquellos que *ellos* siguen y los servidores Pub que usas para *susurrar* mensajes con todos ellos.";
 "YourNetwork.highlightedWord" = "*susurro*";
+
+"Search.all" = "All";
+"Search.people" = "People";
+
+"Discover.emptyTitle" = "Discover Planetary";
+"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";
