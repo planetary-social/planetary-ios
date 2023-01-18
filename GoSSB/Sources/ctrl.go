@@ -106,36 +106,6 @@ func ssbFeedReplicate(ref string) {
 	}
 }
 
-//export ssbFeedBlock
-func ssbFeedBlock(ref string, yes bool) {
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("where", "ssbFeedBlock", "err", err)
-	//	}
-	//}()
-	//
-	//fr, err := refs.ParseFeedRef(ref)
-	//if err != nil {
-	//	err = errors.Wrapf(err, "block: invalid feed reference")
-	//	return
-	//}
-	//
-	//lock.Lock()
-	//defer lock.Unlock()
-	//if sbot == nil {
-	//	err = ErrNotInitialized
-	//	return
-	//}
-	//
-	//if yes {
-	//	sbot.Block(fr)
-	//} else {
-	//	sbot.Unblock(fr)
-	//}
-	// todo
-}
-
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
 	return 0
