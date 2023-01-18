@@ -25,7 +25,7 @@ typedef struct ssbRoomsAliasRegisterReturn {
 
 typedef bool (notifyBlobHandle_t)(int64_t, const char*);
 typedef bool (notifyMigrationOnRunning_t)(int64_t migrationIndex, int64_t migrationsCount);
-typedef bool (notifyMigrationOnError_t)(int64_t migrationIndex, migint64_t migrationsCount, int64_t error);
+typedef bool (notifyMigrationOnError_t)(int64_t migrationIndex, int64_t migrationsCount, int64_t error);
 typedef bool (notifyMigrationOnDone_t)(int64_t migrationsCount);
 typedef void (fsckProgressHandle_t)(double, const char*);
 

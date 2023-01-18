@@ -178,7 +178,7 @@ class GoBotInternal {
         var worked = false
         cfgStr.withGoString {
             cfgGoStr in
-            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
+            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, nil, nil, nil)
         }
         
         if worked {
