@@ -246,12 +246,13 @@ start using Planetary right away, but:
     case dismissMigrationEarlyMessage = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?"
     
     // MARK: - Bot migration
-    case botMigrationBodyText =
+    case botMigrationBody =
 """
 Planetary needs to upgrade to give you a better user experience.
 
 This can take a few minutes. Keep the app open until it’s complete.
 """
+    case botMigrationGenericError = "The migration failed. Please try again, or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app."
     
     // MARK: - 814 fix strings
     case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."

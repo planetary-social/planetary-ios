@@ -9,7 +9,9 @@
 import SwiftUI
 
 protocol BotMigrationViewModel: ObservableObject {
+    var showError: Bool { get set }
     func dismissPressed()
+    func tryAgainPressed()
 }
 
 /// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
@@ -45,7 +47,7 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                                     .frame(maxWidth: 218.3)
                                 Spacer()
                             }
-                            Localized.botMigrationBodyText.view
+                            Localized.botMigrationBody.view
                                 .font(.body)
                                 .foregroundColor(.mainText)
                                 .padding()
@@ -74,6 +76,17 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
             
             Spacer()
         }
+        .alert(isPresented: $viewModel.showError, content: {
+            Alert(
+                // TODO: localize
+                title: Localized.error.view,
+                message: Localized.botMigrationGenericError.view,
+                dismissButton: .default(
+                    Localized.tryAgain.view,
+                    action: viewModel.tryAgainPressed
+                )
+            )
+        })
         .background(
             Color.appBackground.edgesIgnoringSafeArea(.all)
         )
@@ -81,12 +94,26 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
 }
 
 fileprivate class PreviewViewModel: BotMigrationViewModel {
+    @Published var showError = false
     func dismissPressed() {}
+    func tryAgainPressed() {
+        showError = false
+    }
 }
 
 struct BotMigrationView_Previews: PreviewProvider {
+    
+    fileprivate static var errorViewModel: PreviewViewModel = {
+        let viewModel = PreviewViewModel()
+        viewModel.showError = true
+        return viewModel
+    }()
+    
     static var previews: some View {
         BotMigrationView(viewModel: PreviewViewModel())
+            .previewDevice("iPhone 14 Pro")
+        
+        BotMigrationView(viewModel: errorViewModel)
             .previewDevice("iPhone 14 Pro")
         
         BotMigrationView(viewModel: PreviewViewModel())
