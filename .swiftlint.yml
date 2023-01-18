@@ -6,6 +6,8 @@ disabled_rules: # rule identifiers turned on by default to exclude from running
   - private_over_fileprivate
   - empty_count
   - function_parameter_count
+  - attributes
+  - class_delegate_protocol
 opt_in_rules: # some rules are turned off by default, so you need to opt-in
   - attributes
   - capture_variable

@@ -11,12 +11,126 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import SwiftUI
+
+class MockMigrationManager: BotMigrationDelegate {
+
+    lazy var onRunningCallback: MigrationOnRunningCallback = { }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { }
+    lazy var onDoneCallback: MigrationOnDoneCallback = { }
+}
+
+typealias MigrationOnRunningCallback = @convention(c) () -> Void
+typealias MigrationOnErrorCallback = @convention(c) () -> Void
+typealias MigrationOnDoneCallback = @convention(c) () -> Void
+
+protocol BotMigrationDelegate {
+    var onRunningCallback: MigrationOnRunningCallback { get }
+    var onErrorCallback: MigrationOnErrorCallback { get }
+    var onDoneCallback: MigrationOnDoneCallback { get }
+}
+
+class BotMigrationController: BotMigrationViewModel {
+    
+    @Published var showError = false
+    @Published var isDone = false
+    
+    var hostingController: UIViewController
+    
+    init(hostingController: UIViewController) {
+        self.hostingController = hostingController
+    }
+    
+    func dismissPressed() {
+        hostingController.dismiss(animated: true)
+    }
+    
+    func tryAgainPressed() {
+        
+    }
+}
+
+/// Receives migration delegate calls from the Bot and updates UI accordingly.
+class BotMigrationCoordinator: BotMigrationDelegate {
+    
+    
+    lazy var onRunningCallback: MigrationOnRunningCallback = {
+        NotificationCenter.default.post(Notification(name: .migrationOnRunning))
+    }
+    
+    lazy var onErrorCallback: MigrationOnErrorCallback = {
+        NotificationCenter.default.post(Notification(name: .migrationOnError))
+    }
+    
+    lazy var onDoneCallback: MigrationOnDoneCallback = {
+        NotificationCenter.default.post(Notification(name: .migrationOnDone))
+    }
+    
+    private var hostViewController: UIViewController
+    
+    private lazy var botMigrationController: BotMigrationController = {
+        BotMigrationController(hostingController: hostViewController)
+    }()
+    
+    private var hostingController: UIViewController?
+    
+    init(hostViewController: UIViewController) {
+        self.hostViewController = hostViewController
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onRunning),
+            name: Notification.Name.migrationOnRunning,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onError),
+            name: Notification.Name.migrationOnError,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onDone),
+            name: Notification.Name.migrationOnDone,
+            object: nil
+        )
+    }
+    
+    @objc func onRunning(notification: Notification) {
+        Task.detached(priority: .high) { @MainActor [hostViewController, botMigrationController] in
+            let view = BotMigrationView(viewModel: botMigrationController)
+            let hostingController = UIHostingController(rootView: view)
+            hostingController.modalPresentationStyle = .fullScreen
+            hostingController.modalTransitionStyle = .crossDissolve
+            hostViewController.present(hostingController, animated: true)
+            self.hostingController = hostingController
+        }
+    }
+    
+    @objc func onError(notification: Notification) {
+        Task.detached(priority: .high) { @MainActor [botMigrationController] in
+            botMigrationController.showError = true
+        }
+    }
+    
+    @objc func onDone(notification: Notification) {
+        Task.detached(priority: .high) { @MainActor [botMigrationController] in
+            botMigrationController.isDone = true
+        }
+    }
+}
 
 // Mark UserDefaults as @Sendable for now, because docs say it's thread safe and I can't find another good alternative.
 #if compiler(>=5.5) && canImport(_Concurrency)
 extension UserDefaults: @unchecked Sendable {}
 #endif
 
+/// LaunchViewController is used to stand up the app stack at key junctions:
+///    - on app launch
+///    - after onboarding
+///    - after changing AppConfigurations
+///
+/// It also makes the decision to launch onboarding, or run pre-launch migrations.
 class LaunchViewController: UIViewController {
 
     // MARK: Lifecycle
@@ -62,7 +176,7 @@ class LaunchViewController: UIViewController {
     // MARK: Actions
 
     @MainActor
-    func launch() {
+    private func launch() {
         
         guard appConfiguration?.bot?.identity == nil else {
             launchIntoMain()
@@ -125,10 +239,10 @@ class LaunchViewController: UIViewController {
                 
                 try await bot.login(config: configuration, fromOnboarding: false)
             } catch {
-                self.handleLoginFailure(with: error, configuration: configuration)
+                await self.handleLoginFailure(with: error, configuration: configuration)
             }
             
-            self.launchIntoMain()
+            await self.launchIntoMain()
             await self.trackLogin(with: configuration)
         }
     }

@@ -161,7 +161,7 @@
 "Localized.areYouSure" = "Are you sure?";
 "Localized.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
 "Localized.botMigrationBody" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
-"Localized.botMigrationGenericError" = "The migration failed. Please try again, or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
+"Localized.botMigrationGenericError" = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
 "Localized.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
 "Localized.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
 

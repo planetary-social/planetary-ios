@@ -100,6 +100,7 @@ class GoBot: Bot, @unchecked Sendable {
     private var preloadedPubService: PreloadedPubService?
     private var welcomeService: WelcomeService?
     private var banListAPI = BanListAPI.shared
+    private var migrationDelegate: BotMigrationDelegate
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
@@ -108,10 +109,12 @@ class GoBot: Bot, @unchecked Sendable {
 
     required init(
         userDefaults: UserDefaults = UserDefaults.standard,
+        migrationDelegate: BotMigrationDelegate = BotMigrationCoordinator(hostViewController: AppController.shared),
         preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter(),
         welcomeService: WelcomeService? = nil
     ) {
         self.userDefaults = userDefaults
+        self.migrationDelegate = migrationDelegate
         self.preloadedPubService = preloadedPubService
         self.welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
         self.utilityQueue = DispatchQueue(
@@ -208,7 +211,7 @@ class GoBot: Bot, @unchecked Sendable {
         completion(secret, nil)
     }
     
-    @MainActor func login(
+    func login(
         config: AppConfiguration,
         fromOnboarding isLoggingInFromOnboarding: Bool = false
     ) async throws {
@@ -245,13 +248,15 @@ class GoBot: Bot, @unchecked Sendable {
             Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
         }
         
-        try bot.login(
+        try await bot.login(
             network: network,
             hmacKey: hmacKey,
             secret: secret,
             pathPrefix: repoPrefix,
-            disableEBT: isRestoring
+            disableEBT: isRestoring,
+            migrationDelegate: migrationDelegate
         )
+        
         
         // Save GoBot version to disk in case we need to migrate in the future.
         // This is a side-effect that may cause problems if we want to use other bots in the future.
@@ -260,8 +265,8 @@ class GoBot: Bot, @unchecked Sendable {
         
         _identity = secret.identity
 
-        // Run the rest of our post-login tasks off the main thread
-        Task(priority: .high) {
+        // Run the rest of our post-login tasks after returning
+        Task.detached(priority: .high) {
             do {
                 try self.welcomeService?.insertNewMessages(in: self.database)
             } catch {

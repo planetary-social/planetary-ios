@@ -28,6 +28,8 @@ struct BigActionButton: View {
 
 struct BigActionButtonStyle: ButtonStyle {
     
+    @SwiftUI.Environment(\.isEnabled) private var isEnabled
+    
     let cornerRadius: CGFloat = 50
     
     func makeBody(configuration: Configuration) -> some View {
@@ -47,7 +49,7 @@ struct BigActionButtonStyle: ButtonStyle {
                     LinearGradient(
                         colors: [
                             Color(red: 1, green: 1, blue: 1, opacity: 0.2),
-                            Color(red: 1, green: 1, blue: 1, opacity: 1.0)
+                            Color(red: 1, green: 1, blue: 1, opacity: 1.0),
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -76,18 +78,23 @@ struct BigActionButtonStyle: ButtonStyle {
                         x: 0,
                         y: 2
                     )
+                    .opacity(isEnabled ? 1 : 0.5)
             }
             .cornerRadius(cornerRadius)
             .offset(y: configuration.isPressed ? 6 : 0)
         }
-        .fixedSize(horizontal: false, vertical: true) // Add this
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
 struct BigGradientButton_Previews: PreviewProvider {
     static var previews: some View {
-        HStack {
+        VStack(spacing: 20) {
             BigActionButton(title: Localized.startUsingPlanetary, action: {})
+                .frame(width: 268)
+            
+            BigActionButton(title: Localized.startUsingPlanetary, action: {})
+                .disabled(true)
                 .frame(width: 268)
         }
     }

@@ -24,6 +24,7 @@ class FakeBot: Bot {
     
     required init(
         userDefaults: UserDefaults,
+        migrationDelegate: BotMigrationDelegate = MockMigrationManager(),
         preloadedPubService: PreloadedPubService?,
         welcomeService: WelcomeService? = nil
     ) {}

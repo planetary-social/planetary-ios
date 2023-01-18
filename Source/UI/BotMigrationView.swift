@@ -10,6 +10,7 @@ import SwiftUI
 
 protocol BotMigrationViewModel: ObservableObject {
     var showError: Bool { get set }
+    var isDone: Bool { get set }
     func dismissPressed()
     func tryAgainPressed()
 }
@@ -47,17 +48,26 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                                     .frame(maxWidth: 218.3)
                                 Spacer()
                             }
-                            Localized.botMigrationBody.view
-                                .font(.body)
-                                .foregroundColor(.mainText)
-                                .padding()
-                                .multilineTextAlignment(.center)
                             
-                            Spacer()
+                            if !viewModel.isDone {
+                                Localized.botMigrationBody.view
+                                    .font(.body)
+                                    .foregroundColor(.mainText)
+                                    .padding()
+                                    .multilineTextAlignment(.center)
+                                
+                                Spacer()
                             
-                            ProgressView()
-                                .scaleEffect(2)
-                                .accentColor(.mainText)
+                                ProgressView()
+                                    .scaleEffect(2)
+                                    .accentColor(.mainText)
+                            } else {
+                                Localized.success.view
+                                    .font(.headline)
+                                    .foregroundColor(.mainText)
+                                    .padding()
+                                    .multilineTextAlignment(.center)
+                            }
                             
                             Spacer()
 
@@ -65,6 +75,7 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                                 viewModel.dismissPressed()
                             }
                             .frame(width: 286)
+                            .disabled(!viewModel.isDone)
                             
                             Color.clear.frame(width: 0, height: 10)
                         }
@@ -78,7 +89,6 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
         }
         .alert(isPresented: $viewModel.showError, content: {
             Alert(
-                // TODO: localize
                 title: Localized.error.view,
                 message: Localized.botMigrationGenericError.view,
                 dismissButton: .default(
@@ -95,6 +105,7 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
 
 fileprivate class PreviewViewModel: BotMigrationViewModel {
     @Published var showError = false
+    @Published var isDone = false
     func dismissPressed() {}
     func tryAgainPressed() {
         showError = false
@@ -109,11 +120,20 @@ struct BotMigrationView_Previews: PreviewProvider {
         return viewModel
     }()
     
+    fileprivate static var doneViewModel: PreviewViewModel = {
+        let viewModel = PreviewViewModel()
+        viewModel.isDone = true
+        return viewModel
+    }()
+    
     static var previews: some View {
         BotMigrationView(viewModel: PreviewViewModel())
             .previewDevice("iPhone 14 Pro")
         
         BotMigrationView(viewModel: errorViewModel)
+            .previewDevice("iPhone 14 Pro")
+        
+        BotMigrationView(viewModel: doneViewModel)
             .previewDevice("iPhone 14 Pro")
         
         BotMigrationView(viewModel: PreviewViewModel())
