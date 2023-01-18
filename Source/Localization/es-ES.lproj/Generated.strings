@@ -153,8 +153,6 @@
 "Localized.botMigrationBody" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
 "Localized.botMigrationGenericError" = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
 "Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
-"Localized.confirmCopyToMainNetwork" = "Debido a un error tu perfil fue creado en la red de pruebas de Planetary en vez de la red SSB principal. La aplicación copiará tu perfil a la red principal.";
-"Localized.confirmSkipCopyToMainNetwork" = "No se te pedirá que ejecutes esta solución de nuevo. ¿Estás seguro de que quieres omitirlo?";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres ignorar a {{ name }}? No podréis ver el contenido del otro o poder contactar el uno con el otro. Esto será visible públicamente.";
 "Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";

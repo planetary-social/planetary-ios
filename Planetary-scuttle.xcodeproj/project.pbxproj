@@ -1127,8 +1127,6 @@
 		C9C3788E27C6CCD400238B58 /* BotStatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */; };
 		C9C3788F27C6CCD400238B58 /* BotStatisticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */; };
 		C9C3789127C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */; };
-		C9C9BB5128C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */; };
-		C9C9BB5228C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */; };
 		C9D0401D292E53C100C7F226 /* ViewDatabaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */; };
 		C9D1EACA2832A0230092E098 /* AttributedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1EAC02832A0220092E098 /* AttributedStringTests.swift */; };
 		C9D1EACB2832A0230092E098 /* IdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D1EAC12832A0220092E098 /* IdentifierTests.swift */; };
@@ -1871,7 +1869,6 @@
 		C9C3788D27C6CCD400238B58 /* BotStatisticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotStatisticsService.swift; sourceTree = "<group>"; };
 		C9C3789027C6CCFB00238B58 /* GoBotStatisticsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoBotStatisticsServiceTests.swift; sourceTree = "<group>"; };
 		C9C8F0EB27E8EC3400F78ABC /* GoSSB.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = GoSSB.xcodeproj; path = GoSSB/GoSSB.xcodeproj; sourceTree = "<group>"; };
-		C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fix814AccountsHelper.swift; sourceTree = "<group>"; };
 		C9C9D653296C988400D584B8 /* Performance Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Performance Tests.xctestplan"; sourceTree = "<group>"; };
 		C9C9D655296C988400D584B8 /* Planetary Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Planetary Unit Tests.xctestplan"; sourceTree = "<group>"; };
 		C9D0401C292E53C100C7F226 /* ViewDatabaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabaseTestCase.swift; sourceTree = "<group>"; };
@@ -2274,7 +2271,6 @@
 				53211CD32280E1E1007FB785 /* EditAboutViewController.swift */,
 				5396A630224823DD00C57A4B /* FeatureViewController.swift */,
 				C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */,
-				C9C9BB5028C1092C00042F2F /* Fix814AccountsHelper.swift */,
 				C9EBE0462880C2C900A2CF51 /* HelpDrawerCoordinator.swift */,
 				0AC10DE5246DBDDD00CCA22A /* KnownPubsTableViewDataSource.swift */,
 				5396A62E2245A50300C57A4B /* LaunchViewController.swift */,
@@ -4419,7 +4415,6 @@
 				C9724B972809EA7D000EBCCD /* Comparable+Clamped.swift in Sources */,
 				C9C3788A27C6CC3200238B58 /* XCTestCase+Combine.swift in Sources */,
 				C982CBDF28353DE700D8963F /* ContactReplyView.swift in Sources */,
-				C9C9BB5228C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */,
 				E04BC34629520A36005185CD /* AliasListView.swift in Sources */,
 				C9724B662809D6EC000EBCCD /* AboutCellView.swift in Sources */,
 				C9724BC82809ED75000EBCCD /* UINavigationBar+Verse.swift in Sources */,
@@ -4925,7 +4920,6 @@
 				5396A6352248377900C57A4B /* UIColor+Verse.swift in Sources */,
 				53C2B1342295AC000018D0A8 /* AppConfiguration+Data.swift in Sources */,
 				53E26C5A23039597009240B2 /* Dictionary+Transform.swift in Sources */,
-				C9C9BB5128C1092C00042F2F /* Fix814AccountsHelper.swift in Sources */,
 				C9412AEA28AEE8EB00F791A7 /* RoomAliasRegistrationController.swift in Sources */,
 				530F01AC22DEAE6F007EBAE2 /* BioOnboardingStep.swift in Sources */,
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,

@@ -233,10 +233,6 @@ This can take a few minutes. Keep the app open until it’s complete.
 """
     case botMigrationGenericError = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app."
     case startUsingPlanetaryTitle = "Start Using Planetary"
-    
-    // MARK: - 814 fix strings
-    case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."
-    case confirmSkipCopyToMainNetwork = "You will not be prompted to run this fix again. Are you sure you want to skip it?"
 }
 
 // MARK: - ImagePicker
