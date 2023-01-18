@@ -367,3 +367,9 @@ class FakeBot: Bot, @unchecked Sendable {
         completion(.success(""))
     }
 }
+
+class MockMigrationManager: BotMigrationDelegate {
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _, _ in }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in }
+    lazy var onDoneCallback: MigrationOnDoneCallback = { _ in }
+}

@@ -874,6 +874,9 @@
 		C955CAB827D18368005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CAB927D18369005146F2 /* Bundle+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531A8A4F21FA622900D5C8C0 /* Bundle+Current.swift */; };
 		C955CABB27D272F3005146F2 /* ExitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF9E0AB246B23F900910575 /* ExitOperation.swift */; };
+		C95E7C702978979800E921F4 /* BotMigrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C6F2978979800E921F4 /* BotMigrationDelegate.swift */; };
+		C95E7C73297898FD00E921F4 /* BotMigrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C72297898FD00E921F4 /* BotMigrationController.swift */; };
+		C95E7C752978997B00E921F4 /* BotMigrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C742978997B00E921F4 /* BotMigrationCoordinator.swift */; };
 		C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */; };
 		C969F0DF2899CED100081615 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969F0DE2899CED100081615 /* Room.swift */; };
 		C969F0E12899CFEE00081615 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969F0DE2899CED100081615 /* Room.swift */; };
@@ -1733,7 +1736,6 @@
 		5B4AEA76294D14320059E039 /* HashtagListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagListView.swift; sourceTree = "<group>"; };
 		5B4AEA77294D14320059E039 /* CompactHashtagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompactHashtagView.swift; sourceTree = "<group>"; };
 		5B4AEA78294D14320059E039 /* HashtagView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HashtagView.swift; sourceTree = "<group>"; };
-		5B50BBBD293E1935001D4C9A /* EmptyHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyHomeView.swift; sourceTree = "<group>"; };
 		5B533E392959DF5400F5EED1 /* MessageCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCard.swift; sourceTree = "<group>"; };
 		5B533E3C2959DF5B00F5EED1 /* MessageOptionsButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOptionsButton.swift; sourceTree = "<group>"; };
 		5B533E3F2959F96D00F5EED1 /* AppEnvironmentModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironmentModifier.swift; sourceTree = "<group>"; };
@@ -1772,13 +1774,8 @@
 		5BA321662949083400EF740B /* StaticAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticAlgorithm.swift; sourceTree = "<group>"; };
 		5BA32ED72915930000744984 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		5BA32EDB291597DE00744984 /* BotRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotRepository.swift; sourceTree = "<group>"; };
-		5BA6E3AB293447BA000393AC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		5BA6E3B329366E8F000393AC /* HashtagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagView.swift; sourceTree = "<group>"; };
 		5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagAlgorithm.swift; sourceTree = "<group>"; };
-		5BA6E3B929368C34000393AC /* EmptyPostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyPostsView.swift; sourceTree = "<group>"; };
 		5BA6E3BF2937907E000393AC /* Notification+Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Post.swift"; sourceTree = "<group>"; };
-		5BA6E3C22938178E000393AC /* HashtagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagListView.swift; sourceTree = "<group>"; };
-		5BA6E3C529397486000393AC /* CompactHashtagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactHashtagView.swift; sourceTree = "<group>"; };
 		5BA6E3C829397CA9000393AC /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		5BA6E3CB2939A96C000393AC /* FloatingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingButton.swift; sourceTree = "<group>"; };
 		5BAB1840290C2634009F8F90 /* CompactPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactPostView.swift; sourceTree = "<group>"; };
@@ -1867,6 +1864,9 @@
 		C94F66732810AB9E00DEA5AC /* XCTBlockExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTBlockExpectation.swift; sourceTree = "<group>"; };
 		C9570F652788E2280095EFFF /* Architecture */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Architecture; sourceTree = "<group>"; };
 		C95A131F2786279A00FFD52F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		C95E7C6F2978979800E921F4 /* BotMigrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotMigrationDelegate.swift; sourceTree = "<group>"; };
+		C95E7C72297898FD00E921F4 /* BotMigrationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotMigrationController.swift; sourceTree = "<group>"; };
+		C95E7C742978997B00E921F4 /* BotMigrationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotMigrationCoordinator.swift; sourceTree = "<group>"; };
 		C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedPeerListView.swift; sourceTree = "<group>"; };
 		C969F0DE2899CED100081615 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		C969F0E22899D0EC00081615 /* RoomListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomListView.swift; sourceTree = "<group>"; };
@@ -2298,6 +2298,7 @@
 				53211CE122836666007FB785 /* MIMEType.swift */,
 				535B6A0D23728049008C248E /* NSNotification+Bot.swift */,
 				5BA32EDB291597DE00744984 /* BotRepository.swift */,
+				C95E7C6F2978979800E921F4 /* BotMigrationDelegate.swift */,
 			);
 			path = Bot;
 			sourceTree = "<group>";
@@ -2335,6 +2336,7 @@
 				535B6A0523712D79008C248E /* UIViewController+Block.swift */,
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
 				536255DD23AC4C46001007D0 /* UIViewController+Sync.swift */,
+				C95E7C72297898FD00E921F4 /* BotMigrationController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2437,7 +2439,6 @@
 				53C422AE21C476AF00A314AD /* Shared */,
 				5344D82D21C4649700704A34 /* Source */,
 				5308168621C46A53005C48ED /* UnitTests */,
-				5B4AEA6B294D14050059E039 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2560,6 +2561,7 @@
 				C941A6E327ECBE2A009B38C9 /* PreloadedBlobService.swift */,
 				C9F53824286CCF410015A146 /* WelcomeService.swift */,
 				C9313A7B289AD9D40093AC47 /* RoomInvitationRedeemer.swift */,
+				C95E7C742978997B00E921F4 /* BotMigrationCoordinator.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -2916,19 +2918,6 @@
 				5B747F6F295E1AA8003D014A /* GoldenPostView.swift */,
 			);
 			path = Message;
-			sourceTree = "<group>";
-		};
-		5B4AEA6B294D14050059E039 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				5BA6E3C529397486000393AC /* CompactHashtagView.swift */,
-				5BA6E3B929368C34000393AC /* EmptyPostsView.swift */,
-				5B50BBBD293E1935001D4C9A /* EmptyHomeView.swift */,
-				5BA6E3AB293447BA000393AC /* HomeView.swift */,
-				5BA6E3C22938178E000393AC /* HashtagListView.swift */,
-				5BA6E3B329366E8F000393AC /* HashtagView.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		5B4AEA6C294D14240059E039 /* Home */ = {
@@ -4984,6 +4973,7 @@
 				5319258222F3B13600B44FA3 /* AvatarImageView.swift in Sources */,
 				53EAB3912398692000DF5530 /* AvatarStackView.swift in Sources */,
 				5BEE741E2880515800897ACC /* Post+ViewDatabase.swift in Sources */,
+				C95E7C73297898FD00E921F4 /* BotMigrationController.swift in Sources */,
 				535B6A10237362AE008C248E /* BlockedUsersViewController.swift in Sources */,
 				8D74DE012335601F003C284B /* UIViewController+NavigationItems.swift in Sources */,
 				0A64A82824734F00009A5EBF /* VersePubAPI.swift in Sources */,
@@ -5145,6 +5135,7 @@
 				530F019A22DE8F57007EBAE2 /* UIImagePicker.swift in Sources */,
 				5396A62722444A1500C57A4B /* BotViewController.swift in Sources */,
 				532751D1222497A70026500F /* Bots.swift in Sources */,
+				C95E7C752978997B00E921F4 /* BotMigrationCoordinator.swift in Sources */,
 				53E29CD222D40462008A2CB1 /* Bot+Publish.swift in Sources */,
 				53B634B422150A4100400403 /* MainViewController.swift in Sources */,
 				0A64A84624735717009A5EBF /* PhoneVerificationAPIService.swift in Sources */,
@@ -5170,6 +5161,7 @@
 				5BEE74242880774600897ACC /* MessageValue+ViewDatabase.swift in Sources */,
 				0A78CCBC2416ABC80058959B /* AppDelegate+Reset.swift in Sources */,
 				C9F1C85327C980A6005A3228 /* AvatarImageViewRepresentable.swift in Sources */,
+				C95E7C702978979800E921F4 /* BotMigrationDelegate.swift in Sources */,
 				53375F812321757C00610932 /* GalleryView.swift in Sources */,
 				C9421EB228889F2400A4C86D /* FancySectionTitle.swift in Sources */,
 				531EC4102310C274001A25AD /* Blob+NSAttributedString.swift in Sources */,
