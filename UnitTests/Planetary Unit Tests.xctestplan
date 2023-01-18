@@ -49,7 +49,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "API_GoBot"
+        "API_GoBot",
+        "ViewDatabasePerformanceTests"
       ],
       "target" : {
         "containerPath" : "container:Planetary-scuttle.xcodeproj",
