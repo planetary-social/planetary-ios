@@ -40,7 +40,7 @@ struct GoldenPostView: View {
     var text: some View {
         Text(markdown)
             .foregroundColor(.primaryTxt)
-            .accentColor(.accentTxt)
+            .accentColor(.accent)
     }
 
     var footer: some View {

@@ -23,7 +23,7 @@ struct EmptyPostsView: View {
             Text(noPostsDescription)
                 .font(.subheadline)
                 .foregroundColor(.secondaryTxt)
-                .accentColor(.accentTxt)
+                .accentColor(.accent)
                 .multilineTextAlignment(.center)
                 .padding()
         }

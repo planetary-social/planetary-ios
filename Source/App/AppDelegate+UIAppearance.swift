@@ -19,7 +19,7 @@ extension AppDelegate {
     func configureAppearance() {
 
         // default tint across app, affects buttons
-        UIWindow.appearance().tintColor = UIColor.tint.default
+        UIWindow.appearance().tintColor = UIColor.accent
 
         // nav bar
         // we have to set the image because setting the backgroundColor
@@ -28,31 +28,31 @@ extension AppDelegate {
         let appearance = UINavigationBar.appearance()
         appearance.backIndicatorImage = image
         appearance.backIndicatorTransitionMaskImage = image
-        appearance.tintColor = UIColor.tint.default
+        appearance.tintColor = UIColor.accent
         appearance.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 20, weight: .medium),
-            .foregroundColor: UIColor.secondaryText
+            .foregroundColor: UIColor.secondaryTxt
         ]
 
         // clear the bottom shadow edge to allow for a custom edge
         appearance.shadowImage = UIColor.clear.image(dimension: 1)
 
         appearance.isTranslucent = false
-        appearance.backgroundColor = .cardBackground
-        appearance.barTintColor = .cardBackground
+        appearance.backgroundColor = .navigationbarBg
+        appearance.barTintColor = .navigationbarBg
 
         // refresh control
         UIRefreshControl.appearance().tintColor = .loadingIcon
 
         // search bar
-        UISearchBar.appearance().backgroundColor = .cardBackground
+        UISearchBar.appearance().backgroundColor = .navigationbarBg
         
         // table footers and headers
-        let footerColor = UIColor.secondaryText
+        let footerColor = UIColor.secondaryTxt
         UILabel.appearance(whenContainedInInstancesOf: [UITableViewHeaderFooterView.self]).textColor = footerColor
         
         // table views
-        UITableView.appearance().backgroundColor = .appBackground
+        UITableView.appearance().backgroundColor = .appBg
     }
 }
 
@@ -64,15 +64,13 @@ extension UITabBar {
     /// to be used for all versions.
     func configureAppearance() {
         let itemAppearance = UITabBarItemAppearance()
-        itemAppearance.normal.iconColor = .unselectedTab
-        itemAppearance.normal.badgeBackgroundColor = .selectedTab
-        itemAppearance.selected.iconColor = .selectedTab
-        itemAppearance.selected.badgeBackgroundColor = .selectedTab
+        itemAppearance.normal.badgeBackgroundColor = .accent
+        itemAppearance.selected.badgeBackgroundColor = .accent
         
         let appearance = UITabBarAppearance()
         appearance.stackedLayoutAppearance = itemAppearance
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .cardBackground
+        appearance.backgroundColor = .navigationbarBg
         appearance.backgroundImage = UIImage()
         appearance.shadowColor = nil
         appearance.shadowImage = UIImage()

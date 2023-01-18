@@ -196,7 +196,7 @@ enum HelpDrawerCoordinator {
         case .discover:
             return {
                 host.dismissDrawer {
-                    let featureVC = tabBar?.everyoneViewController
+                    let featureVC = tabBar?.everyoneFeatureViewController
                     tabBar?.selectedViewController = featureVC
                     tabBar?.helpDrawerState.isShowingDiscoverHelpDrawer = true
                 }

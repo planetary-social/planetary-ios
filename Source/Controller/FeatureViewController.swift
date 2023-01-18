@@ -47,7 +47,7 @@ class FeatureViewController: UINavigationController {
     }
 
     private func setTabBarItem(title: String?, image named: String? = nil) {
-        guard let name = named ?? cachedTabBarItemImageName, setTabBarItemImage(name) else {
+        guard let name = named ?? cachedTabBarItemImageName, setTabBarItemImage(title: title, image: name) else {
             return
         }
         self.tabBarItem.accessibilityLabel = title
@@ -60,11 +60,13 @@ class FeatureViewController: UINavigationController {
     }
 
     override func viewWillLayoutSubviews() {
-        navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        let backButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        backButtonItem.tintColor = .primaryTxt
+        navigationBar.topItem?.backBarButtonItem = backButtonItem
     }
 
     @discardableResult
-    func setTabBarItemImage(_ name: String) -> Bool {
+    func setTabBarItemImage(title: String?, image name: String) -> Bool {
         guard let image = UIImage(named: name) else {
             return false
         }
@@ -72,9 +74,7 @@ class FeatureViewController: UINavigationController {
             return false
         }
         cachedTabBarItemImageName = name
-        let tabBarItem = UITabBarItem(title: nil, image: image, selectedImage: selected)
-        tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
-        self.tabBarItem = tabBarItem
+        self.tabBarItem = UITabBarItem(title: title, image: image, selectedImage: selected)
         return true
     }
 

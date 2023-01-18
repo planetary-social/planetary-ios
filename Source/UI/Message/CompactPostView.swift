@@ -51,7 +51,7 @@ struct CompactPostView: View {
                 .lineLimit(5)
                 .font(.body)
                 .foregroundColor(.primaryTxt)
-                .accentColor(.accentTxt)
+                .accentColor(.accent)
                 .padding(15)
                 .background {
                     GeometryReader { geometryProxy in
