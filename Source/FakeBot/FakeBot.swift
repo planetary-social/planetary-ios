@@ -14,7 +14,7 @@ enum FakeBotError: Error {
     case notImplemented
 }
 
-class FakeBot: Bot {
+class FakeBot: Bot, @unchecked Sendable {
     
     var isRestoring = false
 
