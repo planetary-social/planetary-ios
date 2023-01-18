@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Updated font of level 3 Headings in Posts to stand out from the body. #1034 
 - Fixed an issue where room names would not show up in the connected peers list.
 - Update the color palette used in the navigation bars and the main tab bar. #1059
 - Added new redesigned Discover screen. #587

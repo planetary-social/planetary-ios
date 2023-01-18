@@ -88,7 +88,7 @@ class MarkdownStyler: DownStyler {
             body = .body
             heading1 = .title3
             heading2 = .headline
-            heading3 = .subheadline
+            heading3 = .headline
         case .small:
             body = .footnote
             heading1 = .footnote
@@ -114,7 +114,7 @@ class MarkdownStyler: DownStyler {
             fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
         case .small, .compact, .large:
             let heading = font(
-                for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1),
+                for: UIFontDescriptor.preferredFontDescriptor(withTextStyle: heading1).withSymbolicTraits(.traitBold),
                 fallback: UIFont.preferredFont(forTextStyle: heading1)
             )
             fonts.heading1 = heading
