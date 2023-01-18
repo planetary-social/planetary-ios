@@ -32,7 +32,7 @@ struct SelectableText: UIViewRepresentable {
         view.isUserInteractionEnabled = true
         view.isEditable = false
         view.isSelectable = true
-        view.tintColor = .accentTxt
+        view.tintColor = .accent
         view.textContainerInset = insets
         view.backgroundColor = .clear
         return view

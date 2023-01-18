@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Light - Alerts--selected@1x.png",
+      "filename" : "Alerts_light--active.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,12 +12,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Light - Alerts--selected@1x-1.png",
+      "filename" : "Alerts_dark--active.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Light - Alerts--selected@2x.png",
+      "filename" : "Alerts_light--active@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -28,12 +28,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Light - Alerts--selected@2x-1.png",
+      "filename" : "Alerts_dark--active@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Light - Alerts--selected@3x.png",
+      "filename" : "Alerts_light--active@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     },
@@ -44,7 +44,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "Light - Alerts--selected@3x-1.png",
+      "filename" : "Alerts_dark--active@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

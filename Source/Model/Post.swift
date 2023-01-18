@@ -33,10 +33,6 @@ class Post: ContentCodable {
         self.text.blobs()
     }()
 
-    // MARK: Calculated temporal unserialized properties
-
-    internal var _attributedString: NSMutableAttributedString?
-
     // MARK: Lifecycle
 
     /// Intended to be used when publishing a new Post from a UI.
@@ -123,6 +119,16 @@ extension Post {
 
     var isRoot: Bool {
         self.root == nil
+    }
+
+    /// Returns true if the post is only a markdown-formatted text
+    var isTextOnly: Bool {
+        anyBlobs.isEmpty
+    }
+
+    /// Returns true if the post is only a gallery of blobs
+    var isBlobOnly: Bool {
+        text.withoutGallery().withoutSpacesOrNewlines.isEmpty
     }
 
     func doesMention(_ identity: Identity?) -> Bool {
