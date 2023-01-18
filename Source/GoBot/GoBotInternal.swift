@@ -198,11 +198,17 @@ class GoBotInternal {
         
         // Run the actual call to ssbBotInit in a detached task and withCheckedThrowingContinuation.
         // Both are necessary to yield the calling thread.
-        try await Task.detached { [configString] in
+        try await Task.detached { [migrationDelegate, configString] in
             try await withCheckedThrowingContinuation { continuation in
                 var worked = false
                 configString.withGoString { configGoString in
-                    worked = ssbBotInit(configGoString, self.notifyBlobReceived, self.notifyNewBearerToken)
+                    worked = ssbBotInit(
+                        configGoString,
+                        self.notifyBlobReceived,
+                        migrationDelegate.onRunningCallback,
+                        migrationDelegate.onErrorCallback,
+                        migrationDelegate.onDoneCallback
+                    )
                 }
                 
                 if worked {

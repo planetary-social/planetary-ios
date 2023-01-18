@@ -49,21 +49,21 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                                 Spacer()
                             }
                             
-                            if !viewModel.isDone {
-                                Localized.botMigrationBody.view
-                                    .font(.body)
-                                    .foregroundColor(.mainText)
-                                    .padding()
-                                    .multilineTextAlignment(.center)
-                                
-                                Spacer()
+                            Localized.botMigrationBody.view
+                                .font(.body)
+                                .foregroundColor(.mainText)
+                                .padding()
+                                .multilineTextAlignment(.center)
                             
+                            Spacer()
+                            
+                            if !viewModel.isDone {
                                 ProgressView()
                                     .scaleEffect(2)
                                     .accentColor(.mainText)
                             } else {
                                 Localized.success.view
-                                    .font(.headline)
+                                    .font(.body)
                                     .foregroundColor(.mainText)
                                     .padding()
                                     .multilineTextAlignment(.center)

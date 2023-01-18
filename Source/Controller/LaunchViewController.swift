@@ -15,14 +15,14 @@ import SwiftUI
 
 class MockMigrationManager: BotMigrationDelegate {
 
-    lazy var onRunningCallback: MigrationOnRunningCallback = { }
-    lazy var onErrorCallback: MigrationOnErrorCallback = { }
-    lazy var onDoneCallback: MigrationOnDoneCallback = { }
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _,_ in }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _,_,_ in }
+    lazy var onDoneCallback: MigrationOnDoneCallback = { _ in }
 }
 
-typealias MigrationOnRunningCallback = @convention(c) () -> Void
-typealias MigrationOnErrorCallback = @convention(c) () -> Void
-typealias MigrationOnDoneCallback = @convention(c) () -> Void
+typealias MigrationOnRunningCallback = @convention(c) (Int64, Int64) -> Void
+typealias MigrationOnErrorCallback = @convention(c) (Int64, Int64, Int64) -> Void
+typealias MigrationOnDoneCallback = @convention(c) (Int64) -> Void
 
 protocol BotMigrationDelegate {
     var onRunningCallback: MigrationOnRunningCallback { get }
@@ -53,16 +53,15 @@ class BotMigrationController: BotMigrationViewModel {
 /// Receives migration delegate calls from the Bot and updates UI accordingly.
 class BotMigrationCoordinator: BotMigrationDelegate {
     
-    
-    lazy var onRunningCallback: MigrationOnRunningCallback = {
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _, _ in
         NotificationCenter.default.post(Notification(name: .migrationOnRunning))
     }
     
-    lazy var onErrorCallback: MigrationOnErrorCallback = {
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in
         NotificationCenter.default.post(Notification(name: .migrationOnError))
     }
     
-    lazy var onDoneCallback: MigrationOnDoneCallback = {
+    lazy var onDoneCallback: MigrationOnDoneCallback = { _ in
         NotificationCenter.default.post(Notification(name: .migrationOnDone))
     }
     

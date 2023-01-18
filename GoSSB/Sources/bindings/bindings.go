@@ -17,6 +17,7 @@ import (
 	"github.com/planetary-social/scuttlego/di"
 	"github.com/planetary-social/scuttlego/logging"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
+	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
@@ -31,6 +32,9 @@ const (
 )
 
 type OnBlobDownloadedFn func(downloaded queries.BlobDownloaded) error
+type MigrationOnRunningFn func(migrationIndex, migrationsCount int)
+type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
+type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
 	AppKey     string `json:"AppKey"`
@@ -61,7 +65,14 @@ func NewNode() *Node {
 	return &Node{}
 }
 
-func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded OnBlobDownloadedFn) error {
+func (n *Node) Start(
+	swiftConfig BotConfig,
+	log kitlog.Logger,
+	onBlobDownloaded OnBlobDownloadedFn,
+	migrationOnRunningFn MigrationOnRunningFn,
+	migrationOnErrorFn MigrationOnErrorFn,
+	migrationOnDoneFn MigrationOnDoneFn,
+) error {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -79,6 +90,11 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 		return errors.Wrap(err, "could not convert the config")
 	}
 
+	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
+	if err != nil {
+		return errors.Wrap(err, "error creating the progress callback")
+	}
+
 	if err = os.MkdirAll(config.DataDirectory, 0700); err != nil {
 		return errors.Wrap(err, "could not create the data directory") // todo should this be here?
 	}
@@ -89,6 +105,17 @@ func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded 
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
+	}
+
+	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
+	if err != nil {
+		cancel()
+		return errors.Wrap(err, "error creating the migration command")
+	}
+
+	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
+		cancel()
+		return errors.Wrap(err, "error running migrations")
 	}
 
 	n.service = &service
