@@ -134,6 +134,9 @@ class OnboardingViewController: UINavigationController, OnboardingStepDelegate {
 
     private func done() {
         // AppController.shared.showDirectoryViewController()
+        if let identity = stepData.context?.identity {
+            Onboarding.set(status: .completed, for: identity)
+        }
         Analytics.shared.trackOnboardingEnd()
         AppController.shared.showMainViewController(fadeIn: true)
     }
