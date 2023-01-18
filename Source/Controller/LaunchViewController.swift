@@ -15,8 +15,8 @@ import SwiftUI
 
 class MockMigrationManager: BotMigrationDelegate {
 
-    lazy var onRunningCallback: MigrationOnRunningCallback = { _,_ in }
-    lazy var onErrorCallback: MigrationOnErrorCallback = { _,_,_ in }
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _, _ in }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in }
     lazy var onDoneCallback: MigrationOnDoneCallback = { _ in }
 }
 
@@ -46,7 +46,18 @@ class BotMigrationController: BotMigrationViewModel {
     }
     
     func tryAgainPressed() {
-        
+        Task {
+            await AppController.shared.relaunch()
+        }
+    }
+}
+
+struct BotMigrationError: LocalizedError {
+    
+    var code: Int64
+    
+    var errorDescription: String? {
+        "BotMigrationError code: \(code)"
     }
 }
 
@@ -57,8 +68,8 @@ class BotMigrationCoordinator: BotMigrationDelegate {
         NotificationCenter.default.post(Notification(name: .migrationOnRunning))
     }
     
-    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in
-        NotificationCenter.default.post(Notification(name: .migrationOnError))
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, errorCode in
+        NotificationCenter.default.post(Notification(name: .migrationOnError, userInfo: ["errorCode": errorCode]))
     }
     
     lazy var onDoneCallback: MigrationOnDoneCallback = { _ in
@@ -97,6 +108,7 @@ class BotMigrationCoordinator: BotMigrationDelegate {
     
     @objc func onRunning(notification: Notification) {
         Task.detached(priority: .high) { @MainActor [hostViewController, botMigrationController] in
+            Analytics.shared.trackDidStartBotMigration()
             let view = BotMigrationView(viewModel: botMigrationController)
             let hostingController = UIHostingController(rootView: view)
             hostingController.modalPresentationStyle = .fullScreen
@@ -107,14 +119,18 @@ class BotMigrationCoordinator: BotMigrationDelegate {
     }
     
     @objc func onError(notification: Notification) {
+        let errorCode = (notification.userInfo?["errorCode"] as? Int64) ?? -1
         Task.detached(priority: .high) { @MainActor [botMigrationController] in
             botMigrationController.showError = true
+            Analytics.shared.trackDidFailBotMigration(errorCode: errorCode)
+            CrashReporting.shared.reportIfNeeded(error: BotMigrationError(code: errorCode))
         }
     }
     
     @objc func onDone(notification: Notification) {
         Task.detached(priority: .high) { @MainActor [botMigrationController] in
             botMigrationController.isDone = true
+            Analytics.shared.trackDidFinishBotMigration()
         }
     }
 }

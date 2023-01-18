@@ -61,6 +61,19 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "drop_database")
     }
     
+    func trackDidStartBotMigration() {
+        service.track(event: .did, element: .bot, name: "migration_start")
+    }
+    
+    func trackDidFailBotMigration(errorCode: Int64) {
+        let params: [String: Any] = ["errorCode": errorCode]
+        service.track(event: .did, element: .bot, name: "migration_failed", params: params)
+    }
+    
+    func trackDidFinishBotMigration() {
+        service.track(event: .did, element: .bot, name: "migration_completed")
+    }
+    
     func trackDidStartBeta1Migration() {
         service.track(event: .did, element: .bot, name: "beta1_migration_start")
     }
