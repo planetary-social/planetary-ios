@@ -53,7 +53,7 @@ class DoneOnboardingStep: OnboardingStep {
         #if DEBUG
         view.toggle.isOn = true
         #else
-        view.toggle.isOn = true
+        view.toggle.isOn = false
         #endif
         return view
     }()
@@ -70,11 +70,18 @@ class DoneOnboardingStep: OnboardingStep {
         Layout.fillSouth(of: analyticsToggle, with: followPlanetaryToggle)
         Layout.fillSouth(of: followPlanetaryToggle, with: publicWebHostingToggle)
         Layout.fillSouth(of: publicWebHostingToggle, with: joinPlanetarySystemToggle)
+        #if DEBUG
         Layout.fillSouth(of: joinPlanetarySystemToggle, with: useTestNetworkToggle)
         useTestNetworkToggle.bottomAnchor.constraint(
             lessThanOrEqualTo: view.buttonStack.topAnchor,
             constant: -Layout.verticalSpacing
         ).isActive = true
+        #else
+        joinPlanetarySystemToggle.bottomAnchor.constraint(
+            lessThanOrEqualTo: view.buttonStack.topAnchor,
+            constant: -Layout.verticalSpacing
+        ).isActive = true
+        #endif
 
         self.view.hintLabel.text = Localized.Onboarding.orUseTheDefaults.text
 

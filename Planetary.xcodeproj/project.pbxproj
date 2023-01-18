@@ -3731,7 +3731,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */;
+			buildConfigurationList = 5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -6208,7 +6208,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary-scuttle" */ = {
+		5344D82621C4649700704A34 /* Build configuration list for PBXProject "Planetary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5344D83B21C4649A00704A34 /* Debug */,

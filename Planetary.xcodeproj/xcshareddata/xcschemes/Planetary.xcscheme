@@ -17,7 +17,7 @@
                BlueprintIdentifier = "5344D82A21C4649700704A34"
                BuildableName = "Planetary.app"
                BlueprintName = "Planetary"
-               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+               ReferencedContainer = "container:Planetary.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
             BlueprintIdentifier = "5344D82A21C4649700704A34"
             BuildableName = "Planetary.app"
             BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+            ReferencedContainer = "container:Planetary.xcodeproj">
          </BuildableReference>
       </CodeCoverageTargets>
       <TestPlans>
@@ -52,7 +52,7 @@
                BlueprintIdentifier = "5308168421C46A52005C48ED"
                BuildableName = "UnitTests.xctest"
                BlueprintName = "UnitTests"
-               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+               ReferencedContainer = "container:Planetary.xcodeproj">
             </BuildableReference>
             <SkippedTests>
                <Test
@@ -79,7 +79,7 @@
             BlueprintIdentifier = "5344D82A21C4649700704A34"
             BuildableName = "Planetary.app"
             BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+            ReferencedContainer = "container:Planetary.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -118,7 +118,7 @@
             BlueprintIdentifier = "5344D82A21C4649700704A34"
             BuildableName = "Planetary.app"
             BlueprintName = "Planetary"
-            ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+            ReferencedContainer = "container:Planetary.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

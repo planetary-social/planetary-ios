@@ -20,7 +20,7 @@ class ThreadViewController: ContentViewController {
         didSet {
             let key = root?.key ?? ""
             let identity = Bots.current.identity ?? ""
-            draftKey = "com.planetary.ios-scuttlego.draft.reply." + key + identity
+            draftKey = "com.planetary.ios.draft.reply." + key + identity
             draftStore = DraftStore(draftKey: draftKey)
         }
     }

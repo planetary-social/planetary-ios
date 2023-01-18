@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1410"
+   LastUpgradeVersion = "1400"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -19,7 +19,7 @@
                BlueprintIdentifier = "5308169021C46A6E005C48ED"
                BuildableName = "APITests.xctest"
                BlueprintName = "APITests"
-               ReferencedContainer = "container:Planetary-scuttle.xcodeproj">
+               ReferencedContainer = "container:Planetary.xcodeproj">
             </BuildableReference>
             <SkippedTests>
                <Test
