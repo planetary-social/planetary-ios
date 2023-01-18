@@ -53,7 +53,7 @@
         "ViewDatabasePerformanceTests"
       ],
       "target" : {
-        "containerPath" : "container:Planetary-scuttle.xcodeproj",
+        "containerPath" : "container:Planetary.xcodeproj",
         "identifier" : "5308168421C46A52005C48ED",
         "name" : "UnitTests"
       }
