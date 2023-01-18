@@ -222,29 +222,8 @@ enum Localized: String, Localizable, CaseIterable {
     case rooms = "Rooms"
     case allCapsCopy = "COPY"
     
-    // MARK: - Beta 1 migration strings
-    case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
-    case beta1MigrationComplete = "Tap on the following button to close this screen and go back to your feed."
-    case beta1MigrationPleaseLeaveAppOpen = "This may take a while.\n\nPlease leave the app open until it's done.\n"
-    case beta1StartUsingPlanetary =
-"""
-If you don't want to wait, you can
-start using Planetary right away, but:
-"""
-    case startUsingPlanetary = "start using Planetary"
-    case startUsingPlanetaryTitle = "Start Using Planetary"
-    case dismissAndStartUsingPlanetary = "Dismiss and start using Planetary"
     case percentComplete = "complete"
-    case beta1Disclaimers =
-"""
 
-• you won't be able to post or follow until your whole feed is downloaded
-
-• you may not see all previous messages until they are downloaded.
-"""
-    case areYouSure = "Are you sure?"
-    case dismissMigrationEarlyMessage = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?"
-    
     // MARK: - Bot migration
     case botMigrationBody =
 """
@@ -253,6 +232,7 @@ Planetary needs to upgrade to give you a better user experience.
 This can take a few minutes. Keep the app open until it’s complete.
 """
     case botMigrationGenericError = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app."
+    case startUsingPlanetaryTitle = "Start Using Planetary"
     
     // MARK: - 814 fix strings
     case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."

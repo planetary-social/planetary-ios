@@ -223,41 +223,24 @@ class LaunchViewController: UIViewController {
         }
 
         // otherwise there is a configuration and onboarding has been completed
-
-        // TODO analytics
-        // this should no longer be necessary with onboarding
-        guard configuration.canLaunch else {
-            self.alert(message: "The configuration is incomplete and cannot be launched. Please try deleting and reinstalling the app.")
-            return
-        }
-
-        // TODO this should be an analytics track()
-        // TODO include app installation UUID
-        // Analytics.shared.app(launch)
         Log.info("Launching with configuration:\n\(configuration)")
         
         Task {
-            login: do {
-                let isMigrating = try await self.migrateIfNeeded(using: configuration)
-                if isMigrating {
-                    break login
-                }
-                
-                if let newConfiguration = try await self.fix814AccountsIfNecessary(using: configuration) {
-                    configuration = newConfiguration
-                    break login
-                }
-                
+            do {
                 // note that hmac key can be nil to switch it off
-                guard configuration.network != nil else { return }
-                guard let bot = configuration.bot else { return }
+                guard configuration.network != nil, let bot = configuration.bot else {
+                    CrashReporting.shared.reportIfNeeded(
+                        error: GoBotError.unexpectedFault("missing configuration needed to start bot")
+                    )
+                    return
+                }
                 
                 try await bot.login(config: configuration, fromOnboarding: false)
             } catch {
-                await self.handleLoginFailure(with: error, configuration: configuration)
+                self.handleLoginFailure(with: error, configuration: configuration)
             }
             
-            await self.launchIntoMain()
+            self.launchIntoMain()
             await self.trackLogin(with: configuration)
         }
     }
@@ -367,21 +350,5 @@ class LaunchViewController: UIViewController {
             // No need to show an alert to the user as we can fetch the current about later
             CrashReporting.shared.reportIfNeeded(error: error)
         }
-    }
-    
-    private func migrateIfNeeded(using configuration: AppConfiguration) async throws -> Bool {
-        try await Beta1MigrationController.performBeta1MigrationIfNeeded(
-            appConfiguration: configuration,
-            appController: appController,
-            userDefaults: userDefaults
-        )
-    }
-    
-    private func fix814AccountsIfNecessary(using configuration: AppConfiguration) async throws -> AppConfiguration? {
-        try await Fix814AccountsHelper.fix814Account(
-            configuration,
-            appController: appController,
-            userDefaults: userDefaults
-        )
     }
 }

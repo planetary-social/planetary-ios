@@ -149,19 +149,10 @@
 "Localized.noResultsHelp" = "No veus el que estàs buscant? Planetary només pot cercar les persones i les publicacions de la vostra xarxa. Ara mateix, la cerca només coincideix amb paraules senceres, identificadors d'usuari i identificadors de publicació. També podem excloure publicacions de més de 6 mesos per estalviar espai al teu dispositiu.";
 "Localized.rooms" = "Sales";
 "Localized.allCapsCopy" = "COPY";
-"Localized.upgradingAndRestoring" = "Planetary està actualitzant i restaurant els teus missatges des de la xarxa.";
-"Localized.beta1MigrationComplete" = "Toca el següent botó per tancar aquesta pantalla i tornar al vostre canal.";
-"Localized.beta1MigrationPleaseLeaveAppOpen" = "Això pot trigar una estona.\n\nSi us plau, deixa l'aplicació oberta fins que acabi.\n";
-"Localized.beta1StartUsingPlanetary" = "Si no vols esperar, pots\ncomençar a utilitzar Planetary de seguida, però:";
-"Localized.startUsingPlanetary" = "comença a utilitzar Planetary";
-"Localized.startUsingPlanetaryTitle" = "Comença a utilitzar Planetary";
-"Localized.dismissAndStartUsingPlanetary" = "Descarta i comença a utilitzar Planetary";
-"Localized.percentComplete" = "completat";
-"Localized.beta1Disclaimers" = "\n• no pots publicar ni seguir fins que no es baixi tot el vostre canal\n\n• és possible que no vegis tots els missatges anteriors fins que no es baixin.";
-"Localized.areYouSure" = "Estàs segur?";
-"Localized.dismissMigrationEarlyMessage" = "Aquesta pantalla s'eliminarà i podràs utilitzar Planetary mentre les teves dades es continuen descarregant en segon pla. Estàs segur?";
+"Localized.percentComplete" = "complete";
 "Localized.botMigrationBody" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
 "Localized.botMigrationGenericError" = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
+"Localized.startUsingPlanetaryTitle" = "Comença a utilitzar Planetary";
 "Localized.confirmCopyToMainNetwork" = "A causa d'un error, el teu perfil es va crear a la xarxa de proves de Planetary en lloc de la xarxa principal SSB. Ara l'aplicació copiarà el teu perfil a la xarxa principal.";
 "Localized.confirmSkipCopyToMainNetwork" = "No se't demanarà que tornis a executar aquesta correcció. Estàs segur que vols saltar-la?";
 

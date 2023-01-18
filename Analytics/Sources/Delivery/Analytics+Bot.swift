@@ -74,18 +74,6 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "migration_completed")
     }
     
-    func trackDidStartBeta1Migration() {
-        service.track(event: .did, element: .bot, name: "beta1_migration_start")
-    }
-    
-    func trackDidDismissBeta1Migration(syncedMessages: Int, totalMessages: Int) {
-        let params: [String: Any] = [
-            "synced_messages": syncedMessages,
-            "total_messages": totalMessages
-        ]
-        service.track(event: .did, element: .bot, name: "beta1_migration_dismiss", params: params)
-    }
-    
     func trackDidStart814Fix() {
         service.track(event: .did, element: .bot, name: "814_fix_start")
     }

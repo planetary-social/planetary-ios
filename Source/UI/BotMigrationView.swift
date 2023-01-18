@@ -15,7 +15,7 @@ protocol BotMigrationViewModel: ObservableObject {
     func tryAgainPressed()
 }
 
-/// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
+/// A view to show the user while the Bot performs migrations
 struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel {
     
     @ObservedObject var viewModel: ViewModel
@@ -71,7 +71,7 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                             
                             Spacer()
 
-                            BigActionButton(title: .startUsingPlanetary) {
+                            BigActionButton(title: .startUsingPlanetaryTitle) {
                                 viewModel.dismissPressed()
                             }
                             .frame(width: 286)

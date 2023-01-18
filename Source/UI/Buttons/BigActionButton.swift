@@ -90,10 +90,10 @@ struct BigActionButtonStyle: ButtonStyle {
 struct BigGradientButton_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
-            BigActionButton(title: Localized.startUsingPlanetary, action: {})
+            BigActionButton(title: Localized.startUsingPlanetaryTitle, action: {})
                 .frame(width: 268)
             
-            BigActionButton(title: Localized.startUsingPlanetary, action: {})
+            BigActionButton(title: Localized.startUsingPlanetaryTitle, action: {})
                 .disabled(true)
                 .frame(width: 268)
         }
