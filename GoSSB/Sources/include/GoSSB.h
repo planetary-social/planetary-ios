@@ -47,7 +47,9 @@ extern int ssbNullContent(gostring_t author, uint64_t sequence);
 extern int ssbNullFeed(gostring_t author);
 
 extern void ssbFeedReplicate(gostring_t feed);
-extern void ssbFeedBlock(gostring_t feed, bool yes);
+
+extern bool ssbBanListAdd(gostring_t hash);
+extern bool ssbBanListRemove(gostring_t hash);
 
 extern char* ssbPublish(gostring_t content);
 extern char* ssbPublishPrivate(gostring_t content, gostring_t recipients);
