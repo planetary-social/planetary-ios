@@ -108,6 +108,10 @@ class BotMigrationCoordinator: BotMigrationDelegate {
     
     @objc func onRunning(notification: Notification) {
         Task.detached(priority: .high) { @MainActor [hostViewController, botMigrationController] in
+            guard self.hostingController == nil else {
+                return
+            }
+            
             Analytics.shared.trackDidStartBotMigration()
             let view = BotMigrationView(viewModel: botMigrationController)
             let hostingController = UIHostingController(rootView: view)
