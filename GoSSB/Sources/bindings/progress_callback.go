@@ -1,40 +1,45 @@
 package bindings
 
-import "github.com/planetary-social/scuttlego/logging"
+import "errors"
 
-const (
-	loggerFieldMigrationIndex  = "migration_index"
-	loggerFieldMigrationsCount = "migrations_count"
-	loggerFieldError           = "error"
-)
-
-type LogProgressCallback struct {
-	logger logging.Logger
+type ProgressCallback struct {
+	migrationOnRunningFn MigrationOnRunningFn
+	migrationOnErrorFn   MigrationOnErrorFn
+	migrationOnDoneFn    MigrationOnDoneFn
 }
 
-func NewLogProgressCallback(logger logging.Logger) *LogProgressCallback {
-	return &LogProgressCallback{
-		logger: logger.New("progress_callback"),
+func NewProgressCallback(
+	migrationOnRunningFn MigrationOnRunningFn,
+	migrationOnErrorFn MigrationOnErrorFn,
+	migrationOnDoneFn MigrationOnDoneFn,
+) (ProgressCallback, error) {
+	if migrationOnRunningFn == nil {
+		return ProgressCallback{}, errors.New("nil on running fn")
 	}
+
+	if migrationOnErrorFn == nil {
+		return ProgressCallback{}, errors.New("nil on error fn")
+	}
+
+	if migrationOnDoneFn == nil {
+		return ProgressCallback{}, errors.New("nil on done fn")
+	}
+
+	return ProgressCallback{
+		migrationOnRunningFn: migrationOnRunningFn,
+		migrationOnErrorFn:   migrationOnErrorFn,
+		migrationOnDoneFn:    migrationOnDoneFn,
+	}, nil
 }
 
-func (l LogProgressCallback) OnRunning(migrationIndex int, migrationsCount int) {
-	l.logger.
-		WithField(loggerFieldMigrationIndex, migrationIndex).
-		WithField(loggerFieldMigrationsCount, migrationsCount).
-		Debug("on running")
+func (l ProgressCallback) OnRunning(migrationIndex int, migrationsCount int) {
+	l.migrationOnRunningFn(migrationIndex, migrationsCount)
 }
 
-func (l LogProgressCallback) OnError(migrationIndex int, migrationsCount int, err error) {
-	l.logger.
-		WithField(loggerFieldMigrationIndex, migrationIndex).
-		WithField(loggerFieldMigrationsCount, migrationsCount).
-		WithField(loggerFieldError, err.Error()).
-		Debug("on error")
+func (l ProgressCallback) OnError(migrationIndex int, migrationsCount int, err error) {
+	l.migrationOnErrorFn(migrationIndex, migrationsCount, 0)
 }
 
-func (l LogProgressCallback) OnDone(migrationsCount int) {
-	l.logger.
-		WithField(loggerFieldMigrationsCount, migrationsCount).
-		Debug("on done")
+func (l ProgressCallback) OnDone(migrationsCount int) {
+	l.migrationOnDoneFn(migrationsCount)
 }
