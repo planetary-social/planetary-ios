@@ -877,6 +877,9 @@
 		C95E7C702978979800E921F4 /* BotMigrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C6F2978979800E921F4 /* BotMigrationDelegate.swift */; };
 		C95E7C73297898FD00E921F4 /* BotMigrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C72297898FD00E921F4 /* BotMigrationController.swift */; };
 		C95E7C752978997B00E921F4 /* BotMigrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C742978997B00E921F4 /* BotMigrationCoordinator.swift */; };
+		C95E7C7A29789BFF00E921F4 /* BotMigrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C6F2978979800E921F4 /* BotMigrationDelegate.swift */; };
+		C95E7C7B29789C0900E921F4 /* BotMigrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C742978997B00E921F4 /* BotMigrationCoordinator.swift */; };
+		C95E7C7C29789C2C00E921F4 /* BotMigrationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95E7C72297898FD00E921F4 /* BotMigrationController.swift */; };
 		C9604C2927C547FB003D1A6D /* ConnectedPeerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9604C2827C547FB003D1A6D /* ConnectedPeerListView.swift */; };
 		C969F0DF2899CED100081615 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969F0DE2899CED100081615 /* Room.swift */; };
 		C969F0E12899CFEE00081615 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C969F0DE2899CED100081615 /* Room.swift */; };
@@ -4357,6 +4360,7 @@
 				C9724BEC2809EF34000EBCCD /* ConnectedPeerCell.swift in Sources */,
 				C9724BAA2809EB67000EBCCD /* UIFont+Tracking.swift in Sources */,
 				C9724B8B2809E97F000EBCCD /* ReplyTextView.swift in Sources */,
+				C95E7C7C29789C2C00E921F4 /* BotMigrationController.swift in Sources */,
 				C9724B3C2809D481000EBCCD /* Onboarding+Migrate.swift in Sources */,
 				5BEE742A2880B0F500897ACC /* ReportTests.swift in Sources */,
 				C9724B152809D2E7000EBCCD /* Onboarding+Status.swift in Sources */,
@@ -4393,6 +4397,7 @@
 				C9724B9E2809EAAC000EBCCD /* RedeemInviteOperation.swift in Sources */,
 				5B9C6952288726F300229469 /* ClearUnreadNotificationsOperation.swift in Sources */,
 				C9724BD22809EDE7000EBCCD /* RemoteNotificationUserInfo.swift in Sources */,
+				C95E7C7A29789BFF00E921F4 /* BotMigrationDelegate.swift in Sources */,
 				5B32F25A291EC037005985E2 /* IdentityHeaderView.swift in Sources */,
 				C9724B322809D47D000EBCCD /* ResumeOnboardingStep.swift in Sources */,
 				E0A4AB1E294A52BC00A410CB /* PillButtonStyle.swift in Sources */,
@@ -4604,6 +4609,7 @@
 				C9724B0D2809CC2A000EBCCD /* LaunchViewController.swift in Sources */,
 				5B2CF3892950FD1D00630CB6 /* FeedStrategyMessageDataSource.swift in Sources */,
 				C98A013E2790AF4400E29A97 /* DatabaseFixtures.swift in Sources */,
+				C95E7C7B29789C0900E921F4 /* BotMigrationCoordinator.swift in Sources */,
 				C9724B222809D403000EBCCD /* Layout+Center.swift in Sources */,
 				53CF2A4D22026B1700F0A2CC /* ImageMetadata.swift in Sources */,
 				5B7AB67B28F0926B007DCCF1 /* String+LoremIpsum.swift in Sources */,

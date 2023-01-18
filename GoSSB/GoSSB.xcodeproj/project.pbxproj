@@ -41,6 +41,9 @@
 		C9570F55278641B00095EFFF /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C9570F5D27864D850095EFFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C95E7454289EBE66005999D1 /* go.mod */ = {isa = PBXFileReference; explicitFileType = text; path = go.mod; sourceTree = "<group>"; };
+		C95E7C7729789B3300E921F4 /* progress_callback.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = progress_callback.go; sourceTree = "<group>"; };
+		C95E7C7829789B3300E921F4 /* logger.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = logger.go; sourceTree = "<group>"; };
+		C95E7C7929789B3300E921F4 /* bindings.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = bindings.go; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -72,6 +75,7 @@
 		C9570F48278640CA0095EFFF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C95E7C7629789B3300E921F4 /* bindings */,
 				C9570F55278641B00095EFFF /* Makefile */,
 				C93DE35727E8C9E700C0E93D /* api-ios.go */,
 				C93DE35E27E8C9E700C0E93D /* blobs.go */,
@@ -89,6 +93,16 @@
 				C93DE36927E8C9E700C0E93D /* include */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		C95E7C7629789B3300E921F4 /* bindings */ = {
+			isa = PBXGroup;
+			children = (
+				C95E7C7729789B3300E921F4 /* progress_callback.go */,
+				C95E7C7829789B3300E921F4 /* logger.go */,
+				C95E7C7929789B3300E921F4 /* bindings.go */,
+			);
+			path = bindings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
