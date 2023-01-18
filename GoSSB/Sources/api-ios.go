@@ -7,14 +7,25 @@ package main
 // #include <sys/types.h>
 // #include <stdint.h>
 // #include <stdbool.h>
+//
 // static bool callNotifyBlobs(void *func, int64_t size, const char *blobRef)
 // {
 //     return ((bool(*)(int64_t, const char *))func)(size, blobRef);
 // }
 //
-// static void callNotifyNewBearerToken(void *func, const char *token, int64_t expires)
+// static void callNotifyMigrationOnRunning(void *func, int64_t migrationIndex, int64_t migrationsCount)
 // {
-//     return ((void(*)(const char *, int64_t))func)(token, expires);
+//     ((void(*)(int64_t, int64_t))func)(migrationIndex, migrationsCount);
+// }
+//
+// static void callNotifyMigrationOnError(void *func, int64_t migrationIndex, int64_t migrationsCount, int64_t error)
+// {
+//     ((void(*)(int64_t, int64_t, int64_t))func)(migrationIndex, migrationsCount, error);
+// }
+//
+// static void callNotifyMigrationOnDone(void *func, int64_t migrationsCount)
+// {
+//     ((void(*)(int64_t))func)(migrationsCount);
 // }
 import "C"
 
@@ -78,6 +89,49 @@ func ssbBotIsRunning() bool {
 	return node.IsRunning()
 }
 
+// Three callbacks are used to notify about progress when running migrations:
+//   - OnRunning is called when a particular migration has to be
+//     executed. If all migrations were already executed this callback will not be
+//     called. If status loading fails for a migration this callback will not
+//     be executed.
+//   - OnError is called when a particular migration fails. If this
+//     callback is triggered it is only triggered once and is the last
+//     callback to be triggered. The error parameter specifies the type of encountered error:
+//     0. Unknown error.
+//   - OnDone is called once there are no more migrations remaining to
+//     be executed. This includes the scenario when there are no more migrations to consider.
+//     If this callback is triggered it is triggered only once and is the last callback to be triggered.
+//
+// Example valid call sequences:
+//
+// - no migrations:
+//   - OnDone(count=0)
+//
+// - we had three migrations, they all had to be run and executed correctly:
+//   - OnRunning(index=0, count=3)
+//   - OnRunning(index=1, count=3)
+//   - OnRunning(index=2, count=3)
+//   - OnDone(count=3)
+//
+// - we had three migrations, not all had to be run and they executed correctly:
+//   - OnRunning(index=2, count=3)
+//   - OnDone(count=3)
+//
+// - we had three migrations, they all had to be run and the second one failed:
+//
+//   - OnRunning(index=0, count=3)
+//
+//   - OnRunning(index=1, count=3)
+//
+//   - OnError(index=1, count=3)
+//
+//   - we had three migrations, one migration executed correctly and status
+//     loading failed for the second one:
+//
+//   - OnRunning(index=0, count=3)
+//
+//   - OnError(index=1, count=3)
+//
 //export ssbBotInit
 func ssbBotInit(
 	config string,
@@ -102,7 +156,7 @@ func ssbBotInit(
 		return false
 	}
 
-	fn := func(event queries.BlobDownloaded) error {
+	onBlobDownloadedFn := func(event queries.BlobDownloaded) error {
 		ref := C.CString(event.Id.String())
 		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
 		C.free(unsafe.Pointer(ref))
@@ -112,7 +166,25 @@ func ssbBotInit(
 		return nil
 	}
 
-	err = node.Start(cfg, log, fn)
+	migrationOnRunningFn := func(migrationIndex, migrationsCount int) {
+		if notifyMigrationOnRunningFn != 0 {
+			C.callNotifyMigrationOnRunning(unsafe.Pointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
+		}
+	}
+
+	migrationOnErrorFn := func(migrationIndex, migrationsCount, error int) {
+		if notifyMigrationOnErrorFn != 0 {
+			C.callNotifyMigrationOnError(unsafe.Pointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
+		}
+	}
+
+	migrationOnDoneFn := func(migrationsCount int) {
+		if notifyMigrationOnDoneFn != 0 {
+			C.callNotifyMigrationOnDone(unsafe.Pointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
+		}
+	}
+
+	err = node.Start(cfg, log, onBlobDownloadedFn, migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
 	if err != nil {
 		err = errors.Wrap(err, "failed to start node")
 		return false
