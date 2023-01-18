@@ -79,7 +79,13 @@ func ssbBotIsRunning() bool {
 }
 
 //export ssbBotInit
-func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
+func ssbBotInit(
+	config string,
+	notifyBlobReceivedFn uintptr,
+	notifyMigrationOnRunningFn uintptr,
+	notifyMigrationOnErrorFn uintptr,
+	notifyMigrationOnDoneFn uintptr,
+) bool {
 	var err error
 	defer logError("ssbBotInit", &err)
 
