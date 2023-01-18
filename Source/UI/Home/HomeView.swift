@@ -11,6 +11,10 @@ import CrashReporting
 import Logger
 import SwiftUI
 
+/// This view is the main view that is displayed when selecting the Home tab.
+///
+/// It displays a feed of messages in a list taking into account the feed strategy that the user selected in
+/// Preferences.
 struct HomeView: View, HelpDrawerHost {
     init(helpDrawerState: HelpDrawerState, bot: Bot) {
         self.helpDrawerState = helpDrawerState
@@ -25,8 +29,6 @@ struct HomeView: View, HelpDrawerHost {
     
     @ObservedObject
     private var helpDrawerState: HelpDrawerState
-
-    private var feedStrategyStore = FeedStrategyStore()
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -50,21 +52,6 @@ struct HomeView: View, HelpDrawerHost {
     var horizontalSizeClass
 
     @State
-    private var messages: [Message]?
-
-    @State
-    private var isLoadingFromScratch = false
-
-    @State
-    private var isLoadingMoreMessages = false
-
-    @State
-    private var offset = 0
-
-    @State
-    private var noMoreMessages = false
-
-    @State
     private var numberOfNewItems = 0
 
     @State
@@ -75,14 +62,16 @@ struct HomeView: View, HelpDrawerHost {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ScrollViewReader { proxy in
             MessageList(dataSource: dataSource)
                 .placeholder(when: dataSource.isEmpty) {
                     EmptyHomeView()
                 }
-            if shouldShowFloatingButton {
-                FloatingButton(count: numberOfNewItems, isLoading: isLoadingFromScratch)
-            }
+                .overlay(alignment: .top) {
+                    if shouldShowFloatingButton {
+                        FloatingButton(count: numberOfNewItems, dataSource: dataSource, proxy: proxy)
+                    }
+                }
         }
         .background(Color.appBg)
         .navigationTitle(Localized.home.text)
@@ -161,7 +150,7 @@ struct HomeView: View, HelpDrawerHost {
     }
 
     private func updateBadgeNumber(value: Int) {
-        numberOfNewItems = 0
+        numberOfNewItems = value
         lastTimeNewFeedUpdatesWasChecked = Date()
         let navigationController = appController.mainViewController?.homeFeatureViewController
         if value > 0 {
@@ -179,11 +168,10 @@ struct HomeView: View, HelpDrawerHost {
             return
         }
         let bot = botRepository.current
-        if let lastMessage = messages?.first?.key {
+        if let lastMessage = dataSource.cache?.first?.key {
             do {
                 let result = try await bot.numberOfRecentItems(since: lastMessage)
                 await MainActor.run {
-                    numberOfNewItems = result
                     updateBadgeNumber(value: result)
                 }
             } catch {

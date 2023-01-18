@@ -389,3 +389,9 @@
 "YourNetwork.title" = "Seus amigos, conexões e servidores públicos";
 "YourNetwork.body" = "Sua rede é única: é formada pelos usuários que você segue, por quem *eles* seguem e pelos servidores públicos que você usa para *fofocar* com todos eles.";
 "YourNetwork.highlightedWord" = "*fofoca*";
+
+"Search.all" = "All";
+"Search.people" = "People";
+
+"Discover.emptyTitle" = "Discover Planetary";
+"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";

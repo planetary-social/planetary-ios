@@ -88,10 +88,14 @@ class HelpDrawerState: ObservableObject {
     var isShowingHomeHelpDrawer = false
 
     @Published
+    var isShowingDiscoverHelpDrawer = false
+
+    @Published
     var isShowingHashtagsHelpDrawer = false
 
-    init(isShowingHome: Bool = false, isShowingHashtags: Bool = false) {
+    init(isShowingHome: Bool = false, isShowingDiscover: Bool = false, isShowingHashtags: Bool = false) {
         self.isShowingHomeHelpDrawer = isShowingHome
+        self.isShowingDiscoverHelpDrawer = isShowingDiscover
         self.isShowingHashtagsHelpDrawer = isShowingHashtags
     }
 }
@@ -123,6 +127,8 @@ enum HelpDrawerCoordinator {
             switch helpDrawer {
             case .home:
                 state.isShowingHomeHelpDrawer = true
+            case .discover:
+                state.isShowingDiscoverHelpDrawer = true
             case .hashtags:
                 state.isShowingHashtagsHelpDrawer = true
             default:
@@ -190,11 +196,9 @@ enum HelpDrawerCoordinator {
         case .discover:
             return {
                 host.dismissDrawer {
-                    let featureVC = tabBar?.everyoneViewController
-                    let helpHost = featureVC?.viewControllers.first as? DiscoverViewController
+                    let featureVC = tabBar?.everyoneFeatureViewController
                     tabBar?.selectedViewController = featureVC
-                    // Yield so we don't end up presenting on a view that hasn't loaded yet.
-                    Task { await helpHost?.helpButtonTouchUpInside() }
+                    tabBar?.helpDrawerState.isShowingDiscoverHelpDrawer = true
                 }
             }
         case .notifications:

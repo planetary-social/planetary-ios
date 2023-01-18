@@ -2,6 +2,12 @@ package bindings
 
 import "errors"
 
+const (
+	loggerFieldMigrationIndex  = "migration_index"
+	loggerFieldMigrationsCount = "migrations_count"
+	loggerFieldError           = "error"
+)
+
 type ProgressCallback struct {
 	migrationOnRunningFn MigrationOnRunningFn
 	migrationOnErrorFn   MigrationOnErrorFn
@@ -33,13 +39,22 @@ func NewProgressCallback(
 }
 
 func (l ProgressCallback) OnRunning(migrationIndex int, migrationsCount int) {
+	l.logger.
+		WithField(loggerFieldMigrationIndex, migrationIndex).
 	l.migrationOnRunningFn(migrationIndex, migrationsCount)
+		Debug("on running")
 }
 
 func (l ProgressCallback) OnError(migrationIndex int, migrationsCount int, err error) {
+	l.logger.
+		WithField(loggerFieldMigrationIndex, migrationIndex).
 	l.migrationOnErrorFn(migrationIndex, migrationsCount, 0)
+		WithField(loggerFieldError, err.Error()).
+		Debug("on error")
 }
 
 func (l ProgressCallback) OnDone(migrationsCount int) {
+	l.logger.
 	l.migrationOnDoneFn(migrationsCount)
+		Debug("on done")
 }

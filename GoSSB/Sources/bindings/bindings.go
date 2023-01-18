@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/planetary-social/scuttlego/service/app/commands"
 	"os"
 	"runtime"
 	"strings"

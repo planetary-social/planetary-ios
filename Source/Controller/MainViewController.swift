@@ -65,7 +65,7 @@ enum MainTab {
         case .discover:
             return {
                 tabBar?.selectedViewController?.dismiss(animated: true)
-                let featureVC = tabBar?.everyoneViewController
+                let featureVC = tabBar?.everyoneFeatureViewController
                 tabBar?.selectedViewController = featureVC
             }
         case .notifications:
@@ -108,25 +108,34 @@ class MainViewController: UITabBarController {
         tabBarItemImageName: "tab-icon-directory"
     )
 
-    let everyoneViewController = FeatureViewController(
-        rootViewController: DiscoverViewController(),
-        tabBarItemImageName: "tab-icon-everyone"
-    )
+    let everyoneFeatureViewController: FeatureViewController
 
     // custom separator on the top edge of the tab bar
     private var topBorder: UIView?
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        let homeViewController = UIHostingController(
+            rootView: HomeView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
+        )
+        homeViewController.navigationItem.title = Localized.home.text
         homeFeatureViewController = FeatureViewController(
-            rootViewController: UIHostingController(
-                rootView: HomeView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
-            ),
+            rootViewController: homeViewController,
             tabBarItemImageName: "tab-icon-home"
         )
+        let everyoneViewController = UIHostingController(
+            rootView: DiscoverView(helpDrawerState: helpDrawerState, bot: Bots.current).injectAppEnvironment()
+        )
+        everyoneViewController.navigationItem.title = Localized.explore.text
+        everyoneFeatureViewController = FeatureViewController(
+            rootViewController: everyoneViewController,
+            tabBarItemImageName: "tab-icon-everyone"
+        )
+        let channelsViewController = UIHostingController(
+            rootView: HashtagListView(helpDrawerState: helpDrawerState).injectAppEnvironment()
+        )
+        channelsViewController.navigationItem.title = Localized.channels.text
         channelsFeatureViewController = FeatureViewController(
-            rootViewController: UIHostingController(
-                rootView: HashtagListView(helpDrawerState: helpDrawerState).injectAppEnvironment()
-            ),
+            rootViewController: channelsViewController,
             tabBarItemImageName: "tab-icon-channels"
         )
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -135,13 +144,13 @@ class MainViewController: UITabBarController {
     convenience init() {
         self.init(nibName: nil, bundle: nil)
         self.delegate = self
-        self.view.backgroundColor = .cardBackground
+        self.view.backgroundColor = .navigationbarBg
         self.tabBar.configureAppearance()
         self.topBorder = Layout.addSeparator(toTopOf: self.tabBar, color: UIColor.separator.bar)
         setNotificationsTabBarIcon()
         let controllers = [
             self.homeFeatureViewController,
-            self.everyoneViewController,
+            self.everyoneFeatureViewController,
             self.notificationsFeatureViewController,
             self.channelsFeatureViewController,
             self.directoryFeatureViewController
@@ -158,11 +167,13 @@ class MainViewController: UITabBarController {
     func setNotificationsTabBarIcon() {
         DispatchQueue.main.async { [weak self] in
             let numberOfNotifications = UIApplication.shared.applicationIconBadgeNumber
+            self?.notificationsFeatureViewController.setTabBarItemImage(
+                title: Localized.notifications.text,
+                image: "tab-icon-notifications"
+            )
             if numberOfNotifications > 0 {
-                self?.notificationsFeatureViewController.setTabBarItemImage("tab-icon-has-notifications")
                 self?.notificationsFeatureViewController.setTabBarItemBadge(numberOfNotifications)
             } else {
-                self?.notificationsFeatureViewController.setTabBarItemImage("tab-icon-notifications")
                 self?.notificationsFeatureViewController.setTabBarItemBadge(nil)
             }
         }

@@ -34,6 +34,8 @@ extension Localized {
             Localized.Help.Notifications.self,
             Localized.Help.Hashtags.self,
             Localized.Help.YourNetwork.self,
+            Localized.Search.self,
+            Localized.Discover.self,
         ]
     }
 }
@@ -235,6 +237,16 @@ This can take a few minutes. Keep the app open until it’s complete.
     case startUsingPlanetaryTitle = "Start Using Planetary"
 }
 
+// MARK: - Discover
+
+extension Localized {
+
+    enum Discover: String, Localizable, CaseIterable {
+        case emptyTitle = "Discover Planetary"
+        case emptyDescription = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following."
+    }
+}
+
 // MARK: - ImagePicker
 
 extension Localized {
@@ -407,6 +419,15 @@ extension Localized {
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
         case deleteRoom = "Delete"
         case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
+    }
+}
+
+// MARK: - Search
+
+extension Localized {
+    enum Search: String, Localizable, CaseIterable {
+        case all = "All"
+        case people = "People"
     }
 }
 

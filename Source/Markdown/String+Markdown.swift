@@ -13,11 +13,11 @@ import CrashReporting
 
 extension String {
 
-    func parseMarkdown() -> AttributedString {
+    func parseMarkdown(fontStyle: MarkdownStyler.FontStyle = .regular) -> AttributedString {
         do {
             let markdown = fixMarkdownIfNeeded(removePlanetaryAttachmentLinks(in: self))
             let down = Down(markdownString: markdown)
-            let styler = MarkdownStyler()
+            let styler = MarkdownStyler(fontStyle: fontStyle)
             var attributed = AttributedString(try down.toAttributedString(.default, styler: styler))
             for attributedRun in attributed.runs {
                 if let link = attributedRun.attributes.link ?? attributedRun.attributes.imageURL {
@@ -139,7 +139,7 @@ extension String {
     
     func decodeMarkdown(small: Bool = false, host: String = "") -> NSAttributedString {
         let down = Down(markdownString: self)
-        let styler = MarkdownStyler(small: small)
+        let styler = MarkdownStyler(fontStyle: small ? .compact : .regular)
         do {
             let attributedString = try down.toAttributedString(.default, styler: styler)
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
