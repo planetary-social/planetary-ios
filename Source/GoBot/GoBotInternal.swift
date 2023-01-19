@@ -413,59 +413,34 @@ class GoBotInternal {
     
     // MARK: manual block / replicate
     
-    /// Instructs the bot to stop replicating the current feed without publishing a message on the user's log.
-    func ban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, true)
-//        }
+    /// Instructs the bot to stop replicating the feed represented by the given hash and delete all content from it.
+    func ban(hash: SHA256DigestString) {
+        hash.withGoString {
+            let success = ssbBanListAdd($0)
+            if !success {
+                let error = GoBotError.unexpectedFault("Bot failed to ban \(hash)")
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        }
     }
     
-    /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(feed:)`.
-    func unban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, false)
-//        }
+    /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(hash:)`.
+    func unban(hash: SHA256DigestString) {
+        hash.withGoString {
+            let success = ssbBanListRemove($0)
+            if !success {
+                let error = GoBotError.unexpectedFault("Bot failed to ban \(hash)")
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
+        }
     }
 
     // TODO: call this to fetch a feed without following it
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
             ssbFeedReplicate($0)
-        }
-    }
-
-    // MARK: Null / Delete
-
-    func nullContent(author: Identity, sequence: UInt) throws {
-        guard author.algorithm == .ggfeed else {
-            throw GoBotError.unexpectedFault("unsupported feed format for deletion")
-        }
-        
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullContent(goAuthor, UInt64(sequence)) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null content failed")
-                return
-            }
-        }
-        
-        if let e = err {
-            throw e
-        }
-    }
-    
-    func nullFeed(author: Identity) throws {
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullFeed(goAuthor) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null feed failed")
-                return
-            }
-        }
-        if let e = err {
-            throw e
         }
     }
 

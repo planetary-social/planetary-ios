@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias BanList = [String]
+typealias BanList = [SHA256DigestString]
 
 /// An object that fetches a list of banned content from an API.
 protocol BanListAPIService {

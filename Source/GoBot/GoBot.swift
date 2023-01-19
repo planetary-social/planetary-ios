@@ -665,74 +665,6 @@ class GoBot: Bot, @unchecked Sendable {
         configuration.apply()
     }
 
-    func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) {
-        var targetMessage: Message?
-        do {
-            targetMessage = try self.database.post(with: message)
-        } catch {
-            completion(GoBotError.duringProcessing("failed to get message", error))
-            return
-        }
-
-        guard let targetMessage = targetMessage else {
-            let error = ViewDatabaseError.unknownMessage(message)
-            let encapsulatedError = GoBotError.duringProcessing("delete: failed to get() from viewDB", error)
-            completion(encapsulatedError)
-            return
-        }
-        
-        if targetMessage.author != self._identity {
-            // drop from view regardless of format
-            do {
-                try self.database.delete(message: message)
-            } catch {
-                completion(GoBotError.duringProcessing("failed to excute delete action", error))
-                return
-            }
-        }
-
-        guard targetMessage.author.algorithm == .ggfeed else {
-            completion(GoBotError.unexpectedFault("unsupported feed format for deletion"))
-            return
-        }
-        
-        guard targetMessage.contentType == .post else {
-            // we _could_ delete .about but we can't select them anyway... (we could display them on user profiles?)
-            completion(ViewDatabaseError.unexpectedContentType("can only delete posts"))
-            return
-        }
-        
-        guard targetMessage.author == self._identity else {
-            // drop content directly / can't request others to do so
-            do {
-                try self.bot.nullContent(
-                    author: targetMessage.author,
-                    sequence: UInt(targetMessage.sequence)
-                )
-            } catch {
-                completion(GoBotError.duringProcessing("failed to null content", error))
-                return
-            }
-            completion(nil)
-            return
-        }
-        
-        // publish signed drop-content-request for other peers
-        let dropContentRequest = DropContentRequest(
-            sequence: UInt(targetMessage.sequence),
-            hash: message
-        )
-
-        self.publish(content: dropContentRequest) { _, error in
-            // fillMessages will make it go away from the view
-            completion(error)
-        }
-    }
-
-    func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) {
-        print("TODO: Implement post update in Bot.")
-    }
-
     /// Computes how many messages are in go-ssb's log but not `ViewDatabase`.
     /// - Returns: A tuple containing the index of the last received message in the go-ssb log and the number of
     ///     messages that the ViewDatabase is missing.
@@ -1290,13 +1222,6 @@ class GoBot: Bot, @unchecked Sendable {
                 return
             }
 
-            do {
-                try self.bot.nullFeed(author: identity)
-            } catch {
-                completion("", GoBotError.duringProcessing("deleting feed from bot failed", error))
-                return
-            }
-
             completion(messageIdentifier, nil)
             NotificationCenter.default.post(name: .didBlockUser, object: identity)
         }
@@ -1324,17 +1249,9 @@ class GoBot: Bot, @unchecked Sendable {
         }
             
         do {
-            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
-            
-            // add as blocked peers to bot (those dont have contact messages)
-            for author in bannedAuthors {
-                try bot.nullFeed(author: author)
-                bot.ban(feed: author)
-            }
-            
-            for author in unbannedAuthors {
-                bot.unban(feed: author)
-            }
+            banList.forEach { bot.ban(hash: $0) }
+            let unbannedHashes = try self.database.applyBanList(banList)
+            unbannedHashes.forEach { bot.unban(hash: $0) }
         } catch {
             Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }

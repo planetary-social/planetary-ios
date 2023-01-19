@@ -28,9 +28,6 @@
 		5B1FF5E028D8A3F2008F3A85 /* raw.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = raw.go; sourceTree = "<group>"; };
 		C93DE35627E8C9E700C0E93D /* go.sum */ = {isa = PBXFileReference; lastKnownFileType = text; path = go.sum; sourceTree = "<group>"; };
 		C93DE35727E8C9E700C0E93D /* api-ios.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = "api-ios.go"; sourceTree = "<group>"; };
-		C93DE35A27E8C9E700C0E93D /* encode.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = encode.go; sourceTree = "<group>"; };
-		C93DE35B27E8C9E700C0E93D /* stored.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = stored.go; sourceTree = "<group>"; };
-		C93DE35C27E8C9E700C0E93D /* migrations.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = migrations.go; sourceTree = "<group>"; };
 		C93DE35D27E8C9E700C0E93D /* testing.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = testing.go; sourceTree = "<group>"; };
 		C93DE35E27E8C9E700C0E93D /* blobs.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = blobs.go; sourceTree = "<group>"; };
 		C93DE36127E8C9E700C0E93D /* handler.go */ = {isa = PBXFileReference; lastKnownFileType = text; path = handler.go; sourceTree = "<group>"; };
@@ -50,24 +47,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		C93DE35827E8C9E700C0E93D /* migrations */ = {
-			isa = PBXGroup;
-			children = (
-				C93DE35927E8C9E700C0E93D /* legacy */,
-				C93DE35C27E8C9E700C0E93D /* migrations.go */,
-			);
-			path = migrations;
-			sourceTree = "<group>";
-		};
-		C93DE35927E8C9E700C0E93D /* legacy */ = {
-			isa = PBXGroup;
-			children = (
-				C93DE35A27E8C9E700C0E93D /* encode.go */,
-				C93DE35B27E8C9E700C0E93D /* stored.go */,
-			);
-			path = legacy;
-			sourceTree = "<group>";
-		};
 		C93DE36027E8C9E700C0E93D /* servicesplug */ = {
 			isa = PBXGroup;
 			children = (
@@ -121,7 +100,6 @@
 				C95E7454289EBE66005999D1 /* go.mod */,
 				C93DE35627E8C9E700C0E93D /* go.sum */,
 				C93DE36927E8C9E700C0E93D /* include */,
-				C93DE35827E8C9E700C0E93D /* migrations */,
 				C93DE36027E8C9E700C0E93D /* servicesplug */,
 			);
 			path = Sources;

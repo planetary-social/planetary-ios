@@ -833,29 +833,36 @@ class ViewDatabase {
     
     // MARK: moderation / delete
     
-    /// Takes a list of hashes of banned content and applies it to the db. This function returns a list of newly banned
-    /// authors and newly unbanned authors.
+    /// Takes a list of hashes of banned content and applies it to the db. This function returns a list of hashes that
+    /// have been unbanned since the last time it was run.
     func applyBanList(
-        _ banList: [String]
-    ) throws -> (bannedAuthors: [FeedIdentifier], unbannedAuthors: [FeedIdentifier]) {
-        try updateBanTable(from: banList)
+        _ banList: BanList
+    ) throws -> [SHA256DigestString] {
+        let unbannedHashes = try updateBanTable(from: banList)
         let bannedAuthors = try authorsMatching(banList: banList)
         let unbannedAuthors = try bannedAuthorsNotIn(banList: banList)
         try ban(authors: bannedAuthors)
         try unban(authors: unbannedAuthors)
         try deleteMessagesMatching(banList: banList)
         
-        return (bannedAuthors, unbannedAuthors)
+        return unbannedHashes
     }
     
-    /// Overwrites the banList table with the new banList
-    private func updateBanTable(from banList: [String]) throws {
+    /// Overwrites the banList table with the given banList and returns any hashes of content that have been unbanned
+    /// since the last time it was called.
+    /// This function is really inefficient and will need to be improved as the ban list grows in size.
+    private func updateBanTable(from newBanList: [String]) throws -> [SHA256DigestString] {
         let db = try checkoutConnection()
+        let banListTable = self.banList
         
-        try db.run(self.banList.delete())
-        for banHash in banList {
+        let unbannedHashes = try db.prepare(banListTable.filter(!newBanList.contains(colHash))).map { $0[colHash] }
+        
+        try db.run(banListTable.delete())
+        for banHash in newBanList {
             try db.run(self.banList.insert(colHash <- banHash))
         }
+        
+        return unbannedHashes
     }
     
     /// Looks for feed IDs that match the hashes in the ban list ban list.

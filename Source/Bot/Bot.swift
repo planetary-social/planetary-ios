@@ -143,11 +143,6 @@ protocol Bot: AnyObject, Sendable {
     /// a message before the user's feed has resynced from the network during a restore.
     func publishingWouldFork(feed: FeedIdentifier) throws -> Bool
         
-    // MARK: Post Management
-
-    func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion)
-    func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion)
-
     // MARK: About
 
     @available(*, deprecated)

@@ -126,10 +126,6 @@ class FakeBot: Bot {
         }
     }
 
-    func delete(message: MessageIdentifier, completion: @escaping ErrorCompletion) { }
-
-    func update(message: MessageIdentifier, content: ContentCodable, completion: @escaping ErrorCompletion) { }
-    
     func follows(identity: Identity, queue: DispatchQueue, completion: @escaping ContactsCompletion) { }
     
     func followers(identity: Identity, queue: DispatchQueue, completion: @escaping AboutsCompletion) { }

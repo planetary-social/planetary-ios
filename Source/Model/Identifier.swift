@@ -121,7 +121,7 @@ extension Identifier {
 
     // TODO: this is a iOS13 specific way to do sha25 hashing....
     // TODO: also it retuns a hex string but i have spent to much time on this already
-    var sha256hash: String {
+    var sha256hash: SHA256DigestString {
         let input = self.data(using: .utf8)!
         let hashed = SHA256.hash(data: input)
         // using description is silly but i couldnt figure out https://developer.apple.com/documentation/cryptokit/sha256digest Accessing Underlying Storage
@@ -131,6 +131,8 @@ extension Identifier {
         return String(descr.dropFirst(prefix.count))
     }
 }
+
+typealias SHA256DigestString = String
 
 /*
  tl;dr: lets turn
