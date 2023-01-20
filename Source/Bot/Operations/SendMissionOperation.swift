@@ -87,18 +87,18 @@ class SendMissionOperation: AsynchronousOperation {
     
     func loadPeerPool(from bot: Bot, config: AppConfiguration) async -> ([MultiserverAddress], [MultiserverAddress]) {
         do {
-            async let joinedRooms = bot.joinedRooms().map { $0.address }
+            let joinedRooms = try await bot.joinedRooms().map { $0.address }
             var joinedPubs = try await bot.joinedPubs().map { $0.address.multiserver }
             
             // If we don't have enough peers, supplement with the Planetary pubs
             let minPeers = JoinPlanetarySystemOperation.minNumberOfStars
-            if joinedPubs.count < 1 {
+            if joinedPubs.count + joinedRooms.count < 1 {
                 let systemPubs = Set(config.systemPubs).map { $0.address.multiserver }
                 let someSystemPubs = systemPubs.randomSample(UInt(minPeers - joinedPubs.count))
                 joinedPubs += someSystemPubs
             }
             
-            return (try await joinedRooms, joinedPubs)
+            return (joinedRooms, joinedPubs)
         } catch {
             Log.error("Error fetching joined rooms and pubs: \(error.localizedDescription)")
             CrashReporting.shared.reportIfNeeded(error: error)
