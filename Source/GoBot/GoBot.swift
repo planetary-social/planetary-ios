@@ -766,10 +766,11 @@ class GoBot: Bot, @unchecked Sendable {
             }
             let diff = Int(Int64(numberOfMessagesInRepo) - 1 - lastRxSeq)
             if diff < 0 {
-                let errorMessage = "needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))"
+                let errorMessage = "needsViewFill: more msgs in SQLite than in GoBot repo: \(lastRxSeq) (diff: \(diff))"
+                // probably don't need to log this anymore with the way scuttlego works, but leaving it in just
+                // to see how common this is.
                 let error = GoBotError.unexpectedFault(errorMessage)
                 CrashReporting.shared.reportIfNeeded(error: error)
-                throw error
             }
             
             return (lastRxSeq, diff)
@@ -836,16 +837,6 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
-        guard diff > 0 else {
-            // still might want to update privates
-            #if DEBUG
-            Log.debug("[rx log] viewdb already up to date.")
-            #endif
-            self.updatePrivate(completion: completion)
-            return
-        }
-        
-        // TOOD: redo until diff==0
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
             
@@ -854,12 +845,6 @@ class GoBot: Bot, @unchecked Sendable {
             let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
             
             guard !msgs.isEmpty else {
-                print("warning: triggered update but got no messages from receive log")
-                // If the bot's log from startSeq to startSeq+limit is full of nulled messages then no messages will
-                // be returned. In this case we need to artificially bump up our sequence number so we don't get
-                // stuck requesting the same messages again and again.
-                userDefaults.set(startSeq + UInt64(limit), forKey: greatestRequestedSequenceNumberFromGoBotKey)
-                userDefaults.synchronize()
                 completion(.success(true))
                 return
             }
@@ -869,7 +854,6 @@ class GoBot: Bot, @unchecked Sendable {
         
                 if let lastReceivedSeq = msgs.last?.receivedSeq {
                     userDefaults.set(lastReceivedSeq, forKey: greatestRequestedSequenceNumberFromGoBotKey)
-                    userDefaults.synchronize()
                 }
 
                 Analytics.shared.trackBotDidUpdateDatabase(
@@ -878,16 +862,10 @@ class GoBot: Bot, @unchecked Sendable {
                     lastTimestamp: msgs[msgs.count - 1].receivedTimestamp,
                     lastHash: msgs[msgs.count - 1].key
                 )
-                if diff < limit { // view is up2date now
-                    completion(.success(true))
-                    // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
-                    // self.updatePrivate(completion: completion)
-                } else {
-                    #if DEBUG
-                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
-                    #endif
-                    completion(.success(false))
-                }
+                Log.debug("#rx log# \(diff - Int(limit)) messages left in go offset log")
+                
+                // recurse
+                updateReceive(limit: limit, completion: completion)
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
     
