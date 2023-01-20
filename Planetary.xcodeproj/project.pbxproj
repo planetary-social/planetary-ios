@@ -6094,7 +6094,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 1.3.14;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				SDKROOT = iphoneos;
@@ -6129,7 +6129,7 @@
 					"@executable_path/",
 				);
 				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				MARKETING_VERSION = 1.3.14;
+				MARKETING_VERSION = 2.0.0;
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				SDKROOT = iphoneos;
