@@ -837,6 +837,7 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
+        // TOOD: redo until diff==0
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
             
@@ -864,8 +865,12 @@ class GoBot: Bot, @unchecked Sendable {
                 )
                 Log.debug("#rx log# \(diff - Int(limit)) messages left in go offset log")
                 
-                // recurse
-                updateReceive(limit: limit, completion: completion)
+                if diff < limit { // view database is up to date now
+                    completion(.success(true))
+                } else {
+                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
+                    completion(.success(false))
+                }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
     
