@@ -172,30 +172,30 @@
 
 "ImagePicker.camera" = "Cámara";
 "ImagePicker.cameraNotAvailable" = "La cámara no está disponible en este dispositivo";
-"ImagePicker.openSettingsMessage" = "Puedes permitir el acceso a la cámara abriendo la apliicación de Preferencias.";
+"ImagePicker.openSettingsMessage" = "Puedes permitir los permisos de la cámara abriendo los ajustes de la aplicación.";
 "ImagePicker.permissionsRequired" = "Permisos requeridos para {{ title }}";
-"ImagePicker.photoLibrary" = "Librería de Fotos";
-"ImagePicker.selectFrom" = "Seleccionar de la Librería de Fotos";
+"ImagePicker.photoLibrary" = "Librería de fotos";
+"ImagePicker.selectFrom" = "Seleccionar de la librería de fotos";
 "ImagePicker.takePhoto" = "Tomar foto con la cámara";
 
-"NewPost.confirmRemove" = "¿Eliminar esta imagen de la publicación? Podrás volver a añadirla si te arrepientes.";
+"NewPost.confirmRemove" = "¿Quitar esta imagen de la publicación? Siempre puedes añadirla de nuevo.";
 "NewPost.remove" = "Quitar";
 "NewPost.publishing" = "Publishing...";
 "NewPost.restoring" = "Restoring...";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";
-"Offboarding.resetConfirmTitle" = "Cuidado";
+"Offboarding.resetConfirmTitle" = "Advertencia";
 "Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "¿Estás seguro?";
 "Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
-"Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para quitarte. Por favor intenta de nuevo.";
-"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió pero no te preocupes, creamos una nota para arreglarlo. Por favor intenta de nuevo.";
+"Offboarding.resetApiErrorTryAgain" = "No hemos podido contectarnos al directorio para eliminarte. Por favor, inténtalo de nuevo.";
+"Offboarding.resetBotErrorTryAgain" = "Algo inesperado ocurrió, pero no te preocupes, hemos creado una nota para arreglarlo. Por favor, inténtalo de nuevo.";
 
 "Onboarding.getStartedButton" = "Empecemos";
 "Onboarding.photoButtonAdd" = "Añade una foto";
-"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.doItLater" = "Lo haré después";
 "Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "Número de teléfono";
 "Onboarding.phoneNumberConfirmationMessage" = "Usamos esto para confirmar tu identidad y para enviarte alertas del servicio.";
@@ -211,7 +211,7 @@
 "Onboarding.startOver" = "Empezar de nuevo";
 "Onboarding.contactsHint" = "Encriptamos estos datos en un solo sentido así nunca podremos acceder a ellos directamente.";
 "Onboarding.connect" = "¡Conectar ya!";
-"Onboarding.notNow" = "No ahora";
+"Onboarding.notNow" = "Ahora no";
 "Onboarding.contactsWIP" = "Disculpas, esta funcionalidad no está terminada. Toca 'OK' para ver una lista de usuarios que te recomendamos seguir.";
 "Onboarding.listMeTitle" = "Listarme en el directorio de usuarios";
 "Onboarding.listMeMessage" = "Esto le permite a la gente encontrarte si saben tu nombre o número de teléfono";
@@ -221,7 +221,7 @@
 "Onboarding.iUnderstand" = "Sí, entiendo";
 "Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
 "Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
-"Onboarding.somethingWentWrong" = "¡Uh no! ¡Algo salió mal!";
+"Onboarding.somethingWentWrong" = "¡Oh no! ¡Algo salió mal!";
 "Onboarding.errorRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. Puedes volver a intentar o comenzar de nuevo, y por favor ven a contarnos sobre ello.";
 "Onboarding.resumeRetryMessage" = "Esto no es tu culpa, nosotros lo arruinamos. En algunos casos, puede significar que tu dispositivo no se puede conectar a la red, por lo que intentar de nuevo puede ayudar.";
 "Onboarding.backupHint" = "Planetary no usa contraseñas - tienes una llave secreta que debes que guardar de forma segura. Si puedes, deberías respaldarla. Nota: esta funcionalidad está todavía en desarrollo.";
@@ -231,7 +231,7 @@
 "Onboarding.findOutMore" = "Aprende más";
 "Onboarding.thatSoundsGreat" = "¡Eso suena muy bien!";
 "Onboarding.policyStatement" = "Si continúas, confirmas que estás de acuerdo con los Términos del Servicio y Política de Privacidad";
-"Onboarding.termsOfService" = "Términos del Servicio";
+"Onboarding.termsOfService" = "Términos de Servicio";
 "Onboarding.privacyPolicy" = "Política de Privacidad";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
 "Onboarding.welcomeBotName" = "Planetary Help";
@@ -297,10 +297,10 @@
 "Alias.aliases" = "Aliases";
 "Alias.introText" = "Room aliases are links you can share with your friends to help them connect to you on Planetary, or any other Scuttlebutt app.";
 
-"Preview.title" = "Configuración avanzada";
-"Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y testeadas, y no han encontrado un lugar permanente en la aplicación.";
+"Preview.title" = "Ajustes avanzados";
+"Preview.footer" = "Nuevas funcionalidades que están siendo desarrolladas y probadas y no han encontrado un lugar permanente en la aplicación.";
 
-"FeedAlgorithm.algorithms" = "Algorithms";
+"FeedAlgorithm.algorithms" = "Algoritmos";
 "FeedAlgorithm.feedAlgorithmTitle" = "Home Feed Algorithm";
 "FeedAlgorithm.feedAlgorithmDescription" = "Choose the algorithms used to sort and filter your feeds.";
 "FeedAlgorithm.recentPostsAlgorithm" = "Recent posts";
@@ -329,7 +329,7 @@
 
 "Push.enabled" = "Activado";
 "Push.title" = "Notificaciones Push";
-"Push.prompt" = "Las notificaciones Push para Planetary son controladas por la aplicación de Preferencias en tu dispositivo. ¿Te gustaría abrir Preferencias ahora?";
+"Push.prompt" = "Las notificaciones push para Planetary están controladas por la aplicación de ajustes en tu dispositivo. ¿Te gustaría abrir ajustes ahora?";
 "Push.footer" = "Mostrar una notificación de sistema cuando seas mencionado, respondido o seguido. La infraestructura de notificaciones está todavía en desarrollo, así que podrías no recibirlas consistentemente.";
 
 "Reporting.abusive" = "Abusivo para mí o alguien más";
