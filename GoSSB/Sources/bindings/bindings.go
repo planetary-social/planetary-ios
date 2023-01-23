@@ -10,10 +10,10 @@ import (
 	"strings"
 	"sync"
 	"time"
+	bindingslogging "verseproj/scuttlegobridge/logging"
 
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/planetary-social/scuttlego/di"
 	"github.com/planetary-social/scuttlego/logging"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
@@ -62,7 +62,7 @@ func NewNode() *Node {
 	return &Node{}
 }
 
-func (n *Node) Start(swiftConfig BotConfig, log kitlog.Logger, onBlobDownloaded OnBlobDownloadedFn) error {
+func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDownloaded OnBlobDownloadedFn) error {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -193,7 +193,7 @@ func (n *Node) isRunning() bool {
 	return n.service != nil
 }
 
-func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.Config, error) {
+func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
 	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.AppKey)
 	if err != nil {
 		return di.Config{}, errors.Wrap(err, "failed to decode network key")
@@ -216,9 +216,8 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 
 	// todo do something with hops
 	// todo do something service pubs?
-	// todo use the testing option to change log level?
 
-	logger := n.newLogger(kitlogLogger)
+	logger := NewLoggerAdapter(bindingsLogger)
 
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
@@ -244,10 +243,6 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 	config.SetDefaults() // todo this should be automatic
 
 	return config, nil
-}
-
-func (n *Node) newLogger(kitlogLogger kitlog.Logger) KitlogLogger {
-	return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug)
 }
 
 func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {

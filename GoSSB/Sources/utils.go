@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"runtime/debug"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"go.cryptoscope.co/ssb"
 	refs "go.mindeco.de/ssb-refs"
@@ -18,11 +17,7 @@ func ssbGenKey() *C.char {
 	defer logPanic()
 
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("genKeyErr", err)
-		}
-	}()
+	defer logError("ssbGenKey", &err)
 
 	kp, err := ssb.NewKeyPair(nil, refs.RefAlgoFeedSSB1)
 	if err != nil {
@@ -72,13 +67,19 @@ type healReport struct {
 
 func logError(functionName string, errPtr *error) {
 	if err := *errPtr; err != nil {
-		level.Error(log).Log("function", functionName, "error", err)
+		log.
+			WithError(err).
+			WithField("function", functionName).
+			Error("function returned an error")
 	}
 }
 
 func logPanic() {
 	if p := recover(); p != nil {
-		level.Error(log).Log("panic", p, "stack", string(debug.Stack()))
+		log.
+			WithField("panic", p).
+			WithField("stack", string(debug.Stack())).
+			Error("encountered a panic")
 		panic(p)
 	}
 }
