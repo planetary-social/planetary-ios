@@ -183,20 +183,20 @@
 "NewPost.publishing" = "Publishing...";
 "NewPost.restoring" = "Restoring...";
 
-"Offboarding.reset" = "Usuń";
-"Offboarding.resetIdentity" = "Usuń moją tożsamość";
+"Offboarding.reset" = "Delete";
+"Offboarding.resetIdentity" = "Delete My Identity";
 "Offboarding.resetConfirmTitle" = "Uwaga";
-"Offboarding.resetConfirmMessage" = "Czy na pewno chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
+"Offboarding.resetConfirmMessage" = "Are you sure want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetConfirmAgainTitle" = "Na pewno?";
-"Offboarding.resetConfirmAgainMessage" = "Czy masz absolutną pewność, że chcesz usunąć swoją tożsamość z tego urządzenia? Utracisz ten profil oraz wszelkie powiązane treści. Nie można tego cofnąć.";
+"Offboarding.resetConfirmAgainMessage" = "Are you really sure you want to delete your identity from this device? You will lose this profile and all related content. This cannot be undone.";
 "Offboarding.resetFooter" = "This will destroy your identity on your device. You will not be able to recover your identity, but you will be able to create a new one.";
 "Offboarding.resetApiErrorTryAgain" = "Nie mogliśmy połączyć się z katalogiem, aby usunąć Twój profil. Proszę spróbuj ponownie.";
 "Offboarding.resetBotErrorTryAgain" = "Stało się coś nieoczekiwanego, ale nie martw się, zostaliśmy o tym powiadomieni i spróbujemy to naprawić. Proszę spróbuj ponownie.";
 
 "Onboarding.getStartedButton" = "Zacznijmy";
 "Onboarding.photoButtonAdd" = "Dodaj zdjęcie";
-"Onboarding.doItLater" = "Zrobię to później";
-"Onboarding.useRealName" = "Twoja nazwa będzie widoczna dla wszystkich, więc możesz użyć pseudonimu lub na razie pominąć ten krok.";
+"Onboarding.doItLater" = "I'll do it later";
+"Onboarding.useRealName" = "Your name will be publicly visible, so feel free to use a pseudonym, or skip this part for now.";
 "Onboarding.phoneNumber" = "Numer Telefonu";
 "Onboarding.phoneNumberConfirmationMessage" = "Używamy go do potwierdzenia Twojej tożsamości oraz alertów serwisowych.";
 "Onboarding.didntGetSMS" = "SMS nie dotarł?";
@@ -216,11 +216,11 @@
 "Onboarding.listMeTitle" = "Wyświetl mnie w katalogu użytkowników";
 "Onboarding.listMeMessage" = "Dzięki temu ludzie mogą Cię znaleźć, jeśli znają Twoje imię i nazwisko lub numer telefonu";
 "Onboarding.orUseTheDefaults" = "Or just use the defaults";
-"Onboarding.doneOnboarding" = "Uff! Udało się!";
+"Onboarding.doneOnboarding" = "One more thing…";
 "Onboarding.earlyAccess" = "Aplikacja jest na wczesnym etapie rozwoju. Skupiliśmy się na podstawach, więc w interfejsie użytkownika są spore luki. Prosimy o wyrozumiałość!";
 "Onboarding.iUnderstand" = "Tak, rozumiem";
-"Onboarding.followPlanetaryToggleTitle" = "Obserwuj Planetary";
-"Onboarding.followPlanetaryToggleDescription" = "Obserwuj konto Planetary, aby zobaczyć wpisy naszego zespołu.";
+"Onboarding.followPlanetaryToggleTitle" = "Follow Planetary";
+"Onboarding.followPlanetaryToggleDescription" = "Follow the Planetary account to see posts from our team.";
 "Onboarding.somethingWentWrong" = "O nie! Coś poszło nie tak!";
 "Onboarding.errorRetryMessage" = "To nie twoja wina, coś schrzaniliśmy. Możesz spróbować ponownie lub zacząć od nowa, albo zgłosić nam napotkany problem.";
 "Onboarding.resumeRetryMessage" = "To nie Twoja wina, coś schrzaniliśmy. W niektórych przypadkach może to oznaczać, że urządzenie nie może połączyć się z siecią. Ponowna próba w późnieszym czasie może to naprawić.";
@@ -234,7 +234,7 @@
 "Onboarding.termsOfService" = "Warunki Korzystania z Usług";
 "Onboarding.privacyPolicy" = "Polityka Prywatności";
 "Onboarding.welcomeMessage" = "Welcome to Planetary! We’re thrilled to have you. Here are some tips to start you on your journey:";
-"Onboarding.welcomeBotName" = "Pomoc Planetary";
+"Onboarding.welcomeBotName" = "Planetary Help";
 "Onboarding.welcomeBotBio" = "This is a fake account used to show welcome messages to new users. To get help open a support ticket from the side menu or post with the hashtag #planetary-help.";
 "Onboarding.joinPlanetarySystem" = "Join Planetary Network";
 "Onboarding.joinPlanetarySystemDescription" = "Joining means you will use Planetary's relay servers to exchange messages with others. Recommended for new users.";
@@ -346,9 +346,9 @@
 "Debug.reset" = "Reset";
 "Debug.noBotConfigured" = "No bot configured.";
 
-"Error.login" = "Nie udało się uruchomić połączenia z siecią. Uruchom ponownie, aby spróbować naprawić tą sytuację, lub użyj opcji Ignoruj, aby przeglądać zawartość, która została już pobrana na Twoje urządzenie.";
-"Error.unexpected" = "Stało się coś nieoczekiwanego.";
-"Error.supportNotConfigured" = "Wsparcie techniczne nie jest dostępne.";
+"Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
+"Error.unexpected" = "Something unexpected happened.";
+"Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 "Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
 "Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
