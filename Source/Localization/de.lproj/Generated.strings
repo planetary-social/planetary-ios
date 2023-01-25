@@ -1,0 +1,105 @@
+// This file is auto-generated at build time and should not be modified by hand
+
+"Blocking.thisUser" = "dieser Benutzer";
+"Blocking.usersYouHaveBlocked" = "Users that you have ignored";
+
+"ImagePicker.camera" = "Kamera";
+"ImagePicker.cameraNotAvailable" = "Kamera ist auf diesem Gerät nicht verfügbar";
+"ImagePicker.openSettingsMessage" = "Du kannst die Kamera-Berechtigungen zulassen, indem du die Einstellungen-App öffnest.";
+"ImagePicker.permissionsRequired" = "Berechtigungen erforderlich für {{ title }}";
+"ImagePicker.photoLibrary" = "Fotobibliothek";
+"ImagePicker.selectFrom" = "Aus Foto-Bibliothek wählen";
+"ImagePicker.takePhoto" = "Foto mit Kamera aufnehmen";
+
+"NewPost.confirmRemove" = "Dieses Bild aus dem Beitrag entfernen? Du kannst es immer wieder hinzufügen.";
+"NewPost.remove" = "Entfernen";
+
+"Offboarding.resetConfirmTitle" = "Warnung";
+"Offboarding.resetConfirmAgainTitle" = "Bist du sicher?";
+"Offboarding.resetApiErrorTryAgain" = "Wir konnten keine Verbindung zum Verzeichnis herstellen, um dich zu entfernen. Bitte versuche es erneut.";
+"Offboarding.resetBotErrorTryAgain" = "Etwas Unerwartetes ist passiert, aber keine Sorge, wir haben eine Notiz gemacht, um es zu beheben. Bitte versuche es erneut.";
+
+"Onboarding.getStartedButton" = "Los geht's";
+"Onboarding.photoButtonAdd" = "Foto hinzufügen";
+"Onboarding.phoneNumber" = "Telefonnummer";
+"Onboarding.phoneNumberConfirmationMessage" = "Wir verwenden dies zur Bestätigung deiner Identität und für Service-Benachrichtigungen.";
+"Onboarding.didntGetSMS" = "SMS nicht erhalten?";
+"Onboarding.reenter" = "Erneut eingeben";
+"Onboarding.resendSMS" = "SMS erneut senden";
+"Onboarding.youEnteredNumber" = "Du hast die Nummer {{ phone }} eingegeben";
+"Onboarding.confirmNumber" = "Wenn diese Nummer korrekt ist, tippe auf 'SMS erneut senden'. Wenn sie nicht korrekt ist, tippe auf 'Erneut Eingeben'.";
+"Onboarding.ageLimit" = "Aus rechtlichen Gründen musst du über sechzehn sein, um Planetary nutzen zu können.";
+"Onboarding.chooseProfileImage" = "Wähle ein\nProfilbild";
+"Onboarding.changePhoto" = "Foto ändern";
+"Onboarding.confirmPhoto" = "Ja, das ist gut!";
+"Onboarding.startOver" = "Neustart";
+"Onboarding.contactsHint" = "Wir verschlüsseln diese Daten einseitig, so dass wir niemals direkt darauf zugreifen können.";
+"Onboarding.connect" = "Verbindung verloren!";
+"Onboarding.notNow" = "Nicht jetzt";
+"Onboarding.contactsWIP" = "Entschuldigung, diese Funktion ist in Arbeit. Tippe auf \"OK\", um eine Liste der empfohlenen Benutzer zu sehen.";
+"Onboarding.listMeTitle" = "Zeige mich im Benutzerverzeichnis";
+"Onboarding.listMeMessage" = "Dies erlaubt Leuten dich zu finden, wenn sie deinen Namen oder deine Telefonnummer kennen";
+"Onboarding.orUseTheDefaults" = "Or just use the defaults";
+"Onboarding.doneOnboarding" = "Puh! Ich bin fertig!";
+"Onboarding.earlyAccess" = "Diese App befindet sich in einem frühen Stadium. Wir haben unsere Zeit auf die Grundlagen konzentriert, also gibt es Lücken und raue Teile in der Benutzeroberfläche. Hab ein wenig Geduld!";
+"Onboarding.iUnderstand" = "Ja, ich verstehe";
+"Onboarding.somethingWentWrong" = "Oh nein! Etwas ging schief!";
+"Onboarding.errorRetryMessage" = "Das ist nicht Ihre Schuld, wir haben etwas verpasst. Sie können es erneut versuchen oder anfangen, und kommen Sie und erzählen Sie uns darüber.";
+"Onboarding.resumeRetryMessage" = "Das ist nicht Ihre Schuld, wir haben etwas verpasst. In einigen Fällen könnte es bedeuten, dass Ihr Gerät nicht in das Netzwerk gelangen kann, und es könnte hilfreich sein, später noch einmal zu versuchen.";
+"Onboarding.backupHint" = "Planetary verwendet keine Passwörter - Sie haben einen geheimen Schlüssel, den Sie sicher halten müssen. Wenn du kannst, solltest du es sichern. Hinweis: Dieses Feature ist noch in Arbeit.";
+"Onboarding.backUp" = "Ja, meine Identität sichern";
+"Onboarding.bioHint" = "Sorgen Sie sich nicht zu sehr über das, was Sie sagen, Sie können es später ändern.";
+"Onboarding.findOutMore" = "Mehr erfahren";
+"Onboarding.thatSoundsGreat" = "Hört sich toll an!";
+"Onboarding.policyStatement" = "Wenn Sie dieses Formular absenden, akzeptieren Sie unsere Nutzungsbedingungen und Datenschutzbestimmungen";
+"Onboarding.termsOfService" = "Nutzungsbedingungen";
+"Onboarding.privacyPolicy" = "Datenschutzerklärung";
+
+"OnboardingStepTitle.backup" = "Okay, wir haben deine Identität erstellt - möchtest du sie sicheren?";
+"OnboardingStepTitle.bio" = "Warum nicht etwas über dich selbst erzählen...";
+"OnboardingStepTitle.birthday" = "Bevor wir beginnen, wann ist dein Geburtstag?";
+"OnboardingStepTitle.contacts" = "Sie können Ihr Adressbuch verbinden, um zu sehen, welche Ihrer Freunde Planetary verwenden";
+"OnboardingStepTitle.directory" = "Leute, die du vielleicht kennst";
+"OnboardingStepTitle.done" = "Customize your settings";
+"OnboardingStepTitle.earlyAccess" = "Gentle-Erinnerung: Dies ist eine frühe Zugriffssoftware";
+"OnboardingStepTitle.join" = "Erstelle deine Identität auf Planetar...";
+"OnboardingStepTitle.name" = "Wie möchtest du genannt werden?";
+"OnboardingStepTitle.phone" = "Ihre Handynummer eingeben?";
+"OnboardingStepTitle.phoneVerify" = "Geben Sie den Code ein, den wir Ihnen zur Bestätigung geschickt haben...";
+"OnboardingStepTitle.photo" = "Okay, das ist das harte Zeug - lass uns dir jetzt ein Profilbild zeigen";
+"OnboardingStepTitle.photoConfirm" = "Profilfoto hinzugefügt";
+"OnboardingStepTitle.resume" = "Fortsetzen der Einrichtung Ihrer Identität auf Planetarisch...";
+
+"Preview.title" = "Erweiterte Einstellungen";
+"Preview.footer" = "Neue Funktionen, die entwickelt und getestet werden und noch kein permanentes Zuhause in der App gefunden haben.";
+
+"Push.enabled" = "Aktiviert";
+"Push.title" = "Push-Mitteilungen";
+"Push.prompt" = "Push-Benachrichtigungen für Planetäre werden in den Einstellungen Ihres Geräts gesteuert. Möchten Sie die Einstellungen jetzt öffnen?";
+"Push.footer" = "Zeigt eine Systembenachrichtigung, wenn Sie erwähnt werden, antwortet oder folgt. Die Benachrichtigungsinfrastruktur befindet sich noch in der Entwicklung, sodass Sie möglicherweise keine konsistenten Benachrichtigungen erhalten.";
+
+"Reporting.abusive" = "Missbräuchlich für mich oder jemand anderes";
+"Reporting.copyright" = "Verletzt mein Urheberrecht";
+"Reporting.offensive" = "Anstößig oder unangemessen";
+"Reporting.other" = "Ein anderer Grund";
+"Reporting.whyAreYouReportingThisPost" = "Warum meldest du diesen Beitrag?";
+
+"Debug.debugTitle" = "Hacker-Modus";
+"Debug.debugMenu" = "Gefährliches und mächtiges Debug-Menü";
+"Debug.debugFooter" = "Hier lassen wir dich in den Fuß schießen. Hier gelangen Sie an Ihren privaten Schlüssel, setzen Sie neue Schlüssel, lesen Sie Informationen über das Netzwerk, Pubs und alle möglichen Dinge. Vorsicht, was Sie in diesem Menü ändern, können Sie Dinge mit diesen Optionen zu brechen.";
+
+"Error.login" = "Die Peer-to-Peer-Engine konnte nicht gestartet werden. Bitte verwenden Sie Neustart, um zu reparieren und neu zu starten, oder verwenden Sie Ignore, um die Inhalte zu durchsuchen, die bereits auf Ihrem Gerät abgerufen werden.";
+"Error.unexpected" = "Etwas Unerwartetes ist passiert.";
+"Error.supportNotConfigured" = "Support ist nicht konfiguriert.";
+
+"Channel.one" = "Kanal";
+"Channel.many" = "Kanäle";
+
+"Post.one" = "Beitrag";
+"Post.many" = "Beiträge";
+
+"Report.somebody" = "Jemand";
+"Report.feedFollowed" = "%@ folgt dir jetzt";
+"Report.postReplied" = "%@ replied to a post you commented on";
+"Report.feedMentioned" = "%@ hat dich in einem Beitrag erwähnt";
+"Report.messageLiked" = "%@ gefällt dein Beitrag";
