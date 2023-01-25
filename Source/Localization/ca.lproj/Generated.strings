@@ -2,7 +2,6 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Vaja!";
-"Localized.success" = "Success!";
 "Localized.cancel" = "Cancel·lar";
 "Localized.skip" = "Omet";
 "Localized.ok" = "D'acord";
@@ -398,9 +397,3 @@
 "YourNetwork.title" = "Els teus amics, connexions i pubs";
 "YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
 "YourNetwork.highlightedWord" = "xafarderia";
-
-"Search.all" = "All";
-"Search.people" = "People";
-
-"Discover.emptyTitle" = "Discover Planetary";
-"Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";
