@@ -6,6 +6,10 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Updated the localization strategy to have a better support of foreign languages. #1065
+
 ## [1.3.14]
 
 - Added a new screen to onboarding that allows you to join the Planetary.name hub server and register an alias. #1004
