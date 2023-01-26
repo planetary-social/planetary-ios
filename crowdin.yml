@@ -1,5 +1,6 @@
 files:
   - source: /Source/Localization/en.lproj/Generated.strings
     translation: /Source/Localization/%osx_code%/Generated.strings
-pull_request_labels: [Skip-Changelog]
-commit_message: [ci skip]
+pull_request_labels:
+  - Skip-Changelog
+commit_message: ci skip
