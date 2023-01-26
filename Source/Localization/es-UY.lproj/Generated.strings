@@ -1,10 +1,10 @@
 // This file is auto-generated at build time and should not be modified by hand
 
 "Localized.planetary" = "Planetary";
-"Localized.error" = "Ups";
+"Localized.error" = "Opa";
 "Localized.success" = "¡Éxito!";
 "Localized.cancel" = "Cancelar";
-"Localized.skip" = "Saltear";
+"Localized.skip" = "Saltar";
 "Localized.ok" = "Dale";
 "Localized.next" = "Siguiente";
 "Localized.back" = "Atrás";
@@ -402,5 +402,5 @@
 "Search.all" = "Todo";
 "Search.people" = "Gente";
 
-"Discover.emptyTitle" = "Descubre Planetary";
-"Discover.emptyDescription" = "La pestaña Descubrir te deja ver más gente en Planetary. Específicamente es todo lo que las personas a las que sigues siguen.";
+"Discover.emptyTitle" = "Descubrí Planetary";
+"Discover.emptyDescription" = "La pestaña Descubrir te deja ver más gente en Planetary. Específicamente es todo lo que las personas que seguís siguen.";
