@@ -4,3 +4,9 @@ files:
 pull_request_labels:
   - Skip-Changelog
 commit_message: ci skip
+export_languages:
+  - ca
+  - de
+  - pl
+  - es
+  - es-UY
