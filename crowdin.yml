@@ -1,5 +1,14 @@
 pull_request_labels:
   - Skip-Changelog
+commit_message: |
+
+  [skip ci]
 files:
   - source: /Source/Localization/en.lproj/Generated.strings
     translation: /Source/Localization/%osx_code%/%original_file_name%
+    languages_mapping:
+      osx_code:
+        ca-ES: ca.lproj
+        de-DE: de.proj
+        pl-PL: pl.lproj
+        es-ES: es.lproj
