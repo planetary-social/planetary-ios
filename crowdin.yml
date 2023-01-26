@@ -8,7 +8,12 @@ files:
     translation: /Source/Localization/%osx_code%/%original_file_name%
     languages_mapping:
       osx_code:
+        ca: ca.lproj
         ca-ES: ca.lproj
+        de: de.lproj
         de-DE: de.proj
+        pl: pl.lproj
         pl-PL: pl.lproj
+        es: es.proj
         es-ES: es.lproj
+        es-UY: es-UY.lproj
