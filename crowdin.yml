@@ -3,7 +3,7 @@ files:
     translation: /Source/Localization/%osx_code%/%original_file_name%
 pull_request_labels:
   - Skip-Changelog
-commit_message: [ci skip]
+commit_message: '[ci skip]'
 export_languages:
   - ca
   - de
