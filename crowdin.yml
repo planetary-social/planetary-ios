@@ -4,10 +4,3 @@ files:
 pull_request_labels:
   - Skip-Changelog
 commit_message: add new translations in %original_file_name% [ci skip]
-append_commit_message: No
-export_languages:
-  - ca
-  - de
-  - pl
-  - es
-  - es-UY
