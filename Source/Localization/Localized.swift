@@ -45,7 +45,6 @@ extension Localized {
 enum Localized: String, Localizable, CaseIterable {
 
     case planetary = "Planetary"
-
     case error = "Oops"
     case success = "Success!"
     case cancel = "Cancel"
