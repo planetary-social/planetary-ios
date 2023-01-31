@@ -9,6 +9,7 @@
 import Foundation
 import Logger
 import UIKit
+import Analytics
 
 /// A controller for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
 @MainActor class RoomListController: RoomListViewModel {
@@ -51,6 +52,7 @@ import UIKit
             loadingMessage = Localized.joiningRoom.text
             Task {
                 try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
+                Analytics.shared.trackDidJoinRoom(at: sanitizedString)
                 self.finishAddingRoom()
             }
         // Check if this is an address
@@ -59,6 +61,7 @@ import UIKit
             Task {
                 do {
                     try await self.bot.insert(room: Room(address: address))
+                    Analytics.shared.trackDidJoinRoom(at: address.string)
                     self.finishAddingRoom()
                 } catch {
                     Log.optional(error)

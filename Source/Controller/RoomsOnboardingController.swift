@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import Analytics
 
 /// A controller for the `RoomsOnboardingView` utilized in `RoomsOnboardingStep`. Allows users to choose and
 /// join an alias server from a preset list and to optionally register an alias with that server.
@@ -78,6 +79,7 @@ import Logger
                     )
                     registeredRoom = true
                 }
+                Analytics.shared.trackDidJoinRoom(at: address.string)
             } catch {
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription
@@ -89,6 +91,7 @@ import Logger
     
     func register(_ desiredAlias: String, in room: Room) async throws -> RoomAlias {
         let alias = try await self.bot.register(alias: desiredAlias, in: room)
+        Analytics.shared.trackDidRegister(alias: desiredAlias, in: room.address.string)
         self.loadingMessage = nil
         return alias
     }
