@@ -10,15 +10,24 @@ import Foundation
 import Logger
 import UIKit
 import Analytics
+import Secrets
 
 /// A controller for the `RoomListView`. Manages CRUD operations for a list of joined room servers.
 @MainActor class RoomListController: RoomListViewModel {
     
-    @Published var rooms = [Room]()
+    @Published var rooms = [Room]() {
+        didSet {
+            showJoinPlanetaryRoomButton = !rooms.contains(where: { $0.address.string.contains("planetary.name") })
+        }
+    }
     
     @Published var loadingMessage: String?
     
-    @Published var errorMessage: String?
+    @Published var alertMessage: String?
+    
+    @Published var alertMessageTitle: String?
+    
+    @Published var showJoinPlanetaryRoomButton = false
     
     private var bot: Bot
     
@@ -40,7 +49,8 @@ import Analytics
                 self.rooms.remove(atOffsets: indexes)
             } catch {
                 Log.optional(error)
-                self.errorMessage = error.localizedDescription
+                self.alertMessageTitle = Localized.error.text
+                self.alertMessage = error.localizedDescription
             }
         }
     }
@@ -65,16 +75,19 @@ import Analytics
                     self.finishAddingRoom()
                 } catch {
                     Log.optional(error)
-                    self.errorMessage = error.localizedDescription
+                    self.alertMessageTitle = Localized.error.text
+                    self.alertMessage = error.localizedDescription
                 }
             }
         } else {
-            errorMessage = Localized.Error.invalidRoomInvitationOrAddress.text
+            alertMessageTitle = Localized.error.text
+            alertMessage = Localized.Error.invalidRoomInvitationOrAddress.text
         }
     }
     
     func didDismissError() {
-        errorMessage = nil
+        alertMessageTitle = nil
+        alertMessage = nil
     }
     
     func refresh() {
@@ -83,7 +96,8 @@ import Analytics
     
     func open(_ room: Room) {
         guard let url = URL(string: "https://\(room.address.host)") else {
-            errorMessage = Localized.ManageRelays.invalidRoomURL.text
+            alertMessageTitle = Localized.error.text
+            alertMessage = Localized.ManageRelays.invalidRoomURL.text
             return
         }
         
@@ -108,7 +122,28 @@ import Analytics
                 self.rooms = rooms
             } catch {
                 Log.optional(error)
-                self.errorMessage = error.localizedDescription
+                self.alertMessageTitle = Localized.error.text
+                self.alertMessage = error.localizedDescription
+            }
+            self.loadingMessage = nil
+        }
+    }
+    
+    func joinPlanetaryRoom() {
+        loadingMessage = Localized.loading.text
+        Task {
+            do {
+                let host = "planetary.name"
+                let token = Keys.shared.get(key: .planetaryRoomToken)!
+                try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
+                Analytics.shared.trackDidJoinRoom(at: host)
+                refresh()
+                self.alertMessageTitle = Localized.success.text
+                self.alertMessage = Localized.invitationRedeemed.text
+            } catch {
+                Log.optional(error)
+                self.alertMessageTitle = Localized.error.text
+                self.alertMessage = error.localizedDescription
             }
             self.loadingMessage = nil
         }
