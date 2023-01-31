@@ -62,7 +62,6 @@ import Secrets
             loadingMessage = Localized.joiningRoom.text
             Task {
                 try await RoomInvitationRedeemer.redeem(inviteURL: url, in: AppController.shared, bot: Bots.current)
-                Analytics.shared.trackDidJoinRoom(at: sanitizedString)
                 self.finishAddingRoom()
             }
         // Check if this is an address
@@ -71,7 +70,6 @@ import Secrets
             Task {
                 do {
                     try await self.bot.insert(room: Room(address: address))
-                    Analytics.shared.trackDidJoinRoom(at: address.string)
                     self.finishAddingRoom()
                 } catch {
                     Log.optional(error)
@@ -136,7 +134,6 @@ import Secrets
                 let host = "planetary.name"
                 let token = Keys.shared.get(key: .planetaryRoomToken)!
                 try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
-                Analytics.shared.trackDidJoinRoom(at: host)
                 refresh()
                 self.alertMessageTitle = Localized.success.text
                 self.alertMessage = Localized.invitationRedeemed.text

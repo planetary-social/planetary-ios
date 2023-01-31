@@ -79,7 +79,6 @@ import Analytics
                     )
                     registeredRoom = true
                 }
-                Analytics.shared.trackDidJoinRoom(at: address.string)
             } catch {
                 Log.optional(error)
                 self.errorMessage = error.localizedDescription
@@ -91,7 +90,6 @@ import Analytics
     
     func register(_ desiredAlias: String, in room: Room) async throws -> RoomAlias {
         let alias = try await self.bot.register(alias: desiredAlias, in: room)
-        Analytics.shared.trackDidRegister(alias: desiredAlias, in: room.address.string)
         self.loadingMessage = nil
         return alias
     }

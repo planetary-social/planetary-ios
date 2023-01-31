@@ -64,7 +64,6 @@ import Analytics
         Task {
             do {
                 _ = try await self.bot.register(alias: desiredAlias, in: room)
-                Analytics.shared.trackDidRegister(alias: desiredAlias, in: room.address.string)
                 self.shouldDismiss = true
             } catch {
                 Log.optional(error)
@@ -82,7 +81,6 @@ import Analytics
                 let host = "planetary.name"
                 let token = Keys.shared.get(key: .planetaryRoomToken)!
                 try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
-                Analytics.shared.trackDidJoinRoom(at: host)
                 await refresh()
                 self.alertMessageTitle = Localized.success.text
                 self.alertMessage = Localized.invitationRedeemed.text
