@@ -29,10 +29,11 @@ import (
 	"time"
 	"unsafe"
 	"verseproj/scuttlegobridge/bindings"
+	"verseproj/scuttlegobridge/logging"
 
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/queries"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -44,14 +45,13 @@ const (
 )
 
 func init() {
-	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	log = kitlog.With(log, "warning", "pre-init")
+	initPreInitLogger()
 
 	debug.SetMemoryLimit(memoryLimitInBytes)
 }
 
 var (
-	log  kitlog.Logger
+	log  logging.Logger
 	node = bindings.NewNode()
 )
 
@@ -118,6 +118,11 @@ func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerToke
 // needed for buildmode c-archive
 func main() {}
 
+func initPreInitLogger() {
+	log = newLogger(os.Stderr)
+	log = log.WithField("warning", "pre-init")
+}
+
 func initLogger(config bindings.BotConfig) error {
 	debugLogs := filepath.Join(config.Repo, "debug")
 	if err := os.MkdirAll(debugLogs, 0700); err != nil {
@@ -130,9 +135,20 @@ func initLogger(config bindings.BotConfig) error {
 		return errors.Wrap(err, "failed to create debug log file")
 	}
 
-	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
-	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
-	log = kitlog.With(log, "ts", kitlog.TimestampFormat(time.Now, swiftLikeFormat))
-	log = kitlog.With(log, "source", "golang")
+	log = newLogger(io.MultiWriter(os.Stderr, logFile))
 	return nil
+}
+
+func newLogger(w io.Writer) logging.Logger {
+	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
+
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = swiftLikeFormat
+
+	logrusLogger := logrus.New()
+	logrusLogger.SetOutput(w)
+	logrusLogger.SetFormatter(customFormatter)
+	logrusLogger.SetLevel(logrus.DebugLevel)
+
+	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
 }

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/common"
 	"github.com/planetary-social/scuttlego/service/app/queries"
@@ -54,7 +53,7 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 		return nil
 	}
 
-	level.Debug(log).Log("event", "returning new messages in ssbStreamRootLog", "n", len(msgs), "duration", time.Since(start).String())
+	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamRootLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
@@ -112,7 +111,7 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		return nil
 	}
 
-	level.Debug(log).Log("event", "returning new messages in ssbStreamPublishedLog", "n", len(msgs), "duration", time.Since(start).Seconds())
+	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamPublishedLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)

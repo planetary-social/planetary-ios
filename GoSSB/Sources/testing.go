@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"verseproj/scuttlegobridge/tests"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 )
@@ -34,7 +33,7 @@ func ssbTestingMakeNamedKey(name string) int {
 		return -1
 	}
 
-	level.Info(log).Log("function", "ssbTestingMakeNamedKey", "action", "created key", "name", name)
+	log.WithField("function", "ssbTestingMakeNamedKey").WithField("name", name).Debug("created a key")
 
 	return 0
 }

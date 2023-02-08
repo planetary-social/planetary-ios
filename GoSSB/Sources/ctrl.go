@@ -13,7 +13,7 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/network"
 	"github.com/planetary-social/scuttlego/service/domain/refs"
 	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
-	multiserver "go.mindeco.de/ssb-multiserver"
+	multiserver "github.com/ssbc/go-ssb-multiserver"
 )
 
 // typedef struct ssbRoomsAliasRegisterReturn {

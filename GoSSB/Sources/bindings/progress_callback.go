@@ -1,6 +1,8 @@
 package bindings
 
-import "github.com/planetary-social/scuttlego/logging"
+import (
+	bindingslogging "verseproj/scuttlegobridge/logging"
+)
 
 const (
 	loggerFieldMigrationIndex  = "migration_index"
@@ -9,12 +11,12 @@ const (
 )
 
 type LogProgressCallback struct {
-	logger logging.Logger
+	logger bindingslogging.Logger
 }
 
-func NewLogProgressCallback(logger logging.Logger) *LogProgressCallback {
+func NewLogProgressCallback(logger bindingslogging.Logger) *LogProgressCallback {
 	return &LogProgressCallback{
-		logger: logger.New("progress_callback"),
+		logger: logger,
 	}
 }
 
