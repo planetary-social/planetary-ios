@@ -31,7 +31,6 @@ import (
 	"verseproj/scuttlegobridge/bindings"
 	"verseproj/scuttlegobridge/logging"
 
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/sirupsen/logrus"
@@ -136,7 +135,7 @@ func initLogger(config bindings.BotConfig) error {
 		return errors.Wrap(err, "failed to create debug log file")
 	}
 
-	log = newLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
+	log = newLogger(io.MultiWriter(os.Stderr, logFile))
 	return nil
 }
 

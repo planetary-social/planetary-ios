@@ -3,7 +3,6 @@ module verseproj/scuttlegobridge
 require (
 	github.com/boreq/errors v0.1.0
 	github.com/dgraph-io/badger/v3 v3.2103.5
-	github.com/go-kit/kit v0.12.0
 	github.com/pkg/errors v0.9.1
 	github.com/planetary-social/scuttlego v0.0.0-20230208142843-b3aac191585e
 	github.com/sirupsen/logrus v1.8.1
@@ -22,7 +21,7 @@ require (
 	github.com/dgraph-io/sroar v0.0.0-20220527172339-b92b7eaaf6e0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/go-kit/log v0.2.0 // indirect
+	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/glog v1.0.0 // indirect
