@@ -1,8 +1,9 @@
 package bindings
 
 import (
-	"github.com/planetary-social/scuttlego/logging"
 	bindingslogging "verseproj/scuttlegobridge/logging"
+
+	"github.com/planetary-social/scuttlego/logging"
 )
 
 type LoggerAdapter struct {
