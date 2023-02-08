@@ -6,8 +6,8 @@ import (
 	"runtime/debug"
 
 	"github.com/pkg/errors"
+	refs "github.com/ssbc/go-ssb-refs"
 	"go.cryptoscope.co/ssb"
-	refs "go.mindeco.de/ssb-refs"
 )
 
 import "C"

@@ -7,10 +7,10 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/planetary-social/scuttlego v0.0.0-20230208142843-b3aac191585e
 	github.com/sirupsen/logrus v1.8.1
+	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
+	github.com/ssbc/go-ssb-refs v0.5.2-0.20221019090322-8b558c2f31de
 	github.com/stretchr/testify v1.8.1
 	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
-	go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9
-	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896
 )
 
 require (
@@ -48,8 +48,6 @@ require (
 	github.com/ssbc/go-netwrap v0.1.5-0.20221019160355-cd323bb2e29d // indirect
 	github.com/ssbc/go-secretstream v1.2.11-0.20221111164233-4b41f899f844 // indirect
 	github.com/ssbc/go-ssb v0.2.2-0.20230201061938-55f48949535c // indirect
-	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57 // indirect
-	github.com/ssbc/go-ssb-refs v0.5.2-0.20221019090322-8b558c2f31de // indirect
 	github.com/ssbc/margaret v0.4.4-0.20230125145533-1439efe21dc4 // indirect
 	github.com/ugorji/go/codec v1.2.8 // indirect
 	github.com/zeebo/bencode v1.0.0 // indirect
@@ -60,6 +58,7 @@ require (
 	go.cryptoscope.co/nocomment v0.0.0-20210520094614-fb744e81f810 // indirect
 	go.cryptoscope.co/secretstream v1.2.10 // indirect
 	go.mindeco.de v1.12.0 // indirect
+	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
 	golang.org/x/net v0.5.0 // indirect

@@ -21,7 +21,7 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
-	refs "go.mindeco.de/ssb-refs"
+	refs "github.com/ssbc/go-ssb-refs"
 )
 
 const (

@@ -482,7 +482,6 @@ go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e/go.mod h1:j337PnJjj4F
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
 go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738/go.mod h1:dnLIgRNXwCJa5e+c6mIZCrds/GIG4ncV9HhK5PX7jPg=
 go.mindeco.de/ssb-gabbygrove v0.2.1-0.20210907140645-35a659043bdd/go.mod h1:R8ur2+eqUC7QzpyApQR67lt3ksewmQdQORuIgXSBdQw=
-go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9 h1:s8p4i/BDOWhiclbIVzRYKvMuqdib/CAsfmCbdgprgec=
 go.mindeco.de/ssb-multiserver v0.1.4-0.20210907140404-6f323e45e9f9/go.mod h1:LEJ3qVeajoeXfojRkYJd1f7peCpqeJKUdj74fUKVFjU=
 go.mindeco.de/ssb-refs v0.4.2-0.20210825091929-c3c28bcc0596/go.mod h1:Ysyvb0aGeR721Nvu5V7mCJtkQP1fwf0qEBLA4FXHXXk=
 go.mindeco.de/ssb-refs v0.4.2-0.20210907140047-ad70b6f7072f/go.mod h1:Ysyvb0aGeR721Nvu5V7mCJtkQP1fwf0qEBLA4FXHXXk=
