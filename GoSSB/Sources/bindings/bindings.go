@@ -15,8 +15,6 @@ import (
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
 	"github.com/planetary-social/scuttlego/di"
-	"github.com/planetary-social/scuttlego/logging"
-	"github.com/planetary-social/scuttlego/service/adapters/badger"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
@@ -92,7 +90,7 @@ func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDo
 		return errors.Wrap(err, "error building service")
 	}
 
-	migrationsCmd, err := commands.NewRunMigrations(NewLogProgressCallback(config.Logger))
+	migrationsCmd, err := commands.NewRunMigrations(NewLogProgressCallback(log))
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error creating the migration command")
@@ -109,14 +107,14 @@ func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDo
 	n.repository = config.DataDirectory
 	n.wg = &sync.WaitGroup{}
 
-	go n.printStats(ctx, config.Logger, service)
+	go n.printStats(ctx, log, service)
 
 	n.wg.Add(1)
 	go func() {
 		defer n.wg.Done()
 
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
-			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
+			logger := log.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
 				logger.WithError(err).Error("error calling onBlobDownloaded")
 			} else {
@@ -225,7 +223,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		Logger:             logger,
+		LoggingSystem:      logger,
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
@@ -233,10 +231,10 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
-			options.SetLogger(badger.NewLogger(logger.New("badger"), badger.LoggerLevelInfo))
 			options.SetValueLogFileSize(32 * mebibyte)
 			options.SetBlockCacheSize(32 * mebibyte)
 			options.SetIndexCacheSize(0)
+			options.SetSyncWrites(true)
 		},
 	}
 
@@ -262,7 +260,7 @@ func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
 	return identity.NewPrivateFromBytes(privateKeyBytes)
 }
 
-func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di.Service) {
+func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service di.Service) {
 	var startTimestamp time.Time
 	var startMessages int
 

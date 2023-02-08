@@ -1,9 +1,8 @@
 package bindings
 
 import (
-	bindingslogging "verseproj/scuttlegobridge/logging"
-
 	"github.com/planetary-social/scuttlego/logging"
+	bindingslogging "verseproj/scuttlegobridge/logging"
 )
 
 type LoggerAdapter struct {
@@ -16,16 +15,10 @@ func NewLoggerAdapter(logger bindingslogging.Logger) LoggerAdapter {
 	}
 }
 
-func (l LoggerAdapter) New(name string) logging.Logger {
-	return NewLoggerAdapter(l.logger.New(name))
-}
-
-func (l LoggerAdapter) WithError(err error) logging.Logger {
-	return NewLoggerAdapter(l.logger.WithError(err))
-}
-
-func (l LoggerAdapter) WithField(key string, v interface{}) logging.Logger {
-	return NewLoggerAdapter(l.logger.WithField(key, v))
+func (l LoggerAdapter) WithField(key string, v any) logging.LoggingSystem {
+	return LoggerAdapter{
+		logger: l.logger.WithField(key, v),
+	}
 }
 
 func (l LoggerAdapter) Error(message string) {

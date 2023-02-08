@@ -151,6 +151,5 @@ func newLogger(w io.Writer) logging.Logger {
 	logrusLogger.SetFormatter(customFormatter)
 	logrusLogger.SetLevel(logrus.DebugLevel)
 
-	log := logging.NewLogrusLogger(logrusLogger, "scuttlego")
-	return log.WithField("source", "golang")
+	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
 }
