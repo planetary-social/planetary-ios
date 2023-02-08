@@ -7,10 +7,10 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/planetary-social/scuttlego v0.0.0-20230208142843-b3aac191585e
 	github.com/sirupsen/logrus v1.8.1
+	github.com/ssbc/go-ssb v0.2.2-0.20230201061938-55f48949535c
 	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
 	github.com/ssbc/go-ssb-refs v0.5.2-0.20221019090322-8b558c2f31de
 	github.com/stretchr/testify v1.8.1
-	go.cryptoscope.co/ssb v0.2.2-0.20220218153308-74274366774e
 )
 
 require (
@@ -20,6 +20,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dgraph-io/sroar v0.0.0-20220527172339-b92b7eaaf6e0 // indirect
+	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/go-kit/log v0.2.0 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -40,25 +41,17 @@ require (
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/libp2p/go-reuseport v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/ssb-ngi-pointer/go-metafeed v1.1.1 // indirect
 	github.com/ssbc/go-gabbygrove v0.0.0-20221025092911-c274a44c3523 // indirect
 	github.com/ssbc/go-luigi v0.3.7-0.20230119190114-bd28e676fa99 // indirect
 	github.com/ssbc/go-metafeed v1.1.3-0.20221019090205-458925e39156 // indirect
 	github.com/ssbc/go-muxrpc/v2 v2.0.14-0.20221111190521-10382533750c // indirect
 	github.com/ssbc/go-netwrap v0.1.5-0.20221019160355-cd323bb2e29d // indirect
 	github.com/ssbc/go-secretstream v1.2.11-0.20221111164233-4b41f899f844 // indirect
-	github.com/ssbc/go-ssb v0.2.2-0.20230201061938-55f48949535c // indirect
 	github.com/ssbc/margaret v0.4.4-0.20230125145533-1439efe21dc4 // indirect
 	github.com/ugorji/go/codec v1.2.8 // indirect
 	github.com/zeebo/bencode v1.0.0 // indirect
-	go.cryptoscope.co/luigi v0.3.6-0.20200131144242-3256b54e72c8 // indirect
-	go.cryptoscope.co/margaret v0.4.3 // indirect
-	go.cryptoscope.co/muxrpc/v2 v2.0.10 // indirect
-	go.cryptoscope.co/netwrap v0.1.1 // indirect
 	go.cryptoscope.co/nocomment v0.0.0-20210520094614-fb744e81f810 // indirect
-	go.cryptoscope.co/secretstream v1.2.10 // indirect
 	go.mindeco.de v1.12.0 // indirect
-	go.mindeco.de/ssb-refs v0.4.2-0.20210908123826-f7ca13c14896 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
