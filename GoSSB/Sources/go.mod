@@ -74,5 +74,3 @@ go 1.19
 replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
 
 replace go.mindeco.de => github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7
-
-replace go.cryptoscope.co/ssb => github.com/planetary-social/ssb v0.2.2-0.20221215175110-f4588d5494a2
