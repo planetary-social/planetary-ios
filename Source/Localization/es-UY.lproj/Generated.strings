@@ -150,18 +150,8 @@
 "Localized.rooms" = "Salas";
 "Localized.allCapsCopy" = "COPIAR";
 "Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
-"Localized.beta1MigrationComplete" = "Pulsá el siguiente botón para cerrar esta pantalla y volver a tu feed.";
-"Localized.beta1MigrationPleaseLeaveAppOpen" = "Puede que esto lleve un rato.\n\nPor favor dejá la aplicación abierta hasta que termine.\n";
-"Localized.beta1StartUsingPlanetary" = "Si no querés esperar, podés\nempezar a usar Planetary ahora mismo, pero:";
-"Localized.startUsingPlanetary" = "empezar a usar Planetary";
 "Localized.startUsingPlanetaryTitle" = "Empezar a usar Planetary";
-"Localized.dismissAndStartUsingPlanetary" = "Descartar y comenzar a usar Planetary";
 "Localized.percentComplete" = "completado";
-"Localized.beta1Disclaimers" = "\n• no podrás postear o seguir hasta que todo tu feed se halla descargado\n\n• puede que no veas todos los posts previos hasta que se descarguen.";
-"Localized.areYouSure" = "¿Estás seguro?";
-"Localized.dismissMigrationEarlyMessage" = "Esta pantalla se cerrará y podrás usar Planetary mientras tus datos se descargan en segundo plano. ¿Estás seguro?";
-"Localized.confirmCopyToMainNetwork" = "Debido a un error tu perfil fue creado en la red de pruebas de Planetary en vez de la red SSB principal. La aplicación copiará tu perfil a la red principal.";
-"Localized.confirmSkipCopyToMainNetwork" = "No se te pedirá que ejecutes esta solución de nuevo. ¿Estás seguro de que quieres omitirlo?";
 
 "Blocking.alertTitle" = "¿Estás seguro de que querés ignorar a {{ name }}? No vas a poder ver su contenido mutuamente ni tampoco volver a contactarse. Esto será visible de manera pública.";
 "Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";
