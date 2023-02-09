@@ -147,10 +147,7 @@
 "Localized.noResultsFound" = "No s'ha trobat resultats.";
 "Localized.noResultsHelp" = "No veus el que estàs buscant? Planetary només pot cercar les persones i les publicacions de la vostra xarxa. Ara mateix, la cerca només coincideix amb paraules senceres, identificadors d'usuari i identificadors de publicació. També podem excloure publicacions de més de 6 mesos per estalviar espai al teu dispositiu.";
 "Localized.rooms" = "Sales";
-"Localized.allCapsCopy" = "COPY";
-"Localized.percentComplete" = "complete";
-"Localized.botMigrationBody" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
-"Localized.botMigrationGenericError" = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
+"Localized.allCapsCopy" = "COPIAR";
 "Localized.startUsingPlanetaryTitle" = "Comença a utilitzar Planetary";
 
 "Blocking.alertTitle" = "Estàs segur que vols ignorar a {{ name }}? Ja no veuràs el seu contingut ni podràs contactar-hi. Això serà visible públicament.";
