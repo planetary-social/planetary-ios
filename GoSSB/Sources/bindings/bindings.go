@@ -15,6 +15,7 @@ import (
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
 	"github.com/planetary-social/scuttlego/di"
+	"github.com/planetary-social/scuttlego/service/adapters/badger"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
@@ -30,6 +31,9 @@ const (
 )
 
 type OnBlobDownloadedFn func(downloaded queries.BlobDownloaded) error
+type MigrationOnRunningFn func(migrationIndex, migrationsCount int)
+type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
+type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
 	AppKey     string `json:"AppKey"`
@@ -60,7 +64,14 @@ func NewNode() *Node {
 	return &Node{}
 }
 
-func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDownloaded OnBlobDownloadedFn) error {
+func (n *Node) Start(
+	swiftConfig BotConfig,
+	log bindingslogging.Logger,
+	onBlobDownloaded OnBlobDownloadedFn,
+	migrationOnRunningFn MigrationOnRunningFn,
+	migrationOnErrorFn MigrationOnErrorFn,
+	migrationOnDoneFn MigrationOnDoneFn,
+) error {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -78,6 +89,11 @@ func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDo
 		return errors.Wrap(err, "could not convert the config")
 	}
 
+	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
+	if err != nil {
+		return errors.Wrap(err, "error creating the progress callback")
+	}
+
 	if err = os.MkdirAll(config.DataDirectory, 0700); err != nil {
 		return errors.Wrap(err, "could not create the data directory") // todo should this be here?
 	}
@@ -90,7 +106,7 @@ func (n *Node) Start(swiftConfig BotConfig, log bindingslogging.Logger, onBlobDo
 		return errors.Wrap(err, "error building service")
 	}
 
-	migrationsCmd, err := commands.NewRunMigrations(NewLogProgressCallback(log))
+	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error creating the migration command")
@@ -231,6 +247,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
+			options.SetLogger(badger.NewLogger(logger, badger.LoggerLevelInfo))
 			options.SetValueLogFileSize(32 * mebibyte)
 			options.SetBlockCacheSize(32 * mebibyte)
 			options.SetIndexCacheSize(0)
