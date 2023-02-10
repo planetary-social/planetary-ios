@@ -113,7 +113,7 @@ import Secrets
     
     /// Loads rooms from the db into this controller's `rooms` array.
     private func loadRooms() {
-        loadingMessage = "Loading rooms..."
+        loadingMessage = Localized.ManageRelays.loadingRooms.text
         Task {
             do {
                 let rooms = try await self.bot.joinedRooms()

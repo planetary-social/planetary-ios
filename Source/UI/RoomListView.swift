@@ -141,18 +141,15 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
             
             if viewModel.showJoinPlanetaryRoomButton {
                 Section {
-                    Button("Join Planetary Room") {
+                    Button(Localized.Onboarding.joinPlanetarySystem.text) {
                         viewModel.joinPlanetaryRoom()
                     }
                     .foregroundColor(.primaryAction)
-                    Text(
-                        "Joining the official Planetary room server will allow to register aliases like " +
-                        "yourname.planetary.name, and sync directly with others in the room."
-                    )
-                    .foregroundColor(.secondaryText)
-                    .font(.subheadline)
-                    .padding(.top, 4)
-                    .lineLimit(5)
+                    Text(Localized.Onboarding.joinPlanetarySystemDescription.text)
+                        .foregroundColor(.secondaryText)
+                        .font(.subheadline)
+                        .padding(.top, 4)
+                        .lineLimit(5)
                 }
                 .listRowBackground(Color.cardBackground)
             }
