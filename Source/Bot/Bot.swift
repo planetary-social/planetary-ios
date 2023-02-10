@@ -27,8 +27,7 @@ typealias PubsCompletion = ((Result<[Pub], Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
-/// - Bool: True if the view database is fully up to date with the backing store.
-typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
+typealias RefreshCompletion = ((Result<Void, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?) -> Void)
 typealias ThreadCompletion = ((Message?, PaginatedMessageDataProxy, Error?) -> Void)
@@ -338,13 +337,13 @@ extension Bot {
     }
     
     @discardableResult
-    func refresh(load: RefreshLoad) async throws -> (TimeInterval, Bool) {
+    func refresh(load: RefreshLoad) async throws -> TimeInterval {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: .main) { refreshResult, timeElapsed in
-                do {
-                    let finished = try refreshResult.get()
-                    continuation.resume(returning: (timeElapsed, finished))
-                } catch {
+            refresh(load: load, queue: .main) { result, timeElapsed in
+                switch result {
+                case .success:
+                    continuation.resume(returning: timeElapsed)
+                case .failure(let error):
                     continuation.resume(throwing: error)
                 }
             }
