@@ -10,12 +10,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+	bindingslogging "verseproj/scuttlegobridge/logging"
 
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
-	kitlog "github.com/go-kit/kit/log"
 	"github.com/planetary-social/scuttlego/di"
-	"github.com/planetary-social/scuttlego/logging"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
@@ -23,7 +22,7 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
-	refs "go.mindeco.de/ssb-refs"
+	refs "github.com/ssbc/go-ssb-refs"
 )
 
 const (
@@ -67,7 +66,7 @@ func NewNode() *Node {
 
 func (n *Node) Start(
 	swiftConfig BotConfig,
-	log kitlog.Logger,
+	log bindingslogging.Logger,
 	onBlobDownloaded OnBlobDownloadedFn,
 	migrationOnRunningFn MigrationOnRunningFn,
 	migrationOnErrorFn MigrationOnErrorFn,
@@ -124,14 +123,14 @@ func (n *Node) Start(
 	n.repository = config.DataDirectory
 	n.wg = &sync.WaitGroup{}
 
-	go n.printStats(ctx, config.Logger, service)
+	go n.printStats(ctx, log, service)
 
 	n.wg.Add(1)
 	go func() {
 		defer n.wg.Done()
 
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
-			logger := config.Logger.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
+			logger := log.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
 				logger.WithError(err).Error("error calling onBlobDownloaded")
 			} else {
@@ -208,7 +207,7 @@ func (n *Node) isRunning() bool {
 	return n.service != nil
 }
 
-func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.Config, error) {
+func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
 	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.AppKey)
 	if err != nil {
 		return di.Config{}, errors.Wrap(err, "failed to decode network key")
@@ -231,9 +230,8 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 
 	// todo do something with hops
 	// todo do something service pubs?
-	// todo use the testing option to change log level?
 
-	logger := n.newLogger(kitlogLogger)
+	logger := NewLoggerAdapter(bindingsLogger)
 
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
@@ -241,7 +239,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		Logger:             logger,
+		LoggingSystem:      logger,
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
@@ -249,20 +247,17 @@ func (n *Node) toConfig(swiftConfig BotConfig, kitlogLogger kitlog.Logger) (di.C
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
-			options.SetLogger(badger.NewLogger(logger.New("badger"), badger.LoggerLevelInfo))
+			options.SetLogger(badger.NewLogger(logger, badger.LoggerLevelInfo))
 			options.SetValueLogFileSize(32 * mebibyte)
 			options.SetBlockCacheSize(32 * mebibyte)
 			options.SetIndexCacheSize(0)
+			options.SetSyncWrites(true)
 		},
 	}
 
 	config.SetDefaults() // todo this should be automatic
 
 	return config, nil
-}
-
-func (n *Node) newLogger(kitlogLogger kitlog.Logger) KitlogLogger {
-	return NewKitlogLogger(kitlogLogger, "gossb", logging.LevelDebug)
 }
 
 func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
@@ -282,7 +277,7 @@ func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
 	return identity.NewPrivateFromBytes(privateKeyBytes)
 }
 
-func (n *Node) printStats(ctx context.Context, logger logging.Logger, service di.Service) {
+func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service di.Service) {
 	var startTimestamp time.Time
 	var startMessages int
 
