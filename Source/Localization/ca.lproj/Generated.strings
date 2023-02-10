@@ -2,6 +2,7 @@
 
 "Localized.planetary" = "Planetary";
 "Localized.error" = "Vaja!";
+"Localized.success" = "Èxit!";
 "Localized.cancel" = "Cancel·lar";
 "Localized.skip" = "Omet";
 "Localized.ok" = "D'acord";
@@ -131,7 +132,7 @@
 "Localized.invitationRedeemed" = "Invitació bescanviada!";
 "Localized.addRoomAddressOrInvitation" = "enganxa l'adreça o la invitació";
 "Localized.joiningRoom" = "Unint-se a sala...";
-"Localized.pleaseSelectRoom" = "Please select a room";
+"Localized.pleaseSelectRoom" = "Si us plau, selecciona un espai";
 "Localized.refreshSingular" = "{{ count }} publicació no llegida!";
 "Localized.refreshPlural" = "{{ count }} publicació no llegida!";
 "Localized.markdownSupported" = "Previsualització de Markdown";
@@ -148,7 +149,19 @@
 "Localized.noResultsHelp" = "No veus el que estàs buscant? Planetary només pot cercar les persones i les publicacions de la vostra xarxa. Ara mateix, la cerca només coincideix amb paraules senceres, identificadors d'usuari i identificadors de publicació. També podem excloure publicacions de més de 6 mesos per estalviar espai al teu dispositiu.";
 "Localized.rooms" = "Sales";
 "Localized.allCapsCopy" = "COPIAR";
+"Localized.upgradingAndRestoring" = "Planetary està actualitzant i restaurant els teus missatges des de la xarxa.";
+"Localized.beta1MigrationComplete" = "Toca el següent botó per tancar aquesta pantalla i tornar al vostre canal.";
+"Localized.beta1MigrationPleaseLeaveAppOpen" = "Això pot trigar una estona.\n\nSi us plau, deixa l'aplicació oberta fins que acabi.\n";
+"Localized.beta1StartUsingPlanetary" = "Si no vols esperar, pots\ncomençar a utilitzar Planetary de seguida, però:";
+"Localized.startUsingPlanetary" = "comença a utilitzar Planetary";
 "Localized.startUsingPlanetaryTitle" = "Comença a utilitzar Planetary";
+"Localized.dismissAndStartUsingPlanetary" = "Descarta i comença a utilitzar Planetary";
+"Localized.percentComplete" = "completat";
+"Localized.beta1Disclaimers" = "\n• no pots publicar ni seguir fins que no es baixi tot el vostre canal\n\n• és possible que no vegis tots els missatges anteriors fins que no es baixin.";
+"Localized.areYouSure" = "Estàs segur?";
+"Localized.dismissMigrationEarlyMessage" = "Aquesta pantalla s'eliminarà i podràs utilitzar Planetary mentre les teves dades es continuen descarregant en segon pla. Estàs segur?";
+"Localized.confirmCopyToMainNetwork" = "A causa d'un error, el teu perfil es va crear a la xarxa de proves de Planetary en lloc de la xarxa principal SSB. Ara l'aplicació copiarà el teu perfil a la xarxa principal.";
+"Localized.confirmSkipCopyToMainNetwork" = "No se't demanarà que tornis a executar aquesta correcció. Estàs segur que vols saltar-la?";
 
 "Blocking.alertTitle" = "Estàs segur que vols ignorar a {{ name }}? Ja no veuràs el seu contingut ni podràs contactar-hi. Això serà visible públicament.";
 "Blocking.buttonTitle" = "Sí, ignora a {{ name }}";
@@ -276,7 +289,7 @@
 
 "Message.noPostsTitle" = "Encara no hi ha publicacions aquí";
 "Message.noPostsDescription" = "Això vol dir que l'usuari no ha publicat res o que no tens prou connexions en comú per sincronitzar les seves publicacions.\n\nAprèn [com funcionen les xafarderies]({{ link }}) a Planetary.";
-"Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
+"Message.noPostsInHashtagDescription" = "Això vol dir que no s'ha publicat cap missatge amb aquest hashtag o que no teniu prou connexions per sincronitzar aquestes publicacions.\n\nAprèn [com funcionen les xafarderies]({{ link }}) a Planetary.";
 
 "Alias.manageAliases" = "Gestiona els àlies (beta)";
 "Alias.addAlias" = "Registra un àlies nou";
@@ -347,8 +360,8 @@
 "Error.notLoggedIn" = "L'operació no s'ha pogut completar perquè no hi ha cap usuari amb la sessió iniciada.";
 "Error.alreadyJoinedRoom" = "Ja ets un membre d'aquest espai";
 
-"Reply.one" = "{{ count }} reply";
-"Reply.many" = "{{ count }} replies";
+"Reply.one" = "{{ count }} resposta";
+"Reply.many" = "{{ count }} respostes";
 
 "Channel.one" = "canal";
 "Channel.many" = "canals";
@@ -365,7 +378,8 @@
 "Notifications.markAllAsRead" = "Marcar tots com a llegits";
 
 "Help.help" = "Ajuda";
-"Help.indexOfTip" = "{{tipIndex}} de {{totalTipCount}} consells";
+"Help.indexOfTip" = "
+{{tipIndex}} de {{totalTipCount}} consells";
 
 "Home.title" = "Consulta les publicacions dels usuaris i els temes que segueixes";
 "Home.body" = "Si el vostre canal està buit, obriu la pestanya Descobriu, cerqueu alguna cosa interessant i seguiu els usuaris o els temes per veure les seves publicacions al vostre canal d'inici.";
@@ -385,3 +399,9 @@
 "YourNetwork.title" = "Els teus amics, connexions i pubs";
 "YourNetwork.body" = "La teva xarxa és única: està feta pels usuaris que segueixes, els que ells segueixen i els servidors públics que fas servir per xafardejar missatges amb tots ells.";
 "YourNetwork.highlightedWord" = "xafarderia";
+
+"Search.all" = "Tot";
+"Search.people" = "Gent";
+
+"Discover.emptyTitle" = "Descobreix Planetary";
+"Discover.emptyDescription" = "La pestanya Descobriu us permet veure més persones a Planetary. Concretament, és tot el que segueix la gent que segueixes.";
