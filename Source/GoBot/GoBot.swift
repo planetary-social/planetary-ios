@@ -100,6 +100,7 @@ class GoBot: Bot, @unchecked Sendable {
     private var preloadedPubService: PreloadedPubService?
     private var welcomeService: WelcomeService?
     private var banListAPI = BanListAPI.shared
+    private var migrationDelegate: BotMigrationDelegate
 
     // TODO https://app.asana.com/0/914798787098068/1120595810221102/f
     // TODO Make GoBotAPI.database and GoBotAPI.bot private
@@ -108,10 +109,12 @@ class GoBot: Bot, @unchecked Sendable {
 
     required init(
         userDefaults: UserDefaults = UserDefaults.standard,
+        migrationDelegate: BotMigrationDelegate = BotMigrationCoordinator(hostViewController: AppController.shared),
         preloadedPubService: PreloadedPubService? = PreloadedPubServiceAdapter(),
         welcomeService: WelcomeService? = nil
     ) {
         self.userDefaults = userDefaults
+        self.migrationDelegate = migrationDelegate
         self.preloadedPubService = preloadedPubService
         self.welcomeService = WelcomeServiceAdapter(userDefaults: userDefaults)
         self.utilityQueue = DispatchQueue(
@@ -208,7 +211,7 @@ class GoBot: Bot, @unchecked Sendable {
         completion(secret, nil)
     }
     
-    @MainActor func login(
+    func login(
         config: AppConfiguration,
         fromOnboarding isLoggingInFromOnboarding: Bool = false
     ) async throws {
@@ -245,13 +248,15 @@ class GoBot: Bot, @unchecked Sendable {
             Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
         }
         
-        try bot.login(
+        try await bot.login(
             network: network,
             hmacKey: hmacKey,
             secret: secret,
             pathPrefix: repoPrefix,
-            disableEBT: isRestoring
+            disableEBT: isRestoring,
+            migrationDelegate: migrationDelegate
         )
+        
         
         // Save GoBot version to disk in case we need to migrate in the future.
         // This is a side-effect that may cause problems if we want to use other bots in the future.
@@ -260,8 +265,8 @@ class GoBot: Bot, @unchecked Sendable {
         
         _identity = secret.identity
 
-        // Run the rest of our post-login tasks off the main thread
-        Task(priority: .high) {
+        // Run the rest of our post-login tasks after returning
+        Task.detached(priority: .high) {
             do {
                 try self.welcomeService?.insertNewMessages(in: self.database)
             } catch {
@@ -761,10 +766,11 @@ class GoBot: Bot, @unchecked Sendable {
             }
             let diff = Int(Int64(numberOfMessagesInRepo) - 1 - lastRxSeq)
             if diff < 0 {
-                let errorMessage = "needsViewFill: more msgs in view then in GoBot repo: \(lastRxSeq) (diff: \(diff))"
+                let errorMessage = "needsViewFill: more msgs in SQLite than in GoBot repo: \(lastRxSeq) (diff: \(diff))"
+                // probably don't need to log this anymore with the way scuttlego works, but leaving it in just
+                // to see how common this is.
                 let error = GoBotError.unexpectedFault(errorMessage)
                 CrashReporting.shared.reportIfNeeded(error: error)
-                throw error
             }
             
             return (lastRxSeq, diff)
@@ -831,15 +837,6 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
-        guard diff > 0 else {
-            // still might want to update privates
-            #if DEBUG
-            Log.debug("[rx log] viewdb already up to date.")
-            #endif
-            self.updatePrivate(completion: completion)
-            return
-        }
-        
         // TOOD: redo until diff==0
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
@@ -849,12 +846,6 @@ class GoBot: Bot, @unchecked Sendable {
             let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
             
             guard !msgs.isEmpty else {
-                print("warning: triggered update but got no messages from receive log")
-                // If the bot's log from startSeq to startSeq+limit is full of nulled messages then no messages will
-                // be returned. In this case we need to artificially bump up our sequence number so we don't get
-                // stuck requesting the same messages again and again.
-                userDefaults.set(startSeq + UInt64(limit), forKey: greatestRequestedSequenceNumberFromGoBotKey)
-                userDefaults.synchronize()
                 completion(.success(true))
                 return
             }
@@ -864,7 +855,6 @@ class GoBot: Bot, @unchecked Sendable {
         
                 if let lastReceivedSeq = msgs.last?.receivedSeq {
                     userDefaults.set(lastReceivedSeq, forKey: greatestRequestedSequenceNumberFromGoBotKey)
-                    userDefaults.synchronize()
                 }
 
                 Analytics.shared.trackBotDidUpdateDatabase(
@@ -873,14 +863,12 @@ class GoBot: Bot, @unchecked Sendable {
                     lastTimestamp: msgs[msgs.count - 1].receivedTimestamp,
                     lastHash: msgs[msgs.count - 1].key
                 )
-                if diff < limit { // view is up2date now
+                Log.debug("#rx log# \(diff - Int(limit)) messages left in go offset log")
+                
+                if diff < limit { // view database is up to date now
                     completion(.success(true))
-                    // disable private messages until there is UI for it AND ADD SQLCYPHER!!!111
-                    // self.updatePrivate(completion: completion)
                 } else {
-                    #if DEBUG
                     print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
-                    #endif
                     completion(.success(false))
                 }
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {

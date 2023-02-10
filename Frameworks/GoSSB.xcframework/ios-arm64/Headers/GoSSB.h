@@ -24,9 +24,9 @@ typedef struct ssbRoomsAliasRegisterReturn {
 } ssbRoomsAliasRegisterReturn_t;
 
 typedef bool (notifyBlobHandle_t)(int64_t, const char*);
-
-typedef void (notifyNewBearertokenHandle_t)(const char*, int64_t);
-
+typedef void (notifyMigrationOnRunning_t)(int64_t migrationIndex, int64_t migrationsCount);
+typedef void (notifyMigrationOnError_t)(int64_t migrationIndex, int64_t migrationsCount, int64_t error);
+typedef void (notifyMigrationOnDone_t)(int64_t migrationsCount);
 typedef void (fsckProgressHandle_t)(double, const char*);
 
 extern const char *ssbVersion(void);
@@ -34,7 +34,7 @@ extern const char *ssbVersion(void);
 extern char* ssbGenKey(void);
 
 extern bool ssbBotIsRunning(void);
-extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyNewBearertokenHandle_t tokenFn);
+extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyMigrationOnRunning_t migrationOnRunningFn, notifyMigrationOnError_t migrationOnErrorFn, notifyMigrationOnDone_t migrationOnDoneFn);
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
 

@@ -46,12 +46,19 @@ extension Notification.Name {
     static let didUpdateReportReadStatus = Notification.Name("didUpdateReportReadStatus")
 }
 
-// MARK: - Databae progress
+// MARK: - Database progress
 extension Notification.Name {
     static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
     static let didUpdateFSCKRepair = Notification.Name("didUpdateFSCKRepair")
     static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
     static let didCreateReport = Notification.Name("didCreateReport")
+}
+
+// MARK: - Bot migration
+extension Notification.Name {
+    static let migrationOnRunning = Notification.Name("migrationOnRunning")
+    static let migrationOnError = Notification.Name("migrationOnError")
+    static let migrationOnDone = Notification.Name("migrationOnDone")
 }
 
 extension Notification {

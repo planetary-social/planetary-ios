@@ -13,7 +13,7 @@
 #include "Shared.release.xcconfig"
 
 PRODUCT_NAME = Planetary
-PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios-scuttlego
+PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
 
 SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 

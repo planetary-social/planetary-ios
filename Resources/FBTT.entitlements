@@ -18,7 +18,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.planetary.ios-scuttlego</string>
+		<string>$(AppIdentifierPrefix)com.planetary.ios</string>
 	</array>
 </dict>
 </plist>

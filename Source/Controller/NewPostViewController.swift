@@ -49,7 +49,7 @@ class NewPostViewController: ContentViewController {
     // MARK: Lifecycle
 
     init(images: [UIImage] = []) {
-        self.draftKey = "com.planetary.ios-scuttlego.draft." + (Bots.current.identity ?? "")
+        self.draftKey = "com.planetary.ios.draft." + (Bots.current.identity ?? "")
         self.draftStore = DraftStore(draftKey: draftKey)
         super.init(scrollable: false, title: .newPost)
         isKeyboardHandlingEnabled = true
