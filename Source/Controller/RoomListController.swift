@@ -130,19 +130,22 @@ import Secrets
     func joinPlanetaryRoom() {
         loadingMessage = Localized.loading.text
         Task {
+            guard let token = Keys.shared.get(key: .planetaryRoomToken) else {
+                loadingMessage = nil
+                return
+            }
             do {
                 let host = "planetary.name"
-                let token = Keys.shared.get(key: .planetaryRoomToken)!
                 try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
                 refresh()
-                self.alertMessageTitle = Localized.success.text
-                self.alertMessage = Localized.invitationRedeemed.text
+                alertMessageTitle = Localized.success.text
+                alertMessage = Localized.invitationRedeemed.text
             } catch {
                 Log.optional(error)
-                self.alertMessageTitle = Localized.error.text
-                self.alertMessage = error.localizedDescription
+                alertMessageTitle = Localized.error.text
+                alertMessage = error.localizedDescription
             }
-            self.loadingMessage = nil
+            loadingMessage = nil
         }
     }
 }

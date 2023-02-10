@@ -435,7 +435,6 @@ extension Localized {
         case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
         case joinPlanetaryRoom = "Join Planetary Room"
         case joinPlanetaryRoomDescription = "Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room."
-        
     }
 }
 
