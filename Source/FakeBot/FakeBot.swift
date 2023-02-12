@@ -14,7 +14,7 @@ enum FakeBotError: Error {
     case notImplemented
 }
 
-class FakeBot: Bot {
+class FakeBot: Bot, @unchecked Sendable {
     
     var isRestoring = false
 
@@ -24,6 +24,7 @@ class FakeBot: Bot {
     
     required init(
         userDefaults: UserDefaults,
+        migrationDelegate: BotMigrationDelegate = MockMigrationManager(),
         preloadedPubService: PreloadedPubService?,
         welcomeService: WelcomeService? = nil
     ) {}
@@ -365,4 +366,10 @@ class FakeBot: Bot {
     func raw(of message: Message, completion: @escaping RawCompletion) {
         completion(.success(""))
     }
+}
+
+class MockMigrationManager: BotMigrationDelegate {
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _, _ in }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in }
+    lazy var onDoneCallback: MigrationOnDoneCallback = { _ in }
 }

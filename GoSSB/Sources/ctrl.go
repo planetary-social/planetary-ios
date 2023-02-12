@@ -1,26 +1,19 @@
 package main
 
+import "C"
 import (
 	"context"
-	"database/sql"
-	"encoding/base64"
-	"fmt"
-	"go.cryptoscope.co/muxrpc/v2"
-	"go.cryptoscope.co/ssb/client"
-	"go.cryptoscope.co/ssb/rooms"
-	refs "go.mindeco.de/ssb-refs"
-	"math"
-	"runtime"
-	"strings"
+	"encoding/json"
 	"time"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb/invite"
-	"go.cryptoscope.co/ssb/repo"
-	mksbot "go.cryptoscope.co/ssb/sbot"
-	multiserver "go.mindeco.de/ssb-multiserver"
-	"golang.org/x/sync/errgroup"
+	"github.com/planetary-social/scuttlego/service/app/commands"
+	"github.com/planetary-social/scuttlego/service/app/queries"
+	"github.com/planetary-social/scuttlego/service/domain/invites"
+	"github.com/planetary-social/scuttlego/service/domain/network"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
+	"github.com/planetary-social/scuttlego/service/domain/rooms/aliases"
+	multiserver "github.com/ssbc/go-ssb-multiserver"
 )
 
 // typedef struct ssbRoomsAliasRegisterReturn {
@@ -31,457 +24,129 @@ import "C"
 
 //export ssbConnectPeer
 func ssbConnectPeer(quasiMs string) bool {
-	defer logPanic()
-
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "ssbConnectPeer", "err", err)
-		}
-	}()
-	lock.Lock()
-	if sbot == nil {
-		lock.Unlock()
-		err = ErrNotInitialized
-		return false
-	}
-	lock.Unlock()
+	defer logError("ssbConnectPeer", &err)
 
-	msAddr, err := multiserver.ParseNetAddress([]byte(quasiMs))
+	service, err := node.Get()
 	if err != nil {
-		err = errors.Wrapf(err, "parsing passed address failed")
+		err = errors.Wrap(err, "could not get the node")
 		return false
 	}
 
-	err = sbot.Network.Connect(longCtx, msAddr.WrappedAddr())
+	addr, identity, err := multiserverAddressToAddressAndRef(quasiMs)
 	if err != nil {
-		err = errors.Wrapf(err, "connecting to %q failed", msAddr.String())
+		err = errors.Wrapf(err, "error parsing the address '%s'", quasiMs)
 		return false
 	}
-	level.Debug(log).Log("event", "dialed", "addr", msAddr.String())
 
-	if servicePlug == nil {
-		return true
+	cmd := commands.Connect{
+		Remote:  identity.Identity(),
+		Address: addr,
 	}
 
-	go func() {
-		time.Sleep(10 * time.Second)
-		tok, ok := servicePlug.HasValidToken()
-		if !ok {
-			log.Log("noToken", "service plugin: token expired or not retreived yet.")
-			return
-		}
-		log.Log("hasToken", tok)
-	}()
+	err = service.App.Commands.Connect.Handle(cmd)
+	if err != nil {
+		err = errors.Wrapf(err, "connecting to '%s' failed", quasiMs)
+		return false
+	}
 
 	return true
-}
-
-//export ssbConnectPeers
-func ssbConnectPeers(count uint32) bool {
-	defer logPanic()
-
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbConnectPeers", "n", count, "err", retErr)
-		}
-	}()
-	lock.Lock()
-	if sbot == nil {
-		lock.Unlock()
-		retErr = ErrNotInitialized
-		return false
-	}
-	lock.Unlock()
-
-	addrs, err := queryAddresses(count)
-	if err != nil {
-		retErr = errors.Wrap(err, "querying addresses")
-		return false
-	}
-
-	if len(addrs) == 0 {
-		_, resetAddrErr := viewDB.Exec(`UPDATE addresses set use=true`)
-		retErr = errors.Errorf("no peers available (%v)", resetAddrErr)
-		return false
-	}
-
-	newConns := make(chan *addrRow)
-	connErrs := make(chan *connectResult, len(addrs))
-
-	var wg errgroup.Group
-
-	for n := count/2 + 1; n > 0; n-- {
-		wg.Go(makeConnWorker(newConns, connErrs))
-	}
-
-	// TODO: make connections until we have as much as we wont
-	// the current code will cancel early if all the connections fail
-	// would be better if it asked for more addresses and kept trying
-	// but this is good enough for now
-	for _, row := range addrs {
-		newConns <- row
-	}
-	close(newConns)
-
-	err = wg.Wait()
-	close(connErrs)
-	if err != nil {
-		retErr = errors.Wrap(err, "waiting for conn workers")
-		return false
-	}
-
-	tx, err := viewDB.Begin()
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to make transaction on viewdb")
-		return false
-	}
-
-	for res := range connErrs {
-		if res.err == nil {
-			_, err := tx.Exec(`UPDATE addresses set worked_last=strftime("%Y-%m-%dT%H:%M:%f", 'now') where address_id = ?`, res.row.addrID)
-			if err != nil {
-				retErr = errors.Wrapf(err, "updateFailed: working pub %d", res.row.addrID)
-				return false
-			}
-			continue
-		}
-
-		_, err := tx.Exec(`UPDATE addresses set worked_last=0,last_err=?,use=false where address_id = ?`, res.err.Error(), res.row.addrID)
-		if err != nil {
-			retErr = errors.Wrapf(err, "updateFailed: failing pub %d", res.row.addrID)
-			return false
-		}
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to commit viewdb transaction")
-		return false
-	}
-	return true
-}
-
-type connectResult struct {
-	row *addrRow
-	err error
-}
-
-func makeConnWorker(workCh <-chan *addrRow, connErrs chan<- *connectResult) func() error {
-	return func() error {
-		for row := range workCh {
-			ctx, _ := context.WithTimeout(longCtx, 10*60*time.Second) // kill connections after a while until we have live streaming
-			err := sbot.Network.Connect(ctx, row.addr.WrappedAddr())
-			level.Info(log).Log("event", "ssbConnectPeers", "dial", row.addrID, "err", err)
-			connErrs <- &connectResult{
-				row: row,
-				err: err,
-			}
-		}
-		return nil
-	}
-}
-
-type addrRow struct {
-	addrID uint
-	addr   *multiserver.NetAddress
-}
-
-func queryAddresses(count uint32) ([]*addrRow, error) {
-	var (
-		addresses []*addrRow
-		i         = 0
-		rows      *sql.Rows
-		err       error
-	)
-
-	// keep the query failures in a seperate transaction and commit it after the parse
-	tx, txErr := viewDB.Begin()
-	if txErr != nil {
-		return nil, errors.Wrap(txErr, "queryAddresses: failed to make transaction for failures")
-	}
-
-	rows, err = tx.Query(`SELECT address_id, address from addresses where use = true order by worked_last desc LIMIT ?;`, count)
-	if err != nil {
-		tx.Rollback()
-		return nil, errors.Wrap(err, "queryAddresses: sql query failed")
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var (
-			id   uint
-			addr string
-		)
-		err := rows.Scan(&id, &addr)
-		if err != nil {
-			return nil, errors.Wrapf(err, "queryAddresses: sql scan of row %d failed", i)
-		}
-
-		msAddr, err := multiserver.ParseNetAddress([]byte(addr))
-		if err != nil {
-			_, execErr := tx.Exec(`UPDATE addresses set use=false,last_err=? where address_id = ?`, err.Error(), id)
-			if execErr != nil {
-				tx.Rollback()
-				return nil, errors.Wrapf(execErr, "queryAddresses(%d): failed to update parse error row %d", i, id)
-			}
-			continue
-		}
-
-		addresses = append(addresses, &addrRow{
-			addrID: id,
-			addr:   msAddr,
-		})
-
-		i++
-	}
-
-	if err := rows.Err(); err != nil {
-		level.Error(log).Log("where", "qryAddrs", "err", err)
-		tx.Rollback()
-		return nil, err
-	}
-
-	commitErr := tx.Commit()
-	return addresses, errors.Wrap(commitErr, "broken address record update failed")
 }
 
 //export ssbDisconnectAllPeers
 func ssbDisconnectAllPeers() bool {
-	defer logPanic()
+	var err error
+	defer logError("ssbDisconnectAllPeers", &err)
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return false
 	}
 
-	sbot.Network.GetConnTracker().CloseAll()
-	level.Debug(log).Log("event", "disconnect")
-	runtime.GC()
+	err = service.App.Commands.DisconnectAll.Handle()
+	if err != nil {
+		err = errors.Wrap(err, "command error")
+		return false
+	}
+
 	return true
 }
 
+// ssbFeedReplicate temporarily adds a feed to the list of replicated feeds. This can be useful to for example add
+// a specific feed to the list of replicated feeds when a user views it.
+//
 //export ssbFeedReplicate
-func ssbFeedReplicate(ref string, yes bool) {
-	defer logPanic()
-
+func ssbFeedReplicate(ref string) {
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "ssbFeedReplicate", "err", err)
-		}
-	}()
+	defer logError("ssbFeedReplicate", &err)
 
-	fr, err := refs.ParseFeedRef(ref)
+	service, err := node.Get()
 	if err != nil {
-		err = errors.Wrapf(err, "replicate: invalid feed reference")
+		err = errors.Wrap(err, "could not get the node")
 		return
 	}
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		return
-	}
-
-	if yes {
-		sbot.Replicate(fr)
-	} else {
-		sbot.DontReplicate(fr)
-	}
-}
-
-//export ssbFeedBlock
-func ssbFeedBlock(ref string, yes bool) {
-	defer logPanic()
-
-	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "ssbFeedBlock", "err", err)
-		}
-	}()
-
-	fr, err := refs.ParseFeedRef(ref)
+	feedRef, err := refs.NewFeed(ref)
 	if err != nil {
-		err = errors.Wrapf(err, "block: invalid feed reference")
+		err = errors.Wrap(err, "could not create a ref")
 		return
 	}
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		err = ErrNotInitialized
+	cmd, err := commands.NewDownloadFeed(feedRef)
+	if err != nil {
+		err = errors.Wrap(err, "could not create a command")
 		return
 	}
 
-	if yes {
-		sbot.Block(fr)
-	} else {
-		sbot.Unblock(fr)
+	err = service.App.Commands.DownloadFeed.Handle(cmd)
+	if err != nil {
+		err = errors.Wrap(err, "command error")
+		return
 	}
 }
 
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
-	defer logPanic()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		level.Error(log).Log("event", "null content failed", "err", ErrNotInitialized)
-		return -1
-	}
-
-	ref, err := refs.ParseFeedRef(author)
-	if err != nil {
-		level.Error(log).Log("event", "null content failed", "err", err)
-		return -1
-	}
-
-	if sequence > math.MaxUint32 {
-		level.Warn(log).Log("event", "null content failed", "whops", "this is a very long feed")
-	}
-
-	err = sbot.NullContent(ref, uint(sequence))
-	if err != nil {
-		level.Error(log).Log("event", "null content failed", "err", err)
-		return -1
-	}
-
 	return 0
 }
 
 //export ssbNullFeed
 func ssbNullFeed(ref string) int {
-	defer logPanic()
-
-	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "ssbNullFeed", "err", err)
-		}
-	}()
-
-	fr, err := refs.ParseFeedRef(ref)
-	if err != nil {
-		err = errors.Wrapf(err, "NullFeed: invalid feed reference")
-		return -1
-	}
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		return -1
-	}
-
-	if nullErr := sbot.NullFeed(fr); nullErr != nil {
-		err = errors.Wrap(nullErr, "NullFeed: bot action failed")
-		return -1
-	}
-
 	return 0
-}
-
-//export ssbDropIndexData
-func ssbDropIndexData() bool {
-	defer logPanic()
-
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbDropIndexData", "err", retErr)
-		}
-	}()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot != nil {
-		retErr = fmt.Errorf("sbot still running")
-		return false
-	}
-
-	if err := mksbot.DropIndicies(repo.New(repoDir)); err != nil {
-		retErr = errors.Wrap(err, "failed to drop index data")
-		return false
-	}
-
-	return true
 }
 
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
-	defer logPanic()
+	var err error
+	defer logError("ssbInviteAccept", &err)
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbInviteAccept", "err", retErr)
-		}
-	}()
-
-	tok, err := invite.ParseLegacyToken(token)
+	service, err := node.Get()
 	if err != nil {
-		retErr = err
+		err = errors.Wrap(err, "could not get the node")
 		return false
 	}
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		err = ErrNotInitialized
+	invite, err := invites.NewInviteFromString(token)
+	if err != nil {
+		err = errors.Wrap(err, "could not create an invite")
 		return false
 	}
 
-	ctx, cancel := context.WithCancel(longCtx)
-	err = invite.Redeem(ctx, tok, sbot.KeyPair.ID(), client.WithSHSAppKey(appKey))
+	cmd := commands.RedeemInvite{
+		Invite: invite,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	if err == nil {
-		return true
-	}
-
-	// don't throw error if pub is already following user
-	if strings.Contains(err.Error(), "already following") {
-		return true
-	}
-
-	// don't throw error if token was already redeemed by user
-	if strings.Contains(err.Error(), "method:invite,use is not in list of allowed methods") {
-		return true
-	}
-
-	retErr = err
-	return false
-}
-
-// todo: add make:bool parameter
-func getAuthorID(ref refs.FeedRef) (int64, error) {
-	strRef := ref.String()
-
-	var peerID int64
-	err := viewDB.QueryRow(`SELECT id FROM authors where author = ?`, strRef).Scan(&peerID)
+	err = service.App.Commands.RedeemInvite.Handle(ctx, cmd)
 	if err != nil {
-		if err != sql.ErrNoRows {
-			return -1, errors.Wrap(err, "getAuthorID: find query error")
-		}
-
-		res, err := viewDB.Exec(`INSERT INTO authors (author) VALUES (?)`, strRef)
-		if err != nil {
-			return -1, errors.Wrap(err, "getAuthorID: insert query error")
-		}
-		newID, err := res.LastInsertId()
-		if err != nil {
-			return -1, errors.Wrap(err, "getAuthorID: insert result error")
-		}
-
-		peerID = newID
+		err = errors.Wrap(err, "command failed")
+		return false
 	}
-	return peerID, nil
+
+	return true
 }
 
 const (
@@ -491,107 +156,84 @@ const (
 )
 
 //export ssbRoomsAliasRegister
-func ssbRoomsAliasRegister(address, alias string) C.ssbRoomsAliasRegisterReturn_t {
-	defer logPanic()
+func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasRegisterReturn_t {
+	var err error
+	defer logError("ssbRoomsAliasRegister", &err)
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
-		}
-	}()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
-	ctx, cancel := context.WithCancel(longCtx)
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	alias, err := aliases.NewAlias(aliasString)
+	if err != nil {
+		err = errors.Wrap(err, "could not create an alias")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	cmd, err := commands.NewRoomsAliasRegister(identity, addr, alias)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second)
 	defer cancel()
 
-	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-
-	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	aliasURL, err := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
 	if err != nil {
-		retErr = errors.Wrap(err, "could not parse the address")
-		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	}
-
-	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to create a tcp client")
-		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
-	}
-	defer inviteClient.Close()
-
-	registration := rooms.Registration{
-		Alias:  alias,
-		UserID: sbot.KeyPair.ID(),
-		RoomID: netAddress.Ref,
-	}
-
-	signatureString := base64.StdEncoding.EncodeToString(registration.Sign(sbot.KeyPair.Secret()).Signature) + ".sig.ed25519"
-
-	params := []interface{}{
-		alias,
-		signatureString,
-	}
-
-	var ret string
-	err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "registerAlias"}, params...)
-	if err != nil {
-		retErr = errors.Wrap(err, "async call failed")
-		if strings.Contains(err.Error(), "is already taken") {
+		if errors.Is(err, commands.ErrRoomAliasAlreadyTaken) {
 			return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterAliasAlreadyTaken}
 		}
+		err = errors.Wrap(err, "error calling the handler")
 		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
-	return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(ret)}
+	return C.ssbRoomsAliasRegisterReturn_t{alias: C.CString(aliasURL.String())}
 }
 
 //export ssbRoomsAliasRevoke
-func ssbRoomsAliasRevoke(address, alias string) bool {
-	defer logPanic()
+func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
+	var err error
+	defer logError("ssbRoomsAliasRevoke", &err)
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbRoomsAliasRegister", "err", retErr)
-		}
-	}()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return false
 	}
 
-	ctx, cancel := context.WithCancel(longCtx)
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return false
+	}
+
+	alias, err := aliases.NewAlias(aliasString)
+	if err != nil {
+		err = errors.Wrap(err, "could not create an alias")
+		return false
+	}
+
+	cmd, err := commands.NewRoomsAliasRevoke(identity, addr, alias)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return false
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
 	defer cancel()
 
-	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-
-	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	err = service.App.Commands.RoomsAliasRevoke.Handle(ctx, cmd)
 	if err != nil {
-		retErr = errors.Wrap(err, "could not parse the address")
-		return false
-	}
-
-	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to create a tcp client")
-		return false
-	}
-	defer inviteClient.Close()
-
-	var ret string
-	err = inviteClient.Async(ctx, &ret, muxrpc.TypeString, muxrpc.Method{"room", "revokeAlias"}, alias)
-	if err != nil {
-		retErr = errors.Wrap(err, "async call failed")
+		err = errors.Wrap(err, "error calling the handler")
 		return false
 	}
 
@@ -599,47 +241,63 @@ func ssbRoomsAliasRevoke(address, alias string) bool {
 }
 
 //export ssbRoomsListAliases
-func ssbRoomsListAliases(address string) *C.char {
-	defer logPanic()
+func ssbRoomsListAliases(addressString string) *C.char {
+	var err error
+	defer logError("ssbRoomsListAliases", &err)
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("where", "ssbRoomsListAliases", "err", retErr)
-		}
-	}()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return nil
 	}
 
-	ctx, cancel := context.WithCancel(longCtx)
+	addr, identity, err := multiserverAddressToAddressAndRef(addressString)
+	if err != nil {
+		err = errors.Wrap(err, "error parsing the address")
+		return nil
+	}
+
+	query, err := queries.NewRoomsListAliases(identity, addr)
+	if err != nil {
+		err = errors.Wrap(err, "could not create the command")
+		return nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
 	defer cancel()
 
-	opts := []client.Option{client.WithSHSAppKey(appKey), client.WithContext(ctx)}
-
-	netAddress, err := multiserver.ParseNetAddress([]byte(address))
+	aliases, err := service.App.Queries.RoomsListAliases.Handle(ctx, query)
 	if err != nil {
-		retErr = errors.Wrap(err, "could not parse the address")
+		err = errors.Wrap(err, "error calling the handler")
 		return nil
 	}
 
-	inviteClient, err := client.NewTCP(sbot.KeyPair, netAddress.WrappedAddr(), opts...)
-	if err != nil {
-		retErr = errors.Wrap(err, "failed to create a tcp client")
-		return nil
+	result := make([]string, 0)
+	for _, alias := range aliases {
+		result = append(result, alias.String())
 	}
-	defer inviteClient.Close()
 
-	var ret string
-	err = inviteClient.Async(ctx, &ret, muxrpc.TypeJSON, muxrpc.Method{"room", "listAliases"}, sbot.KeyPair.ID())
+	j, err := json.Marshal(result)
 	if err != nil {
-		retErr = errors.Wrap(err, "list aliases rpc call error")
+		err = errors.Wrap(err, "error marshaling the result")
 		return nil
 	}
 
-	return C.CString(ret)
+	return C.CString(string(j))
+}
+
+func multiserverAddressToAddressAndRef(multiserverAddress string) (network.Address, refs.Identity, error) {
+	netAddress, err := multiserver.ParseNetAddress([]byte(multiserverAddress))
+	if err != nil {
+		return network.Address{}, refs.Identity{}, errors.Wrap(err, "could not parse the address")
+	}
+
+	addr := network.NewAddress(netAddress.Addr.String())
+
+	identity, err := refs.NewIdentity(netAddress.Ref.String())
+	if err != nil {
+		return network.Address{}, refs.Identity{}, errors.Wrap(err, "error creating an identity ref")
+	}
+
+	return addr, identity, nil
 }

@@ -24,9 +24,9 @@ typedef struct ssbRoomsAliasRegisterReturn {
 } ssbRoomsAliasRegisterReturn_t;
 
 typedef bool (notifyBlobHandle_t)(int64_t, const char*);
-
-typedef void (notifyNewBearertokenHandle_t)(const char*, int64_t);
-
+typedef void (notifyMigrationOnRunning_t)(int64_t migrationIndex, int64_t migrationsCount);
+typedef void (notifyMigrationOnError_t)(int64_t migrationIndex, int64_t migrationsCount, int64_t error);
+typedef void (notifyMigrationOnDone_t)(int64_t migrationsCount);
 typedef void (fsckProgressHandle_t)(double, const char*);
 
 extern const char *ssbVersion(void);
@@ -34,11 +34,9 @@ extern const char *ssbVersion(void);
 extern char* ssbGenKey(void);
 
 extern bool ssbBotIsRunning(void);
-extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyNewBearertokenHandle_t tokenFn);
+extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyMigrationOnRunning_t migrationOnRunningFn, notifyMigrationOnError_t migrationOnErrorFn, notifyMigrationOnDone_t migrationOnDoneFn);
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
-
-extern bool ssbDropIndexData(void);
 
 extern int ssbOffsetFSCK(uint32_t mode, fsckProgressHandle_t updateFn);
 extern char* ssbHealRepo(void);
@@ -48,8 +46,10 @@ extern bool ssbInviteAccept(gostring_t token);
 extern int ssbNullContent(gostring_t author, uint64_t sequence);
 extern int ssbNullFeed(gostring_t author);
 
-extern void ssbFeedReplicate(gostring_t feed, bool yes);
-extern void ssbFeedBlock(gostring_t feed, bool yes);
+extern void ssbFeedReplicate(gostring_t feed);
+
+extern bool ssbBanListAdd(gostring_t hash);
+extern bool ssbBanListRemove(gostring_t hash);
 
 extern char* ssbPublish(gostring_t content);
 extern char* ssbPublishPrivate(gostring_t content, gostring_t recipients);
@@ -60,21 +60,18 @@ extern char* ssbTestingPublishAs(gostring_t nick, gostring_t content);
 extern char* ssbTestingPublishPrivateAs(gostring_t nick, gostring_t content, gostring_t recipients);
 
 extern char* ssbRepoStats(void);
-extern int ssbReplicateUpTo(void);
 
 extern char* ssbStreamRootLog(uint64_t seq, int limit);
 extern char* ssbStreamPrivateLog(uint64_t seq, int limit);
 extern char* ssbStreamPublishedLog(int64_t seq);
 
 // returns true if the connection was successfull
-extern bool ssbConnectPeers(uint32_t count);
 extern bool ssbConnectPeer(gostring_t multisrv);
 
 extern bool ssbDisconnectAllPeers(void);
 extern uint ssbOpenConnections(void);
 
 extern bool ssbBlobsWant(gostring_t ref);
-extern int ssbBlobsGet(gostring_t ref);
 extern char* ssbBlobsAdd(int32_t fd);
 
 extern char* ssbRoomsListAliases(gostring_t address);

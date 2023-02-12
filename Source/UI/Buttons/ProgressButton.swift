@@ -15,7 +15,7 @@ protocol ProgressButtonViewModel: ObservableObject {
     var progress: Float { get }
 }
 
-/// A view to show the user while they are upgrading from GoBot version "beta1" to "beta2"
+/// A button that fills itself with color to indicate finite progress.
 struct ProgressButton<ViewModel>: View where ViewModel: ProgressButtonViewModel {
     
     @ObservedObject var viewModel: ViewModel

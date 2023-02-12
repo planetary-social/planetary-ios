@@ -7,339 +7,226 @@ package main
 // #include <sys/types.h>
 // #include <stdint.h>
 // #include <stdbool.h>
+//
 // static bool callNotifyBlobs(void *func, int64_t size, const char *blobRef)
 // {
 //     return ((bool(*)(int64_t, const char *))func)(size, blobRef);
 // }
 //
-// static void callNotifyNewBearerToken(void *func, const char *token, int64_t expires)
+// static void callNotifyMigrationOnRunning(void *func, int64_t migrationIndex, int64_t migrationsCount)
 // {
-//     return ((void(*)(const char *, int64_t))func)(token, expires);
+//     ((void(*)(int64_t, int64_t))func)(migrationIndex, migrationsCount);
+// }
+//
+// static void callNotifyMigrationOnError(void *func, int64_t migrationIndex, int64_t migrationsCount, int64_t error)
+// {
+//     ((void(*)(int64_t, int64_t, int64_t))func)(migrationIndex, migrationsCount, error);
+// }
+//
+// static void callNotifyMigrationOnDone(void *func, int64_t migrationsCount)
+// {
+//     ((void(*)(int64_t))func)(migrationsCount);
 // }
 import "C"
 
 import (
-	"context"
-	"database/sql"
-	"encoding/base64"
 	"encoding/json"
-	stderr "errors"
 	"fmt"
 	"io"
-	"net"
 	"os"
 	"path/filepath"
 	"runtime/debug"
 	"strings"
-	"sync"
 	"time"
 	"unsafe"
+	"verseproj/scuttlegobridge/bindings"
+	"verseproj/scuttlegobridge/logging"
 
-	"github.com/cryptix/go/logging/countconn"
-	kitlog "github.com/go-kit/kit/log"
-	"github.com/go-kit/kit/log/level"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb"
-	"go.cryptoscope.co/ssb/plugins2"
-	mksbot "go.cryptoscope.co/ssb/sbot"
-	refs "go.mindeco.de/ssb-refs"
-
-	"verseproj/scuttlegobridge/servicesplug"
+	"github.com/planetary-social/scuttlego/service/app/queries"
+	"github.com/sirupsen/logrus"
 )
 
-var versionString *C.char
+const (
+	kilobyte = 1000
+	megabyte = 1000 * kilobyte
+)
+const (
+	memoryLimitInBytes = 500 * megabyte
+)
 
 func init() {
-	versionString = C.CString("beta2")
-	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(os.Stderr))
-	log = kitlog.With(log, "warning", "pre-init")
+	initPreInitLogger()
 
-	debug.SetGCPercent(10)
+	debug.SetMemoryLimit(memoryLimitInBytes)
 }
 
-// globals
 var (
-	log kitlog.Logger
-
-	lock    sync.Mutex
-	sbot    *mksbot.Sbot
-	repoDir string
-
-	servicePlug *servicesplug.Plugin
-
-	viewDB *sql.DB
-
-	longCtx  context.Context
-	shutdown context.CancelFunc
-
-	appKey string
+	log  logging.Logger
+	node = bindings.NewNode()
 )
-
-var ErrNotInitialized = stderr.New("gosbot: not initialized or crashed")
 
 //export ssbVersion
 func ssbVersion() *C.char {
-	return versionString
+	return C.CString("project-raptor") // todo remove this function, I don't see why we need this
 }
-
-// Stop halts the running sbot and sets it's address to nil
-// call BotInit again to boot a new one
-// if this fails you might need to crash the app and do a full restart
 
 //export ssbBotStop
 func ssbBotStop() bool {
-	defer logPanic()
+	var err error
+	defer logError("ssbBotStop", &err)
 
-	lock.Lock()
-	defer lock.Unlock()
-	stopEvt := kitlog.With(log, "event", "botStop")
-	if sbot == nil {
-		level.Warn(stopEvt).Log("msg", "sbot already stopped")
-		return true
+	err = node.Stop()
+	if err != nil {
+		err = errors.Wrap(err, "failed to stop the node")
 	}
-
-	shutdown()
-	sbot.Shutdown()
-	if sbot.Network != nil {
-		ct := sbot.Network.GetConnTracker()
-		sbot.Network.Close()
-
-		// we have to set the network peer nil so that it isn't closed again by sbot.Close
-		sbot.Network = nil
-
-		level.Debug(stopEvt).Log("msg", "shutdown")
-		var waited uint
-		for ct.Count() > 0 && waited < 10 {
-			ct.CloseAll()
-			waited++
-			time.Sleep(1 * time.Second)
-			count := ct.Count()
-			if count > 0 {
-				level.Warn(stopEvt).Log("msg", "still open connectionss", "n", count)
-			}
-		}
-	}
-
-	if err := sbot.Close(); err != nil {
-		level.Error(stopEvt).Log("err", err)
-		return false
-	}
-	sbot = nil
-
-	viewDB.Close()
 
 	return true
 }
 
 //export ssbBotIsRunning
 func ssbBotIsRunning() bool {
-	lock.Lock()
-	defer lock.Unlock()
-	return sbot != nil
+	return node.IsRunning()
 }
 
-type botConfig struct {
-	AppKey     string
-	HMACKey    string
-	KeyBlob    string
-	Repo       string
-	ListenAddr string
-	Hops       uint
-	Testing    bool
-    DisableEBT bool
-
-	// Pubs that host planetary specific muxrpc calls
-	ServicePubs []refs.FeedRef
-
-	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
-}
-
-var (
-	notifyBlobsHandle          unsafe.Pointer
-	notifyNewBearerTokenHandle unsafe.Pointer
-)
-
+// Three callbacks are used to notify about progress when running migrations:
+//   - OnRunning is called when a particular migration has to be
+//     executed. If all migrations were already executed this callback will not be
+//     called. If status loading fails for a migration this callback will not
+//     be executed.
+//   - OnError is called when a particular migration fails. If this
+//     callback is triggered it is only triggered once and is the last
+//     callback to be triggered. The error parameter specifies the type of encountered error:
+//     0. Unknown error.
+//   - OnDone is called once there are no more migrations remaining to
+//     be executed. This includes the scenario when there are no more migrations to consider.
+//     If this callback is triggered it is triggered only once and is the last callback to be triggered.
+//
+// Example valid call sequences:
+//
+// - no migrations:
+//   - OnDone(count=0)
+//
+// - we had three migrations, they all had to be run and executed correctly:
+//   - OnRunning(index=0, count=3)
+//   - OnRunning(index=1, count=3)
+//   - OnRunning(index=2, count=3)
+//   - OnDone(count=3)
+//
+// - we had three migrations, not all had to be run and they executed correctly:
+//   - OnRunning(index=2, count=3)
+//   - OnDone(count=3)
+//
+// - we had three migrations, they all had to be run and the second one failed:
+//
+//   - OnRunning(index=0, count=3)
+//
+//   - OnRunning(index=1, count=3)
+//
+//   - OnError(index=1, count=3)
+//
+//   - we had three migrations, one migration executed correctly and status
+//     loading failed for the second one:
+//
+//   - OnRunning(index=0, count=3)
+//
+//   - OnError(index=1, count=3)
+//
 //export ssbBotInit
-func ssbBotInit(config string, notifyBlobReceivedFn uintptr, notifyNewBearerTokenFn uintptr) bool {
-	defer logPanic()
-
-	lock.Lock()
-	defer lock.Unlock()
-
+func ssbBotInit(
+	config string,
+	notifyBlobReceivedFn uintptr,
+	notifyMigrationOnRunningFn uintptr,
+	notifyMigrationOnErrorFn uintptr,
+	notifyMigrationOnDoneFn uintptr,
+) bool {
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("event", "bot init failed", "err", err)
-		}
-	}()
+	defer logError("ssbBotInit", &err)
 
-	notifyBlobsHandle = unsafe.Pointer(notifyBlobReceivedFn)
-	notifyNewBearerTokenHandle = unsafe.Pointer(notifyNewBearerTokenFn)
-
-	var cfg botConfig
+	var cfg bindings.BotConfig
 	err = json.NewDecoder(strings.NewReader(config)).Decode(&cfg)
 	if err != nil {
-		err = errors.Wrapf(err, "BotInit: failed to decode config")
+		err = errors.Wrap(err, "failed to decode config")
 		return false
 	}
 
-	appKey = cfg.AppKey
-	keyblob := cfg.KeyBlob
-	repoDir = cfg.Repo
-	listenAddr := cfg.ListenAddr
-	hmacSignKey := cfg.HMACKey
-
-	// create logger that writes to stderr and a timestamped file
-	debugLogs := filepath.Join(repoDir, "debug")
-	os.MkdirAll(debugLogs, 0700)
-	logFileName := fmt.Sprintf("gobot-%s.log", time.Now().Format("2006-01-02_15-04"))
-	logFile, err := os.Create(filepath.Join(debugLogs, logFileName))
+	err = initLogger(cfg)
 	if err != nil {
-		err = errors.Wrapf(err, "BotInit: failed to create debug log file")
-		return false
-	}
-	log = kitlog.NewLogfmtLogger(kitlog.NewSyncWriter(io.MultiWriter(os.Stderr, logFile)))
-	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
-	log = kitlog.With(log, "ts", kitlog.TimestampFormat(time.Now, swiftLikeFormat))
-
-	if cfg.Hops == 0 || cfg.Hops > 3 {
-		level.Warn(log).Log("event", "bot init", "msg", "invalid hops setting, defaulting to 1", "got", cfg.Hops)
-		cfg.Hops = 1
-	}
-
-	if sbot != nil {
-		err = errors.Errorf("BotInit: already initialized")
+		err = errors.Wrap(err, "failed to init logger")
 		return false
 	}
 
-	appKeyBytes, err := base64.StdEncoding.DecodeString(appKey)
-	if err != nil || len(appKeyBytes) != 32 {
-		err = errors.Wrapf(err, "BotInit: failed to decode passed AppKey: %s", appKey)
-		return false
+	onBlobDownloadedFn := func(event queries.BlobDownloaded) error {
+		ref := C.CString(event.Id.String())
+		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
+		C.free(unsafe.Pointer(ref))
+		if !ret {
+			return errors.New("calling C function failed")
+		}
+		return nil
 	}
 
-	longCtx = context.Background()
-	longCtx, shutdown = context.WithCancel(longCtx) // TODO: with Err shutting down
-
-	_, err = os.Stat(repoDir)
-	if err != nil && os.IsNotExist(err) {
-		err = os.MkdirAll(repoDir, 0700)
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: failed to create repo location")
-			shutdown()
-			return false
+	migrationOnRunningFn := func(migrationIndex, migrationsCount int) {
+		if notifyMigrationOnRunningFn != 0 {
+			C.callNotifyMigrationOnRunning(unsafe.Pointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
 		}
 	}
 
-	// open viewdatabase for address-stuff
-	vdbPath := filepath.Join(repoDir, "..", fmt.Sprintf("schema-built%d.sqlite?cache=shared&mode=rwc&_journal_mode=WAL", cfg.ViewDBSchemaVersion))
-	viewDB, err = sql.Open("sqlite3", vdbPath)
+	migrationOnErrorFn := func(migrationIndex, migrationsCount, error int) {
+		if notifyMigrationOnErrorFn != 0 {
+			C.callNotifyMigrationOnError(unsafe.Pointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
+		}
+	}
+
+	migrationOnDoneFn := func(migrationsCount int) {
+		if notifyMigrationOnDoneFn != 0 {
+			C.callNotifyMigrationOnDone(unsafe.Pointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
+		}
+	}
+
+	err = node.Start(cfg, log, onBlobDownloadedFn, migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
 	if err != nil {
-		err = errors.Wrap(err, "BotInit: failed to open view database")
+		err = errors.Wrap(err, "failed to start node")
 		return false
 	}
 
-	if !cfg.Testing {
-		log = level.NewFilter(log, level.AllowInfo())
-	}
-
-	var servicePlug *servicesplug.Plugin
-	if len(cfg.ServicePubs) != 0 {
-		swiftNotifyer := func(tok servicesplug.Token) {
-			cTok := C.CString(tok.Token)
-			unixTs := time.Time(tok.Expires).Unix()
-			C.callNotifyNewBearerToken(notifyNewBearerTokenHandle, cTok, C.longlong(unixTs))
-			C.free(unsafe.Pointer(cTok))
-		}
-		servicePlug = servicesplug.New(cfg.ServicePubs, swiftNotifyer)
-	}
-
-	opts := []mksbot.Option{
-		mksbot.WithInfo(log),
-		mksbot.WithContext(longCtx),
-		mksbot.WithRepoPath(repoDir),
-		mksbot.WithAppKey(appKeyBytes),
-		mksbot.WithJSONKeyPair(keyblob),
-		mksbot.WithListenAddr(listenAddr),
-		mksbot.WithHops(cfg.Hops),
-		mksbot.EnableAdvertismentDialing(true),
-		mksbot.EnableAdvertismentBroadcasts(true),
-		mksbot.WithPreSecureConnWrapper(disableSigPipeWrapper),
-		mksbot.WithPreSecureConnWrapper(func(c net.Conn) (net.Conn, error) {
-			// TODO: make version that prints bytes "unhumanized" so that we can count them
-			return countconn.WrapConn(level.Debug(log), c), nil
-		}),
-		mksbot.DisableEBT(cfg.DisableEBT),
-		mksbot.WithPublicAuthorizer(newAcceptAllAuthorizer()),
-	}
-
-	if hmacSignKey != "" {
-		k, err := base64.StdEncoding.DecodeString(hmacSignKey)
-		if err != nil {
-			err = errors.Wrap(err, "BotInit: invalid signing key")
-			shutdown()
-			return false
-		}
-		opts = append(opts, mksbot.WithHMACSigning(k))
-	}
-
-	if servicePlug != nil {
-		opts = append(opts,
-			mksbot.LateOption(mksbot.MountPlugin(servicePlug, plugins2.AuthPublic)),
-		)
-	}
-
-	sbot, err = mksbot.New(opts...)
-	if err != nil {
-		err = errors.Wrap(err, "BotInit: failed to make sbot instance")
-		shutdown()
-		return false
-	}
-
-	sbot.BlobStore.Register(newEmitter())
-
-	log.Log("event", "serving", "self", sbot.KeyPair.ID().ShortSigil(), "addr", listenAddr)
-	go func() {
-		srvErr := sbot.Network.Serve(longCtx)
-		log.Log("event", "sbot node.Serve returned", "srvErr", srvErr)
-	}()
 	return true
 }
 
 // needed for buildmode c-archive
 func main() {}
 
-type emitter struct {
+func initPreInitLogger() {
+	log = newLogger(os.Stderr)
+	log = log.WithField("warning", "pre-init")
 }
 
-func newEmitter() *emitter {
-	return &emitter{}
-}
-
-func (e emitter) EmitBlob(n ssb.BlobStoreNotification) error {
-	if n.Op != ssb.BlobStoreOpPut {
-		return nil
+func initLogger(config bindings.BotConfig) error {
+	debugLogs := filepath.Join(config.Repo, "debug")
+	if err := os.MkdirAll(debugLogs, 0700); err != nil {
+		return errors.Wrap(err, "could not create logs directory")
 	}
 
-	testRef := C.CString(n.Ref.String())
-	ret := C.callNotifyBlobs(notifyBlobsHandle, C.longlong(n.Size), testRef)
-	C.free(unsafe.Pointer(testRef))
-	log.Log("event", "swift side notified of stored blob", "ret", ret, "blob", n.Ref.String())
+	logFileName := fmt.Sprintf("gobot-%s.log", time.Now().Format("2006-01-02_15-04"))
+	logFile, err := os.Create(filepath.Join(debugLogs, logFileName))
+	if err != nil {
+		return errors.Wrap(err, "failed to create debug log file")
+	}
+
+	log = newLogger(io.MultiWriter(os.Stderr, logFile))
 	return nil
 }
 
-func (e emitter) Close() error {
-	return nil
-}
+func newLogger(w io.Writer) logging.Logger {
+	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
 
-type acceptAllAuthorizer struct {
-}
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = swiftLikeFormat
 
-func newAcceptAllAuthorizer() *acceptAllAuthorizer {
-	return &acceptAllAuthorizer{}
-}
+	logrusLogger := logrus.New()
+	logrusLogger.SetOutput(w)
+	logrusLogger.SetFormatter(customFormatter)
+	logrusLogger.SetLevel(logrus.DebugLevel)
 
-func (a acceptAllAuthorizer) Authorize(remote refs.FeedRef) error {
-	return nil
+	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
 }

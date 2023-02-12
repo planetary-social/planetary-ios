@@ -3,57 +3,69 @@
 
 package main
 
+import "C"
+
 import (
-	"bytes"
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
-	"go.cryptoscope.co/ssb/private/box"
-	"strings"
+	"path/filepath"
+	"verseproj/scuttlegobridge/tests"
 
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb/repo"
-	refs "go.mindeco.de/ssb-refs"
+	"github.com/planetary-social/scuttlego/service/app/commands"
 )
-
-import "C"
 
 //export ssbTestingMakeNamedKey
 func ssbTestingMakeNamedKey(name string) int {
-	testRepo := repo.New(repoDir)
-	h := sha256.New()
-	fmt.Fprint(h, name)
-	_, err := repo.NewKeyPairFromSeed(testRepo, name, refs.RefAlgoFeedSSB1, bytes.NewReader(h.Sum(nil)))
+	defer logPanic()
+
+	var err error
+	defer logError("ssbTestingMakeNamedKey", &err)
+
+	testKeys, err := newTestKeys()
 	if err != nil {
+		err = errors.Wrap(err, "error creating test keys")
 		return -1
 	}
+
+	err = testKeys.CreateNamedKey(name)
+	if err != nil {
+		err = errors.Wrap(err, "error creating named key")
+		return -1
+	}
+
+	log.WithField("function", "ssbTestingMakeNamedKey").WithField("name", name).Debug("created a key")
+
 	return 0
 }
 
 //export ssbTestingAllNamedKeypairs
 func ssbTestingAllNamedKeypairs() *C.char {
-	var err error
-	defer func() {
-		if err != nil {
-			log.Log("where", "ssbTestingPublishAs", "err", err)
-		}
-	}()
-	testRepo := repo.New(repoDir)
+	defer logPanic()
 
-	pairs, err := repo.AllKeyPairs(testRepo)
+	var err error
+	defer logError("ssbTestingAllNamedKeypairs", &err)
+
+	testKeys, err := newTestKeys()
 	if err != nil {
-		err = errors.Wrap(err, "failed to get all keypairs")
+		err = errors.Wrap(err, "error creating test keys")
 		return nil
 	}
 
-	pubkeys := make(map[string]string, len(pairs))
-	for name, kp := range pairs {
-		pubkeys[name] = kp.ID().Sigil()
+	result := make(map[string]string)
+
+	keys, err := testKeys.ListNamedKeys()
+	if err != nil {
+		err = errors.Wrap(err, "error listing named keys")
+		return nil
 	}
 
-	jsonMap, err := json.Marshal(pubkeys)
+	for name, ref := range keys {
+		result[name] = ref.String()
+	}
+
+	jsonMap, err := json.Marshal(result)
 	if err != nil {
-		err = errors.Wrap(err, "failed to marshal pubkey map")
+		err = errors.Wrap(err, "failed to marshal the map")
 		return nil
 	}
 
@@ -62,72 +74,56 @@ func ssbTestingAllNamedKeypairs() *C.char {
 
 //export ssbTestingPublishAs
 func ssbTestingPublishAs(nick, content string) *C.char {
-	lock.Lock()
-	defer lock.Unlock()
+	defer logPanic()
+
 	var err error
-	defer func() {
-		if err != nil {
-			log.Log("where", "ssbTestingPublishAs", "err", err)
-		}
-	}()
-	if sbot == nil {
-		err = ErrNotInitialized
+	defer logError("ssbTestingPublishAs", &err)
+
+	testKeys, err := newTestKeys()
+	if err != nil {
+		err = errors.Wrap(err, "error creating test keys")
 		return nil
 	}
 
-	newRef, err := sbot.PublishAs(nick, json.RawMessage(content))
+	iden, err := testKeys.GetNamedKey(nick)
 	if err != nil {
-		err = errors.Wrapf(err, "ssbTestingPublishAs: failed to publush value as %s", nick)
+		err = errors.Wrap(err, "could not get the identity")
 		return nil
 	}
-	return C.CString(newRef.Key().Sigil())
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return nil
+	}
+
+	cmd, err := commands.NewPublishRawAsIdentity([]byte(content), iden)
+	if err != nil {
+		err = errors.Wrap(err, "error creating a command")
+		return nil
+	}
+
+	ref, err := service.App.Commands.PublishRawAsIdentity.Handle(cmd)
+	if err != nil {
+		err = errors.Wrap(err, "error calling the handler")
+		return nil
+	}
+
+	return C.CString(ref.String())
 }
 
 //export ssbTestingPublishPrivateAs
 func ssbTestingPublishPrivateAs(nick, content, recps string) *C.char {
-	lock.Lock()
-	var err error
-	defer func() {
-		if err != nil {
-			log.Log("where", "publishPrivateAs", "err", err)
-		}
-	}()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
-		return nil
-	}
-	publishLock.Lock()
-	defer publishLock.Unlock()
-	lock.Unlock()
+	return nil // publishing private messages is not supported for now
+}
 
-	var rcpsRefs []refs.FeedRef
-	for i, rstr := range strings.Split(recps, ";") {
-		ref, err := refs.ParseFeedRef(rstr)
-		if err != nil {
-			err = errors.Wrapf(err, "private/publishAs: failed to parse recipient %d", i)
-			return nil
-		}
-		rcpsRefs = append(rcpsRefs, ref)
-	}
-
-	boxedMsg, err := box.NewBoxer(nil).Encrypt(json.RawMessage(content), rcpsRefs...)
+func newTestKeys() (*tests.TestKeys, error) {
+	repository, err := node.Repository()
 	if err != nil {
-		err = errors.Wrap(err, "private/publishAs: failed to box message")
-		return nil
+		return nil, errors.Wrap(err, "could not get the repository")
 	}
 
-	newMsgRef, err := sbot.PublishAs(nick, boxedMsg)
-	if err != nil {
-		err = errors.Wrap(err, "private/publishAs: failed to append value")
-		return nil
-	}
-
-	n := len(boxedMsg)
-	if n > 8*1024 { // TODO: check feed format (gg can do 64k)
-		err = errors.Errorf("private/publishAs: msg too big (got %d bytes)", n)
-		return nil
-	}
-
-	return C.CString(newMsgRef.Key().Sigil())
+	storage := tests.NewStorage(filepath.Join(repository, "testing"))
+	testKeys := tests.NewTestKeys(storage)
+	return testKeys, nil
 }

@@ -149,19 +149,10 @@
 "Localized.noResultsHelp" = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device.";
 "Localized.rooms" = "Rooms";
 "Localized.allCapsCopy" = "COPY";
-"Localized.upgradingAndRestoring" = "Planetary is upgrading and restoring your messages from the network.";
-"Localized.beta1MigrationComplete" = "Tap on the following button to close this screen and go back to your feed.";
-"Localized.beta1MigrationPleaseLeaveAppOpen" = "This may take a while.\n\nPlease leave the app open until it's done.\n";
-"Localized.beta1StartUsingPlanetary" = "If you don't want to wait, you can\nstart using Planetary right away, but:";
-"Localized.startUsingPlanetary" = "start using Planetary";
-"Localized.startUsingPlanetaryTitle" = "Start Using Planetary";
-"Localized.dismissAndStartUsingPlanetary" = "Dismiss and start using Planetary";
 "Localized.percentComplete" = "complete";
-"Localized.beta1Disclaimers" = "\n• you won't be able to post or follow until your whole feed is downloaded\n\n• you may not see all previous messages until they are downloaded.";
-"Localized.areYouSure" = "Are you sure?";
-"Localized.dismissMigrationEarlyMessage" = "This screen will dismiss and you can use Planetary while your data continues downloading in the background. Are you sure?";
-"Localized.confirmCopyToMainNetwork" = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network.";
-"Localized.confirmSkipCopyToMainNetwork" = "You will not be prompted to run this fix again. Are you sure you want to skip it?";
+"Localized.botMigrationBody" = "Planetary needs to upgrade to give you a better user experience.\n\nThis can take a few minutes. Keep the app open until it’s complete.";
+"Localized.botMigrationGenericError" = "The migration failed. Please try again or email support@planetary.social for help. If the error persists, you may need to delete and reinstall the Planetary app.";
+"Localized.startUsingPlanetaryTitle" = "Start Using Planetary";
 
 "Blocking.alertTitle" = "Are you sure you want to ignore {{ name }}? You will no longer see each other's content or be able to contact each other. This will be publicly visible.";
 "Blocking.buttonTitle" = "Yes, ignore {{ name }}";

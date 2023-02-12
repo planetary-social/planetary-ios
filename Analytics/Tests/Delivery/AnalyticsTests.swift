@@ -95,18 +95,8 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
-    func testTrackDidStartBeta1Migration() {
-        analytics.trackDidStartBeta1Migration()
-        XCTAssertTrue(service.tracked)
-    }
-    
     func testTrackDidDropDatabase() {
         analytics.trackDidDropDatabase()
-        XCTAssertTrue(service.tracked)
-    }
-    
-    func testTrackDidDismissBeta1Migration() {
-        analytics.trackDidDismissBeta1Migration(syncedMessages: 0, totalMessages: 0)
         XCTAssertTrue(service.tracked)
     }
 

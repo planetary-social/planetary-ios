@@ -52,7 +52,13 @@ protocol Bot: AnyObject, Sendable {
     var version: String { get }
 
     // MARK: AppLifecycle
-    init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?, welcomeService: WelcomeService?)
+    init(
+        userDefaults: UserDefaults,
+        migrationDelegate: BotMigrationDelegate,
+        preloadedPubService: PreloadedPubService?,
+        welcomeService: WelcomeService?
+    )
+    
     func suspend()
     func exit() async
     func dropDatabase(for configuration: AppConfiguration) async throws
