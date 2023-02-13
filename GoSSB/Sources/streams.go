@@ -71,12 +71,12 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 }
 
 // ssbStreamPublishedLog returns messages published by the current active
-// identity. Only messages with a sequence greater than the sequence of a message
-// pointed to by the provided receive log sequence are returned. This sequence
-// is not the sequence field of Scuttlebutt messages and is simply an index of a message in a list of all received
-// messages. This means that receive log and published log share the sequence numbers. This
-// sequence starts at 0. In order to get the first message you need to pass -1 to this function.
-// The provided sequence must be a sequence of a message belonging to the feed of the currently active local identity.
+// identity. Only messages with receive log sequences greater than the given
+// receive log sequence are returned. This sequence is not the sequence field of
+// Scuttlebutt messages and is simply an index of a message in a list of all
+// received messages. This means that receive log and published log share the
+// sequence numbers. This sequence starts at 0. In order to get the first
+// message you need to pass -1 to this function.
 //
 //export ssbStreamPublishedLog
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
