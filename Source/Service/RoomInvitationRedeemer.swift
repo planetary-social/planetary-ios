@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import Analytics
 
 /// A container for functions to redeem room server invitations.
 enum RoomInvitationRedeemer {
@@ -252,6 +253,7 @@ enum RoomInvitationRedeemer {
                 } catch {
                     throw RoomInvitationError.alreadyJoinedRoom
                 }
+                Analytics.shared.trackDidJoinRoom(at: url.host ?? "error")
                 return
             } else {
                 Log.error("Got failure response from room: \(String(describing: responseData.string))")
