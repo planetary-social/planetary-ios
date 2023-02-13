@@ -190,16 +190,12 @@ class AppConfigurationViewController: DebugTableViewController {
                         
                         Task {
                             AppController.shared.showProgress()
-                            // Make sure the view database is fully synced with the backing store.
-                            var fullySynced = false
-                            while !fullySynced {
-                                do {
-                                    let (_, finished) = try await bot.refresh(load: .long)
-                                    fullySynced = finished
-                                } catch {
-                                    self.alert(error: error)
-                                    return
-                                }
+                            // Make a log refresh so that database is fully synced with the backing store.
+                            do {
+                                try await bot.refresh(load: .long)
+                            } catch {
+                                self.alert(error: error)
+                                return
                             }
                             let statistics = await bot.statistics()
                             self.configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages

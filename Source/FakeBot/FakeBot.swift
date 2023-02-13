@@ -211,7 +211,7 @@ class FakeBot: Bot, @unchecked Sendable {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(.success(true), 0)
+            completion(.success(()), 0)
         }
     }
 
