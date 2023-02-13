@@ -31,8 +31,17 @@ public extension Analytics {
     
     /// Should fire when a user follows or joins a pub.
     /// - Parameter multipeerAddress: the address of the pub in multipeer format.
-    func trackDidJoinPub(at multipeerAddress: String) {
-        service.track(event: .did, element: .action, name: "join_pub", params: ["address": multipeerAddress])
+    func trackDidJoinPub(at multiPeerAddress: String) {
+        service.track(event: .did, element: .action, name: "join_pub", params: ["address": multiPeerAddress])
+    }
+    
+    func trackDidJoinRoom(at multiPeerAddress: String) {
+        service.track(event: .did, element: .action, name: "join_room", params: ["address": multiPeerAddress])
+    }
+    
+    func trackDidRegister(alias: String, in multiPeerAddress: String) {
+        let params = ["address": multiPeerAddress, "alias": alias]
+        service.track(event: .did, element: .action, name: "register_alias", params: params)
     }
 
     func trackDidBlockIdentity() {

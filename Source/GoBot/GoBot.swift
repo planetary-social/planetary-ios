@@ -423,6 +423,8 @@ class GoBot: Bot, @unchecked Sendable {
                 )
             )
             
+            Analytics.shared.trackDidRegister(alias: alias, in: room.address.string)
+            
             return aliasModel
         }
         return try await task.value

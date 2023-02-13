@@ -277,6 +277,8 @@
 "ManageRelays.roomHelpText" = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own.";
 "ManageRelays.deleteRoom" = "Delete";
 "ManageRelays.deleteRoomConfirmation" = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room.";
+"ManageRelays.joinPlanetaryRoom" = "Join Planetary Room";
+"ManageRelays.joinPlanetaryRoomDescription" = "Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.";
 
 "Message.noPostsTitle" = "No posts here yet";
 "Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
