@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/planetary-social/scuttlego/service/domain/graph"
 	"os"
 	"runtime"
 	"strings"
@@ -36,19 +37,26 @@ type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
 type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
-	AppKey     string `json:"AppKey"`
-	HMACKey    string `json:"HMACKey"`
-	KeyBlob    string `json:"KeyBlob"`
-	Repo       string `json:"Repo"`
-	OldRepo    string `json:"OldRepo"`
-	ListenAddr string `json:"ListenAddr"`
-	Hops       uint   `json:"Hops"`
-	Testing    bool   `json:"Testing"`
+	// AppKey is a base64 encoded network key.
+	AppKey string `json:"AppKey"`
 
-	// Pubs that host planetary specific muxrpc calls
-	ServicePubs []refs.FeedRef `json:"ServicePubs"`
+	// HMACKey is a base64 encoded message HMAC.
+	HMACKey string `json:"HMACKey"`
 
-	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
+	// Hops is the number of hops that should be replicated automatically.
+	// WARNING:
+	// 0 == followees
+	// 1 == followees of followees
+	// etc
+	Hops uint `json:"Hops"`
+
+	KeyBlob             string         `json:"KeyBlob"`
+	Repo                string         `json:"Repo"`
+	OldRepo             string         `json:"OldRepo"`
+	ListenAddr          string         `json:"ListenAddr"`
+	Testing             bool           `json:"Testing"`
+	ServicePubs         []refs.FeedRef `json:"ServicePubs"`
+	ViewDBSchemaVersion uint           `json:"SchemaVersion"`
 }
 
 type Node struct {
@@ -228,10 +236,14 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	// todo do something with hops
-	// todo do something service pubs?
+	hops, err := graph.NewHops(int(swiftConfig.Hops + 1))
+	if err != nil {
+		return di.Config{}, errors.Wrap(err, "error creating hops")
+	}
 
 	logger := NewLoggerAdapter(bindingsLogger)
+
+	// todo do something service pubs?
 
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
@@ -243,6 +255,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
+		Hops: &hops,
 		ModifyBadgerOptions: func(options di.BadgerOptions) {
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
