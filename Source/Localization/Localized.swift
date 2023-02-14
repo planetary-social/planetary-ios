@@ -80,6 +80,7 @@ enum Localized: String, Localizable, CaseIterable {
     case posted = "{{somebody}} posted"
     case replied = "{{somebody}} replied"
     case liked = "{{somebody}} liked"
+    case reacted = "{{somebody}} reacted"
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
     case startedBlocking = "{{somebody}} blocked"

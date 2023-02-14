@@ -10,8 +10,6 @@ import SwiftUI
 
 struct MessageHeaderView: View {
     var message: Message
-    var attributedTitle: AttributedString?
-    var shouldDisplayOptions = true
 
     @EnvironmentObject
     private var appController: AppController
@@ -22,9 +20,9 @@ struct MessageHeaderView: View {
                 appController.open(identity: message.author)
             } label: {
                 HStack(alignment: .center) {
-                    AvatarView(metadata: message.metadata.author.about?.image, size: 24)
-                    if let title = attributedTitle {
-                        Text(title)
+                    AvatarView(metadata: author.image, size: 24)
+                    if let header = attributedHeader {
+                        Text(header)
                             .lineLimit(1)
                             .font(.subheadline)
                             .foregroundColor(Color.secondaryTxt)
@@ -33,9 +31,7 @@ struct MessageHeaderView: View {
                     }
                 }
             }
-            if shouldDisplayOptions {
-                MessageOptionsButton(message: message)
-            }
+            MessageOptionsButton(message: message)
         }
         .padding(10)
     }
@@ -73,6 +69,8 @@ struct MessageHeaderView: View {
             } else {
                 localized = .stoppedFollowing
             }
+        case .vote:
+            localized = .reacted
         default:
             return nil
         }

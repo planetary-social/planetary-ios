@@ -15,6 +15,7 @@ struct MessageCard: View {
 
     var message: Message
     var style = CardStyle.compact
+    var shouldDisplayChain = false
 
     @EnvironmentObject
     private var appController: AppController
@@ -30,102 +31,58 @@ struct MessageCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            switch style {
-            case .compact:
-                HStack(alignment: .center) {
-                    Button {
-                        appController.open(identity: author.identity)
-                    } label: {
-                        HStack(alignment: .center) {
-                            AvatarView(metadata: author.image, size: 24)
-                            if let header = attributedHeader {
-                                Text(header)
-                                    .lineLimit(1)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                    }
-                    MessageOptionsButton(message: message)
+        ZStack {
+            if shouldDisplayChain {
+                Path { path in
+                    path.move(to: CGPoint(x: 35, y: -4))
+                    path.addLine(to: CGPoint(x: 35, y: 15))
                 }
-                .padding(10)
-                Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                if let contact = message.content.contact {
-                    IdentityCard(identity: contact.contact, style: .compact)
-                } else if let post = message.content.post {
-                    Group {
+                .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .fill(Color.secondaryTxt)
+            }
+            VStack(alignment: .leading, spacing: 0) {
+                switch style {
+                case .compact:
+                    MessageHeaderView(message: message)
+                    Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                    if let contact = message.content.contact {
+                        IdentityCard(identity: contact.contact, style: .compact)
+                    } else if let post = message.content.post {
                         CompactPostView(identifier: message.id, post: post)
-                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                        HStack {
-                            StackedAvatarsView(avatars: replies, size: 20, border: 0)
-                            if let replies = attributedReplies {
-                                Text(replies)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                            }
-                            Spacer()
-                            Image.buttonReply
+                    } else if let vote = message.content.vote {
+                        CompactVoteView(identifier: message.id, vote: vote.vote)
+                    }
+                    Divider()
+                        .overlay(Color.cardDivider)
+                        .shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                    HStack {
+                        StackedAvatarsView(avatars: replies, size: 20, border: 0)
+                        if let replies = attributedReplies {
+                            Text(replies)
+                                .font(.subheadline)
+                                .foregroundColor(Color.secondaryTxt)
                         }
-                        .padding(15)
+                        Spacer()
+                        Image.buttonReply
+                    }
+                    .padding(15)
+                case .golden:
+                    if let contact = message.content.contact {
+                        GoldenIdentityView(identity: contact.contact)
+                    } else if let post = message.content.post {
+                        GoldenPostView(identifier: message.id, post: post, author: author)
                     }
                 }
-            case .golden:
-                if let contact = message.content.contact {
-                    GoldenIdentityView(identity: contact.contact)
-                } else if let post = message.content.post {
-                    GoldenPostView(identifier: message.id, post: post, author: author)
-                }
             }
-        }
-        .background(
-            LinearGradient(
-                colors: [Color.cardBgTop, Color.cardBgBottom],
-                startPoint: .top,
-                endPoint: .bottom
+            .background(
+                LinearGradient(
+                    colors: [Color.cardBgTop, Color.cardBgBottom],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             )
-        )
-        .cornerRadius(cornerRadius)
-        .padding(padding)
-    }
-
-    private var attributedHeader: AttributedString? {
-        var localized: Localized
-        switch message.contentType {
-        case .post:
-            guard let post = message.content.post else {
-                return nil
-            }
-            if post.isRoot {
-                localized = .posted
-            } else {
-                localized = .replied
-            }
-        case .contact:
-            guard let contact = message.content.contact else {
-                return nil
-            }
-            if contact.isBlocking {
-                localized = .startedBlocking
-            } else if contact.isFollowing {
-                localized = .startedFollowing
-            } else {
-                localized = .stoppedFollowing
-            }
-        default:
-            return nil
-        }
-        let string = localized.text(["somebody": "**\(author.displayName)**"])
-        do {
-            var attributed = try AttributedString(markdown: string)
-            if let range = attributed.range(of: author.displayName) {
-                attributed[range].foregroundColor = .primaryTxt
-            }
-            return attributed
-        } catch {
-            return nil
+            .cornerRadius(cornerRadius)
+            .padding(padding)
         }
     }
 
@@ -264,7 +221,7 @@ struct MessageCard_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ScrollView {
-                VStack {
+                VStack(spacing: 0) {
                     MessageCard(message: message)
                     MessageCard(message: messageWithOneReply)
                     MessageCard(message: messageWithReplies)

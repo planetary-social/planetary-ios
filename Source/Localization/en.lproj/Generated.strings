@@ -34,6 +34,7 @@
 "Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} replied";
 "Localized.liked" = "{{somebody}} liked";
+"Localized.reacted" = "{{somebody}} reacted";
 "Localized.startedFollowing" = "{{somebody}} started following";
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
 "Localized.startedBlocking" = "{{somebody}} blocked";

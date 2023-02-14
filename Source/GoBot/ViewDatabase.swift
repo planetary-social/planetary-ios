@@ -685,9 +685,29 @@ class ViewDatabase {
         }
     }
     
-    func message(with id: MessageIdentifier) throws -> Message {
-        let msgId = try self.msgID(of: id, make: false)
-        return try post(with: msgId)
+    func message(with identifier: MessageIdentifier) throws -> Message? {
+        let db = try checkoutConnection()
+
+        let qry = msgs
+            .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
+            .join(authors, on: authors[colID] == msgs[colAuthorID])
+            .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
+            .join(.leftOuter, posts, on: posts[colMessageRef] == msgs[colMessageID])
+            .join(.leftOuter, votes, on: votes[colMessageRef] == msgs[colMessageID])
+            .join(.leftOuter, abouts, on: abouts[colAboutID] == msgs[colAuthorID])
+            .filter(msgKeys[colKey] == identifier)
+            .limit(1)
+        if let row = try db.prepare(qry).makeIterator().next() {
+            return try Message(
+                row: row,
+                database: self,
+                useNamespacedTables: true,
+                hasMentionColumns: false,
+                hasReplies: false
+            )
+        } else {
+            return nil
+        }
     }
     
     // MARK: pubs & rooms

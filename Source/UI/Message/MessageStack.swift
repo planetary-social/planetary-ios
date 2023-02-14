@@ -15,10 +15,13 @@ struct MessageStack<DataSource>: View where DataSource: MessageDataSource {
     @ObservedObject
     var dataSource: DataSource
 
+    // If true, it will chain all messages
+    var chained = false
+
     var body: some View {
         InfiniteStack(dataSource: dataSource) { message in
             if let message = message as? Message {
-                MessageButton(message: message)
+                MessageButton(message: message, shouldDisplayChain: chained)
             }
         }
     }

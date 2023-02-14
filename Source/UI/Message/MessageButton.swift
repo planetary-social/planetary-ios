@@ -15,19 +15,16 @@ import SwiftUI
 struct MessageButton: View {
     var message: Message
     var style = CardStyle.compact
+    var shouldDisplayChain = false
 
     @EnvironmentObject
     private var appController: AppController
 
     var body: some View {
         Button {
-            if let contact = message.content.contact {
-                appController.open(identity: contact.contact)
-            } else {
-                appController.open(identifier: message.id)
-            }
+            appController.open(identifier: message.id)
         } label: {
-            MessageCard(message: message, style: style)
+            MessageCard(message: message, style: style, shouldDisplayChain: shouldDisplayChain)
         }
         .buttonStyle(CardButtonStyle())
     }
