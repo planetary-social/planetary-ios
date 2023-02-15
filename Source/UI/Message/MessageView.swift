@@ -57,40 +57,42 @@ struct MessageView: View {
     var body: some View {
         Group {
             if let message = message {
-                ScrollView(.vertical) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        MessageHeaderView(message: message)
-                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                        if let contact = message.content.contact {
-                            IdentityCard(identity: contact.contact, style: .compact)
-                        } else if let post = message.content.post {
-                            CompactPostView(identifier: message.id, post: post, lineLimit: nil)
-                        } else if let vote = message.content.vote {
-                            CompactVoteView(identifier: message.id, vote: vote.vote)
+                VStack(spacing: 0) {
+                    ScrollView(.vertical) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            MessageHeaderView(message: message)
+                            Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
+                            if let contact = message.content.contact {
+                                IdentityCard(identity: contact.contact, style: .compact)
+                            } else if let post = message.content.post {
+                                CompactPostView(identifier: message.id, post: post, lineLimit: nil)
+                            } else if let vote = message.content.vote {
+                                CompactVoteView(identifier: message.id, vote: vote.vote)
+                            }
                         }
-                    }
-                    .background(
-                        LinearGradient(
-                            colors: [Color.cardBgTop, Color.cardBgBottom],
-                            startPoint: .top,
-                            endPoint: .bottom
+                        .background(
+                            LinearGradient(
+                                colors: [Color.cardBgTop, Color.cardBgBottom],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
-                    )
-                    .cornerRadius(20)
-                    .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
-                    .compositingGroup()
-                    .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-                    .shadow(
-                        color: .cardShadowBottom,
-                        radius: 10,
-                        x: 0,
-                        y: 4
-                    )
-                    MessageStack(dataSource: dataSource, chained: true)
-                        .placeholder(when: dataSource.isEmpty, alignment: .top) {
-                            EmptyView()
-                        }
-                    Spacer(minLength: 15)
+                        .cornerRadius(20)
+                        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+                        .compositingGroup()
+                        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
+                        .shadow(
+                            color: .cardShadowBottom,
+                            radius: 10,
+                            x: 0,
+                            y: 4
+                        )
+                        MessageStack(dataSource: dataSource, chained: true)
+                            .placeholder(when: dataSource.isEmpty, alignment: .top) {
+                                EmptyView()
+                            }
+                        Spacer(minLength: 15)
+                    }
                 }
             } else {
                 LoadingView()
@@ -131,8 +133,41 @@ struct MessageView: View {
 }
 
 struct MessageView_Previews: PreviewProvider {
+    static var messageValue: MessageValue {
+        MessageValue(
+            author: "@QW5uYVZlcnNlWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg=.ed25519",
+            content: Content(
+                from: Post(
+                    blobs: nil,
+                    branches: nil,
+                    hashtags: nil,
+                    mentions: nil,
+                    root: nil,
+                    text: .loremIpsum(words: 10)
+                )
+            ),
+            hash: "",
+            previous: nil,
+            sequence: 0,
+            signature: .null,
+            claimedTimestamp: 0
+        )
+    }
+    static var message: Message {
+        var message = Message(
+            key: "@unset",
+            value: messageValue,
+            timestamp: 0
+        )
+        message.metadata = Message.Metadata(
+            author: Message.Metadata.Author(about: About(about: .null, name: "Mario")),
+            replies: Message.Metadata.Replies(count: 0, abouts: Set()),
+            isPrivate: false
+        )
+        return message
+    }
     static var previews: some View {
-        MessageView(identifier: .null, bot: FakeBot())
+        MessageView(message: message, bot: FakeBot())
             .injectAppEnvironment(botRepository: .fake)
     }
 }

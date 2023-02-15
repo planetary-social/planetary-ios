@@ -688,23 +688,85 @@ class ViewDatabase {
     func message(with identifier: MessageIdentifier) throws -> Message? {
         let db = try checkoutConnection()
 
-        let qry = msgs
-            .join(msgKeys, on: msgKeys[colID] == msgs[colMessageID])
-            .join(authors, on: authors[colID] == msgs[colAuthorID])
-            .join(.leftOuter, tangles, on: tangles[colMessageRef] == msgs[colMessageID])
-            .join(.leftOuter, posts, on: posts[colMessageRef] == msgs[colMessageID])
-            .join(.leftOuter, votes, on: votes[colMessageRef] == msgs[colMessageID])
-            .join(.leftOuter, abouts, on: abouts[colAboutID] == msgs[colAuthorID])
-            .filter(msgKeys[colKey] == identifier)
-            .limit(1)
-        if let row = try db.prepare(qry).makeIterator().next() {
-            return try Message(
-                row: row,
-                database: self,
-                useNamespacedTables: true,
-                hasMentionColumns: false,
-                hasReplies: false
-            )
+        // swiftlint:disable indentation_width
+        let query = """
+            SELECT
+              messages.*,
+              posts.*,
+              contacts.*,
+              contact_about.about_id,
+              tangles.*,
+              messagekeys.*,
+              votes.*,
+              authors.*,
+              author_about.*,
+              contact_author.author AS contact_identifier,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  post_blobs
+                WHERE
+                  post_blobs.msg_ref = messages.msg_id
+              ) as has_blobs,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  mention_feed
+                WHERE
+                  mention_feed.msg_ref = messages.msg_id
+              ) as has_feed_mentions,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  mention_message
+                WHERE
+                  mention_message.msg_ref = messages.msg_id
+              ) as has_message_mentions,
+              (
+                SELECT
+                  COUNT(*)
+                FROM
+                  tangles
+                WHERE
+                  root = messages.msg_id
+              ) as replies_count,
+              (
+                SELECT
+                  GROUP_CONCAT(abouts.image, ';')
+                FROM
+                  tangles
+                  JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
+                  JOIN abouts ON abouts.about_id = tangled_message.author_id
+                WHERE
+                  tangles.root = messages.msg_id
+                  AND abouts.image IS NOT NULL
+                LIMIT
+                  2
+              ) as replies
+            FROM
+              messages
+              LEFT JOIN posts ON messages.msg_id = posts.msg_ref
+              LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
+              LEFT JOIN tangles ON tangles.msg_ref = messages.msg_id
+              LEFT JOIN votes ON votes.msg_ref = messages.msg_id
+              JOIN messagekeys ON messagekeys.id = messages.msg_id
+              JOIN authors ON authors.id = messages.author_id
+              LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
+              LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+              LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+            WHERE
+              messagekeys.key = :message_identifier
+            LIMIT
+              1
+        """
+        // swiftlint:enable indentation_width
+
+        let bindings: [String: Binding?] = [":message_identifier": identifier]
+        if let row = try db.prepare(query).bind(bindings).prepareRowIterator().next() {
+            return try Message(row: row, database: self)
         } else {
             return nil
         }
