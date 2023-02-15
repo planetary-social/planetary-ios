@@ -48,7 +48,16 @@ extension Localizable {
     // You can modify this to perform localization, or overrides based on server or other config
     var text: String {
         let bundle = Bundle(for: CurrentBundle.self)
-        return NSLocalizedString(key, tableName: "Generated", bundle: bundle, comment: "")
+        let string = NSLocalizedString(key, tableName: "Generated", bundle: bundle, value: "not_found", comment: "")
+        if string == "not_found" {
+            if let path = bundle.path(forResource: "en", ofType: "lproj"), let bundle = Bundle(path: path) {
+                return bundle.localizedString(forKey: key, value: nil, table: "Generated")
+            } else {
+                return string
+            }
+        } else {
+            return string
+        }
     }
 
     // replaces keys in the string with values from the dictionary passed

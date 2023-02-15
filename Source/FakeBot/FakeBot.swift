@@ -82,8 +82,8 @@ class FakeBot: Bot {
     func insert(room: Room) async throws { }
     func delete(room: Room) async throws { }
     
-    func registeredAliases() async throws -> [RoomAlias] {
-        throw FakeBotError.notImplemented
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
+        return []
     }
     
     func register(alias: String, in: Room) async throws -> RoomAlias {
@@ -306,7 +306,12 @@ class FakeBot: Bot {
     }
     
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
-        completion([], nil)
+        do {
+            let messages = try strategy.fetchMessages(database: ViewDatabase(), userId: 0, limit: limit, offset: offset)
+            completion(messages, nil)
+        } catch {
+            completion([], error)
+        }
     }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {

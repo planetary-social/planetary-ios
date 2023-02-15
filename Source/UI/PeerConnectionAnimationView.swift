@@ -20,10 +20,11 @@ struct PeerConnectionAnimationView: UIViewRepresentable {
     let dotSize: CGFloat = 5
     let insideDiameter: CGFloat = 16
     let outsideDiameter: CGFloat = 29
+    var color = UIColor.defaultTint
 
     func makeUIView(context: Context) -> PeerConnectionAnimation {
         let animationView = PeerConnectionAnimation(
-            color: UIColor.defaultTint,
+            color: color,
             sizeMultiplier: sizeMultiplier,
             lineWidth: lineWidth,
             centerDotSize: centerDotSize,

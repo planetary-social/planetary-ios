@@ -96,7 +96,7 @@ protocol Bot: AnyObject, Sendable {
     func insert(room: Room) async throws
     func delete(room: Room) async throws
     
-    func registeredAliases() async throws -> [RoomAlias]
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias]
     func register(alias: String, in: Room) async throws -> RoomAlias
     func revoke(alias: RoomAlias) async throws
 
@@ -609,6 +609,23 @@ extension Bot {
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }
+            }
+        }
+    }
+
+    /// Fetch all hashtags in the database
+    ///
+    /// - returns: Array with the hashtags found
+    ///
+    /// This function will throw if it cannot access the database
+    func hashtags() async throws -> [Hashtag] {
+        try await withCheckedThrowingContinuation { continuation in
+            hashtags { hashtags, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: hashtags)
             }
         }
     }

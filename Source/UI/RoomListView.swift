@@ -17,8 +17,11 @@ import SwiftUI
     /// A loading message that should be displayed when it is not nil
     var loadingMessage: String? { get }
     
-    /// An error message that should be displayed when it is not nil
-    var errorMessage: String? { get }
+    /// An alert message that should be displayed when it is not nil
+    var alertMessage: String? { get set }
+    
+    /// An alert title that should be displayed when it is not nil
+    var alertMessageTitle: String? { get set }
     
     /// An error message that should be displayed when it is not nil
     func deleteRooms(at: IndexSet)
@@ -34,6 +37,10 @@ import SwiftUI
     
     /// Called when the user pulls to refresh the view.
     func refresh()
+    
+    func joinPlanetaryRoom()
+    
+    var showJoinPlanetaryRoomButton: Bool { get }
 }
 
 /// Shows a list of room servers and allows the user to add and remove them.
@@ -45,7 +52,7 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
     
     private var showAlert: Binding<Bool> {
         Binding {
-            viewModel.errorMessage != nil
+            viewModel.alertMessage != nil
         } set: { _ in
             viewModel.didDismissError()
         }
@@ -131,14 +138,29 @@ struct RoomListView<ViewModel>: View where ViewModel: RoomListViewModel {
                     .font(.subheadline)
                     .padding(.top, 4)
             }
+            
+            if viewModel.showJoinPlanetaryRoomButton {
+                Section {
+                    Button(Localized.Onboarding.joinPlanetarySystem.text) {
+                        viewModel.joinPlanetaryRoom()
+                    }
+                    .foregroundColor(.primaryAction)
+                    Text(Localized.Onboarding.joinPlanetarySystemDescription.text)
+                        .foregroundColor(.secondaryText)
+                        .font(.subheadline)
+                        .padding(.top, 4)
+                        .lineLimit(5)
+                }
+                .listRowBackground(Color.cardBackground)
+            }
         }
         .disabled(showProgress)
         .overlay(loadingIndicator)
         .alert(isPresented: showAlert) {
             // Error alert
             Alert(
-                title: Localized.error.view,
-                message: Text(viewModel.errorMessage ?? "")
+                title: Text(viewModel.alertMessageTitle ?? ""),
+                message: Text(viewModel.alertMessage ?? "")
             )
         }
         .refreshable {
@@ -162,7 +184,11 @@ fileprivate class PreviewViewModel: RoomListViewModel {
     
     @Published var loadingMessage: String?
     
-    @Published var errorMessage: String?
+    @Published var alertMessage: String?
+    
+    @Published var alertMessageTitle: String?
+    
+    @Published var showJoinPlanetaryRoomButton = true
     
     init(rooms: [Room]) {
         self.rooms = rooms
@@ -183,15 +209,17 @@ fileprivate class PreviewViewModel: RoomListViewModel {
                 self.loadingMessage = nil
             }
         } else {
-            errorMessage = "Error joining room"
+            alertMessage = "Error joining room"
         }
     }
     
     func open(_ room: Room) {}
     
     func didDismissError() {
-        errorMessage = nil
+        alertMessage = nil
     }
+    
+    func joinPlanetaryRoom() {}
 }
 
 struct RoomListView_Previews: PreviewProvider {

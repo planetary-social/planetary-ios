@@ -8,6 +8,7 @@
 
 import Foundation
 import Logger
+import Analytics
 
 /// A controller for the `RoomsOnboardingView` utilized in `RoomsOnboardingStep`. Allows users to choose and
 /// join an alias server from a preset list and to optionally register an alias with that server.
@@ -66,7 +67,7 @@ import Logger
     }
     
     func addRoom(from string: String, token: String?) async throws {
-        if let address = MultiserverAddress(string: string) {
+        if let address = MultiserverAddress(string: string.trimmed) {
             do {
                 if let token {
                     try await RoomInvitationRedeemer.redeem(

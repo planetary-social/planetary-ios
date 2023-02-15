@@ -23,6 +23,7 @@ extension Localized {
             Localized.Reporting.self,
             Localized.Debug.self,
             Localized.Error.self,
+            Localized.Reply.self,
             Localized.Channel.self,
             Localized.Post.self,
             Localized.Report.self,
@@ -33,6 +34,8 @@ extension Localized {
             Localized.Help.Notifications.self,
             Localized.Help.Hashtags.self,
             Localized.Help.YourNetwork.self,
+            Localized.Search.self,
+            Localized.Discover.self,
         ]
     }
 }
@@ -42,7 +45,6 @@ extension Localized {
 enum Localized: String, Localizable, CaseIterable {
 
     case planetary = "Planetary"
-
     case error = "Oops"
     case success = "Success!"
     case cancel = "Cancel"
@@ -219,6 +221,7 @@ enum Localized: String, Localizable, CaseIterable {
     case noResultsFound = "No results found."
     case noResultsHelp = "Not seeing what you are looking for? Planetary can only search the people and posts in your network. Right now the search only matches whole words, user IDs, and post IDs. We also may exclude posts older than 6 months to save space on your device."
     case rooms = "Rooms"
+    case allCapsCopy = "COPY"
     
     // MARK: - Beta 1 migration strings
     case upgradingAndRestoring = "Planetary is upgrading and restoring your messages from the network."
@@ -246,6 +249,16 @@ start using Planetary right away, but:
     // MARK: - 814 fix strings
     case confirmCopyToMainNetwork = "Due to a bug your profile was created on Planetary's test network instead of the main SSB network. The app will now copy your profile to the main network."
     case confirmSkipCopyToMainNetwork = "You will not be prompted to run this fix again. Are you sure you want to skip it?"
+}
+
+// MARK: - Discover
+
+extension Localized {
+
+    enum Discover: String, Localizable, CaseIterable {
+        case emptyTitle = "Discover Planetary"
+        case emptyDescription = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following."
+    }
 }
 
 // MARK: - ImagePicker
@@ -420,6 +433,17 @@ extension Localized {
         case roomHelpText = "Room servers allow members to connect to one another and gossip directly, using the server as a tunnel. To add a room you need to ask an existing room member for an invite, or run your own."
         case deleteRoom = "Delete"
         case deleteRoomConfirmation = "Note: This will only remove the room from your local Planetary database. It does not remove you as a member of the room."
+        case joinPlanetaryRoom = "Join Planetary Room"
+        case joinPlanetaryRoomDescription = "Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room."
+    }
+}
+
+// MARK: - Search
+
+extension Localized {
+    enum Search: String, Localizable, CaseIterable {
+        case all = "All"
+        case people = "People"
     }
 }
 
@@ -427,6 +451,7 @@ extension Localized {
     enum Message: String, Localizable, CaseIterable {
         case noPostsTitle = "No posts here yet"
         case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
+        case noPostsInHashtagDescription = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
     }
 }
 // MARK: - Manage Aliases
@@ -575,6 +600,12 @@ extension Localized {
     }
 }
 
+extension Localized {
+    enum Reply: String, Localizable, CaseIterable {
+        case one = "{{ count }} reply"
+        case many = "{{ count }} replies"
+    }
+}
 extension Localized {
     enum Channel: String, Localizable, CaseIterable {
         case one = "channel"

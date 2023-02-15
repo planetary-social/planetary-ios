@@ -66,7 +66,8 @@ struct HelpDrawerView: View {
         self.dismissAction = dismissAction
         let asset = AVAsset(url: videoURL)
         let item = AVPlayerItem(asset: asset)
-        videoPlayer = AVQueuePlayer(playerItem: item)
+        videoPlayer = AVQueuePlayer(items: [item])
+        videoPlayer.actionAtItemEnd = .none
         videoPlayer.isMuted = true
         videoLooper = AVPlayerLooper(player: videoPlayer, templateItem: item)
         
@@ -87,7 +88,9 @@ struct HelpDrawerView: View {
                 SingleAxisGeometryReader(axis: .horizontal) { containerWidth in
                     NoControlsVideoPlayer(player: videoPlayer)
                         .frame(width: containerWidth, height: videoAspectRatio * containerWidth)
-                        .onAppear { videoPlayer.play() }
+                        .onAppear {
+                            videoPlayer.play()
+                        }
                 }
             }
             Spacer()
@@ -226,6 +229,7 @@ struct HelpDrawerView: View {
             )
         }
         .edgesIgnoringSafeArea(.bottom)
+        .frame(idealWidth: 320, idealHeight: 480)
     }
 }
 
@@ -292,26 +296,26 @@ struct HomeHelpView_Previews: PreviewProvider {
         homeTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
-        
+
         // iPhone 13 Pro Max
         homeTabPreview
             .previewLayout(.fixed(width: 428, height: 502))
             .preferredColorScheme(.dark)
-        
+
         // iPhone SE 2nd gen
         homeTabPreview
             .previewLayout(.fixed(width: 375, height: 351))
             .preferredColorScheme(.dark)
-        
+
         notificationsTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.light)
-        
+
         notificationsTabPreview
             .previewLayout(.fixed(width: 375, height: 493))
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraLarge)
-        
+
         // iPad popover size
         iPadPreview
     }

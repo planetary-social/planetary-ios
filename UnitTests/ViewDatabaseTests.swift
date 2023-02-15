@@ -30,7 +30,7 @@ class ViewDatabaseTests: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -Double.infinity)
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([Message].self, from: data)
@@ -583,8 +583,11 @@ class ViewDatabaseTests: XCTestCase {
     }
     
     /// Verify that fillMessages does not fill messages older than 6 months.
-    func testFillMessagesGivenOldMessage() throws {
+    func testFillMessagesGivenOldMessage() async throws {
         // Arrange
+        await vdb.close()
+        let dbPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
+        try self.vdb.open(path: dbPath, user: currentUser, maxAge: 0)
         let messageCount = try vdb.messageCount()
         let oldDate = Date(timeIntervalSince1970: 5)
         let testMessage = MessageFixtures.post(
@@ -876,7 +879,7 @@ class ViewDatabasePreloadTest: XCTestCase {
             
             // open DB
             let  damnPath = self.tmpURL.absoluteString.replacingOccurrences(of: "file://", with: "")
-            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -60 * 60 * 24 * 30 * 48) // 48 month (so roughtly until 2023)
+            try self.vdb.open(path: damnPath, user: currentUser, maxAge: -Double.infinity) 
             
             // get test messages from JSON
             let msgs = try JSONDecoder().decode([Message].self, from: preloadData)

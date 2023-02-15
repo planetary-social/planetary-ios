@@ -6,6 +6,33 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Updated the localization strategy to have a better support of foreign languages. #1065
+- Added the option to join the Planetary room to the Manage Rooms screen. #1137
+
+## [1.3.14] 2023-01-20
+
+- Added a new screen to onboarding that allows you to join the Planetary.name hub server and register an alias. #1004
+
+## [1.3.13] 2023-01-20
+
+- Updated font of level 3 Headings in Posts to stand out from the body. #1034 
+- Fixed an issue where room names would not show up in the connected peers list.
+- Update the color palette used in the navigation bars and the main tab bar. #1059
+- Added new redesigned Discover screen. #587
+- Publish announcement messages of newly registered room aliases on the SSB log. #899
+
+## [1.3.12] 2022-12-13
+
+- Fixed a bug that caused hashtags to not display any posts. #1021
+
+## [1.3.11] 2022-12-09
+
+- Added new redesigned Home screen. #974
+- Added new redesigned Hashtag screen. #975
+## Unreleased
+- Display aliases on profile screen #979
 ## Unreleased 
 - Fix "Oops! Invitation redeemed!" message when successfully redeeming Planetary.name room invitation. #949
 

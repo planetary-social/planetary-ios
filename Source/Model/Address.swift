@@ -149,11 +149,18 @@ typealias KnownPubs = [KnownPub]
 
 /// A message type that announces the registering or revoking of an alias.
 struct RoomAliasAnnouncement: ContentCodable {
-    let type: ContentType
+    var type: ContentType = .roomAliasAnnouncement
     let action: RoomAliasActionType
     let alias: String
     let room: Identity
     let aliasURL: String
+    
+    init(action: RoomAliasActionType, alias: String, room: Identity, aliasURL: String) {
+        self.action = action
+        self.alias = alias
+        self.room = room
+        self.aliasURL = aliasURL
+    }
 
     enum RoomAliasActionType: String, Codable {
         case registered

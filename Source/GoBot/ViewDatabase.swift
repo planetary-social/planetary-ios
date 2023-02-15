@@ -64,7 +64,7 @@ class ViewDatabase {
     private let connectionPool = DatabaseConnectionPool()
 
     // should be changed on login/logout
-    private var currentUserID: Int64 = -1
+    private(set) var currentUserID: Int64 = -1
     private(set) var currentUser: Identity?
 
     // skip messages older than this (6 months)
@@ -1119,25 +1119,29 @@ class ViewDatabase {
         return abouts
     }
     
-    func abouts(withNameLike queryString: String) throws -> [About] {
+    func abouts(filter queryString: String) throws -> [About] {
         let db = try checkoutConnection()
-        
+        let pattern = "%\(queryString)%"
         let query = self.abouts
             .join(self.authors, on: colID == self.abouts[colAboutID])
             .order(self.abouts[colName])
-            .where(colName.like("%\(queryString)%"))
+            .where(colName.like(pattern) || colDescr.like(pattern))
         
         var abouts: [About] = []
         
         let aboutsQuery = try db.prepare(query)
         for about in aboutsQuery {
-            let about = About(
-                about: try about.get(colAuthor),
-                name: try about.get(colName),
-                description: try about.get(colDescr),
-                imageLink: try about.get(colImage)
-            )
-            abouts += [about]
+            do {
+                let about = About(
+                    about: try about.get(colAuthor),
+                    name: try about.get(colName),
+                    description: try about.get(colDescr),
+                    imageLink: try about.get(colImage)
+                )
+                abouts += [about]
+            } catch {
+                Log.optional(error)
+            }
         }
         return abouts
     }
@@ -2097,8 +2101,12 @@ class ViewDatabase {
         )
         for row in query {
             let messageID = row[colMessageRef]
-            let message = try post(with: messageID)
-            messages.append(message)
+            do {
+                let message = try post(with: messageID)
+                messages.append(message)
+            } catch {
+                Log.optional(error)
+            }
         }
         
         return messages

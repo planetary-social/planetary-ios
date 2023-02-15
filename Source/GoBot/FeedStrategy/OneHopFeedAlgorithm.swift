@@ -221,15 +221,16 @@ final class OneHopFeedAlgorithm: NSObject, FeedStrategy {
           ) as replies_count,
           (
             SELECT
-              GROUP_CONCAT(authors.author, ';')
+              GROUP_CONCAT(abouts.image, ';')
             FROM
               tangles
               JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
-              JOIN authors ON authors.id = tangled_message.author_id
+              JOIN abouts ON abouts.about_id = tangled_message.author_id
             WHERE
               tangles.root = messages.msg_id
+              AND abouts.image IS NOT NULL
             LIMIT
-              3
+              2
           ) as replies
         FROM
           messages

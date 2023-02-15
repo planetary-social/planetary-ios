@@ -12,6 +12,8 @@ import Foundation
 /// a name from the Bot and the view database.
 /// Checkout Bot+Hashtag to see how a hashtag is created from String name
 /// and returned as a Hashtag model.
+///
+/// As a side note, we sometimes call it 'Channel' in other parts of the app.
 struct Hashtag: Codable {
 
     // name is raw unadorned characters after #

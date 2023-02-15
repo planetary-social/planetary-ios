@@ -394,12 +394,16 @@ class GoBot: Bot, @unchecked Sendable {
         return try await task.value
     }
     
-    func registeredAliases() async throws -> [RoomAlias] {
-        guard let identity = _identity else {
+    /// Returns registered aliases for the specified identity. If no identities are supplied,
+    ///  the aliases of the current user are returned.
+    func registeredAliases(_ identity: Identity?) async throws -> [RoomAlias] {
+        
+        guard let currentUserIdentity = _identity else {
             throw BotError.notLoggedIn
         }
+        
         let task = Task.detached(priority: .userInitiated) {
-            try self.database.getRegisteredAliasesByUser(user: identity)
+            try self.database.getRegisteredAliasesByUser(user: identity ?? currentUserIdentity)
         }
         return try await task.value
     }
@@ -415,11 +419,25 @@ class GoBot: Bot, @unchecked Sendable {
             guard let url = URL(string: "https://" + alias + "." + room.address.host) else {
                 throw GoBotError.unexpectedFault("Invalid URL")
             }
-            return try self.database.insertRoomAlias(
+            
+            let aliasModel = try self.database.insertRoomAlias(
                 url: url,
                 room: room,
                 user: identity
             )
+            
+            let messageID = try await self.publish(
+                content: RoomAliasAnnouncement(
+                    action: .registered,
+                    alias: alias,
+                    room: room.id,
+                    aliasURL: url.absoluteString
+                )
+            )
+            
+            Analytics.shared.trackDidRegister(alias: alias, in: room.address.string)
+            
+            return aliasModel
         }
         return try await task.value
     }
@@ -538,7 +556,9 @@ class GoBot: Bot, @unchecked Sendable {
             self._statistics.lastRefreshDuration = elapsed
         }
         completion(result, elapsed)
-        NotificationCenter.default.post(name: .didRefresh, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .didRefresh, object: nil)
+        }
     }
     
     // MARK: Invites
@@ -1132,7 +1152,7 @@ class GoBot: Bot, @unchecked Sendable {
     
     func abouts(matching filter: String) async throws -> [About] {
         let dbTask = Task.detached(priority: .high) {
-            try self.database.abouts(withNameLike: filter)
+            try self.database.abouts(filter: filter)
         }
         
         return try await dbTask.value
@@ -1542,7 +1562,12 @@ class GoBot: Bot, @unchecked Sendable {
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion) {
         userInitiatedQueue.async { [database] in
             do {
-                let messages = try strategy.fetchMessages(database: database, userId: 0, limit: limit, offset: offset)
+                let messages = try strategy.fetchMessages(
+                    database: database,
+                    userId: database.currentUserID,
+                    limit: limit,
+                    offset: offset
+                )
                 completion(messages, nil)
             } catch {
                 completion([], error)
