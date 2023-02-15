@@ -43,8 +43,7 @@ class SyncOperation: AsynchronousOperation {
             return
         }
         
-        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.sync(queue: queue, peers: pubs) { [weak self] (error) in
+        Bots.current.sync(queue: dispatchQueue, peers: pubs) { [weak self] (error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             Log.info("Dialing rooms")

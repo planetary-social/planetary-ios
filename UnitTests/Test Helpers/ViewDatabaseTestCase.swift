@@ -17,7 +17,7 @@ class ViewDatabaseTestCase: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        await db.close()
+        await db.close(andOptimize: false)
 
         // get random location for the new database.
         dbURL = URL(fileURLWithPath: NSTemporaryDirectory().appending("/ViewDatabaseTestCase/\(UUID().uuidString)"))
@@ -30,6 +30,6 @@ class ViewDatabaseTestCase: XCTestCase {
 
     override func tearDown() async throws {
         try await super.tearDown()
-        await db.close()
+        await db.close(andOptimize: false)
     }
 }

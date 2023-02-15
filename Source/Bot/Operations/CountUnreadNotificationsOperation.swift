@@ -16,8 +16,7 @@ class CountUnreadNotificationsOperation: AsynchronousOperation {
 
     override func main() {
         Log.info("CountUnreadNotificationsOperation started.")
-        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.numberOfUnreadReports(queue: queue) { [weak self] result in
+        Bots.current.numberOfUnreadReports(queue: dispatchQueue) { [weak self] result in
             switch result {
             case .success(let count):
                 DispatchQueue.main.async {

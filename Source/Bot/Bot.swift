@@ -55,7 +55,12 @@ protocol Bot: AnyObject, Sendable {
     init(userDefaults: UserDefaults, preloadedPubService: PreloadedPubService?, welcomeService: WelcomeService?)
     func suspend()
     func exit() async
+    
+    /// Drops all data from this Bot's database
     func dropDatabase(for configuration: AppConfiguration) async throws
+    
+    /// Drops any view-layer caches from the Bot's database without dropping the source data.
+    func dropViewDatabase() async throws
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
@@ -547,7 +552,7 @@ extension Bot {
     /// of the associated message.
     func numberOfUnreadReports() async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
-            numberOfUnreadReports(queue: DispatchQueue.global(qos: .background)) { result in
+            numberOfUnreadReports(queue: DispatchQueue.global(qos: .utility)) { result in
                 switch result {
                 case .success(let count):
                     continuation.resume(returning: count)

@@ -38,6 +38,10 @@ class FakeBot: Bot {
         fatalError("TODO:\(#function)")
     }
     
+    func dropViewDatabase() async throws {
+        fatalError("TODO:\(#function)")
+    }
+    
     func reports(queue: DispatchQueue, completion: @escaping (([Report], Error?) -> Void)) {
         queue.async {
             completion([], nil)

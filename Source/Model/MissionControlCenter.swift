@@ -30,7 +30,11 @@ class MissionControlCenter {
     private(set) var state: State = .stopped
     
     /// OperationQueue where SendMissionOperation and RefreshOperation are executed
-    let operationQueue = OperationQueue()
+    private let operationQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.qualityOfService = .utility
+        return queue
+    }()
     
     /// Timer for the SendMissionOperation
     private lazy var sendMissionTimer: RepeatingTimer = {

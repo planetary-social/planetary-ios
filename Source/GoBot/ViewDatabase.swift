@@ -206,8 +206,8 @@ class ViewDatabase {
     let colHost = Expression<String>("host")
     let colPort = Expression<Int>("port")
     // colKey
-    
     // Rooms
+    
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     let colRoomID = Expression<Int64?>("room_id")
     let colPubKey = Expression<String>("pub_key")
@@ -261,6 +261,22 @@ class ViewDatabase {
 
         // uncomment to print all statements
         // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
+    }
+    
+    /// Deletes the database at the given path.
+    func dropDatabase(at path: String) async throws {
+        if isOpen() {
+            await close(andOptimize: false)
+        }
+        let path = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
+        let wal = path.appending("-wal")
+        let shm = path.appending("-shm")
+        
+        for filePath in [path, wal, shm] {
+            if FileManager.default.fileExists(atPath: filePath) {
+                try FileManager.default.removeItem(atPath: filePath)
+            }
+        }
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -537,13 +553,15 @@ class ViewDatabase {
     
     /// Closes all connections to the database and performs cleanup tasks. This function will wait for all open
     /// connections to finish their queries before returning.
-    func close() async {
-        optimize: do {
-            try optimize()
-        } catch {
-            if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
+    func close(andOptimize shouldOptimize: Bool = true) async {
+        if shouldOptimize {
+            optimize: do {
+                try optimize()
+            } catch {
+                if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
         }
         
         await connectionPool.close()
