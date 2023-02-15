@@ -273,7 +273,9 @@ class ViewDatabase {
         let shm = path.appending("-shm")
         
         for filePath in [path, wal, shm] {
-            try FileManager.default.removeItem(atPath: filePath)
+            if FileManager.default.fileExists(atPath: filePath) {
+                try FileManager.default.removeItem(atPath: filePath)
+            }
         }
     }
     
