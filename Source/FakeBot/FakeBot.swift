@@ -34,7 +34,9 @@ class FakeBot: Bot, @unchecked Sendable {
     func suspend() { }
     
     func exit() { }
-    
+
+    func syncLoggedIdentity() async throws { }
+
     func dropDatabase(for configuration: AppConfiguration) async throws {
         fatalError("TODO:\(#function)")
     }

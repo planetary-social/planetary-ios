@@ -83,6 +83,11 @@ class BotMigrationCoordinator: BotMigrationDelegate {
     
     @objc func onDone(notification: Notification) {
         Task.detached(priority: .high) { @MainActor [botMigrationController] in
+            do {
+                try await Bots.current.syncLoggedIdentity()
+            } catch {
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
             botMigrationController.isDone = true
             Analytics.shared.trackDidFinishBotMigration()
         }

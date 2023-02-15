@@ -184,6 +184,26 @@ class GoBot: Bot, @unchecked Sendable {
         
         Analytics.shared.trackDidDropDatabase()
     }
+
+    func syncLoggedIdentity() async throws {
+        Log.info("Syncing from Published Log...")
+
+        guard let identity = self._identity else {
+            throw BotError.notLoggedIn
+        }
+        try await withCheckedThrowingContinuation { continuation in
+            userInitiatedQueue.async {
+                do {
+                    try self.database.delete(allFrom: identity)
+                    let publishedPosts = try self.bot.getPublishedLog(after: -1)
+                    try self.database.fillMessages(msgs: publishedPosts)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
     
     private func guessIfRestoring() throws -> Bool {
         guard database.isOpen(),

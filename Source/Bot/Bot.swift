@@ -61,6 +61,9 @@ protocol Bot: AnyObject, Sendable {
     func suspend()
     func exit() async
     func dropDatabase(for configuration: AppConfiguration) async throws
+
+    /// Delete all content from the logged in identity and sync it again using the published log
+    func syncLoggedIdentity() async throws
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
@@ -331,7 +334,7 @@ extension Bot {
             }
         }
     }
-    
+
     func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
