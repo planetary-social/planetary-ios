@@ -64,12 +64,5 @@ func ssbBlobsAdd(fd int32) *C.char {
 		return nil
 	}
 
-	// todo push blobs differently
-	//err = sbot.WantManager.WantWithDist(br, -1)
-	//if err != nil {
-	//	err = errors.Wrap(err, "push: pushing blob to other peers failed")
-	//	return nil
-	//}
-
 	return C.CString(ref.String())
 }
