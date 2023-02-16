@@ -12,4 +12,5 @@ extension UserDefaults {
     static let homeFeedStrategy = "PLHomeFeedStrategy"
     static let discoveryFeedStrategy = "PLDiscoveryFeedStrategy"
     static let appStoreReviewPromptCount = "PLAppStoreReviewPromptCount"
+    static let didMigrateIdentityToScuttlego = "PLDidMigrateIdentityToScuttlego"
 }

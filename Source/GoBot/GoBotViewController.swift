@@ -143,6 +143,25 @@ class GoBotViewController: DebugTableViewController {
         )
     }
 
+    private var syncPublishedLogCell: DebugTableViewCellModel {
+        DebugTableViewCellModel(
+            title: "Sync with Published Log",
+            cellReuseIdentifier: DebugValueTableViewCell.className,
+            valueClosure: { cell in
+                cell.detailTextLabel?.text = "Run"
+            },
+            actionClosure: { _ in
+                Task {
+                    do {
+                        try await GoBot.shared.syncLoggedIdentity()
+                    } catch {
+                        Log.optional(error)
+                    }
+                }
+            }
+        )
+    }
+
     private func purgeRepoAndView() {
         let searchPaths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
         guard let appSupportDir = searchPaths.first else {
@@ -224,7 +243,7 @@ class GoBotViewController: DebugTableViewController {
         if GoBot.shared.bot.isRunning {
             cells += [publishCell]
         }
-        cells += [fullFsckAndRepairCell, deleteRepoCell]
+        cells += [syncPublishedLogCell, fullFsckAndRepairCell, deleteRepoCell]
         return ("Actions", cells, nil)
     }
 
