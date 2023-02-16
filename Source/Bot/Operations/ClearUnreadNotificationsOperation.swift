@@ -16,8 +16,7 @@ class ClearUnreadNotificationsOperation: AsynchronousOperation {
 
     override func main() {
         Log.info("ClearUnreadNotificationsOperation started.")
-        let queue = OperationQueue.current?.underlyingQueue ?? DispatchQueue.global(qos: .background)
-        Bots.current.markAllMessageAsRead(queue: queue) { [weak self] result in
+        Bots.current.markAllMessageAsRead(queue: dispatchQueue) { [weak self] result in
             switch result {
             case .success:
                 DispatchQueue.main.async {

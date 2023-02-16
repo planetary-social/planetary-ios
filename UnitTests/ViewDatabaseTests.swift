@@ -15,7 +15,7 @@ class ViewDatabaseTests: XCTestCase {
         let data = self.data(for: fixture.fileName)
 
         do {
-            await vdb.close()
+            await vdb.close(andOptimize: false)
             
             // get random location for the new db
             self.tmpURL = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "viewDBtest-feedFill2"])!
@@ -47,7 +47,7 @@ class ViewDatabaseTests: XCTestCase {
     
     override func tearDown() async throws {
         try await super.tearDown()
-        await vdb.close()
+        await vdb.close(andOptimize: false)
     }
 
     func test01_stats() {
@@ -864,8 +864,8 @@ class ViewDatabasePreloadTest: XCTestCase {
         let preloadData = self.data(for: "Feed_example_preload.json")
 
         do {
-            await self.vdb.close()
-            
+            await vdb.close(andOptimize: false)
+
             // get random location for the new db
             self.tmpURL = NSURL.fileURL(withPathComponents: [NSTemporaryDirectory(), "viewDBtest-feedFillPreload"])!
 
@@ -895,7 +895,7 @@ class ViewDatabasePreloadTest: XCTestCase {
     
     override func tearDown() async throws {
         try await super.tearDown()
-        await vdb.close()
+        await vdb.close(andOptimize: false)
     }
     
     func test01_stats() {

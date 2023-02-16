@@ -76,7 +76,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     /// Transforms a report into a scheduled `UNNotificationRequest` that the human
     /// can interact with.
     func scheduleLocalNotification(_ report: Report) {
-        Bots.current.about(queue: .global(qos: .background), identity: report.message.author) { (about, error) in
+        Bots.current.about(queue: .global(qos: .utility), identity: report.message.author) { (about, error) in
             Log.optional(error)
             CrashReporting.shared.reportIfNeeded(error: error)
             

@@ -205,6 +205,22 @@ class GoBot: Bot, @unchecked Sendable {
         }
     }
     
+    func dropViewDatabase() async throws {
+        guard let config = config else {
+            throw BotError.notLoggedIn
+        }
+
+        Log.info("Dropping GoBot SQL ViewDatabase...")
+        let databaseDirectory = try config.databaseDirectory()
+        try await database.dropDatabase(at: databaseDirectory)
+        userDefaults.set(0, forKey: greatestRequestedSequenceNumberFromGoBotKey)
+        try self.database.open(
+            path: databaseDirectory,
+            user: config.secret.identity
+        )
+        Log.info("GoBot SQL ViewDatabase dropped successfully.")
+    }
+
     private func guessIfRestoring() throws -> Bool {
         guard database.isOpen(),
             let config = config else {
@@ -1610,7 +1626,7 @@ class GoBot: Bot, @unchecked Sendable {
         serialQueue.async {
             let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
-
+            
             var ownMessages = -1
             self.numberOfPublishedMessagesLock.lock()
             if let identity = self._identity,
@@ -1637,7 +1653,7 @@ class GoBot: Bot, @unchecked Sendable {
                 numberOfPublishedMessages: ownMessages,
                 lastHash: counts?.lastHash ?? ""
             )
-
+            
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             
