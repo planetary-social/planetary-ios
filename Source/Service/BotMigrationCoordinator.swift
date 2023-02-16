@@ -82,15 +82,31 @@ class BotMigrationCoordinator: BotMigrationDelegate {
     }
     
     @objc func onDone(notification: Notification) {
-        Task.detached(priority: .high) { @MainActor [botMigrationController] in
-            do {
-                try await Bots.current.syncLoggedIdentity()
-            } catch {
-                CrashReporting.shared.reportIfNeeded(error: error)
+        let userDefaults = UserDefaults.standard
+        let didMigrateIdentityToScuttlego = userDefaults.bool(forKey: UserDefaults.didMigrateIdentityToScuttlego)
+        let enableDoneButton = { [botMigrationController] in
+            _ = Task.detached(priority: .high) { @MainActor in
+                do {
+                    try await Bots.current.syncLoggedIdentity()
+                    userDefaults.setValue(true, forKey: UserDefaults.didMigrateIdentityToScuttlego)
+                } catch {
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                }
+                botMigrationController.isDone = true
+                Analytics.shared.trackDidFinishBotMigration()
             }
-            botMigrationController.isDone = true
-            Analytics.shared.trackDidFinishBotMigration()
+        }
+        if didMigrateIdentityToScuttlego {
+            enableDoneButton()
+        } else {
+            Task.detached(priority: .high) {
+                do {
+                    try await Bots.current.syncLoggedIdentity()
+                } catch {
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                }
+                enableDoneButton()
+            }
         }
     }
 }
-///
