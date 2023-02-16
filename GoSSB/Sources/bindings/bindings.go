@@ -31,6 +31,9 @@ var ErrNodeIsNotRunning = errors.New("node isn't running")
 const (
 	kibibyte = 1024
 	mebibyte = 1024 * kibibyte
+
+	kilobyte = 1000
+	megabyte = 1000 * kilobyte
 )
 
 type OnBlobDownloadedFn func(downloaded queries.BlobDownloaded) error
@@ -343,7 +346,7 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 }
 
 func bToMb(b uint64) uint64 {
-	return b / 1000 / 1000
+	return b / megabyte
 }
 
 type identityBlob struct {
