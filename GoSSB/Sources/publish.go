@@ -8,6 +8,8 @@ import (
 
 //export ssbPublish
 func ssbPublish(content string) *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbPublish", &err)
 
@@ -34,5 +36,7 @@ func ssbPublish(content string) *C.char {
 
 //export ssbPublishPrivate
 func ssbPublishPrivate(content, recps string) *C.char {
+	defer logPanic()
+
 	return nil
 }

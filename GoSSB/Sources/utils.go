@@ -38,11 +38,15 @@ func ssbGenKey() *C.char {
 
 //export ssbOffsetFSCK
 func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
+	defer logPanic()
+
 	return 0
 }
 
 //export ssbHealRepo
 func ssbHealRepo() *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbHealRepo", &err)
 

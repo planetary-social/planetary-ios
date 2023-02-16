@@ -114,6 +114,8 @@ func ssbTestingPublishAs(nick, content string) *C.char {
 
 //export ssbTestingPublishPrivateAs
 func ssbTestingPublishPrivateAs(nick, content, recps string) *C.char {
+	defer logPanic()
+
 	return nil // publishing private messages is not supported for now
 }
 

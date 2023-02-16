@@ -21,6 +21,8 @@ import (
 //
 //export ssbStreamRootLog
 func ssbStreamRootLog(startSeq int64, limit int) *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbStreamRootLog", &err)
 
@@ -67,6 +69,8 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 
 //export ssbStreamPrivateLog
 func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
+	defer logPanic()
+
 	return C.CString("[]")
 }
 
@@ -80,6 +84,8 @@ func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
 //
 //export ssbStreamPublishedLog
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbStreamPublishedLog", &err)
 
