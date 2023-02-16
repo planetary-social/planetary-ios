@@ -3,14 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"go.cryptoscope.co/ssb/multilogs"
-	refs "go.mindeco.de/ssb-refs"
-	"net"
-	"syscall"
+	"fmt"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/netwrap"
+	"github.com/ssbc/go-ssb"
 )
 
 import "C"
@@ -19,30 +15,40 @@ import "C"
 func ssbBotStatus() *C.char {
 	defer logPanic()
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("BotStatus", retErr)
-		}
-	}()
+	var err error
+	defer logError("ssbBotStatus", &err)
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return nil
 	}
 
-	status, err := sbot.Status()
+	status, err := service.App.Queries.Status.Handle()
 	if err != nil {
-		retErr = errors.Wrap(err, "failed to get current bot status")
+		err = errors.Wrap(err, "could not execute the query")
 		return nil
+	}
+
+	rv := ssb.Status{ // todo return something else, cleanup the interface
+		PID:      1,
+		Peers:    nil,
+		Blobs:    make([]ssb.BlobWant, 0),
+		Root:     1,
+		Indicies: nil,
+	}
+
+	for _, peer := range status.Peers {
+		rv.Peers = append(rv.Peers, ssb.PeerStatus{
+			Addr:  fmt.Sprintf("net:1.2.3.4:8008~shs:%s", peer.Identity.String()), // todo change this so we just return the key
+			Since: "since_is_not_supported",
+		})
 	}
 
 	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(status)
+	err = json.NewEncoder(&buf).Encode(rv)
 	if err != nil {
-		retErr = errors.Wrap(err, "failed to encode result")
+		err = errors.Wrap(err, "failed to encode result")
 		return nil
 	}
 
@@ -53,130 +59,60 @@ func ssbBotStatus() *C.char {
 func ssbOpenConnections() uint {
 	defer logPanic()
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
+	var err error
+	defer logError("ssbOpenConnections", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return 0
 	}
-	return sbot.Network.GetConnTracker().Count()
-}
 
-type repoCounts struct {
-	Feeds    int    `json:"feeds"`
-	Messages int64  `json:"messages"`
-	LastHash string `json:"lastHash"`
+	status, err := service.App.Queries.Status.Handle()
+	if err != nil {
+		err = errors.Wrap(err, "could not execute the query")
+		return 0
+	}
+
+	return uint(len(status.Peers))
 }
 
 //export ssbRepoStats
 func ssbRepoStats() *C.char {
 	defer logPanic()
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("RepoStats", retErr)
-		}
-	}()
+	var err error
+	defer logError("ssbRepoStats", &err)
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
-		return nil
-	}
-
-	var counts repoCounts
-
-	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
-	if !ok {
-		retErr = errors.Errorf("sbot: missing userFeeds index")
-		return nil
-	}
-
-	feeds, err := uf.List()
+	service, err := node.Get()
 	if err != nil {
-		retErr = errors.Wrap(err, "RepoStats: could not get list of feeds")
+		err = errors.Wrap(err, "could not get the node")
 		return nil
 	}
 
-	counts.Feeds = len(feeds)
-
-	sv := sbot.ReceiveLog.Seq()
-	counts.Messages = sv
-	counts.Messages += 1 // 0-indexed (empty is -1)
-
-	lm, err := sbot.ReceiveLog.Get(sv)
-	if err == nil {
-		lastMsg, ok := lm.(refs.Message)
-		if ok {
-			counts.LastHash = lastMsg.Key().String()
-		} else {
-			level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: latest message is not ok"))
-		}
-	} else {
-		level.Warn(log).Log("RepoStats", errors.Wrap(err, "RepoStats: could not get the last message hash"))
-	}
-
-	statBytes, err := json.Marshal(counts)
+	status, err := service.App.Queries.Status.Handle()
 	if err != nil {
-		retErr = errors.Wrap(err, "RepoStats: failed to get marshal json")
+		err = errors.Wrap(err, "could not execute the query")
 		return nil
 	}
-	return C.CString(string(statBytes))
+
+	counts := repoCounts{
+		Feeds:    status.NumberOfFeeds,
+		Messages: int64(status.NumberOfMessages),
+		LastHash: "last_hash_is_not_supported",
+	}
+
+	countsBytes, err := json.Marshal(counts)
+	if err != nil {
+		err = errors.Wrap(err, "failed to marshal json")
+		return nil
+	}
+
+	return C.CString(string(countsBytes))
 }
 
-// a copy of netwrap.Dial
-func dialWithOutSigPipe(addr net.Addr, wrappers ...netwrap.ConnWrapper) (net.Conn, error) {
-	conn, err := net.Dial(addr.Network(), addr.String())
-	if err != nil {
-		return nil, errors.Wrap(err, "error dialing")
-	}
-
-	if err := ignoreSIGPIPE(conn); err != nil {
-		return nil, err
-	}
-
-	for _, cw := range wrappers {
-		conn, err = cw(conn)
-		if err != nil {
-			return nil, errors.Wrap(err, "error wrapping connection")
-		}
-	}
-
-	return conn, nil
-}
-
-func disableSigPipeWrapper(c net.Conn) (net.Conn, error) {
-	if err := ignoreSIGPIPE(c); err != nil {
-		return nil, err
-	}
-	return c, nil
-}
-
-// ignoreSIGPIPE prevents SIGPIPE from being raised on TCP sockets when remote hangs up
-// https://stackoverflow.com/questions/32197319/network-code-stopping-with-sigpipe
-// See also: https://github.com/golang/go/issues/17393
-func ignoreSIGPIPE(c net.Conn) error {
-	s, ok := c.(syscall.Conn)
-	if !ok {
-		return errors.Errorf("IgnoreSigPipe: not a syscallConn: %T", c)
-	}
-	r, e := s.SyscallConn()
-	if e != nil {
-		return errors.Wrap(e, "IgnoreSigPipe: Failed to get SyscallConn")
-	}
-	var setSockErr error
-	e = r.Control(func(fd uintptr) {
-		intfd := int(fd)
-		if e := syscall.SetsockoptInt(intfd, syscall.SOL_SOCKET, syscall.SO_NOSIGPIPE, 1); e != nil {
-			setSockErr = errors.Wrap(e, "IgnoreSigPipe: Failed to set SO_NOSIGPIPE")
-		}
-	})
-	if e != nil {
-		return errors.Wrap(e, "IgnoreSigPipe: Failed to set SO_NOSIGPIPE")
-	}
-	if setSockErr != nil {
-		return setSockErr
-	}
-	return nil
+type repoCounts struct {
+	Feeds    int    `json:"feeds"`
+	Messages int64  `json:"messages"`
+	LastHash string `json:"lastHash"`
 }

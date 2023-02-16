@@ -77,7 +77,7 @@ extension DataKey: Equatable {
 
 // MARK: - Specific keys subclasses
 
-class NetworkKey: DataKey {
+class NetworkKey: DataKey, @unchecked Sendable {
     /// TODO: this should be stored in AppConfiguration and then we can get rid of this
     var name: String {
         var name: String?
@@ -98,4 +98,4 @@ class NetworkKey: DataKey {
     }
 }
 
-class HMACKey: DataKey {}
+class HMACKey: DataKey, @unchecked Sendable {}

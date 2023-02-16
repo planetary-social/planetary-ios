@@ -127,7 +127,7 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(statistics.repo.feedCount, 0)
             XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
             XCTAssertEqual(statistics.repo.messageCount, 0)
-            XCTAssertEqual(statistics.repo.lastHash, "")
+            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exSecondStats.fulfill()
         }
         self.wait(for: [exSecondStats], timeout: 10)
@@ -151,7 +151,7 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.statistics { statistics in
             XCTAssertEqual(statistics.db.lastReceivedMessage, 0)
             XCTAssertEqual(statistics.repo.messageCount, 1)
-            XCTAssertEqual(statistics.repo.lastHash, messageHash)
+            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exStats.fulfill()
         }
         self.wait(for: [exStats], timeout: 10)
@@ -214,7 +214,7 @@ class GoBotOrderedTests: XCTestCase {
         XCTAssertEqual(publishedMessages.last?.contentType, .about)
     }
     
-    /// Tests that the getPublishedLog function returns nil when we pass an out-of-bounds index.
+    /// Tests that the getPublishedLog returns an empty list when we pass an out-of-bounds index.
     func test054_getPublishLogGivenIndexOOB() throws {
         let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: 99_999_999)
         XCTAssertEqual(publishedMessages.count, 0)
@@ -1064,6 +1064,16 @@ class GoBotOrderedTests: XCTestCase {
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
+    }
+    
+    func test999_teardown() async throws {
+            do {
+                try await GoBotOrderedTests.shared.logout()
+            } catch {
+                guard case BotError.notLoggedIn = error else {
+                    throw error
+                }
+            }
     }
 
     // MARK: TODOS

@@ -1,106 +1,44 @@
 package main
 
-import (
-	"fmt"
-	refs "go.mindeco.de/ssb-refs"
-	"io"
-	"os"
-	"strconv"
-
-	"github.com/go-kit/kit/log/level"
-	"github.com/pkg/errors"
-)
-
 import "C"
+import (
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/planetary-social/scuttlego/service/app/commands"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
+)
 
 //export ssbBlobsWant
 func ssbBlobsWant(ref string) bool {
 	defer logPanic()
 
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("where", "blobsWant", "error", err)
-		}
-	}()
+	defer logError("ssbBlobsWant", &err)
 
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return false
 	}
-	lock.Unlock()
 
-	br, err := refs.ParseBlobRef(ref)
+	id, err := refs.NewBlob(ref)
 	if err != nil {
-		err = errors.Wrap(err, "want: invalid argument")
+		err = errors.Wrap(err, "could not create a ref")
 		return false
 	}
-	if _, err := sbot.BlobStore.Get(br); err == nil {
-		return true
+
+	cmd := commands.DownloadBlob{
+		Id: id,
 	}
-	err = sbot.WantManager.Want(br)
+
+	err = service.App.Commands.DownloadBlob.Handle(cmd)
 	if err != nil {
-		err = errors.Wrap(err, "want: wanting failed")
+		err = errors.Wrap(err, "command failed")
 		return false
 	}
+
 	return true
-}
-
-//export ssbBlobsGet
-func ssbBlobsGet(ref string) int {
-	defer logPanic()
-
-	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("ssbBlobsGet", err)
-		}
-	}()
-
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
-		return -1
-	}
-	lock.Unlock()
-	level.Warn(log).Log("deprecated", "ssbBlobsGet", "msg", "this uses os pipe - use direct file system access to get a blob")
-
-	br, err := refs.ParseBlobRef(ref)
-	if err != nil {
-		err = errors.Wrap(err, "blobs/get: invalid blob ref")
-		return -1
-	}
-	blobReader, err := sbot.BlobStore.Get(br)
-	if err != nil {
-		err = errors.Wrap(err, "blobs/get: store get failed")
-		return -1
-	}
-
-	r, w, err := os.Pipe()
-	if err != nil {
-		err = errors.Wrap(err, "pipe: creation failed")
-		return -1
-	}
-
-	fdptr := r.Fd()
-	fd, err := strconv.Atoi(fmt.Sprint(fdptr))
-	if err != nil {
-		err = errors.Wrap(err, "pipe: failed to extract FD")
-		return -1
-	}
-
-	go func() {
-		_, err = io.Copy(w, blobReader)
-		if err != nil {
-			err = errors.Wrap(err, "blobs/get: transfer failed")
-		}
-		w.Close()
-	}()
-
-	return fd
 }
 
 //export ssbBlobsAdd
@@ -108,34 +46,23 @@ func ssbBlobsAdd(fd int32) *C.char {
 	defer logPanic()
 
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("ssbBlobsAdd", err)
-		}
-	}()
+	defer logError("ssbBlobsAdd", &err)
 
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
-		return nil
-	}
-	lock.Unlock()
-
-	f := os.NewFile(uintptr(fd), "newBlob")
-
-	br, err := sbot.BlobStore.Put(f)
+	service, err := node.Get()
 	if err != nil {
-		err = errors.Wrap(err, "blobs/add: put failed")
+		err = errors.Wrap(err, "could not get the node")
 		return nil
 	}
-	f.Close()
 
-	err = sbot.WantManager.WantWithDist(br, -1)
+	cmd := commands.CreateBlob{
+		Reader: os.NewFile(uintptr(fd), "newBlob"),
+	}
+
+	ref, err := service.App.Commands.CreateBlob.Handle(cmd)
 	if err != nil {
-		err = errors.Wrap(err, "push: pushing blob to other peers failed")
+		err = errors.Wrap(err, "command failed")
 		return nil
 	}
 
-	return C.CString(br.String())
+	return C.CString(ref.String())
 }

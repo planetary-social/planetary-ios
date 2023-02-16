@@ -195,6 +195,7 @@ extension Image {
        static let iconPlanetary2 = Image("icon-planetary-2", bundle: Bundle.current)
        static let iconPlanetary3 = Image("icon-planetary-3", bundle: Bundle.current)
        static let iconPlanetary4 = Image("icon-planetary-4", bundle: Bundle.current)
+       static let iconPlanetary5 = Image("icon-planetary-5", bundle: Bundle.current)
        static let iconPlanetarySmall = Image("icon-planetary-small", bundle: Bundle.current)
        static let iconPlanetary = Image("icon-planetary", bundle: Bundle.current)
        static let iconProfile = Image("icon-profile", bundle: Bundle.current)
@@ -264,6 +265,7 @@ extension UIImage {
        static let iconPlanetary2 = UIImage(named: "icon-planetary-2", in: Bundle.current, with: nil)!
        static let iconPlanetary3 = UIImage(named: "icon-planetary-3", in: Bundle.current, with: nil)!
        static let iconPlanetary4 = UIImage(named: "icon-planetary-4", in: Bundle.current, with: nil)!
+       static let iconPlanetary5 = UIImage(named: "icon-planetary-5", in: Bundle.current, with: nil)!
        static let iconPlanetarySmall = UIImage(named: "icon-planetary-small", in: Bundle.current, with: nil)!
        static let iconPlanetary = UIImage(named: "icon-planetary", in: Bundle.current, with: nil)!
        static let iconProfile = UIImage(named: "icon-profile", in: Bundle.current, with: nil)!

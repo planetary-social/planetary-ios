@@ -3,29 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"go.cryptoscope.co/ssb/multilogs"
-	"os"
 	"runtime/debug"
-	"strconv"
-	"time"
-	"unsafe"
 
-	"github.com/go-kit/kit/log/level"
 	"github.com/pkg/errors"
-	"go.cryptoscope.co/ssb"
-	mksbot "go.cryptoscope.co/ssb/sbot"
-	refs "go.mindeco.de/ssb-refs"
+	"github.com/ssbc/go-ssb"
+	refs "github.com/ssbc/go-ssb-refs"
 )
 
-// #include <stdlib.h>
-// #include <sys/types.h>
-// #include <stdint.h>
-// #include <stdbool.h>
-// static void callFSCKProgressNotify(void *func, double percentage, const char* remaining)
-// {
-//   ((void(*)(double, const char*))func)(percentage, remaining);
-// }
 import "C"
 
 //export ssbGenKey
@@ -33,11 +17,7 @@ func ssbGenKey() *C.char {
 	defer logPanic()
 
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("genKeyErr", err)
-		}
-	}()
+	defer logError("ssbGenKey", &err)
 
 	kp, err := ssb.NewKeyPair(nil, refs.RefAlgoFeedSSB1)
 	if err != nil {
@@ -53,116 +33,12 @@ func ssbGenKey() *C.char {
 		return nil
 	}
 
-	return C.CString(string(buf.Bytes()))
+	return C.CString(buf.String())
 }
-
-//export ssbReplicateUpTo
-func ssbReplicateUpTo() int {
-	defer logPanic()
-
-	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("ssbReplicateUpTo", err)
-		}
-	}()
-
-	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
-	if !ok {
-		err = errors.Errorf("sbot: missing userFeeds index")
-		return -1
-	}
-
-	knownFeeds, err := uf.List()
-	if err != nil {
-		err = errors.Wrap(err, "feeds: failed to feed listing")
-		return -1
-	}
-
-	feedCnt := make(map[string]int64, len(knownFeeds))
-	for i, addr := range knownFeeds {
-		subLog, err := uf.Get(addr)
-		if err != nil {
-			err = errors.Wrapf(err, "feeds: log(%d) failed to open", i)
-			return -1
-		}
-
-		ms := subLog.Seq()
-
-		fr, err := refs.NewLegacyFeedRefFromBytes([]byte(addr)) // todo is this correct?
-		if err != nil {
-			err = errors.Wrapf(err, "feeds: log(%d) failed to get current seq", i)
-			return -1
-		}
-
-		feedCnt[fr.String()] = ms
-	}
-
-	r, w, err := os.Pipe()
-	if err != nil {
-		err = errors.Wrap(err, "os.Pipe creation failed")
-		return -1
-	}
-
-	go func() {
-		err = json.NewEncoder(w).Encode(feedCnt)
-		if err != nil {
-			log.Log("ssbReplicateUpTo", err)
-		}
-		err = w.Close()
-		log.Log("ssbReplicateUpTo", "done", "closeErr", err)
-	}()
-
-	fdptr := r.Fd()
-	fd, err := strconv.Atoi(fmt.Sprint(fdptr))
-	if err != nil {
-		err = errors.Wrap(err, "ssbReplicateUpTo: failed to transfer FD")
-		return -1
-	}
-
-	return fd
-}
-
-var lastFSCK mksbot.ErrConsistencyProblems
 
 //export ssbOffsetFSCK
 func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 	defer logPanic()
-
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("ssbOffsetFSCK", retErr, "mode", mode)
-		}
-	}()
-
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
-		return -1
-	}
-
-	fsckMode := mksbot.FSCKMode(mode)
-	if fsckMode != mksbot.FSCKModeLength && fsckMode != mksbot.FSCKModeSequences {
-		retErr = errors.Errorf("fsck: invalid mode %d", fsckMode)
-		return -1
-	}
-
-	progressFuncPtr := unsafe.Pointer(progressFn)
-	wrapFn := func(perc float64, remaining time.Duration) {
-		remainingCstr := C.CString(remaining.String())
-		C.callFSCKProgressNotify(progressFuncPtr, C.double(perc), remainingCstr)
-		C.free(unsafe.Pointer(remainingCstr))
-	}
-
-	retErr = sbot.FSCK(mksbot.FSCKWithMode(fsckMode), mksbot.FSCKWithProgress(wrapFn))
-	if retErr != nil {
-		if constErrs, ok := retErr.(mksbot.ErrConsistencyProblems); ok {
-			lastFSCK = constErrs
-		}
-		return -1
-	}
 
 	return 0
 }
@@ -171,42 +47,21 @@ func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
 func ssbHealRepo() *C.char {
 	defer logPanic()
 
-	var retErr error
-	defer func() {
-		if retErr != nil {
-			level.Error(log).Log("ssbHealRepo", retErr)
-		}
-	}()
+	var err error
+	defer logError("ssbHealRepo", &err)
 
-	lock.Lock()
-	defer lock.Unlock()
-	if sbot == nil {
-		retErr = ErrNotInitialized
-		return nil
+	report := healReport{
+		Authors:  make([]refs.FeedRef, 0),
+		Messages: 0,
 	}
 
-	sbot.Network.GetConnTracker().CloseAll()
-
-	retErr = sbot.HealRepo(lastFSCK)
-	if retErr != nil {
-		return nil
-	}
-
-	var rep healReport
-	for _, errs := range lastFSCK.Errors {
-		rep.Authors = append(rep.Authors, errs.Ref)
-	}
-	rep.Messages = lastFSCK.Sequences.GetCardinality()
-
-	lastFSCK.Sequences = nil
-	lastFSCK.Errors = nil
-
-	bytes, err := json.Marshal(rep)
+	b, err := json.Marshal(report)
 	if err != nil {
-		retErr = errors.Wrap(err, "ssbHealRepo: json encoding report failed")
+		err = errors.Wrap(err, "json marshal failed")
 		return nil
 	}
-	return C.CString(string(bytes))
+
+	return C.CString(string(b))
 }
 
 type healReport struct {
@@ -214,44 +69,21 @@ type healReport struct {
 	Messages uint64
 }
 
-// TODO: probably want to add a blobsNotify-like callback instead to reduce polling
-
-//export planetaryBearerToken
-func planetaryBearerToken() *C.char {
-	defer logPanic()
-
-	lock.Lock()
-	defer lock.Unlock()
-
-	var err error
-	defer func() {
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "planetaryBearerToken error: %+v", err)
-		}
-	}()
-
-	if sbot == nil {
-		err = ErrNotInitialized
-		return nil
+func logError(functionName string, errPtr *error) {
+	if err := *errPtr; err != nil {
+		log.
+			WithError(err).
+			WithField("function", functionName).
+			Error("function returned an error")
 	}
-
-	if servicePlug == nil {
-		err = errors.Errorf("service plugin not loaded")
-		return nil
-	}
-
-	tok, ok := servicePlug.HasValidToken()
-	if !ok {
-		err = errors.Errorf("service plugin: token expired or not retreived yet.")
-		return nil
-	}
-
-	return C.CString(tok)
 }
 
 func logPanic() {
 	if p := recover(); p != nil {
-		level.Error(log).Log("panic", p, "stack", string(debug.Stack()))
+		log.
+			WithField("panic", p).
+			WithField("stack", string(debug.Stack())).
+			Error("encountered a panic")
 		panic(p)
 	}
 }

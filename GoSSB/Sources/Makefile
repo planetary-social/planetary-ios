@@ -54,7 +54,7 @@ $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a: $(foreach ARCH,$(ARCHS_SI
 
 GOROOT ?= $(TEMP_ROOT)/.goroot
 export GOPATH := $(BUILDDIR)/gopath
-export PATH := $(GOROOT)/bin:$(PATH)
+export PATH := /opt/homebrew/bin:$(GOROOT)/bin:$(PATH)
 
 GO := $(GOROOT)/bin/go
 

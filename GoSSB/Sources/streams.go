@@ -1,48 +1,66 @@
 package main
 
+import "C"
 import (
 	"bytes"
-	"context"
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"github.com/go-kit/kit/log/level"
-	"github.com/pkg/errors"
-	"go.cryptoscope.co/luigi"
-	"go.cryptoscope.co/luigi/mfr"
-	"go.cryptoscope.co/margaret"
-	"go.cryptoscope.co/margaret/indexes"
-	"go.cryptoscope.co/ssb/multilogs"
-	"go.mindeco.de/encodedTime"
-	refs "go.mindeco.de/ssb-refs"
-	"go.mindeco.de/ssb-refs/tfk"
 	"time"
+
+	"github.com/pkg/errors"
+	"github.com/planetary-social/scuttlego/service/app/common"
+	"github.com/planetary-social/scuttlego/service/app/queries"
 )
 
-import "C"
-
+// ssbStreamRootLog returns received messages. Only messages with a sequence
+// greater or equal to the given sequence are returned. This sequence is not
+// the sequence field of Scuttlebutt messages and is simply an index of a
+// message in a list of all received messages. This sequence starts at 0.
+// Number of returned messages can be limited. Limit must be a positive number.
+//
 //export ssbStreamRootLog
-func ssbStreamRootLog(seq int64, limit int) *C.char {
+func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 	defer logPanic()
 
 	var err error
-	defer func() {
-		if err != nil {
-			level.Error(log).Log("ssbStreamRootLog", err)
-		}
-	}()
+	defer logError("ssbStreamRootLog", &err)
 
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
 		return nil
 	}
-	lock.Unlock()
 
-	buf, err := newLogDrain(sbot.ReceiveLog, seq, limit)
+	receiveLogSequence, err := common.NewReceiveLogSequence(int(startSeq))
 	if err != nil {
-		err = errors.Wrap(err, "rootLog: draining failed")
+		err = errors.Wrap(err, "could not create a receive log sequence")
+		return nil
+	}
+
+	query, err := queries.NewReceiveLog(
+		receiveLogSequence,
+		limit,
+	)
+	if err != nil {
+		err = errors.Wrap(err, "could not create a query")
+		return nil
+	}
+
+	start := time.Now()
+
+	msgs, err := service.App.Queries.ReceiveLog.Handle(query)
+	if err != nil {
+		err = errors.Wrap(err, "query failed")
+		return nil
+	}
+
+	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamRootLog")
+
+	var buf bytes.Buffer
+	err = marshalAsLog(&buf, msgs)
+	if err != nil {
+		err = errors.Wrap(err, "marshaling failed")
 		return nil
 	}
 
@@ -51,287 +69,95 @@ func ssbStreamRootLog(seq int64, limit int) *C.char {
 
 //export ssbStreamPrivateLog
 func ssbStreamPrivateLog(seq uint64, limit int) *C.char {
-	// return empty array until there is actual UI in place for these
+	defer logPanic()
+
 	return C.CString("[]")
-	//var err error
-	//defer func() {
-	//	if err != nil {
-	//		level.Error(log).Log("ssbStreamPrivateLog", err)
-	//	}
-	//}()
-	//
-	//lock.Lock()
-	//if sbot == nil {
-	//	err = ErrNotInitialized
-	//	return nil
-	//}
-	//lock.Unlock()
-	//
-	//pl, ok := sbot.GetMultiLog("privLogs")
-	//if !ok {
-	//	err = errors.Errorf("sbot: missing privLogs index")
-	//	return nil
-	//}
-	//
-	//userPrivs, err := pl.Get(sbot.KeyPair.ID().StoredAddr())
-	//if err != nil {
-	//	err = errors.Wrap(err, "failed to open user private index")
-	//	return nil
-	//}
-	//
-	//unboxlog := private.NewUnboxerLog(sbot.ReceiveLog, userPrivs, sbot.KeyPair)
-	//buf, err := newLogDrain(unboxlog, seq, limit)
-	//if err != nil {
-	//	err = errors.Wrap(err, "PrivateLog: pipe draining failed")
-	//	return nil
-	//}
-	//
-	//return C.CString(buf.String())
 }
 
+// ssbStreamPublishedLog returns messages published by the current active
+// identity. Only messages with receive log sequences greater than the given
+// receive log sequence are returned. This sequence is not the sequence field of
+// Scuttlebutt messages and is simply an index of a message in a list of all
+// received messages. This means that receive log and published log share the
+// sequence numbers. This sequence starts at 0. In order to get the first
+// message you need to pass -1 to this function.
+//
 //export ssbStreamPublishedLog
-// This function should fetch all the currently logged in user's posts aka the "publishedLog"
-// The seq parameter should be the index of the last known message that the user published in the RootLog.
-// Pass -1 to get the entire log.
 func ssbStreamPublishedLog(afterSeq int64) *C.char {
 	defer logPanic()
 
-	// Please don't judge me too hard I don't know much Go - ml
 	var err error
-	defer func() {
+	defer logError("ssbStreamPublishedLog", &err)
+
+	service, err := node.Get()
+	if err != nil {
+		err = errors.Wrap(err, "could not get the node")
+		return nil
+	}
+
+	query := queries.PublishedLog{
+		LastSeq: nil,
+	}
+
+	if afterSeq >= 0 {
+		var sequence common.ReceiveLogSequence
+		sequence, err = common.NewReceiveLogSequence(int(afterSeq))
 		if err != nil {
-			level.Error(log).Log("ssbStreamPublishLog", err)
+			err = errors.Wrap(err, "failed to create a message sequence")
+			return nil
 		}
-	}()
-
-	lock.Lock()
-	if sbot == nil {
-		err = ErrNotInitialized
-		lock.Unlock()
-		return nil
-	}
-	lock.Unlock()
-
-	uf, ok := sbot.GetMultiLog(multilogs.IndexNameFeeds)
-	if !ok {
-		err = errors.Wrapf(err, "failed to get user feed")
-		return nil
-	}
-
-	addr, err := feedStoredAddr(sbot.KeyPair.ID())
-	if err != nil {
-		err = errors.Wrap(err, "failed to get the address used for storage")
-		return nil
-	}
-
-	publishedLog, err := uf.Get(addr)
-	if err != nil {
-		err = errors.Wrap(err, "userFeeds: could not get log for current user")
-		return nil
+		query.LastSeq = &sequence
 	}
 
 	start := time.Now()
 
-	w := &bytes.Buffer{}
-
-	// This creates a stream of indexes of messages the user has published.
-	src, err := publishedLog.Query(
-		margaret.SeqWrap(true))
-
+	msgs, err := service.App.Queries.PublishedLog.Handle(query)
 	if err != nil {
-		errors.Wrapf(err, "drainLog: failed to open query")
+		err = errors.Wrap(err, "command failed")
 		return nil
 	}
 
-	keyHasher := sha256.New()
-	i := 0
-	w.WriteString("[")
-	for {
-		v, err := src.Next(longCtx)
-		if err != nil {
-			if luigi.IsEOS(err) {
-				break
-			}
-			if margaret.IsErrNulled(errors.Cause(err)) {
-				continue
-			}
-			errors.Wrapf(err, "drainLog: failed to drain log msg:%d", i)
-			return nil
-		}
+	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamPublishedLog")
 
-		sw, ok := v.(margaret.SeqWrapper)
-		if !ok {
-			errors.Errorf("drainLog: want wrapper type got: %T", v)
-			return nil
-		}
-
-		wrappedVal := sw.Value()
-		indexOfMessageInRootLog, ok := wrappedVal.(int64)
-		if !ok {
-			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
-			return nil
-		}
-
-		// Filter out messages before seq
-		// This is an inefficient way to do this. Really we should be adding a filter to the publishLog.Query, but I'm not sure how to convert an index
-		// in the RootLog to an index in the publishedLog
-		if indexOfMessageInRootLog <= afterSeq {
-			continue
-		}
-
-		v, err = sbot.ReceiveLog.Get(indexOfMessageInRootLog)
-		if err != nil {
-			errors.Wrapf(err, "drainLog: could not get message %d from RootLog", indexOfMessageInRootLog)
-			return nil
-		}
-
-		msg, ok := v.(refs.Message)
-		if !ok {
-			errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
-			return nil
-		}
-
-		if i > 0 {
-			w.WriteString(",")
-		}
-
-		var kv struct {
-			refs.KeyValueRaw
-			ReceiveLogSeq int64 // the sequence no of the log its stored in
-			HashedKey     string
-		}
-		kv.ReceiveLogSeq = indexOfMessageInRootLog
-		kv.Key_ = msg.Key()
-		kv.Value = *msg.ValueContent()
-		kv.Timestamp = encodedTime.Millisecs(msg.Received())
-
-		keyHasher.Write([]byte(kv.Key_.String()))
-		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
-
-		if err := json.NewEncoder(w).Encode(kv); err != nil {
-			errors.Wrapf(err, "drainLog: failed to k:v map message %d", i)
-			return nil
-		}
-		keyHasher.Reset()
-
-		i++
+	var buf bytes.Buffer
+	err = marshalAsLog(&buf, msgs)
+	if err != nil {
+		err = errors.Wrap(err, "marshaling failed")
+		return nil
 	}
 
-	w.WriteString("]")
-
-	if i > 0 {
-		durr := time.Since(start)
-		level.Info(log).Log("event", "fresh publishLog chunk", "msgs", i, "took", durr)
-	}
-
-	return C.CString(w.String())
+	return C.CString(buf.String())
 }
 
-func newLogDrain(sourceLog margaret.Log, seq int64, limit int) (*bytes.Buffer, error) {
-	start := time.Now()
+func marshalAsLog(buf *bytes.Buffer, msgs []queries.LogMessage) error {
+	result := make([]logEntry, 0) // prevent empty arrays rendering as null
 
-	w := &bytes.Buffer{}
+	for _, logMsg := range msgs {
+		hasher := sha256.New()
+		hasher.Write([]byte(logMsg.Message.Id().String()))
 
-	src, err := sourceLog.Query(
-		margaret.SeqWrap(true),
-		margaret.Gte(seq),
-		margaret.Limit(limit))
-	if err != nil {
-		return nil, errors.Wrapf(err, "drainLog: failed to open query")
+		entry := logEntry{
+			Key:           logMsg.Message.Id().String(),
+			Value:         logMsg.Message.Raw().Bytes(),
+			Timestamp:     time.Now().UnixMilli(),
+			ReceiveLogSeq: int64(logMsg.Sequence.Int()),
+			HashedKey:     fmt.Sprintf("%x", hasher.Sum(nil)),
+		}
+
+		result = append(result, entry)
 	}
 
-	noNulled := mfr.FilterFunc(func(ctx context.Context, v interface{}) (bool, error) {
-		sw, ok := v.(margaret.SeqWrapper)
-		if ok {
-			if err, ok := sw.Value().(error); ok && margaret.IsErrNulled(err) {
-				return false, nil
-			}
-		}
-		if err, ok := v.(error); ok {
-			if margaret.IsErrNulled(err) {
-				return false, nil
-			}
-			return false, err
-		}
-		return true, nil
-	})
-	src = mfr.SourceFilter(src, noNulled)
-
-	keyHasher := sha256.New()
-	i := 0
-	w.WriteString("[")
-	for {
-		v, err := src.Next(longCtx)
-		if err != nil {
-			if luigi.IsEOS(err) {
-				break
-			}
-			if margaret.IsErrNulled(errors.Cause(err)) {
-				continue
-			}
-			return nil, errors.Wrapf(err, "drainLog: failed to drain log msg:%d", i)
-		}
-
-		sw, ok := v.(margaret.SeqWrapper)
-		if !ok {
-			return nil, errors.Errorf("drainLog: want wrapper type got: %T", v)
-		}
-
-		rxLogSeq := sw.Seq()
-		wrappedVal := sw.Value()
-		msg, ok := wrappedVal.(refs.Message)
-		if !ok {
-			return nil, errors.Errorf("drainLog: want msg type got: %T", wrappedVal)
-		}
-
-		if i > 0 {
-			w.WriteString(",")
-		}
-
-		var kv struct {
-			refs.KeyValueRaw
-			ReceiveLogSeq int64 // the sequence no of the log its stored in
-			HashedKey     string
-		}
-		kv.ReceiveLogSeq = rxLogSeq
-		kv.Key_ = msg.Key()
-		kv.Value = *msg.ValueContent()
-		kv.Timestamp = encodedTime.Millisecs(msg.Received())
-
-		keyHasher.Write([]byte(kv.Key_.String()))
-		kv.HashedKey = fmt.Sprintf("%x", keyHasher.Sum(nil))
-
-		if err := json.NewEncoder(w).Encode(kv); err != nil {
-			return nil, errors.Wrapf(err, "drainLog: failed to k:v map message %d", i)
-		}
-		keyHasher.Reset()
-
-		if i > limit {
-			break
-		}
-		i++
+	if err := json.NewEncoder(buf).Encode(result); err != nil {
+		return errors.Wrap(err, "json marshaling failed")
 	}
 
-	w.WriteString("]")
-
-	if i > 0 {
-		durr := time.Since(start)
-		level.Info(log).Log("event", "fresh viewdb chunk", "msgs", i, "took", durr)
-	}
-	return w, nil
-
+	return nil
 }
 
-func feedStoredAddr(r refs.FeedRef) (indexes.Addr, error) {
-	sr, err := tfk.FeedFromRef(r)
-	if err != nil {
-		return "", fmt.Errorf("failed to make stored feed ref: %w", err)
-	}
-
-	b, err := sr.MarshalBinary()
-	if err != nil {
-		return "", fmt.Errorf("error while marshalling stored feed ref: %w", err)
-	}
-
-	return indexes.Addr(b), nil
+type logEntry struct {
+	Key           string          `json:"key"`
+	Value         json.RawMessage `json:"value"`
+	Timestamp     int64           `json:"timestamp"`
+	ReceiveLogSeq int64           `json:"ReceiveLogSeq"`
+	HashedKey     string          `json:"HashedKey"`
 }

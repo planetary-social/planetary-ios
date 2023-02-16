@@ -61,39 +61,19 @@ public extension Analytics {
         service.track(event: .did, element: .bot, name: "drop_database")
     }
     
-    func trackDidStartBeta1Migration() {
-        service.track(event: .did, element: .bot, name: "beta1_migration_start")
+    func trackDidStartBotMigration() {
+        service.track(event: .did, element: .bot, name: "migration_start")
     }
     
-    func trackDidDismissBeta1Migration(syncedMessages: Int, totalMessages: Int) {
-        let params: [String: Any] = [
-            "synced_messages": syncedMessages,
-            "total_messages": totalMessages
-        ]
-        service.track(event: .did, element: .bot, name: "beta1_migration_dismiss", params: params)
+    func trackDidFailBotMigration(errorCode: Int64) {
+        let params: [String: Any] = ["errorCode": errorCode]
+        service.track(event: .did, element: .bot, name: "migration_failed", params: params)
     }
     
-    func trackDidStart814Fix() {
-        service.track(event: .did, element: .bot, name: "814_fix_start")
+    func trackDidFinishBotMigration() {
+        service.track(event: .did, element: .bot, name: "migration_completed")
     }
     
-    func trackDidComplete814Fix() {
-        service.track(event: .did, element: .bot, name: "814_fix_complete")
-    }
-    
-    func trackDidFail814Fix(error: Error) {
-        service.track(
-            event: .did,
-            element: .bot,
-            name: "814_fix_error",
-            params: ["message": error.localizedDescription]
-        )
-    }
-    
-    func trackDidSkip814Fix() {
-        service.track(event: .did, element: .bot, name: "814_fix_skip")
-    }
-
     func trackBotDidChangeHomeFeedStrategy(to strategyName: String) {
         let params = ["strategy": strategyName]
         service.track(event: .did, element: .bot, name: "changeHomeFeedStrategy", params: params)

@@ -1024,7 +1024,7 @@ class ViewDatabase {
             try db.run(self.msgs.filter(chunk.contains(colMessageID)).delete())
         }
     }
-
+    
     func delete(message: MessageIdentifier) throws {
         let db = try checkoutConnection()
         try db.transaction {

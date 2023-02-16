@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated the localization strategy to have a better support of foreign languages. #1065
 - Added the option to join the Planetary room to the Manage Rooms screen. #1137
 - Add a button to delete the SQL database in the debug settings. #738
+- Change the underlying Secure Scuttlebutt implementation from go-ssb to scuttlego
 
 ## [1.3.14] 2023-01-20
 

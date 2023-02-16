@@ -14,7 +14,7 @@ enum FakeBotError: Error {
     case notImplemented
 }
 
-class FakeBot: Bot {
+class FakeBot: Bot, @unchecked Sendable {
     
     var isRestoring = false
 
@@ -24,6 +24,7 @@ class FakeBot: Bot {
     
     required init(
         userDefaults: UserDefaults,
+        migrationDelegate: BotMigrationDelegate = MockMigrationManager(),
         preloadedPubService: PreloadedPubService?,
         welcomeService: WelcomeService? = nil
     ) {}
@@ -33,7 +34,9 @@ class FakeBot: Bot {
     func suspend() { }
     
     func exit() { }
-    
+
+    func syncLoggedIdentity() async throws { }
+
     func dropDatabase(for configuration: AppConfiguration) async throws {
         fatalError("TODO:\(#function)")
     }
@@ -214,7 +217,7 @@ class FakeBot: Bot {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(.success(true), 0)
+            completion(.success(()), 0)
         }
     }
 
@@ -369,4 +372,10 @@ class FakeBot: Bot {
     func raw(of message: Message, completion: @escaping RawCompletion) {
         completion(.success(""))
     }
+}
+
+class MockMigrationManager: BotMigrationDelegate {
+    lazy var onRunningCallback: MigrationOnRunningCallback = { _, _ in }
+    lazy var onErrorCallback: MigrationOnErrorCallback = { _, _, _ in }
+    lazy var onDoneCallback: MigrationOnDoneCallback = { _ in }
 }

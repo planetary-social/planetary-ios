@@ -52,6 +52,9 @@ struct ScuttlegobotRepoCounts: Decodable {
     let lastHash: String
 }
 
+// these structs are set this way to match the Go code
+// swiftlint:disable identifier_name
+
 struct ScuttlegobotBlobWant: Decodable {
     let Ref: String
     let Dist: Int
@@ -87,8 +90,11 @@ private struct GoBotConfig: Encodable {
     let HMACKey: String
     let KeyBlob: String
     let Repo: String
+    let OldRepo: String
     let ListenAddr: String
-    let Hops: UInt // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be understood slightly differently than in the case of some other clients
+    // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be
+    // understood slightly differently than in the case of some other clients
+    let Hops: UInt
     let SchemaVersion: UInt
 
     let ServicePubs: [Identity]? // identities of services which supply planetary specific services
@@ -101,20 +107,32 @@ private struct GoBotConfig: Encodable {
     #else
     let Testing = false
     #endif
+    
+    func stringRepresentation() throws -> String {
+        let configData = try JSONEncoder().encode(self)
+        if let string = String(data: configData, encoding: .utf8) {
+            return string
+        } else {
+            throw GoBotError.unexpectedFault("Could not encode config to string")
+        }
+    }
 }
+
+// swiftlint:enable identifier_name
 
 class GoBotInternal {
 
     var currentRepoPath: String { self.repoPath }
     private var repoPath: String = "/tmp/FBTT/unset"
+    private var oldRepoPath: String = "/tmp/FBTT/unset"
     
     let name = "GoBot"
 
     var version: String {
-        guard let v = ssbVersion() else {
+        guard let version = ssbVersion() else {
             return "binding error"
         }
-        return String(cString: v)
+        return String(cString: version)
     }
 
     private let queue: DispatchQueue
@@ -135,14 +153,22 @@ class GoBotInternal {
 
     // MARK: login / logout
 
-    func login(network: NetworkKey, hmacKey: HMACKey?, secret: Secret, pathPrefix: String, disableEBT: Bool) throws {
+    func login(
+        network: NetworkKey,
+        hmacKey: HMACKey?,
+        secret: Secret,
+        pathPrefix: String,
+        disableEBT: Bool,
+        migrationDelegate: BotMigrationDelegate
+    ) async throws {
         if self.isRunning {
             guard self.logout() == true else {
                 throw GoBotError.duringProcessing("failure during logging out previous session", GoBotError.alreadyStarted)
             }
         }
         
-        self.repoPath = pathPrefix.appending("/GoSbot")
+        self.oldRepoPath = pathPrefix.appending("/GoSbot")
+        self.repoPath = pathPrefix.appending("/scuttlego")
         
         // TODO: device address enumeration (v6 and v4)
         // https://github.com/VerseApp/ios/issues/82
@@ -150,11 +176,12 @@ class GoBotInternal {
 
         let servicePubs: [Identity] = Environment.PlanetarySystem.systemPubs.map { $0.feed }
 
-        let cfg = GoBotConfig(
+        let config = GoBotConfig(
             AppKey: network.string,
             HMACKey: hmacKey == nil ? "" : hmacKey!.string,
             KeyBlob: secret.jsonString()!,
             Repo: self.repoPath,
+            OldRepo: self.oldRepoPath,
             ListenAddr: listenAddr,
             Hops: 1,
             SchemaVersion: ViewDatabase.schemaVersion,
@@ -162,34 +189,44 @@ class GoBotInternal {
             DisableEBT: disableEBT
         )
         
-        let enc = JSONEncoder()
-        var cfgStr: String
+        var configString: String
         do {
-            let d = try enc.encode(cfg)
-            cfgStr = String(data: d, encoding: .utf8)!
+            configString = try config.stringRepresentation()
         } catch {
             throw GoBotError.duringProcessing("config prep failed", error)
         }
-
-        var worked = false
-        cfgStr.withGoString {
-            cfgGoStr in
-            worked = ssbBotInit(cfgGoStr, self.notifyBlobReceived, self.notifyNewBearerToken)
-        }
         
-        if worked {
-            self.replicate(feed: secret.identity)
-            // make sure internal planetary pubs are authorized for connections
-            for pub in servicePubs {
-                self.replicate(feed: pub)
+        // Run the actual call to ssbBotInit in a detached task and withCheckedThrowingContinuation.
+        // Both are necessary to yield the calling thread.
+        try await Task.detached { [migrationDelegate, configString] in
+            try await withCheckedThrowingContinuation { continuation in
+                var worked = false
+                configString.withGoString { configGoString in
+                    worked = ssbBotInit(
+                        configGoString,
+                        self.notifyBlobReceived,
+                        migrationDelegate.onRunningCallback,
+                        migrationDelegate.onErrorCallback,
+                        migrationDelegate.onDoneCallback
+                    )
+                }
+                
+                if worked {
+                    self.replicate(feed: secret.identity)
+                    // make sure internal planetary pubs are authorized for connections
+                    for pub in servicePubs {
+                        self.replicate(feed: pub)
+                    }
+                    
+                    continuation.resume()
+                } else {
+                    continuation.resume(throwing: GoBotError.unexpectedFault("failed to start"))
+                }
             }
-            
-            return
-        }
-        
-        throw GoBotError.unexpectedFault("failed to start")
+        }.value
     }
-    
+
+    @discardableResult
     func logout() -> Bool {
         guard self.isRunning else {
             Log.info("[GoBot] wanted to logout but bot not running")
@@ -411,34 +448,22 @@ class GoBotInternal {
     
     /// Instructs the bot to stop replicating the current feed without publishing a message on the user's log.
     func ban(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedBlock($0, true)
-        }
+//        feed.withGoString {
+//            ssbFeedBlock($0, true)
+//        }
     }
     
     /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(feed:)`.
     func unban(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedBlock($0, false)
-        }
-    }
-
-    func unblock(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedBlock($0, false)
-        }
+//        feed.withGoString {
+//            ssbFeedBlock($0, false)
+//        }
     }
 
     // TODO: call this to fetch a feed without following it
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
-            ssbFeedReplicate($0, true)
-        }
-    }
-
-    func dontReplicate(feed: FeedIdentifier) {
-        feed.withGoString {
-            ssbFeedReplicate($0, false)
+            ssbFeedReplicate($0)
         }
     }
 
@@ -521,7 +546,7 @@ class GoBotInternal {
         let restIdx = hexRef.index(hexRef.startIndex, offsetBy: 2)
         let rest = String(hexRef[restIdx...])
 
-        var u = URL(fileURLWithPath: self.repoPath)
+        var u = URL(fileURLWithPath: self.oldRepoPath)
         u.appendPathComponent("blobs")
         u.appendPathComponent("sha256")
         u.appendPathComponent(dir)
@@ -553,43 +578,6 @@ class GoBotInternal {
         }
         if !worked {
             throw GoBotError.unexpectedFault("BlobsWant failed")
-        }
-    }
-    
-    // retreive a list of stored feeds and their current sequence number
-    func getFeedList(completion: @escaping (([Identity: Int], Error?) -> Void)) {
-        var err: Error?
-        var feeds = [Identity: Int]()
-        defer {
-            completion(feeds, err)
-        }
-        
-        let intfd = ssbReplicateUpTo()
-        if intfd == -1 {
-            err = GoBotError.unexpectedFault("feedList pre-processing error")
-            return
-        }
-        let file = FileHandle(fileDescriptor: intfd, closeOnDealloc: true)
-        let fld = file.readDataToEndOfFile()
-    
-        /* form of the response is
-              {
-                  "feed1": currSeqAsInt,
-                  "feed2": currSeqAsInt,
-                  "feed3": currSeqAsInt
-              }
-        */
-       
-        do {
-            let json = try JSONSerialization.jsonObject(with: fld, options: [])
-            if let dictionary = json as? [String: Any] {
-                for (feed, val) in dictionary {
-                    feeds[feed] = val as? Int
-                }
-            }
-        } catch {
-            err = GoBotError.duringProcessing("feedList json decoding error:", error)
-            return
         }
     }
     
