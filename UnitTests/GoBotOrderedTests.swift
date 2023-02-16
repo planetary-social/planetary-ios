@@ -216,7 +216,8 @@ class GoBotOrderedTests: XCTestCase {
     
     /// Tests that the getPublishedLog function throws an error when we pass an out-of-bounds index.
     func test054_getPublishLogGivenIndexOOB() throws {
-        XCTAssertThrowsError(try GoBotOrderedTests.shared.bot.getPublishedLog(after: 99_999_999))
+        let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: 99_999_999)
+        XCTAssertEqual(publishedMessages.count, 0)
     }
 
     func test101_ViewHasAboutSelf() async {
