@@ -154,7 +154,9 @@ func (n *Node) Start(
 		defer n.wg.Done()
 
 		if err := service.Run(ctx); err != nil {
-			fmt.Println("service has terminated with an error", err)
+			if !errors.Is(err, context.Canceled) {
+				log.WithError(err).Error("service terminated with an error")
+			}
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
 		}
 	}()
