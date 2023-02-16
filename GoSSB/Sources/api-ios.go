@@ -78,7 +78,10 @@ func ssbBotStop() bool {
 
 	err = node.Stop()
 	if err != nil {
-		err = errors.Wrap(err, "failed to stop the node")
+		if !errors.Is(err, bindings.ErrNodeIsNotRunning) {
+			err = errors.Wrap(err, "failed to stop the node")
+			return false
+		}
 	}
 
 	return true

@@ -26,6 +26,8 @@ import (
 	refs "github.com/ssbc/go-ssb-refs"
 )
 
+var ErrNodeIsNotRunning = errors.New("node isn't running")
+
 const (
 	kibibyte = 1024
 	mebibyte = 1024 * kibibyte
@@ -165,7 +167,7 @@ func (n *Node) Stop() error {
 	defer n.mutex.Unlock()
 
 	if !n.isRunning() {
-		return errors.New("node isn't running")
+		return ErrNodeIsNotRunning
 	}
 
 	n.cancel()
