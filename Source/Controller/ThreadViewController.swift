@@ -384,14 +384,10 @@ class ThreadViewController: ContentViewController {
             await draftStore.save(text: textValue, images: images)
             do {
                 let messageID = try await Bots.current.publish(post, with: images)
-<<<<<<< Updated upstream
                 Analytics.shared.trackDidReply()
-=======
-                Analytics.shared.trackDidReply(characterCount: post.text.count)
                 await AppController.shared.hideProgress()
-                await MainActor.run { self.buttonsView.postButton.isEnabled = true }
->>>>>>> Stashed changes
                 await MainActor.run {
+                    self.buttonsView.postButton.isEnabled = true
                     self.replyTextView.clear()
                     _ = self.replyTextView.resignFirstResponder()
                     self.buttonsView.minimize()
