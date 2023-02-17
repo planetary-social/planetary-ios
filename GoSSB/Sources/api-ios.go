@@ -68,17 +68,24 @@ var (
 
 //export ssbVersion
 func ssbVersion() *C.char {
+	defer logPanic()
+
 	return C.CString("project-raptor") // todo remove this function, I don't see why we need this
 }
 
 //export ssbBotStop
 func ssbBotStop() bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbBotStop", &err)
 
 	err = node.Stop()
 	if err != nil {
-		err = errors.Wrap(err, "failed to stop the node")
+		if !errors.Is(err, bindings.ErrNodeIsNotRunning) {
+			err = errors.Wrap(err, "failed to stop the node")
+			return false
+		}
 	}
 
 	return true
@@ -86,6 +93,8 @@ func ssbBotStop() bool {
 
 //export ssbBotIsRunning
 func ssbBotIsRunning() bool {
+	defer logPanic()
+
 	return node.IsRunning()
 }
 
@@ -140,6 +149,8 @@ func ssbBotInit(
 	notifyMigrationOnErrorFn uintptr,
 	notifyMigrationOnDoneFn uintptr,
 ) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbBotInit", &err)
 

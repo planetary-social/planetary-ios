@@ -25,7 +25,7 @@ class ViewDatabasePerformanceTests: XCTestCase {
     }
     
     override func tearDown() async throws {
-        await viewDatabase.close()
+        await viewDatabase.close(andOptimize: false)
         try FileManager.default.removeItem(at: self.dbURL)
         try await super.tearDown()
     }

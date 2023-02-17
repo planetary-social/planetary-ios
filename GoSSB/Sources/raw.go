@@ -13,6 +13,8 @@ import (
 //
 //export ssbGetRawMessage
 func ssbGetRawMessage(feedRef string, seq int64) *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbGetRawMessage", &err)
 

@@ -398,7 +398,7 @@ class DebugViewController: DebugTableViewController {
             cell.showActivityIndicator()
             let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
             let url = temporaryDirectory.appendingPathComponent(UUID().uuidString)
-            DispatchQueue.global(qos: .background).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 defer {
                     DispatchQueue.main.sync {
                         cell.hideActivityIndicator()

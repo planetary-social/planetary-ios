@@ -184,7 +184,43 @@ class GoBot: Bot, @unchecked Sendable {
         
         Analytics.shared.trackDidDropDatabase()
     }
+
+    func syncLoggedIdentity() async throws {
+        Log.info("Syncing from Published Log...")
+
+        guard let identity = self._identity else {
+            throw BotError.notLoggedIn
+        }
+        try await withCheckedThrowingContinuation { continuation in
+            userInitiatedQueue.async {
+                do {
+                    try self.database.delete(allFrom: identity)
+                    let publishedPosts = try self.bot.getPublishedLog(after: -1)
+                    try self.database.fillMessages(msgs: publishedPosts)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
     
+    func dropViewDatabase() async throws {
+        guard let config = config else {
+            throw BotError.notLoggedIn
+        }
+
+        Log.info("Dropping GoBot SQL ViewDatabase...")
+        let databaseDirectory = try config.databaseDirectory()
+        try await database.dropDatabase(at: databaseDirectory)
+        userDefaults.set(0, forKey: greatestRequestedSequenceNumberFromGoBotKey)
+        try self.database.open(
+            path: databaseDirectory,
+            user: config.secret.identity
+        )
+        Log.info("GoBot SQL ViewDatabase dropped successfully.")
+    }
+
     private func guessIfRestoring() throws -> Bool {
         guard database.isOpen(),
             let config = config else {
@@ -256,8 +292,7 @@ class GoBot: Bot, @unchecked Sendable {
             disableEBT: isRestoring,
             migrationDelegate: migrationDelegate
         )
-        
-        
+
         // Save GoBot version to disk in case we need to migrate in the future.
         // This is a side-effect that may cause problems if we want to use other bots in the future.
         userDefaults.set(version, forKey: GoBot.versionKey)
@@ -424,6 +459,8 @@ class GoBot: Bot, @unchecked Sendable {
                 )
             )
             
+            Analytics.shared.trackDidRegister(alias: alias, in: room.address.string)
+            
             return aliasModel
         }
         return try await task.value
@@ -511,7 +548,7 @@ class GoBot: Bot, @unchecked Sendable {
     private func internalRefresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         guard self._isRefreshing == false else {
             queue.async {
-                completion(.success(false), 0)
+                completion(.success(()), 0)
             }
             return
         }
@@ -534,7 +571,7 @@ class GoBot: Bot, @unchecked Sendable {
 
     private func notifyRefreshComplete(
         in elapsed: TimeInterval,
-        result: Result<Bool, Error>,
+        result: Result<Void, Error>,
         completion: @escaping RefreshCompletion
     ) {
         self._isRefreshing = false
@@ -738,11 +775,9 @@ class GoBot: Bot, @unchecked Sendable {
         print("TODO: Implement post update in Bot.")
     }
 
-    /// Computes how many messages are in go-ssb's log but not `ViewDatabase`.
-    /// - Returns: A tuple containing the index of the last received message in the go-ssb log and the number of
-    ///     messages that the ViewDatabase is missing.
-    func needsViewFill() throws -> (Int64, Int) {
-        var lastRxSeq: Int64 = 0
+    /// Computes the largest known sequence number, either in the ViewDatabase, or stored in the Keychain.
+    /// - Returns: The index of the last received message in the go-ssb log.
+    func largestKnownRxSeq() throws -> Int64 {
         do {
             let lastRxSeqFromDB = try self.database.largestSeqNotFromPublishedLog()
             var lastRxSeqFromDisk: Int64 = -1
@@ -751,31 +786,9 @@ class GoBot: Bot, @unchecked Sendable {
             ) as? Int64 {
                 lastRxSeqFromDisk = userDefaultsValue
             }
-            lastRxSeq = max(lastRxSeqFromDB, lastRxSeqFromDisk)
+            return max(lastRxSeqFromDB, lastRxSeqFromDisk)
         } catch {
             throw GoBotError.duringProcessing("view query failed", error)
-        }
-        
-        do {
-            var repoStatsResult: Result<ScuttlegobotRepoCounts, Error>?
-            serialQueue.sync { repoStatsResult = self.bot.repoStats() }
-            let numberOfMessagesInRepo = try repoStatsResult?.get().messages ?? 0
-            
-            if numberOfMessagesInRepo == 0 {
-                return (lastRxSeq, 0)
-            }
-            let diff = Int(Int64(numberOfMessagesInRepo) - 1 - lastRxSeq)
-            if diff < 0 {
-                let errorMessage = "needsViewFill: more msgs in SQLite than in GoBot repo: \(lastRxSeq) (diff: \(diff))"
-                // probably don't need to log this anymore with the way scuttlego works, but leaving it in just
-                // to see how common this is.
-                let error = GoBotError.unexpectedFault(errorMessage)
-                CrashReporting.shared.reportIfNeeded(error: error)
-            }
-            
-            return (lastRxSeq, diff)
-        } catch {
-            throw GoBotError.duringProcessing("bot current failed", error)
         }
     }
     
@@ -826,27 +839,19 @@ class GoBot: Bot, @unchecked Sendable {
     }
     
     // should only be called by refresh() (which does the proper completion on mainthread)
-    private func updateReceive(limit: Int32 = 15_000, completion: @escaping (Result<Bool, Error>) -> Void) {
-        var current: Int64 = 0
-        var diff: Int = 0
-
-        do {
-            (current, diff) = try self.needsViewFill()
-        } catch {
-            completion(.failure(error))
-            return
-        }
-        
-        // TOOD: redo until diff==0
+    private func updateReceive(limit: Int32 = 15_000, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
             Log.debug("[rx log] asking go-ssb for new messages.")
+
+            let current = try self.largestKnownRxSeq()
             
             // If the go log is empty we need to request 0. Otherwise request the next seq number.
             let startSeq = UInt64(current <= 0 ? 0 : current + 1)
             let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
             
             guard !msgs.isEmpty else {
-                completion(.success(true))
+                Log.debug("[#rx log#] no new messages from go-ssb")
+                completion(.success(()))
                 return
             }
             
@@ -863,14 +868,9 @@ class GoBot: Bot, @unchecked Sendable {
                     lastTimestamp: msgs[msgs.count - 1].receivedTimestamp,
                     lastHash: msgs[msgs.count - 1].key
                 )
-                Log.debug("#rx log# \(diff - Int(limit)) messages left in go offset log")
+                Log.debug("[#rx log#] added \(msgs.count) new messages from go-ssb")
                 
-                if diff < limit { // view database is up to date now
-                    completion(.success(true))
-                } else {
-                    print("#rx log# \(diff - Int(limit)) messages left in go-ssb offset log")
-                    completion(.success(false))
-                }
+                completion(.success(()))
             } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
                 let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
     
@@ -1639,7 +1639,7 @@ class GoBot: Bot, @unchecked Sendable {
         serialQueue.async {
             let counts: ScuttlegobotRepoCounts? = try? self.bot.repoStats()
             let sequence = try? self.database.stats(table: .messagekeys)
-
+            
             var ownMessages = -1
             self.numberOfPublishedMessagesLock.lock()
             if let identity = self._identity,
@@ -1666,7 +1666,7 @@ class GoBot: Bot, @unchecked Sendable {
                 numberOfPublishedMessages: ownMessages,
                 lastHash: counts?.lastHash ?? ""
             )
-
+            
             let connectionCount = self.bot.openConnections()
             let openConnections = self.bot.openConnectionList()
             

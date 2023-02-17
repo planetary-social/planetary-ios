@@ -206,8 +206,8 @@ class ViewDatabase {
     let colHost = Expression<String>("host")
     let colPort = Expression<Int>("port")
     // colKey
-    
     // Rooms
+    
     let rooms = Table(ViewDatabaseTableNames.rooms.rawValue)
     let colRoomID = Expression<Int64?>("room_id")
     let colPubKey = Expression<String>("pub_key")
@@ -261,6 +261,22 @@ class ViewDatabase {
 
         // uncomment to print all statements
         // connection.trace { print("\n\n\ntSQL: \($0)\n\n\n") }
+    }
+    
+    /// Deletes the database at the given path.
+    func dropDatabase(at path: String) async throws {
+        if isOpen() {
+            await close(andOptimize: false)
+        }
+        let path = "\(path)/schema-built\(ViewDatabase.schemaVersion).sqlite"
+        let wal = path.appending("-wal")
+        let shm = path.appending("-shm")
+        
+        for filePath in [path, wal, shm] {
+            if FileManager.default.fileExists(atPath: filePath) {
+                try FileManager.default.removeItem(atPath: filePath)
+            }
+        }
     }
     
     /// Runs any db migrations that haven't been run yet.
@@ -537,13 +553,15 @@ class ViewDatabase {
     
     /// Closes all connections to the database and performs cleanup tasks. This function will wait for all open
     /// connections to finish their queries before returning.
-    func close() async {
-        optimize: do {
-            try optimize()
-        } catch {
-            if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
+    func close(andOptimize shouldOptimize: Bool = true) async {
+        if shouldOptimize {
+            optimize: do {
+                try optimize()
+            } catch {
+                if case ViewDatabaseError.notOpen = error { break optimize } // close should be idempotent
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+            }
         }
         
         await connectionPool.close()
@@ -886,7 +904,12 @@ class ViewDatabase {
     }
     
     func getRegisteredAliasesByUser(user: Identity) throws -> [RoomAlias] {
-        let authorID = try authorID(of: user)
+        let authorID: Int64
+        do {
+            authorID = try self.authorID(of: user)
+        } catch {
+            return []
+        }
         return try getRegisteredAliases(userID: authorID)
     }
     
@@ -1088,7 +1111,7 @@ class ViewDatabase {
             try db.run(self.msgs.filter(chunk.contains(colMessageID)).delete())
         }
     }
-
+    
     func delete(message: MessageIdentifier) throws {
         let db = try checkoutConnection()
         try db.transaction {
@@ -1145,20 +1168,29 @@ class ViewDatabase {
     
     func getAbout(for id: Identifier) throws -> About? {
         let db = try checkoutConnection()
+
+        let aboutID: Int64
+
+        do {
+            aboutID = try self.authorID(of: id)
+        } catch ViewDatabaseError.unknownAuthor {
+            return About(about: id)
+        } catch {
+            throw error
+        }
         
-        let aboutID = try self.authorID(of: id)
-        
-        let qry = self.abouts
+        let query = self.abouts
             .join(self.msgs, on: colMessageRef == self.msgs[colMessageID])
             .filter(colAboutID == aboutID)
         
-        let msgs: [About] = try db.prepare(qry).map { row in
-            About(about: id,
-                     name: try row.get(colName),
-                     description: try row.get(colDescr),
-                     imageLink: try row.get(colImage),
-                     publicWebHosting: try row.get(colPublicWebHosting)
-                 )
+        let msgs: [About] = try db.prepare(query).map { row in
+            About(
+                about: id,
+                name: try row.get(colName),
+                description: try row.get(colDescr),
+                imageLink: try row.get(colImage),
+                publicWebHosting: try row.get(colPublicWebHosting)
+            )
         }
         return msgs.first
     }
@@ -1216,25 +1248,21 @@ class ViewDatabase {
     
     // who is this feed following?
     func getFollows(feed: Identity) throws -> [Identity] {
-        let db = try checkoutConnection()
-        
-        let authorID = try self.authorID(of: feed, make: false)
-        
-        let qry = self.contacts
+        let connection = try checkoutConnection()
+        let authorID: Int64
+        do {
+            authorID = try self.authorID(of: feed, make: false)
+        } catch {
+            return []
+        }
+        let query = self.contacts
             .select(colAuthor.distinct)
             .join(self.authors, on: colContactID == self.authors[colID])
             .filter(colAuthorID == authorID)
             .filter(colContactState == 1)
-        
-        var follows: [FeedIdentifier] = []
-    
-        let followsQry = try db.prepare(qry)
-        for follow in followsQry {
-            let authorID: Identity = try follow.get(colAuthor.distinct)
-            follows += [authorID]
+        return try connection.prepare(query).map { row in
+            try row.get(colAuthor.distinct) as Identity
         }
-        
-        return follows
     }
 
     func getFollows(feed: Identity) throws -> [About] {
@@ -1266,26 +1294,25 @@ class ViewDatabase {
     
     // who is following this feed
     func followedBy(feed: Identity) throws -> [Identity] {
-        let db = try checkoutConnection()
+        let connection = try checkoutConnection()
+
+        let feedID: Int64
+        do {
+            feedID = try self.authorID(of: feed, make: false)
+        } catch {
+            return []
+        }
         
-        let feedID = try self.authorID(of: feed, make: false)
-        
-        let qry = self.contacts
+        let query = self.contacts
             .select(colAuthor.distinct)
             .join(self.authors, on: colAuthorID == self.authors[colID])
             .filter(colContactID == feedID)
             .filter(colContactState == 1)
             .order(colClaimedAt.desc)
         
-        var who: [Identity] = []
-        
-        let followsQry = try db.prepare(qry)
-        for follow in followsQry {
-            let authorID: Identity = try follow.get(colAuthor.distinct)
-            who += [authorID]
+        return try connection.prepare(query).map { row in
+            try row.get(colAuthor.distinct) as Identity
         }
-        
-        return who
     }
 
     func followedBy(feed: Identity) throws -> [About] {
@@ -1393,24 +1420,24 @@ class ViewDatabase {
 
     // who is this feed blocking
     func getBlocks(feed: Identity) throws -> [Identity] {
-        let db = try checkoutConnection()
+        let connection = try checkoutConnection()
+
+        let authorID: Int64
+        do {
+            authorID = try self.authorID(of: feed, make: false)
+        } catch {
+            return []
+        }
         
-        let authorID = try self.authorID(of: feed, make: false)
-        
-        let qry = self.contacts
+        let query = self.contacts
             .select(colAuthor)
             .join(self.authors, on: colContactID == self.authors[colID])
             .filter(colAuthorID == authorID)
             .filter(colContactState == -1)
         
-        var follows: [FeedIdentifier] = []
-        
-        for follow in try db.prepare(qry) {
-            let followID = try follow.get(colAuthor)
-            follows += [followID]
+        return try connection.prepare(query).map { row in
+            try row.get(colAuthor) as Identity
         }
-        
-        return follows
     }
     
     func blockedBy(feed: Identity) throws -> [Identity] {
@@ -2209,7 +2236,6 @@ class ViewDatabase {
         }
     }
     
-    // TODO: pagination
     func messagesForHashtag(name: String) throws -> [Message] {
         let cID = try self.channelID(from: name)
 

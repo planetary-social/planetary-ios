@@ -4,11 +4,11 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230208142843-b3aac191585e
+	github.com/planetary-social/scuttlego v0.0.0-20230217164342-422b735c1d53
 	github.com/sirupsen/logrus v1.8.1
-	github.com/ssbc/go-ssb v0.2.2-0.20230201061938-55f48949535c
+	github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8
 	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
-	github.com/ssbc/go-ssb-refs v0.5.2-0.20221019090322-8b558c2f31de
+	github.com/ssbc/go-ssb-refs v0.5.2
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -40,9 +40,9 @@ require (
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/libp2p/go-reuseport v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/ssbc/go-gabbygrove v0.0.0-20221025092911-c274a44c3523 // indirect
+	github.com/ssbc/go-gabbygrove v0.2.2 // indirect
 	github.com/ssbc/go-luigi v0.3.7-0.20230119190114-bd28e676fa99 // indirect
-	github.com/ssbc/go-metafeed v1.1.3-0.20221019090205-458925e39156 // indirect
+	github.com/ssbc/go-metafeed v1.1.3 // indirect
 	github.com/ssbc/go-muxrpc/v2 v2.0.14-0.20221111190521-10382533750c // indirect
 	github.com/ssbc/go-netwrap v0.1.5-0.20221019160355-cd323bb2e29d // indirect
 	github.com/ssbc/go-secretstream v1.2.11-0.20221111164233-4b41f899f844 // indirect
@@ -53,15 +53,11 @@ require (
 	go.mindeco.de v1.12.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
-	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 go 1.19
-
-replace golang.org/x/crypto => github.com/cryptix/golang_x_crypto v0.0.0-20200303113948-2939d6771b24
-
-replace go.mindeco.de => github.com/planetary-social/go-toolbelt v0.0.0-20220509144343-0f7ad206c2b7

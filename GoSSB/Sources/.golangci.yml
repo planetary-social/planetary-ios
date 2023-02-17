@@ -1,5 +1,0 @@
-issues:
-  exclude-rules:
-    - linters:
-      - errcheck
-      text: "Error return value of `\\(github.com\\/go-kit\\/kit\\/log.Logger\\).Log` is not checked"

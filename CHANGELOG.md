@@ -6,12 +6,16 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.14] 2023-01-20
 ## [Unreleased]
 
 - Updated the localization strategy to have a better support of foreign languages. #1065
+- Added the option to join the Planetary room to the Manage Rooms screen. #1137
+- Add a button to delete the SQL database in the debug settings. #738
+- Change the underlying Secure Scuttlebutt implementation from go-ssb to scuttlego
+- Avoid showing an error alert when showing an identity we have no information for. #1114
+- Alert user if some error ocurred while replying to a post. #923
 
-## [1.3.14]
+## [1.3.14] 2023-01-20
 
 - Added a new screen to onboarding that allows you to join the Planetary.name hub server and register an alias. #1004
 
@@ -31,9 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added new redesigned Home screen. #974
 - Added new redesigned Hashtag screen. #975
-## Unreleased
 - Display aliases on profile screen #979
-## Unreleased 
 - Fix "Oops! Invitation redeemed!" message when successfully redeeming Planetary.name room invitation. #949
 
 ## [1.3.10] 2022-11-25
@@ -69,7 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the Share Database button in the debug settings. #918
 - Fixed incorrect aspect ratio of avatar images. #753
 - Fixes bug where the number of published messages is calculated incorrectly which causes a forked feed protection error message to be displayed. #611 #923
-
 - Fixed an issue that could potentially freeze the UI on startup. #865
 - Fixed an issue that could cause the home feed to load slowly. #921
 - Added a button to delete the SQL database in the debug settings. #738

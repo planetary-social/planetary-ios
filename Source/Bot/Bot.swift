@@ -27,8 +27,7 @@ typealias PubsCompletion = ((Result<[Pub], Error>) -> Void)
 
 /// - Error: an error if the refresh failed
 /// - TimeInterval: the amount of time the refresh took
-/// - Bool: True if the view database is fully up to date with the backing store.
-typealias RefreshCompletion = ((Result<Bool, Error>, TimeInterval) -> Void)
+typealias RefreshCompletion = ((Result<Void, Error>, TimeInterval) -> Void)
 typealias SecretCompletion = ((Secret?, Error?) -> Void)
 typealias SyncCompletion = ((Error?) -> Void)
 typealias ThreadCompletion = ((Message?, PaginatedMessageDataProxy, Error?) -> Void)
@@ -61,7 +60,15 @@ protocol Bot: AnyObject, Sendable {
     
     func suspend()
     func exit() async
+    
+    /// Drops all data from this Bot's database
     func dropDatabase(for configuration: AppConfiguration) async throws
+
+    /// Delete all content from the logged in identity and sync it again using the published log
+    func syncLoggedIdentity() async throws
+    
+    /// Drops any view-layer caches from the Bot's database without dropping the source data.
+    func dropViewDatabase() async throws
     
     /// A flag that signals that the bot is resyncing the user's feed from the network.
     /// Currently used to suppress push notifications because the user has already seen them.
@@ -335,19 +342,19 @@ extension Bot {
             }
         }
     }
-    
+
     func sync(peers: [MultiserverAddress], completion: @escaping SyncCompletion) {
         self.sync(queue: .main, peers: peers, completion: completion)
     }
     
     @discardableResult
-    func refresh(load: RefreshLoad) async throws -> (TimeInterval, Bool) {
+    func refresh(load: RefreshLoad) async throws -> TimeInterval {
         try await withCheckedThrowingContinuation { continuation in
-            refresh(load: load, queue: .main) { refreshResult, timeElapsed in
-                do {
-                    let finished = try refreshResult.get()
-                    continuation.resume(returning: (timeElapsed, finished))
-                } catch {
+            refresh(load: load, queue: .main) { result, timeElapsed in
+                switch result {
+                case .success:
+                    continuation.resume(returning: timeElapsed)
+                case .failure(let error):
                     continuation.resume(throwing: error)
                 }
             }
@@ -556,7 +563,7 @@ extension Bot {
     /// of the associated message.
     func numberOfUnreadReports() async throws -> Int {
         try await withCheckedThrowingContinuation { continuation in
-            numberOfUnreadReports(queue: DispatchQueue.global(qos: .background)) { result in
+            numberOfUnreadReports(queue: DispatchQueue.global(qos: .utility)) { result in
                 switch result {
                 case .success(let count):
                     continuation.resume(returning: count)

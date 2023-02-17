@@ -15,6 +15,8 @@ import (
 //
 //export ssbBanListAdd
 func ssbBanListAdd(hash string) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbBanListAdd", &err)
 
@@ -57,6 +59,8 @@ func ssbBanListAdd(hash string) bool {
 //
 //export ssbBanListRemove
 func ssbBanListRemove(hash string) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbBanListRemove", &err)
 

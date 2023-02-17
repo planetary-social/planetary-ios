@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 import Logger
 import Secrets
+import Analytics
 
 @MainActor class RoomAliasRegistrationController: AddAliasViewModel {
     
@@ -77,8 +78,9 @@ import Secrets
         loadingMessage = Localized.loading.text
         Task {
             do {
+                let host = "planetary.name"
                 let token = Keys.shared.get(key: .planetaryRoomToken)!
-                try await RoomInvitationRedeemer.redeem(token: token, at: "planetary.name", bot: bot)
+                try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
                 await refresh()
                 self.alertMessageTitle = Localized.success.text
                 self.alertMessage = Localized.invitationRedeemed.text

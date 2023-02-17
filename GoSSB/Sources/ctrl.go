@@ -24,6 +24,8 @@ import "C"
 
 //export ssbConnectPeer
 func ssbConnectPeer(quasiMs string) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbConnectPeer", &err)
 
@@ -55,6 +57,8 @@ func ssbConnectPeer(quasiMs string) bool {
 
 //export ssbDisconnectAllPeers
 func ssbDisconnectAllPeers() bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbDisconnectAllPeers", &err)
 
@@ -78,6 +82,8 @@ func ssbDisconnectAllPeers() bool {
 //
 //export ssbFeedReplicate
 func ssbFeedReplicate(ref string) {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbFeedReplicate", &err)
 
@@ -108,16 +114,22 @@ func ssbFeedReplicate(ref string) {
 
 //export ssbNullContent
 func ssbNullContent(author string, sequence uint64) int {
+	defer logPanic()
+
 	return 0
 }
 
 //export ssbNullFeed
 func ssbNullFeed(ref string) int {
+	defer logPanic()
+
 	return 0
 }
 
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbInviteAccept", &err)
 
@@ -157,6 +169,8 @@ const (
 
 //export ssbRoomsAliasRegister
 func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasRegisterReturn_t {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbRoomsAliasRegister", &err)
 
@@ -201,6 +215,8 @@ func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasReg
 
 //export ssbRoomsAliasRevoke
 func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbRoomsAliasRevoke", &err)
 
@@ -242,6 +258,8 @@ func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
 
 //export ssbRoomsListAliases
 func ssbRoomsListAliases(addressString string) *C.char {
+	defer logPanic()
+
 	var err error
 	defer logError("ssbRoomsListAliases", &err)
 

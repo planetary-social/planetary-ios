@@ -34,8 +34,14 @@ class FakeBot: Bot, @unchecked Sendable {
     func suspend() { }
     
     func exit() { }
-    
+
+    func syncLoggedIdentity() async throws { }
+
     func dropDatabase(for configuration: AppConfiguration) async throws {
+        fatalError("TODO:\(#function)")
+    }
+    
+    func dropViewDatabase() async throws {
         fatalError("TODO:\(#function)")
     }
     
@@ -211,7 +217,7 @@ class FakeBot: Bot, @unchecked Sendable {
     func refresh(load: RefreshLoad, queue: DispatchQueue, completion: @escaping RefreshCompletion) {
         self._statistics.lastRefreshDate = Date()
         queue.async {
-            completion(.success(true), 0)
+            completion(.success(()), 0)
         }
     }
 

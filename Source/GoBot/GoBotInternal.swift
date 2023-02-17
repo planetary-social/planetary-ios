@@ -225,7 +225,8 @@ class GoBotInternal {
             }
         }.value
     }
-    
+
+    @discardableResult
     func logout() -> Bool {
         guard self.isRunning else {
             Log.info("[GoBot] wanted to logout but bot not running")

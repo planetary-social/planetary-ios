@@ -20,14 +20,20 @@ import (
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
+	"github.com/planetary-social/scuttlego/service/domain/graph"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
 	refs "github.com/ssbc/go-ssb-refs"
 )
 
+var ErrNodeIsNotRunning = errors.New("node isn't running")
+
 const (
 	kibibyte = 1024
 	mebibyte = 1024 * kibibyte
+
+	kilobyte = 1000
+	megabyte = 1000 * kilobyte
 )
 
 type OnBlobDownloadedFn func(downloaded queries.BlobDownloaded) error
@@ -36,19 +42,26 @@ type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
 type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
-	AppKey     string `json:"AppKey"`
-	HMACKey    string `json:"HMACKey"`
-	KeyBlob    string `json:"KeyBlob"`
-	Repo       string `json:"Repo"`
-	OldRepo    string `json:"OldRepo"`
-	ListenAddr string `json:"ListenAddr"`
-	Hops       uint   `json:"Hops"`
-	Testing    bool   `json:"Testing"`
+	// AppKey is a base64 encoded network key.
+	AppKey string `json:"AppKey"`
 
-	// Pubs that host planetary specific muxrpc calls
-	ServicePubs []refs.FeedRef `json:"ServicePubs"`
+	// HMACKey is a base64 encoded message HMAC.
+	HMACKey string `json:"HMACKey"`
 
-	ViewDBSchemaVersion uint `json:"SchemaVersion"` // ViewDatabase number for filename
+	// Hops is the number of hops that should be replicated automatically.
+	// WARNING:
+	// 0 == followees
+	// 1 == followees of followees
+	// etc
+	Hops uint `json:"Hops"`
+
+	KeyBlob             string         `json:"KeyBlob"`
+	Repo                string         `json:"Repo"`
+	OldRepo             string         `json:"OldRepo"`
+	ListenAddr          string         `json:"ListenAddr"`
+	Testing             bool           `json:"Testing"`
+	ServicePubs         []refs.FeedRef `json:"ServicePubs"`
+	ViewDBSchemaVersion uint           `json:"SchemaVersion"`
 }
 
 type Node struct {
@@ -144,7 +157,9 @@ func (n *Node) Start(
 		defer n.wg.Done()
 
 		if err := service.Run(ctx); err != nil {
-			fmt.Println("service has terminated with an error", err)
+			if !errors.Is(err, context.Canceled) {
+				log.WithError(err).Error("service terminated with an error")
+			}
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
 		}
 	}()
@@ -157,7 +172,7 @@ func (n *Node) Stop() error {
 	defer n.mutex.Unlock()
 
 	if !n.isRunning() {
-		return errors.New("node isn't running")
+		return ErrNodeIsNotRunning
 	}
 
 	n.cancel()
@@ -228,10 +243,14 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	// todo do something with hops
-	// todo do something service pubs?
+	hops, err := graph.NewHops(int(swiftConfig.Hops + 1))
+	if err != nil {
+		return di.Config{}, errors.Wrap(err, "error creating hops")
+	}
 
 	logger := NewLoggerAdapter(bindingsLogger)
+
+	// todo do something service pubs?
 
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
@@ -243,6 +262,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
+		Hops: &hops,
 		ModifyBadgerOptions: func(options di.BadgerOptions) {
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
@@ -326,7 +346,7 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 }
 
 func bToMb(b uint64) uint64 {
-	return b / 1000 / 1000
+	return b / megabyte
 }
 
 type identityBlob struct {
