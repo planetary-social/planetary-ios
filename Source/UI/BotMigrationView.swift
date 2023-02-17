@@ -39,23 +39,22 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                 VStack(spacing: 0) {
                     VerticallyCenteringScrollView {
                         VStack(spacing: 30) {
-                            Color.clear.frame(width: 0, height: 60)
-                            HStack {
-                                Spacer()
+                            Spacer(minLength: 60)
+
+                            HStack(alignment: .center) {
                                 Image.iconPlanetary5
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(maxWidth: 218.3)
-                                Spacer()
+                                    .frame(maxWidth: 200)
                             }
                             
                             Localized.botMigrationBody.view
                                 .font(.body)
                                 .foregroundColor(.mainText)
-                                .padding()
+                                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
                                 .multilineTextAlignment(.center)
                             
-                            Spacer()
+                            Spacer(minLength: 0)
                             
                             if !viewModel.isDone {
                                 ProgressView()
@@ -65,19 +64,18 @@ struct BotMigrationView<ViewModel>: View where ViewModel: BotMigrationViewModel 
                                 Localized.success.view
                                     .font(.body)
                                     .foregroundColor(.mainText)
-                                    .padding()
                                     .multilineTextAlignment(.center)
                             }
-                            
-                            Spacer()
+
+                            Spacer(minLength: 0)
 
                             BigActionButton(title: .startUsingPlanetaryTitle) {
                                 viewModel.dismissPressed()
                             }
                             .frame(width: 286)
                             .disabled(!viewModel.isDone)
-                            
-                            Color.clear.frame(width: 0, height: 10)
+
+                            Spacer(minLength: 10)
                         }
                     }
                 }
