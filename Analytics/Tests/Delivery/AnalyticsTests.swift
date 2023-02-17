@@ -133,12 +133,12 @@ final class AnalyticsTests: XCTestCase {
     }
 
     func testTrackDidPost() {
-        analytics.trackDidPost()
+        analytics.trackDidPost(characterCount: 0)
         XCTAssertTrue(service.tracked)
     }
 
     func testTrackDidReply() {
-        analytics.trackDidReply()
+        analytics.trackDidReply(characterCount: 0)
         XCTAssertTrue(service.tracked)
     }
 
