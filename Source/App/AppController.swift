@@ -23,10 +23,6 @@ class AppController: UIViewController, ObservableObject {
     /// Queue to handle background operations
     private var operationQueue = OperationQueue()
     
-    private var didStartDatabaseProcessingObserver: NSObjectProtocol?
-    private var didFinishDatabaseProcessingObserver: NSObjectProtocol?
-    private var didUpdateDatabaseProgressObserver: NSObjectProtocol?
-    
     /// One and a half second `CATransition` `.easeInEaseOut` with type `CATransitionType.fade`.
     private var crossFadeTransition: CATransition {
         let transition = CATransition()
@@ -43,11 +39,6 @@ class AppController: UIViewController, ObservableObject {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .appBg
-        self.addObservers()
-    }
-    
-    deinit {
-        removeObservers()
     }
 
     /// Because controllers are nested and presented when the keyboard is also being presented,
@@ -143,55 +134,6 @@ class AppController: UIViewController, ObservableObject {
     
     func dismissSettingsViewController(completion: (() -> Void)? = nil) {
         mainViewController?.dismiss(animated: true, completion: completion)
-    }
-    
-    // MARK: Observers
-    
-    func addObservers() {
-        let showProgress = { [weak self] (_: Notification) -> Void in
-            // self?.showProgress(statusText: notification.databaseProgressStatus)
-            self?.missionControlCenter.pause()
-        }
-        // let updateProgress = { (notification: Notification) -> Void in
-        //     guard let percDone = notification.databaseProgressPercentageDone else { return }
-        //     guard let status = notification.databaseProgressStatus else { return }
-        //     self?.updateProgress(perc: percDone, status: status)
-        // }
-        let dismissProgress = { [weak self] (_: Notification) -> Void in
-            // self?.hideProgress()
-            self?.missionControlCenter.resume()
-        }
-        removeObservers()
-        let notificationCenter = NotificationCenter.default
-        didStartDatabaseProcessingObserver = notificationCenter.addObserver(
-            forName: .didStartFSCKRepair,
-            object: nil,
-            queue: .main,
-            using: showProgress
-        )
-        didFinishDatabaseProcessingObserver = notificationCenter.addObserver(
-            forName: .didFinishFSCKRepair,
-            object: nil,
-            queue: .main,
-            using: dismissProgress
-        )
-//        didUpdateDatabaseProgressObserver = notificationCenter.addObserver(forName: .didUpdateFSCKRepair,
-//                                                                       object: nil,
-//                                                                       queue: .main,
-//                                                                       using: updateProgress)
-    }
-    
-    func removeObservers() {
-        let notificationCenter = NotificationCenter.default
-        if let start = self.didStartDatabaseProcessingObserver {
-            notificationCenter.removeObserver(start)
-        }
-        if let finish = self.didFinishDatabaseProcessingObserver {
-            notificationCenter.removeObserver(finish)
-        }
-        if let progress = self.didUpdateDatabaseProgressObserver {
-            notificationCenter.removeObserver(progress)
-        }
     }
     
     /// Returns the view controller at the top of this AppController's hierarchy.

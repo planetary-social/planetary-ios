@@ -14,9 +14,6 @@ import CrashReporting
 // get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
 
-// get's called with the messages left to process
-typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
-
 // get's called with a token and an expiry date as unix timestamp
 typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
 
@@ -69,20 +66,6 @@ struct ScuttlegobotBotStatus: Decodable {
     let Root: Int
     let Peers: [ScuttlegobotPeerStatus]
     let Blobs: [ScuttlegobotBlobWant]
-}
-
-enum ScuttlegobotFSCKMode: UInt32 {
-
-    // compares the message count of a feed with the sequence number of last message of a feed
-    case FeedLength = 1
-
-    // goes through all the messages and makes sure the sequences increament correctly for each feed
-    case Sequences = 2
-}
-
-struct ScuttlegobotHealReport: Decodable {
-    let Authors: [Identity]
-    let Messages: UInt32
 }
 
 private struct GoBotConfig: Encodable {
@@ -376,61 +359,6 @@ class GoBotInternal {
             return .success(try repoStats())
         } catch {
             return .failure(error)
-        }
-    }
-    
-    // repoFSCK returns true if the repo is fine and otherwise false
-    private lazy var fsckProgressNotify: CFSCKProgressCallback = {
-        percDone, remaining in
-        guard let remStr = remaining else { return }
-        let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateFSCKRepair(perc: percDone / 100, status: status)
-        NotificationCenter.default.post(notification)
-    }
-    
-    func repoFSCK(_ mode: ScuttlegobotFSCKMode) -> Bool {
-        let ret = ssbOffsetFSCK(mode.rawValue, self.fsckProgressNotify)
-        return ret == 0
-    }
-    
-    func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
-        // disable sync during fsck check and cleanup
-        // new message kill the performance of this process
-        self.disconnectAll()
-
-        // TODO: disable network listener to stop local connections
-        // would be better then a polling timer but this suffices as a bug fix
-        let dcTimer = RepeatingTimer(interval: 5, completion: {
-            self.disconnectAll()
-        })
-        dcTimer.start()
-
-        defer {
-            dcTimer.stop()
-        }
-
-        NotificationCenter.default.post(Notification.didStartFSCKRepair())
-        defer {
-            NotificationCenter.default.post(Notification.didFinishFSCKRepair())
-        }
-        guard self.repoFSCK(.Sequences) == false else {
-            Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")
-            return (true, nil)
-        }
-        guard let reportData = ssbHealRepo() else {
-            Log.unexpected(.botError, "repo healing failed")
-            return (false, nil)
-        }
-        let d = String(cString: reportData).data(using: .utf8)!
-        free(reportData)
-        let dec = JSONDecoder()
-        do {
-            let report = try dec.decode(ScuttlegobotHealReport.self, from: d)
-            return (true, report)
-        } catch {
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            return (false, nil)
         }
     }
     
