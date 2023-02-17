@@ -574,7 +574,7 @@ extension Localized {
         case supportNotConfigured = "Support is not configured."
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
         case invitationRedemptionFailedWithReason = "Invitation redemption failed with message: {{ reason }}."
-        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
+        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.\nIf you feel that your feed is already up to date, you can reset the Forked Feed Protection and continue posting, but your feed could be forked, so proceed with caution."
         case restoring = "Planetary is currently restoring your data from the network."
         case invalidAppConfiguration = "Invalid app configuration"
         case couldNotGenerateLink = "Could not generate link."

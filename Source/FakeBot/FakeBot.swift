@@ -317,6 +317,8 @@ class FakeBot: Bot, @unchecked Sendable {
         }
     }
 
+    func resetForkedFeedProtection() async throws { }
+
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }

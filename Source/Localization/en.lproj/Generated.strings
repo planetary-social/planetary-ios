@@ -344,7 +344,7 @@
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 "Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.\nIf you feel that your feed is already up to date, you can reset the Forked Feed Protection and continue posting, but your feed could be forked, so proceed with caution.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
