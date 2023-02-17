@@ -385,7 +385,9 @@ class ThreadViewController: ContentViewController {
             do {
                 let messageID = try await Bots.current.publish(post, with: images)
                 Analytics.shared.trackDidReply()
+                await AppController.shared.hideProgress()
                 await MainActor.run {
+                    self.buttonsView.postButton.isEnabled = true
                     self.replyTextView.clear()
                     _ = self.replyTextView.resignFirstResponder()
                     self.buttonsView.minimize()
@@ -398,9 +400,10 @@ class ThreadViewController: ContentViewController {
             } catch {
                 Log.optional(error)
                 CrashReporting.shared.reportIfNeeded(error: error)
+                await AppController.shared.hideProgress()
+                await MainActor.run { self.buttonsView.postButton.isEnabled = true }
+                await AppController.shared.alert(error: error)
             }
-            await MainActor.run { self.buttonsView.postButton.isEnabled = true }
-            await AppController.shared.hideProgress()
         }
     }
     
