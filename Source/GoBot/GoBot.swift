@@ -1591,8 +1591,7 @@ class GoBot: Bot, @unchecked Sendable {
                 identity: self.identity,
                 feedCount: feedCount,
                 messageCount: messageCount,
-                numberOfPublishedMessages: ownMessages,
-                lastHash: counts?.lastHash ?? ""
+                numberOfPublishedMessages: ownMessages
             )
             
             let connectionCount = self.bot.openConnections()

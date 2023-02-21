@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the option to join the Planetary room to the Manage Rooms screen. #1137
 - Add a button to delete the SQL database in the debug settings. #738
 - Change the underlying Secure Scuttlebutt implementation from go-ssb to scuttlego
+- Avoid showing an error alert when showing an identity we have no information for. #1114
 - Alert user if some error ocurred while replying to a post. #923
 
 ## [1.3.14] 2023-01-20
