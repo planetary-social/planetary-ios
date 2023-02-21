@@ -96,10 +96,9 @@ func ssbRepoStats() *C.char {
 		return nil
 	}
 
-	counts := repoCounts{
+	counts := repoStats{
 		Feeds:    status.NumberOfFeeds,
-		Messages: int64(status.NumberOfMessages),
-		LastHash: "last_hash_is_not_supported",
+		Messages: status.NumberOfMessages,
 	}
 
 	countsBytes, err := json.Marshal(counts)
@@ -111,8 +110,7 @@ func ssbRepoStats() *C.char {
 	return C.CString(string(countsBytes))
 }
 
-type repoCounts struct {
-	Feeds    int    `json:"feeds"`
-	Messages int64  `json:"messages"`
-	LastHash string `json:"lastHash"`
+type repoStats struct {
+	Feeds    int `json:"feeds"`
+	Messages int `json:"messages"`
 }
