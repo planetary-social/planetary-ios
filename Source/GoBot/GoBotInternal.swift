@@ -51,20 +51,13 @@ struct ScuttlegobotRepoCounts: Decodable {
 // these structs are set this way to match the Go code
 // swiftlint:disable identifier_name
 
-struct ScuttlegobotBlobWant: Decodable {
-    let Ref: String
-    let Dist: Int
-}
-
 struct ScuttlegobotPeerStatus: Decodable {
-    let Addr: String
-    let Since: String
+    let publicKey: String
+    let address: String
 }
 
 struct ScuttlegobotBotStatus: Decodable {
-    let Root: Int
-    let Peers: [ScuttlegobotPeerStatus]
-    let Blobs: [ScuttlegobotBlobWant]
+    let peers: [ScuttlegobotPeerStatus]
 }
 
 private struct GoBotConfig: Encodable {
@@ -238,23 +231,8 @@ class GoBotInternal {
     func openConnectionList() -> [(String, Identity)] {
         var open: [(String, Identity)] = []
         if let status = try? self.status() {
-            for p in  status.Peers {
-                // split of multiserver addr format
-                // ex: net:1.2.3.4:8008~shs:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-                if !p.Addr.hasPrefix("net:") {
-                    continue
-                }
-
-                let hostWithPubkey = p.Addr.dropFirst(4)
-                guard let startOfPubKey = hostWithPubkey.firstIndex(of: "~") else {
-                    continue
-                }
-
-                let host = hostWithPubkey[..<startOfPubKey]
-                let keyB64Start = hostWithPubkey.index(startOfPubKey, offsetBy: 5) // ~shs:
-                let pubkey = hostWithPubkey[keyB64Start...]
-
-                open.append((String(host), String(pubkey)))
+            for p in  status.peers {
+                open.append((String(p.address), String(p.publicKey)))
             }
         }
         return open
