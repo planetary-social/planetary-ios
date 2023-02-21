@@ -72,6 +72,14 @@ class API_GoBot: XCTestCase {
         try await API_GoBot.bot.login(config: reproConfiguration, fromOnboarding: false)
     }
     
+    // check we loaded all the messages from the fixtures repo
+    func test02_replicateUpto() async {
+        let statistics = await API_GoBot.bot.statistics()
+        XCTAssertEqual(statistics.repo.feedCount, 200)
+        XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
+        XCTAssertEqual(statistics.repo.messageCount, 6700)
+    }
+    
     // make sure view db is uptodate with gosbot repo
     func test03_refresh() {
         var refreshExpectation = self.expectation(description: "refresh")
@@ -90,6 +98,12 @@ class API_GoBot: XCTestCase {
             refreshExpectation.fulfill()
         }
         waitForExpectations(timeout: 10)
+    }
+    
+    func test04_same_msgs() async {
+        let statistics = await API_GoBot.bot.statistics()
+        XCTAssertEqual(statistics.db.lastReceivedMessage, 6699)
+        XCTAssertEqual(statistics.repo.messageCount, 6700)
     }
 
     func test05_refresh() {
