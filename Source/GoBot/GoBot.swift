@@ -289,7 +289,6 @@ class GoBot: Bot, @unchecked Sendable {
             hmacKey: hmacKey,
             secret: secret,
             pathPrefix: repoPrefix,
-            disableEBT: isRestoring,
             migrationDelegate: migrationDelegate
         )
 
