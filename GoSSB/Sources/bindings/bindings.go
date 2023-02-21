@@ -23,7 +23,6 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/graph"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
-	refs "github.com/ssbc/go-ssb-refs"
 )
 
 var ErrNodeIsNotRunning = errors.New("node isn't running")
@@ -42,26 +41,18 @@ type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
 type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
-	// AppKey is a base64 encoded network key.
-	AppKey string `json:"AppKey"`
+	// NetworkKey is a base64 encoded network key.
+	NetworkKey string `json:"networkKey"`
 
 	// HMACKey is a base64 encoded message HMAC.
-	HMACKey string `json:"HMACKey"`
+	HMACKey string `json:"hmacKey"`
 
-	// Hops is the number of hops that should be replicated automatically.
-	// WARNING:
-	// 0 == followees
-	// 1 == followees of followees
-	// etc
-	Hops uint `json:"Hops"`
-
-	KeyBlob             string         `json:"KeyBlob"`
-	Repo                string         `json:"Repo"`
-	OldRepo             string         `json:"OldRepo"`
-	ListenAddr          string         `json:"ListenAddr"`
-	Testing             bool           `json:"Testing"`
-	ServicePubs         []refs.FeedRef `json:"ServicePubs"`
-	ViewDBSchemaVersion uint           `json:"SchemaVersion"`
+	Hops       int    `json:"hops"`
+	KeyBlob    string `json:"keyBlob"`
+	Repo       string `json:"repo"`
+	OldRepo    string `json:"oldRepo"`
+	ListenAddr string `json:"listenAddr"`
+	Testing    bool   `json:"testing"`
 }
 
 type Node struct {
@@ -223,7 +214,7 @@ func (n *Node) isRunning() bool {
 }
 
 func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
-	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.AppKey)
+	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.NetworkKey)
 	if err != nil {
 		return di.Config{}, errors.Wrap(err, "failed to decode network key")
 	}
@@ -243,14 +234,12 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	hops, err := graph.NewHops(int(swiftConfig.Hops + 1))
+	hops, err := graph.NewHops(swiftConfig.Hops)
 	if err != nil {
 		return di.Config{}, errors.Wrap(err, "error creating hops")
 	}
 
 	logger := NewLoggerAdapter(bindingsLogger)
-
-	// todo do something service pubs?
 
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,

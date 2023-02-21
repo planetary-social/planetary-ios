@@ -61,26 +61,18 @@ struct ScuttlegobotBotStatus: Decodable {
 }
 
 private struct GoBotConfig: Encodable {
-    let AppKey: String
-    let HMACKey: String
-    let KeyBlob: String
-    let Repo: String
-    let OldRepo: String
-    let ListenAddr: String
-    // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be
-    // understood slightly differently than in the case of some other clients
-    let Hops: UInt
-    let SchemaVersion: UInt
-
-    let ServicePubs: [Identity]? // identities of services which supply planetary specific services
-    
-    /// Disables EBT replication if true. Part of a workaround for #847.
-    let DisableEBT: Bool
+    let networkKey: String
+    let hmacKey: String
+    let keyBlob: String
+    let repo: String
+    let oldRepo: String
+    let listenAddr: String
+    let hops: UInt
 
     #if DEBUG
-    let Testing = true
+    let testing = true
     #else
-    let Testing = false
+    let testing = false
     #endif
     
     func stringRepresentation() throws -> String {
@@ -127,7 +119,6 @@ class GoBotInternal {
         hmacKey: HMACKey?,
         secret: Secret,
         pathPrefix: String,
-        disableEBT: Bool,
         migrationDelegate: BotMigrationDelegate
     ) async throws {
         if self.isRunning {
@@ -146,16 +137,13 @@ class GoBotInternal {
         let servicePubs: [Identity] = Environment.PlanetarySystem.systemPubs.map { $0.feed }
 
         let config = GoBotConfig(
-            AppKey: network.string,
-            HMACKey: hmacKey == nil ? "" : hmacKey!.string,
-            KeyBlob: secret.jsonString()!,
-            Repo: self.repoPath,
-            OldRepo: self.oldRepoPath,
-            ListenAddr: listenAddr,
-            Hops: 1,
-            SchemaVersion: ViewDatabase.schemaVersion,
-            ServicePubs: servicePubs,
-            DisableEBT: disableEBT
+            networkKey: network.string,
+            hmacKey: hmacKey == nil ? "" : hmacKey!.string,
+            keyBlob: secret.jsonString()!,
+            repo: self.repoPath,
+            oldRepo: self.oldRepoPath,
+            listenAddr: listenAddr,
+            hops: 2
         )
         
         var configString: String
@@ -182,7 +170,7 @@ class GoBotInternal {
                 
                 if worked {
                     self.replicate(feed: secret.identity)
-                    // make sure internal planetary pubs are authorized for connections
+
                     for pub in servicePubs {
                         self.replicate(feed: pub)
                     }

@@ -221,18 +221,6 @@ class GoBot: Bot, @unchecked Sendable {
         Log.info("GoBot SQL ViewDatabase dropped successfully.")
     }
 
-    private func guessIfRestoring() throws -> Bool {
-        guard database.isOpen(),
-            let config = config else {
-            throw BotError.notLoggedIn
-        }
-        
-        let numberOfPublishedMessagesInViewDB = try database.numberOfMessages(for: config.identity)
-        let numberOfPublishedMessagesInAppConfig = config.numberOfPublishedMessages
-        return numberOfPublishedMessagesInViewDB == 0 ||
-            numberOfPublishedMessagesInViewDB < numberOfPublishedMessagesInAppConfig
-    }
-
     // MARK: Login/Logout
     
     func createSecret(completion: SecretCompletion) {
@@ -278,18 +266,11 @@ class GoBot: Bot, @unchecked Sendable {
         
         try self.database.open(path: repoPrefix, user: secret.identity)
         
-        isRestoring = isLoggingInFromOnboarding ? false : try guessIfRestoring()
-
-        if isRestoring {
-            Log.info("It seems like the user is restoring their feed. Disabling EBT replication to work around #847.")
-        }
-        
         try await bot.login(
             network: network,
             hmacKey: hmacKey,
             secret: secret,
             pathPrefix: repoPrefix,
-            disableEBT: isRestoring,
             migrationDelegate: migrationDelegate
         )
 
