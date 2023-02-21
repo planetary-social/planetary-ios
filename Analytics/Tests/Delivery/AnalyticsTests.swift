@@ -89,12 +89,6 @@ final class AnalyticsTests: XCTestCase {
         XCTAssertTrue(service.tracked)
     }
 
-    func testTrackBotDidRepair() {
-        let repair = Analytics.BotRepair(function: #function, numberOfMessagesInDB: 2, numberOfMessagesInRepo: 1)
-        analytics.trackBotDidRepair(databaseError: "", error: nil, repair: repair)
-        XCTAssertTrue(service.tracked)
-    }
-
     func testTrackDidDropDatabase() {
         analytics.trackDidDropDatabase()
         XCTAssertTrue(service.tracked)
