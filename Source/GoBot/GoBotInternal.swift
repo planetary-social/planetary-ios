@@ -102,13 +102,7 @@ class GoBotInternal {
     private var oldRepoPath: String = "/tmp/FBTT/unset"
     
     let name = "GoBot"
-
-    var version: String {
-        guard let version = ssbVersion() else {
-            return "binding error"
-        }
-        return String(cString: version)
-    }
+    let version = "project-raptor"
 
     private let queue: DispatchQueue
 
@@ -369,41 +363,6 @@ class GoBotInternal {
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
             ssbFeedReplicate($0)
-        }
-    }
-
-    // MARK: Null / Delete
-
-    func nullContent(author: Identity, sequence: UInt) throws {
-        guard author.algorithm == .ggfeed else {
-            throw GoBotError.unexpectedFault("unsupported feed format for deletion")
-        }
-        
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullContent(goAuthor, UInt64(sequence)) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null content failed")
-                return
-            }
-        }
-        
-        if let e = err {
-            throw e
-        }
-    }
-    
-    func nullFeed(author: Identity) throws {
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullFeed(goAuthor) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null feed failed")
-                return
-            }
-        }
-        if let e = err {
-            throw e
         }
     }
 
