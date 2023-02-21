@@ -66,7 +66,7 @@ GOBUILDTAGS = nommio x509omitbundledroots
 #ifeq ($(CONFIGURATION),Debug)
     GOBUILDTAGS += testing
 #else
-    GOEXTRAFLAGS += -ldflags="-s -w"
+    GOEXTRAFLAGS += -buildvcs=false -ldflags="-s -w"
 #endif
 
 # this builds multiple lib.a files for different ARCHS_PHONE
