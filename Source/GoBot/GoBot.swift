@@ -745,16 +745,7 @@ class GoBot: Bot, @unchecked Sendable {
         }
         
         guard targetMessage.author == self._identity else {
-            // drop content directly / can't request others to do so
-            do {
-                try self.bot.nullContent(
-                    author: targetMessage.author,
-                    sequence: UInt(targetMessage.sequence)
-                )
-            } catch {
-                completion(GoBotError.duringProcessing("failed to null content", error))
-                return
-            }
+            // can't request others to drop content
             completion(nil)
             return
         }
@@ -1219,13 +1210,6 @@ class GoBot: Bot, @unchecked Sendable {
                 return
             }
 
-            do {
-                try self.bot.nullFeed(author: identity)
-            } catch {
-                completion("", GoBotError.duringProcessing("deleting feed from bot failed", error))
-                return
-            }
-
             completion(messageIdentifier, nil)
             NotificationCenter.default.post(name: .didBlockUser, object: identity)
         }
@@ -1257,7 +1241,6 @@ class GoBot: Bot, @unchecked Sendable {
             
             // add as blocked peers to bot (those dont have contact messages)
             for author in bannedAuthors {
-                try bot.nullFeed(author: author)
                 bot.ban(feed: author)
             }
             

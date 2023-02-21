@@ -112,20 +112,6 @@ func ssbFeedReplicate(ref string) {
 	}
 }
 
-//export ssbNullContent
-func ssbNullContent(author string, sequence uint64) int {
-	defer logPanic()
-
-	return 0
-}
-
-//export ssbNullFeed
-func ssbNullFeed(ref string) int {
-	defer logPanic()
-
-	return 0
-}
-
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
 	defer logPanic()
