@@ -247,8 +247,7 @@ final class AnalyticsTests: XCTestCase {
         statistics.repo = Analytics.RepoStatistics(
             feedCount: 1,
             messageCount: 2,
-            numberOfPublishedMessages: 3,
-            lastHash: ""
+            numberOfPublishedMessages: 3
         )
         statistics.peer = Analytics.PeerStatistics(peers: 1, connectedPeers: 2)
         analytics.trackStatistics(statistics)

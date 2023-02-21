@@ -26,13 +26,11 @@ public extension Analytics {
         public var feedCount: Int
         public var messageCount: Int
         public var numberOfPublishedMessages: Int
-        public var lastHash: String
 
-        public init(feedCount: Int, messageCount: Int, numberOfPublishedMessages: Int, lastHash: String) {
+        public init(feedCount: Int, messageCount: Int, numberOfPublishedMessages: Int) {
             self.feedCount = feedCount
             self.messageCount = messageCount
             self.numberOfPublishedMessages = numberOfPublishedMessages
-            self.lastHash = lastHash
         }
     }
 
@@ -71,7 +69,6 @@ public extension Analytics {
             params["Feed Count"] = repo.feedCount
             params["Repo Message Count"] = repo.messageCount
             params["Published Message Count"] = repo.numberOfPublishedMessages
-            params["Last Hash"] = repo.lastHash
         }
 
         if let database = statistics.database {

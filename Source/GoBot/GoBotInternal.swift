@@ -49,7 +49,6 @@ private struct FeedLogRequest: Codable {
 struct ScuttlegobotRepoCounts: Decodable {
     let messages: UInt
     let feeds: UInt
-    let lastHash: String
 }
 
 // these structs are set this way to match the Go code
