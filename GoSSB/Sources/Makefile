@@ -38,6 +38,7 @@ export GOOS_PHONE := ios
 export GOOS_SIM_arm64 := ios
 export GOOS_SIM_x86_64 := ios
 export CGO_ENABLED := 1
+export ZERO_AR_DATE := 1
 
 # main build targets
 build: $(BUILD_DIR)/$(PLATFORM_PHONE)-arm64/libssb-go.a $(BUILD_DIR)/$(PLATFORM_SIM)-arm64_x86_64/libssb-go.a
