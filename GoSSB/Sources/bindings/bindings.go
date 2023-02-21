@@ -99,7 +99,7 @@ func (n *Node) Start(
 	}
 
 	if err = os.MkdirAll(config.DataDirectory, 0700); err != nil {
-		return errors.Wrap(err, "could not create the data directory") // todo should this be here?
+		return errors.Wrap(err, "could not create the data directory")
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -264,7 +264,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		},
 	}
 
-	config.SetDefaults() // todo this should be automatic
+	config.SetDefaults()
 
 	return config, nil
 }
