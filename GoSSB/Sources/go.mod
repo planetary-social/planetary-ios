@@ -4,7 +4,7 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230220162145-d6d5d269bda6
+	github.com/planetary-social/scuttlego v0.0.0-20230220195140-8fe4de7be4a7
 	github.com/sirupsen/logrus v1.8.1
 	github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8
 	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
@@ -30,6 +30,7 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/flatbuffers v22.10.26+incompatible // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/google/subcommands v1.0.1 // indirect
 	github.com/google/wire v0.5.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -53,9 +54,11 @@ require (
 	go.mindeco.de v1.12.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.4.0 // indirect
+	golang.org/x/mod v0.6.0 // indirect
 	golang.org/x/net v0.6.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/tools v0.2.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
