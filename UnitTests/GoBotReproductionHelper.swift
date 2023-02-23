@@ -78,8 +78,6 @@ class API_GoBot: XCTestCase {
         XCTAssertEqual(statistics.repo.feedCount, 200)
         XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
         XCTAssertEqual(statistics.repo.messageCount, 6700)
-        
-        XCTAssertFalse(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }
     
     // make sure view db is uptodate with gosbot repo
@@ -101,13 +99,11 @@ class API_GoBot: XCTestCase {
         }
         waitForExpectations(timeout: 10)
     }
-
+    
     func test04_same_msgs() async {
         let statistics = await API_GoBot.bot.statistics()
         XCTAssertEqual(statistics.db.lastReceivedMessage, 6699)
         XCTAssertEqual(statistics.repo.messageCount, 6700)
-        
-        XCTAssertTrue(API_GoBot.bot.bot.repoFSCK(.Sequences))
     }
 
     func test05_refresh() {

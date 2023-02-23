@@ -18,7 +18,6 @@ enum ViewDatabaseError: Error {
     case unexpectedContentType(String)
     case unknownTable(ViewDatabaseTableNames)
     case unhandledContentType(ContentType)
-    case messageConstraintViolation(Identity, String)
     case invalidAddress(String)
     case invalidAliasURL(String)
     case invalidRoom

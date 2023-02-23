@@ -66,13 +66,6 @@ var (
 	node = bindings.NewNode()
 )
 
-//export ssbVersion
-func ssbVersion() *C.char {
-	defer logPanic()
-
-	return C.CString("project-raptor") // todo remove this function, I don't see why we need this
-}
-
 //export ssbBotStop
 func ssbBotStop() bool {
 	defer logPanic()

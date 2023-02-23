@@ -101,7 +101,6 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(statistics.repo.feedCount, -1)
             XCTAssertEqual(statistics.db.lastReceivedMessage, -3)
             XCTAssertEqual(statistics.repo.messageCount, -1)
-            XCTAssertEqual(statistics.repo.lastHash, "")
             exFirstStats.fulfill()
         }
         self.wait(for: [exFirstStats], timeout: 10)
@@ -127,7 +126,6 @@ class GoBotOrderedTests: XCTestCase {
             XCTAssertEqual(statistics.repo.feedCount, 0)
             XCTAssertEqual(statistics.db.lastReceivedMessage, -1)
             XCTAssertEqual(statistics.repo.messageCount, 0)
-            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exSecondStats.fulfill()
         }
         self.wait(for: [exSecondStats], timeout: 10)
@@ -135,14 +133,12 @@ class GoBotOrderedTests: XCTestCase {
 
     // MARK: simple publish
     func test006_publish_one() {
-        var messageHash = ""
         let ex = self.expectation(description: "\(#function)")
         GoBotOrderedTests.shared.publish(content: Post(text: "hello world")) {
             newMsgID, publishErr in
             XCTAssertNil(publishErr)
             XCTAssertTrue(newMsgID.hasPrefix("%"))
             XCTAssertTrue(newMsgID.hasSuffix(Algorithm.sha256.rawValue))
-            messageHash = newMsgID
             ex.fulfill()
         }
         self.wait(for: [ex], timeout: 10)
@@ -151,7 +147,6 @@ class GoBotOrderedTests: XCTestCase {
         GoBotOrderedTests.shared.statistics { statistics in
             XCTAssertEqual(statistics.db.lastReceivedMessage, 0)
             XCTAssertEqual(statistics.repo.messageCount, 1)
-            XCTAssertEqual(statistics.repo.lastHash, "last_hash_is_not_supported")
             exStats.fulfill()
         }
         self.wait(for: [exStats], timeout: 10)

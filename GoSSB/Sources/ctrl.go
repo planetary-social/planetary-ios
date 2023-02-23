@@ -112,20 +112,6 @@ func ssbFeedReplicate(ref string) {
 	}
 }
 
-//export ssbNullContent
-func ssbNullContent(author string, sequence uint64) int {
-	defer logPanic()
-
-	return 0
-}
-
-//export ssbNullFeed
-func ssbNullFeed(ref string) int {
-	defer logPanic()
-
-	return 0
-}
-
 //export ssbInviteAccept
 func ssbInviteAccept(token string) bool {
 	defer logPanic()
@@ -198,7 +184,7 @@ func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasReg
 		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
-	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	aliasURL, err := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
@@ -244,7 +230,7 @@ func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
 		return false
 	}
 
-	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	err = service.App.Commands.RoomsAliasRevoke.Handle(ctx, cmd)
@@ -281,7 +267,7 @@ func ssbRoomsListAliases(addressString string) *C.char {
 		return nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.TODO(), 30*time.Second) // todo
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	aliases, err := service.App.Queries.RoomsListAliases.Handle(ctx, query)

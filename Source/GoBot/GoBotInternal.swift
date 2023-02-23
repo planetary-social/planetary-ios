@@ -14,9 +14,6 @@ import CrashReporting
 // get's called with the size and the hash (might return a bool just as a demo of passing data back)
 typealias CBlobsNotifyCallback = @convention(c) (Int64, UnsafePointer<Int8>?) -> Bool
 
-// get's called with the messages left to process
-typealias CFSCKProgressCallback = @convention(c) (Float64, UnsafePointer<Int8>?) -> Void
-
 // get's called with a token and an expiry date as unix timestamp
 typealias CPlanetaryBearerTokenCallback = @convention(c) (UnsafePointer<Int8>?, Int64) -> Void
 
@@ -49,63 +46,33 @@ private struct FeedLogRequest: Codable {
 struct ScuttlegobotRepoCounts: Decodable {
     let messages: UInt
     let feeds: UInt
-    let lastHash: String
 }
 
 // these structs are set this way to match the Go code
 // swiftlint:disable identifier_name
 
-struct ScuttlegobotBlobWant: Decodable {
-    let Ref: String
-    let Dist: Int
-}
-
 struct ScuttlegobotPeerStatus: Decodable {
-    let Addr: String
-    let Since: String
+    let publicKey: String
+    let address: String
 }
 
 struct ScuttlegobotBotStatus: Decodable {
-    let Root: Int
-    let Peers: [ScuttlegobotPeerStatus]
-    let Blobs: [ScuttlegobotBlobWant]
-}
-
-enum ScuttlegobotFSCKMode: UInt32 {
-
-    // compares the message count of a feed with the sequence number of last message of a feed
-    case FeedLength = 1
-
-    // goes through all the messages and makes sure the sequences increament correctly for each feed
-    case Sequences = 2
-}
-
-struct ScuttlegobotHealReport: Decodable {
-    let Authors: [Identity]
-    let Messages: UInt32
+    let peers: [ScuttlegobotPeerStatus]
 }
 
 private struct GoBotConfig: Encodable {
-    let AppKey: String
-    let HMACKey: String
-    let KeyBlob: String
-    let Repo: String
-    let OldRepo: String
-    let ListenAddr: String
-    // setting this value to 0 means "a person that you follow" (1 hop away), therefore this value should be
-    // understood slightly differently than in the case of some other clients
-    let Hops: UInt
-    let SchemaVersion: UInt
-
-    let ServicePubs: [Identity]? // identities of services which supply planetary specific services
-    
-    /// Disables EBT replication if true. Part of a workaround for #847.
-    let DisableEBT: Bool
+    let networkKey: String
+    let hmacKey: String
+    let keyBlob: String
+    let repo: String
+    let oldRepo: String
+    let listenAddr: String
+    let hops: UInt
 
     #if DEBUG
-    let Testing = true
+    let testing = true
     #else
-    let Testing = false
+    let testing = false
     #endif
     
     func stringRepresentation() throws -> String {
@@ -127,13 +94,7 @@ class GoBotInternal {
     private var oldRepoPath: String = "/tmp/FBTT/unset"
     
     let name = "GoBot"
-
-    var version: String {
-        guard let version = ssbVersion() else {
-            return "binding error"
-        }
-        return String(cString: version)
-    }
+    let version = "project-raptor"
 
     private let queue: DispatchQueue
 
@@ -158,7 +119,6 @@ class GoBotInternal {
         hmacKey: HMACKey?,
         secret: Secret,
         pathPrefix: String,
-        disableEBT: Bool,
         migrationDelegate: BotMigrationDelegate
     ) async throws {
         if self.isRunning {
@@ -177,16 +137,13 @@ class GoBotInternal {
         let servicePubs: [Identity] = Environment.PlanetarySystem.systemPubs.map { $0.feed }
 
         let config = GoBotConfig(
-            AppKey: network.string,
-            HMACKey: hmacKey == nil ? "" : hmacKey!.string,
-            KeyBlob: secret.jsonString()!,
-            Repo: self.repoPath,
-            OldRepo: self.oldRepoPath,
-            ListenAddr: listenAddr,
-            Hops: 1,
-            SchemaVersion: ViewDatabase.schemaVersion,
-            ServicePubs: servicePubs,
-            DisableEBT: disableEBT
+            networkKey: network.string,
+            hmacKey: hmacKey == nil ? "" : hmacKey!.string,
+            keyBlob: secret.jsonString()!,
+            repo: self.repoPath,
+            oldRepo: self.oldRepoPath,
+            listenAddr: listenAddr,
+            hops: 2
         )
         
         var configString: String
@@ -213,7 +170,7 @@ class GoBotInternal {
                 
                 if worked {
                     self.replicate(feed: secret.identity)
-                    // make sure internal planetary pubs are authorized for connections
+
                     for pub in servicePubs {
                         self.replicate(feed: pub)
                     }
@@ -256,23 +213,8 @@ class GoBotInternal {
     func openConnectionList() -> [(String, Identity)] {
         var open: [(String, Identity)] = []
         if let status = try? self.status() {
-            for p in  status.Peers {
-                // split of multiserver addr format
-                // ex: net:1.2.3.4:8008~shs:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-                if !p.Addr.hasPrefix("net:") {
-                    continue
-                }
-
-                let hostWithPubkey = p.Addr.dropFirst(4)
-                guard let startOfPubKey = hostWithPubkey.firstIndex(of: "~") else {
-                    continue
-                }
-
-                let host = hostWithPubkey[..<startOfPubKey]
-                let keyB64Start = hostWithPubkey.index(startOfPubKey, offsetBy: 5) // ~shs:
-                let pubkey = hostWithPubkey[keyB64Start...]
-
-                open.append((String(host), String(pubkey)))
+            for p in  status.peers {
+                open.append((String(p.address), String(p.publicKey)))
             }
         }
         return open
@@ -379,61 +321,6 @@ class GoBotInternal {
         }
     }
     
-    // repoFSCK returns true if the repo is fine and otherwise false
-    private lazy var fsckProgressNotify: CFSCKProgressCallback = {
-        percDone, remaining in
-        guard let remStr = remaining else { return }
-        let status = "Database consistency check in progress.\nSorry, this will take a moment.\nTime remaining: \(String(cString: remStr))"
-        let notification = Notification.didUpdateFSCKRepair(perc: percDone / 100, status: status)
-        NotificationCenter.default.post(notification)
-    }
-    
-    func repoFSCK(_ mode: ScuttlegobotFSCKMode) -> Bool {
-        let ret = ssbOffsetFSCK(mode.rawValue, self.fsckProgressNotify)
-        return ret == 0
-    }
-    
-    func fsckAndRepair() -> (Bool, ScuttlegobotHealReport?) {
-        // disable sync during fsck check and cleanup
-        // new message kill the performance of this process
-        self.disconnectAll()
-
-        // TODO: disable network listener to stop local connections
-        // would be better then a polling timer but this suffices as a bug fix
-        let dcTimer = RepeatingTimer(interval: 5, completion: {
-            self.disconnectAll()
-        })
-        dcTimer.start()
-
-        defer {
-            dcTimer.stop()
-        }
-
-        NotificationCenter.default.post(Notification.didStartFSCKRepair())
-        defer {
-            NotificationCenter.default.post(Notification.didFinishFSCKRepair())
-        }
-        guard self.repoFSCK(.Sequences) == false else {
-            Log.unexpected(.botError, "repair was triggered but repo fsck says it's fine")
-            return (true, nil)
-        }
-        guard let reportData = ssbHealRepo() else {
-            Log.unexpected(.botError, "repo healing failed")
-            return (false, nil)
-        }
-        let d = String(cString: reportData).data(using: .utf8)!
-        free(reportData)
-        let dec = JSONDecoder()
-        do {
-            let report = try dec.decode(ScuttlegobotHealReport.self, from: d)
-            return (true, report)
-        } catch {
-            Log.optional(error)
-            CrashReporting.shared.reportIfNeeded(error: error)
-            return (false, nil)
-        }
-    }
-    
     func status() throws -> ScuttlegobotBotStatus {
         guard let status = ssbBotStatus() else {
             throw GoBotError.unexpectedFault("failed to get bot status")
@@ -464,41 +351,6 @@ class GoBotInternal {
     func replicate(feed: FeedIdentifier) {
         feed.withGoString {
             ssbFeedReplicate($0)
-        }
-    }
-
-    // MARK: Null / Delete
-
-    func nullContent(author: Identity, sequence: UInt) throws {
-        guard author.algorithm == .ggfeed else {
-            throw GoBotError.unexpectedFault("unsupported feed format for deletion")
-        }
-        
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullContent(goAuthor, UInt64(sequence)) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null content failed")
-                return
-            }
-        }
-        
-        if let e = err {
-            throw e
-        }
-    }
-    
-    func nullFeed(author: Identity) throws {
-        var err: Error?
-        author.withGoString {
-            goAuthor in
-            guard ssbNullFeed(goAuthor) == 0 else {
-                err = GoBotError.unexpectedFault("gobot: null feed failed")
-                return
-            }
-        }
-        if let e = err {
-            throw e
         }
     }
 
