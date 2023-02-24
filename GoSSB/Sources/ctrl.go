@@ -46,7 +46,7 @@ func ssbConnectPeer(quasiMs string) bool {
 		Address: addr,
 	}
 
-	err = service.App.Commands.Connect.Handle(cmd)
+	err = service.App.Commands.Connect.Handle(service.Ctx, cmd)
 	if err != nil {
 		err = errors.Wrapf(err, "connecting to '%s' failed", quasiMs)
 		return false
@@ -135,7 +135,7 @@ func ssbInviteAccept(token string) bool {
 		Invite: invite,
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(service.Ctx, 30*time.Second)
 	defer cancel()
 
 	err = service.App.Commands.RedeemInvite.Handle(ctx, cmd)
@@ -184,7 +184,7 @@ func ssbRoomsAliasRegister(addressString, aliasString string) C.ssbRoomsAliasReg
 		return C.ssbRoomsAliasRegisterReturn_t{err: SsbRoomsAliasRegisterUnknown}
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(service.Ctx, 30*time.Second)
 	defer cancel()
 
 	aliasURL, err := service.App.Commands.RoomsAliasRegister.Handle(ctx, cmd)
@@ -230,7 +230,7 @@ func ssbRoomsAliasRevoke(addressString, aliasString string) bool {
 		return false
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(service.Ctx, 30*time.Second)
 	defer cancel()
 
 	err = service.App.Commands.RoomsAliasRevoke.Handle(ctx, cmd)
@@ -267,7 +267,7 @@ func ssbRoomsListAliases(addressString string) *C.char {
 		return nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(service.Ctx, 30*time.Second)
 	defer cancel()
 
 	aliases, err := service.App.Queries.RoomsListAliases.Handle(ctx, query)
