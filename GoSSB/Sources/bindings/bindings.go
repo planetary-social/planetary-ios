@@ -22,6 +22,7 @@ import (
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/graph"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
 )
 
@@ -83,19 +84,21 @@ func (n *Node) Start(
 		return errors.New("node is already running")
 	}
 
-	local, err := n.toIdentity(swiftConfig)
+	privateIdentity, err := n.toIdentity(swiftConfig)
 	if err != nil {
 		return errors.Wrap(err, "could not create the identity")
 	}
 
+	publicIdentityRef, err := refs.NewIdentityFromPublic(privateIdentity.Public())
+	if err != nil {
+		return errors.Wrap(err, "could not create the identity ref")
+	}
+
+	log.WithField("identity", publicIdentityRef).Debug("building service")
+
 	config, err := n.toConfig(swiftConfig, log)
 	if err != nil {
 		return errors.Wrap(err, "could not convert the config")
-	}
-
-	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
-	if err != nil {
-		return errors.Wrap(err, "error creating the progress callback")
 	}
 
 	if err = os.MkdirAll(config.DataDirectory, 0700); err != nil {
@@ -104,20 +107,15 @@ func (n *Node) Start(
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	service, cleanup, err := di.BuildService(ctx, local, config)
+	service, cleanup, err := di.BuildService(ctx, privateIdentity, config)
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
 	}
 
-	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
-	if err != nil {
+	if err := n.runMigrations(ctx, service, migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn); err != nil {
 		cancel()
-		return errors.Wrap(err, "error creating the migration command")
-	}
-
-	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
-		cancel()
+		cleanup()
 		return errors.Wrap(err, "error running migrations")
 	}
 
@@ -211,6 +209,30 @@ func (n *Node) IsRunning() bool {
 
 func (n *Node) isRunning() bool {
 	return n.service != nil
+}
+
+func (n *Node) runMigrations(
+	ctx context.Context,
+	service di.Service,
+	migrationOnRunningFn MigrationOnRunningFn,
+	migrationOnErrorFn MigrationOnErrorFn,
+	migrationOnDoneFn MigrationOnDoneFn,
+) error {
+	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
+	if err != nil {
+		return errors.Wrap(err, "error creating the progress callback")
+	}
+
+	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
+	if err != nil {
+		return errors.Wrap(err, "error creating the migration command")
+	}
+
+	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
+		return errors.Wrap(err, "error running migrations")
+	}
+
+	return nil
 }
 
 func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
