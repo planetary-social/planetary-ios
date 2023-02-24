@@ -16,6 +16,7 @@ import (
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
 	"github.com/planetary-social/scuttlego/di"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
+	"github.com/planetary-social/scuttlego/service/app"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
 	"github.com/planetary-social/scuttlego/service/domain"
@@ -56,8 +57,15 @@ type BotConfig struct {
 	Testing    bool   `json:"testing"`
 }
 
+type Service struct {
+	Ctx context.Context
+	App app.Application
+}
+
 type Node struct {
-	mutex      sync.Mutex
+	mutex sync.Mutex
+
+	ctx        context.Context
 	service    *di.Service
 	cancel     context.CancelFunc
 	cleanup    func()
@@ -107,7 +115,7 @@ func (n *Node) Start(
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	service, cleanup, err := di.BuildService(ctx, privateIdentity, config)
+	service, cleanup, err := di.BuildService(privateIdentity, config)
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
@@ -119,6 +127,7 @@ func (n *Node) Start(
 		return errors.Wrap(err, "error running migrations")
 	}
 
+	n.ctx = ctx
 	n.service = &service
 	n.cancel = cancel
 	n.cleanup = cleanup
@@ -169,6 +178,7 @@ func (n *Node) Stop() error {
 
 	n.wg.Wait()
 
+	n.ctx = nil
 	n.service = nil
 	n.cancel = nil
 	n.repository = ""
@@ -189,7 +199,7 @@ func (n *Node) Repository() (string, error) {
 	return n.repository, nil
 }
 
-func (n *Node) Get() (*di.Service, error) {
+func (n *Node) Get() (*Service, error) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -197,7 +207,10 @@ func (n *Node) Get() (*di.Service, error) {
 		return nil, errors.New("node isn't running")
 	}
 
-	return n.service, nil
+	return &Service{
+		Ctx: n.ctx,
+		App: n.service.App,
+	}, nil
 }
 
 func (n *Node) IsRunning() bool {
