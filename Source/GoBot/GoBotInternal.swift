@@ -68,12 +68,7 @@ private struct GoBotConfig: Encodable {
     let oldRepo: String
     let listenAddr: String
     let hops: UInt
-
-    #if DEBUG
-    let testing = true
-    #else
-    let testing = false
-    #endif
+    let testing: Bool
     
     func stringRepresentation() throws -> String {
         let configData = try JSONEncoder().encode(self)
@@ -143,7 +138,8 @@ class GoBotInternal {
             repo: self.repoPath,
             oldRepo: self.oldRepoPath,
             listenAddr: listenAddr,
-            hops: 2
+            hops: 2,
+            testing: false
         )
         
         var configString: String
