@@ -149,9 +149,10 @@
 "Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
 "Localized.rooms" = "Salas";
 "Localized.allCapsCopy" = "COPIAR";
-"Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
-"Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
 "Localized.percentComplete" = "completado";
+"Localized.botMigrationBody" = "Planetary necesita mejorar para darte una mejor experiencia de usuario.\n\nEsto puede llevar unos pocos minutos. Mantén la aplicación abierta hasta que esté completado.";
+"Localized.botMigrationGenericError" = "La migración falló. Por favor, prueba de nuevo o envía un email a support@planetary.social para obtener ayuda. Si el error persiste, a lo mejor necesitarás eliminar y reinstalar Planetary.";
+"Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres ignorar a {{ name }}? No podréis ver el contenido del otro o poder contactar el uno con el otro. Esto será visible públicamente.";
 "Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";
@@ -276,6 +277,8 @@
 "ManageRelays.roomHelpText" = "Los servidores de sala permiten a los miembros conectarse entre ellos y susurrarse directamente, usando el servidor como un túnel. Para añadir una sala necesitas preguntar a un miembro de una sala existente por una invitación o ejecutar la tuya propia.";
 "ManageRelays.deleteRoom" = "Eliminar";
 "ManageRelays.deleteRoomConfirmation" = "Nota: Esto solamente eliminará la sala de tu base de datos local de Planetary. No te elimina como miembro de la sala.";
+"ManageRelays.joinPlanetaryRoom" = "Unirse a la sala Planetary";
+"ManageRelays.joinPlanetaryRoomDescription" = "Al unirte al servidor de la sala oficial de Planetary podrás registrar alias como tunombre.planetary.name y sincronizar directamente con otros en la sala.";
 
 "Message.noPostsTitle" = "No hay publicaciones aquí todavía";
 "Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";

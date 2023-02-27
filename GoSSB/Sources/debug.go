@@ -3,10 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 
 	"github.com/pkg/errors"
-	"github.com/ssbc/go-ssb"
 )
 
 import "C"
@@ -30,18 +28,14 @@ func ssbBotStatus() *C.char {
 		return nil
 	}
 
-	rv := ssb.Status{ // todo return something else, cleanup the interface
-		PID:      1,
-		Peers:    nil,
-		Blobs:    make([]ssb.BlobWant, 0),
-		Root:     1,
-		Indicies: nil,
+	rv := botStatus{
+		Peers: nil,
 	}
 
 	for _, peer := range status.Peers {
-		rv.Peers = append(rv.Peers, ssb.PeerStatus{
-			Addr:  fmt.Sprintf("net:1.2.3.4:8008~shs:%s", peer.Identity.String()), // todo change this so we just return the key
-			Since: "since_is_not_supported",
+		rv.Peers = append(rv.Peers, botStatusPeer{
+			PublicKey: peer.Identity.PublicKey(),
+			Address:   "1.2.3.4:8008",
 		})
 	}
 
@@ -96,10 +90,9 @@ func ssbRepoStats() *C.char {
 		return nil
 	}
 
-	counts := repoCounts{
+	counts := repoStats{
 		Feeds:    status.NumberOfFeeds,
-		Messages: int64(status.NumberOfMessages),
-		LastHash: "last_hash_is_not_supported",
+		Messages: status.NumberOfMessages,
 	}
 
 	countsBytes, err := json.Marshal(counts)
@@ -111,8 +104,16 @@ func ssbRepoStats() *C.char {
 	return C.CString(string(countsBytes))
 }
 
-type repoCounts struct {
-	Feeds    int    `json:"feeds"`
-	Messages int64  `json:"messages"`
-	LastHash string `json:"lastHash"`
+type botStatus struct {
+	Peers []botStatusPeer `json:"peers"`
+}
+
+type botStatusPeer struct {
+	PublicKey []byte `json:"publicKey"`
+	Address   string `json:"address"`
+}
+
+type repoStats struct {
+	Feeds    int `json:"feeds"`
+	Messages int `json:"messages"`
 }

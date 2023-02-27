@@ -27,9 +27,6 @@ typedef bool (notifyBlobHandle_t)(int64_t, const char*);
 typedef void (notifyMigrationOnRunning_t)(int64_t migrationIndex, int64_t migrationsCount);
 typedef void (notifyMigrationOnError_t)(int64_t migrationIndex, int64_t migrationsCount, int64_t error);
 typedef void (notifyMigrationOnDone_t)(int64_t migrationsCount);
-typedef void (fsckProgressHandle_t)(double, const char*);
-
-extern const char *ssbVersion(void);
 
 extern char* ssbGenKey(void);
 
@@ -38,13 +35,7 @@ extern bool ssbBotInit(gostring_t configPath, notifyBlobHandle_t blobFn, notifyM
 extern bool ssbBotStop(void);
 extern char* ssbBotStatus(void);
 
-extern int ssbOffsetFSCK(uint32_t mode, fsckProgressHandle_t updateFn);
-extern char* ssbHealRepo(void);
-
 extern bool ssbInviteAccept(gostring_t token);
-
-extern int ssbNullContent(gostring_t author, uint64_t sequence);
-extern int ssbNullFeed(gostring_t author);
 
 extern void ssbFeedReplicate(gostring_t feed);
 

@@ -66,13 +66,6 @@ var (
 	node = bindings.NewNode()
 )
 
-//export ssbVersion
-func ssbVersion() *C.char {
-	defer logPanic()
-
-	return C.CString("project-raptor") // todo remove this function, I don't see why we need this
-}
-
 //export ssbBotStop
 func ssbBotStop() bool {
 	defer logPanic()
@@ -208,7 +201,7 @@ func ssbBotInit(
 func main() {}
 
 func initPreInitLogger() {
-	log = newLogger(os.Stderr)
+	log = newLogger(os.Stderr, false)
 	log = log.WithField("warning", "pre-init")
 }
 
@@ -224,11 +217,11 @@ func initLogger(config bindings.BotConfig) error {
 		return errors.Wrap(err, "failed to create debug log file")
 	}
 
-	log = newLogger(io.MultiWriter(os.Stderr, logFile))
+	log = newLogger(io.MultiWriter(os.Stderr, logFile), config.Testing)
 	return nil
 }
 
-func newLogger(w io.Writer) logging.Logger {
+func newLogger(w io.Writer, testing bool) logging.Logger {
 	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
 
 	customFormatter := new(logrus.TextFormatter)
@@ -237,7 +230,11 @@ func newLogger(w io.Writer) logging.Logger {
 	logrusLogger := logrus.New()
 	logrusLogger.SetOutput(w)
 	logrusLogger.SetFormatter(customFormatter)
-	logrusLogger.SetLevel(logrus.DebugLevel)
+	if testing {
+		logrusLogger.SetLevel(logrus.TraceLevel)
+	} else {
+		logrusLogger.SetLevel(logrus.DebugLevel)
+	}
 
 	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
 }
