@@ -55,7 +55,12 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 		return nil
 	}
 
-	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamRootLog")
+	log.
+		WithField("param.startSeq", startSeq).
+		WithField("param.limit", limit).
+		WithField("n", len(msgs)).
+		WithField("duration", time.Since(start)).
+		Debug("returning new messages in ssbStreamRootLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
@@ -117,7 +122,11 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		return nil
 	}
 
-	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamPublishedLog")
+	log.
+		WithField("param.afterSeq", afterSeq).
+		WithField("n", len(msgs)).
+		WithField("duration", time.Since(start)).
+		Debug("returning new messages in ssbStreamPublishedLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
