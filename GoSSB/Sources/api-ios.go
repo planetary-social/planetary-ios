@@ -33,6 +33,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	stdlog "log"
 	"os"
 	"path/filepath"
 	"runtime/debug"
@@ -236,5 +237,7 @@ func newLogger(w io.Writer, testing bool) logging.Logger {
 		logrusLogger.SetLevel(logrus.DebugLevel)
 	}
 
-	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
+	logrusLoggerEntry := logrusLogger.WithField("source", "golang")
+	stdlog.SetOutput(logrusLoggerEntry.Writer())
+	return logging.NewLogrusLogger(logrusLoggerEntry)
 }
