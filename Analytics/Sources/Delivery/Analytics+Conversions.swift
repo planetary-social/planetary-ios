@@ -52,11 +52,11 @@ public extension Analytics {
         service.track(event: .publish, element: .identity, name: "unblock")
     }
 
-    func trackDidPost() {
-        service.track(event: .publish, element: .post, name: "new")
+    func trackDidPost(characterCount: Int) {
+        service.track(event: .publish, element: .post, name: "new", param: "post_length", value: "\(characterCount)")
     }
 
-    func trackDidReply() {
-        service.track(event: .publish, element: .post, name: "reply")
+    func trackDidReply(characterCount: Int) {
+        service.track(event: .publish, element: .post, name: "reply", param: "reply_length", value: "\(characterCount)")
     }
 }
