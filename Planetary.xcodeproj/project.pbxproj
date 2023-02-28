@@ -217,7 +217,6 @@
 		23EF5AAE249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
 		23EF5AAF249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
 		23EF5AB0249D185E00469977 /* BearerBanListAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */; };
-		2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		2D1C46EF289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */; };
 		2D1C46F0289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */; };
 		2D1F3F9E2894E81200742C45 /* RandomAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */; };
@@ -929,7 +928,6 @@
 		C9724B362809D47D000EBCCD /* PhotoConfirmOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F019722DE87EB007EBAE2 /* PhotoConfirmOnboardingStep.swift */; };
 		C9724B372809D47D000EBCCD /* PhotoOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F019522DE87CD007EBAE2 /* PhotoOnboardingStep.swift */; };
 		C9724B382809D47D000EBCCD /* SplashOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530F019B22DEAD70007EBAE2 /* SplashOnboardingStep.swift */; };
-		C9724B392809D47D000EBCCD /* DirectoryOnboardingStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */; };
 		C9724B3A2809D481000EBCCD /* Onboarding+AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53033E9E2383322B004609F8 /* Onboarding+AppConfiguration.swift */; };
 		C9724B3B2809D481000EBCCD /* Onboarding+Follow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587B822A0CDFB0004E2B1 /* Onboarding+Follow.swift */; };
 		C9724B3C2809D481000EBCCD /* Onboarding+Migrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531587BA22A18C280004E2B1 /* Onboarding+Migrate.swift */; };
@@ -1352,7 +1350,6 @@
 		23EF5AA2249CE69900469977 /* NullBlocksAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NullBlocksAPI.swift; sourceTree = "<group>"; };
 		23EF5AA7249D177F00469977 /* BanListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BanListAPI.swift; sourceTree = "<group>"; };
 		23EF5AAC249D185E00469977 /* BearerBanListAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearerBanListAPI.swift; sourceTree = "<group>"; };
-		2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryOnboardingStep.swift; sourceTree = "<group>"; };
 		2D1C46EE289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryFeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
 		2D1F3F9C2894E81200742C45 /* RandomAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomAlgorithm.swift; sourceTree = "<group>"; };
 		2DFBECE325E1542A00803075 /* development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = development.entitlements; sourceTree = "<group>"; };
@@ -2080,7 +2077,6 @@
 				530F01AB22DEAE6F007EBAE2 /* BioOnboardingStep.swift */,
 				530F019D22DEAD84007EBAE2 /* BirthdateOnboardingStep.swift */,
 				530F01A722DEAE3F007EBAE2 /* ContactsOnboardingStep.swift */,
-				2D16330D25C72D1B00E68CBE /* DirectoryOnboardingStep.swift */,
 				530F01AD22DEAE86007EBAE2 /* DoneOnboardingStep.swift */,
 				5342426E2368A66F00192293 /* EarlyAccessOnboardingStep.swift */,
 				530F01B522E0D930007EBAE2 /* JoinOnboardingStep.swift */,
@@ -3859,7 +3855,6 @@
 				C9724B7C2809E8D4000EBCCD /* PillButton.swift in Sources */,
 				C982CBDE28353DBB00D8963F /* JoinPlanetarySystemOperation.swift in Sources */,
 				C9724B382809D47D000EBCCD /* SplashOnboardingStep.swift in Sources */,
-				C9724B392809D47D000EBCCD /* DirectoryOnboardingStep.swift in Sources */,
 				53E29CE122D80427008A2CB1 /* Hashtag+NSAttributedString.swift in Sources */,
 				0A64A83924735392009A5EBF /* PushAPIService.swift in Sources */,
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
@@ -4479,7 +4474,6 @@
 				53EE01FF22051A1700DFDF16 /* ImageMetadata.swift in Sources */,
 				53631EEF23A941A7009C6999 /* NSAttributedString+Mutable.swift in Sources */,
 				53E341FE224FF9EE002BB5F4 /* UIImage+Verse.swift in Sources */,
-				2D16330E25C72D1B00E68CBE /* DirectoryOnboardingStep.swift in Sources */,
 				5B533E402959F96D00F5EED1 /* AppEnvironmentModifier.swift in Sources */,
 				53C9FA2C22FBBC3C00EAC35F /* NSAttributedString+FontColor.swift in Sources */,
 				C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */,
