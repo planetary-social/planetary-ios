@@ -171,7 +171,7 @@ class NewPostViewController: ContentViewController {
             await draftStore.save(text: textValue, images: self.galleryView.images)
             do {
                 _ = try await Bots.current.publish(post, with: images)
-                Analytics.shared.trackDidPost()
+                Analytics.shared.trackDidPost(characterCount: post.text.count)
                 await self.dismiss(didPublish: post)
                 try StoreReviewController.promptIfConditionsMet()
             } catch {

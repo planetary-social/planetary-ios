@@ -384,7 +384,7 @@ class ThreadViewController: ContentViewController {
             await draftStore.save(text: textValue, images: images)
             do {
                 let messageID = try await Bots.current.publish(post, with: images)
-                Analytics.shared.trackDidReply()
+                Analytics.shared.trackDidReply(characterCount: post.text.count)
                 await AppController.shared.hideProgress()
                 await MainActor.run {
                     self.buttonsView.postButton.isEnabled = true
