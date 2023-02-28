@@ -34,8 +34,7 @@ class BotStatisticsServiceTests: XCTestCase {
                 path: nil,
                 feedCount: 1,
                 messageCount: 1,
-                numberOfPublishedMessages: 1,
-                lastHash: "hash"
+                numberOfPublishedMessages: 1
             ),
             peer: PeerStatistics(
                 count: 1,
@@ -54,8 +53,7 @@ class BotStatisticsServiceTests: XCTestCase {
                 path: nil,
                 feedCount: 2,
                 messageCount: 2,
-                numberOfPublishedMessages: 2,
-                lastHash: "hash"
+                numberOfPublishedMessages: 2
             ),
             peer: PeerStatistics(
                 count: 2,

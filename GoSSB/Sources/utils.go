@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"runtime/debug"
 
 	"github.com/pkg/errors"
@@ -34,39 +33,6 @@ func ssbGenKey() *C.char {
 	}
 
 	return C.CString(buf.String())
-}
-
-//export ssbOffsetFSCK
-func ssbOffsetFSCK(mode uint32, progressFn uintptr) int {
-	defer logPanic()
-
-	return 0
-}
-
-//export ssbHealRepo
-func ssbHealRepo() *C.char {
-	defer logPanic()
-
-	var err error
-	defer logError("ssbHealRepo", &err)
-
-	report := healReport{
-		Authors:  make([]refs.FeedRef, 0),
-		Messages: 0,
-	}
-
-	b, err := json.Marshal(report)
-	if err != nil {
-		err = errors.Wrap(err, "json marshal failed")
-		return nil
-	}
-
-	return C.CString(string(b))
-}
-
-type healReport struct {
-	Authors  []refs.FeedRef
-	Messages uint64
 }
 
 func logError(functionName string, errPtr *error) {

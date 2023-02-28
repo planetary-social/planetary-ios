@@ -48,9 +48,6 @@ extension Notification.Name {
 
 // MARK: - Database progress
 extension Notification.Name {
-    static let didStartFSCKRepair = Notification.Name("didStartFSCKRepair")
-    static let didUpdateFSCKRepair = Notification.Name("didUpdateFSCKRepair")
-    static let didFinishFSCKRepair = Notification.Name("didFinishFSCKRepair")
     static let didCreateReport = Notification.Name("didCreateReport")
 }
 
@@ -59,38 +56,4 @@ extension Notification.Name {
     static let migrationOnRunning = Notification.Name("migrationOnRunning")
     static let migrationOnError = Notification.Name("migrationOnError")
     static let migrationOnDone = Notification.Name("migrationOnDone")
-}
-
-extension Notification {
-
-    var databaseProgressPercentageDone: Float64? {
-        self.userInfo?["percentage_done"] as? Float64
-    }
-    
-    var databaseProgressStatus: String? {
-        self.userInfo?["status"] as? String
-    }
-    
-    static func didStartFSCKRepair() -> Notification {
-        Notification(
-            name: .didStartFSCKRepair,
-            object: nil,
-            userInfo: ["status": "Database consistency check in progress"]
-        )
-    }
-    
-    static func didFinishFSCKRepair() -> Notification {
-        Notification(
-            name: .didFinishFSCKRepair,
-            object: nil
-        )
-    }
-
-    static func didUpdateFSCKRepair(perc: Float64, status: String) -> Notification {
-        Notification(
-            name: .didUpdateFSCKRepair,
-            object: nil,
-            userInfo: ["percentage_done": perc, "status": status]
-        )
-    }
 }
