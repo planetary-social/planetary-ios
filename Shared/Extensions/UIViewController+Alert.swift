@@ -32,20 +32,20 @@ extension UIViewController: AlertRouter {
         switch error {
         case BotError.forkProtection:
             let resetForkedFeedProtectionAction = UIAlertAction(
-                title: Localized.Debug.reset.text,
+                title: Localized.ForkedFeedProtection.prepareForReset.text,
                 style: .destructive
             ) { _ in
                 controller.dismiss(animated: false)
 
                 let confirmAlertController = UIAlertController(
-                    title: Localized.Debug.resetForkedFeedProtection.text,
-                    message: Localized.Debug.resetForkedFeedProtectionDescription.text,
+                    title: Localized.ForkedFeedProtection.resetForkedFeedProtection.text,
+                    message: Localized.ForkedFeedProtection.resetForkedFeedProtectionDescription.text,
                     preferredStyle: .alert
                 )
                 confirmAlertController.view.tintColor = UIColor.tint.system
 
                 let resetAction = UIAlertAction(
-                    title: Localized.Debug.reset.text,
+                    title: Localized.ForkedFeedProtection.reset.text,
                     style: .destructive
                 ) { _ in
                     confirmAlertController.dismiss(animated: false)
@@ -78,6 +78,16 @@ extension UIViewController: AlertRouter {
                 self.present(alertController: confirmAlertController)
             }
             controller.addAction(resetForkedFeedProtectionAction)
+
+            if let url = URL(string: "https://github.com/planetary-social/planetary-ios/wiki/Forked-Feed") {
+                let moreInfoAction = UIAlertAction(
+                    title: Localized.ForkedFeedProtection.readMore.text,
+                    style: .default
+                ) { _ in
+                    UIApplication.shared.open(url)
+                }
+                controller.addAction(moreInfoAction)
+            }
         default:
             break
         }

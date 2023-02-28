@@ -167,7 +167,7 @@ class AppConfigurationViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Localized.Debug.resetForkedFeedProtection.text,
+                title: Localized.ForkedFeedProtection.resetForkedFeedProtection.text,
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: { [weak self] cell in
                     let enabled = AppConfiguration.current == self?.configuration
@@ -178,9 +178,9 @@ class AppConfigurationViewController: DebugTableViewController {
                 actionClosure: { [weak self] cell in
                     self?.confirm(
                         from: cell,
-                        message: Localized.Debug.resetForkedFeedProtectionDescription.text,
+                        message: Localized.ForkedFeedProtection.resetForkedFeedProtectionDescription.text,
                         isDestructive: true,
-                        confirmTitle: Localized.Debug.reset.text
+                        confirmTitle: Localized.ForkedFeedProtection.reset.text
                     ) {
                         guard let self = self,
                             let bot = self.configuration.bot else {
