@@ -1236,16 +1236,8 @@ class GoBot: Bot, @unchecked Sendable {
         }
             
         do {
-            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
-            
-            // add as blocked peers to bot (those dont have contact messages)
-            for author in bannedAuthors {
-                bot.ban(feed: author)
-            }
-            
-            for author in unbannedAuthors {
-                bot.unban(feed: author)
-            }
+            try self.database.applyBanList(banList)
+            try bot.setBanList(banList: banList)
         } catch {
             Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }

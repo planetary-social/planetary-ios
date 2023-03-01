@@ -326,21 +326,16 @@ class GoBotInternal {
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotBotStatus.self, from: d)
     }
-    
-    // MARK: manual block / replicate
-    
-    /// Instructs the bot to stop replicating the current feed without publishing a message on the user's log.
-    func ban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, true)
-//        }
-    }
-    
-    /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(feed:)`.
-    func unban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, false)
-//        }
+        
+    func setBanList(banList: BanList) throws {
+        let encodedHashes = try JSONEncoder().encode(banList)
+        let hashesStr = String(data: encodedHashes, encoding: .utf8)!
+        let succeeded = hashesStr.withGoString {
+            return ssbBanListSet($0)
+        }
+        if !succeeded {
+            throw GoBotError.unexpectedFault("failed to set the ban list")
+        }
     }
 
     // TODO: call this to fetch a feed without following it
