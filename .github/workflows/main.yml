@@ -131,3 +131,7 @@ jobs:
       - name: Run tests
         run: make -f Makefile.ci ci
         working-directory: GoSSB/Sources/
+
+      - name: Confirm that archives were rebuilt
+        run: make
+        working-directory: GoSSB/Sources/
