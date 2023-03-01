@@ -911,11 +911,6 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
-        guard !isRestoring else {
-            completion(identifier, nil, BotError.restoring)
-            return
-        }
-
         userInitiatedQueue.async {
 
             // get non-empty data from blob storage
