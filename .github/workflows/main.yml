@@ -51,6 +51,10 @@ jobs:
         run: make -f Makefile.ci ci
         working-directory: GoSSB/Sources/
 
-      - name: Confirm that archives were rebuilt
+      - name: Rebuild archives
         run: make
+        working-directory: GoSSB/Sources/
+
+      - name: Confirm that the archives haven't changed
+        run: make -f Makefile.ci check_repository_unchanged
         working-directory: GoSSB/Sources/
