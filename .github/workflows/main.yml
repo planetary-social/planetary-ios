@@ -52,8 +52,7 @@ jobs:
         working-directory: GoSSB/Sources/
 
       - name: Rebuild archives
-        run: GOROOT=$(go env GOROOT) make
-        working-directory: GoSSB/Sources/
+        run: xcodebuild -project Planetary.xcodeproj -scheme GoSSB.xcframework build
 
       - name: Confirm that the archives haven't changed
         run: make -f Makefile.ci check_repository_unchanged
