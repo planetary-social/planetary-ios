@@ -163,7 +163,7 @@ func ssbBotInit(
 
 	onBlobDownloadedFn := func(event queries.BlobDownloaded) error {
 		ref := C.CString(event.Id.String())
-		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
+		ret := C.callNotifyBlobs(unsafeExternPointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
 		C.free(unsafe.Pointer(ref))
 		if !ret {
 			return errors.New("calling C function failed")
@@ -173,19 +173,19 @@ func ssbBotInit(
 
 	migrationOnRunningFn := func(migrationIndex, migrationsCount int) {
 		if notifyMigrationOnRunningFn != 0 {
-			C.callNotifyMigrationOnRunning(unsafe.Pointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
+			C.callNotifyMigrationOnRunning(unsafeExternPointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
 		}
 	}
 
 	migrationOnErrorFn := func(migrationIndex, migrationsCount, error int) {
 		if notifyMigrationOnErrorFn != 0 {
-			C.callNotifyMigrationOnError(unsafe.Pointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
+			C.callNotifyMigrationOnError(unsafeExternPointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
 		}
 	}
 
 	migrationOnDoneFn := func(migrationsCount int) {
 		if notifyMigrationOnDoneFn != 0 {
-			C.callNotifyMigrationOnDone(unsafe.Pointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
+			C.callNotifyMigrationOnDone(unsafeExternPointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
 		}
 	}
 
@@ -240,4 +240,20 @@ func newLogger(w io.Writer, testing bool) logging.Logger {
 	logrusLoggerEntry := logrusLogger.WithField("source", "golang")
 	stdlog.SetOutput(logrusLoggerEntry.Writer())
 	return logging.NewLogrusLogger(logrusLoggerEntry)
+}
+
+// unsafeExternPointer converts a uintptr address known to be a valid pointer
+// external to the Go heap to an unsafe.Pointer, without triggering the
+// unsafeptr vet warning.
+func unsafeExternPointer(addr uintptr) unsafe.Pointer {
+	// Converting a uintptr directly to an unsafe.Pointer triggers a vet warning,
+	// because a uintptr cannot safely hold a pointer to the Go heap. (Because a
+	// uintptr may hold an integer, uintptr values are not traced during garbage
+	// collection and are not updated during stack resizing.)
+	//
+	// However, if we know that the address is not owned by the Go heap, it does
+	// not need to be traced by the GC and cannot be implicitly relocated.
+	// We silence the unsafeptr warning by converting a pointer-to-uintptr to
+	// a pointer-to-pointer.
+	return *(*unsafe.Pointer)(unsafe.Pointer(&addr))
 }
