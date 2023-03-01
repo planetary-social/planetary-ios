@@ -91,6 +91,71 @@ class FeedStrategyTests: ViewDatabaseTestCase {
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 2)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%1"), 3)
     }
+
+    /// Verifies that RecentlyActivePostsAndContactsAlgorithm discards unfollows
+    func testRecentlyActivePostsAndContactsAlgorithmDoesNotCountUnfollows() throws {
+        let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
+        let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
+        let alice = DatabaseFixture.exampleFeed.identities[1]
+        let bob = DatabaseFixture.exampleFeed.identities[2]
+
+        let post0 = MessageFixtures.post(
+            key: "%0",
+            sequence: 0,
+            timestamp: referenceDate + 0,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 0,
+            author: testAuthor
+        )
+        let follow1 = MessageFixtures.message(
+            key: "%1",
+            sequence: 1,
+            content: Content(from: Contact(contact: alice, following: true)),
+            timestamp: referenceDate + 1,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 1,
+            author: testAuthor
+        )
+        let about1 = MessageFixtures.message(
+            key: "%2",
+            sequence: 2,
+            content: Content(from: About(about: alice, name: "Alice")),
+            timestamp: referenceDate + 2,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 2,
+            author: alice
+        )
+        let about2 = MessageFixtures.message(
+            key: "%3",
+            sequence: 3,
+            content: Content(from: About(about: bob, name: "Bob")),
+            timestamp: referenceDate + 3,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 3,
+            author: bob
+        )
+        let unfollow1 = MessageFixtures.message(
+            key: "%4",
+            sequence: 4,
+            content: Content(from: Contact(contact: bob, following: false)),
+            timestamp: referenceDate + 4,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 4,
+            author: alice
+        )
+
+        try db.fillMessages(msgs: [post0, follow1, about1, about2, unfollow1])
+
+        let strategy = RecentlyActivePostsAndContactsAlgorithm()
+        let proxy = try db.paginatedFeed(with: strategy)
+
+        XCTAssertEqual(proxy.count, 2)
+        XCTAssertEqual(proxy.messageBy(index: 0), follow1)
+        XCTAssertEqual(proxy.messageBy(index: 1), post0)
+
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post0.key), 1)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: follow1.key), 0)
+    }
     
     /// Verifies that the recently active posts and contacts algorithm does not push old posts to the top when they
     /// receive a vote.
@@ -215,6 +280,71 @@ class FeedStrategyTests: ViewDatabaseTestCase {
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 1)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%1"), 2)
         XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%0"), 3)
+    }
+
+    /// Verifies that PostsAndContactsAlgorithm discards unfollows
+    func testPostsAndContactsAlgorithmDoesNotCountUnfollows() throws {
+        let referenceDate: Double = 1_652_813_189_000 // May 17, 2022 in millis
+        let receivedDate: Double = 1_652_813_515_000 // May 17, 2022 in millis
+        let alice = DatabaseFixture.exampleFeed.identities[1]
+        let bob = DatabaseFixture.exampleFeed.identities[2]
+
+        let post0 = MessageFixtures.post(
+            key: "%0",
+            sequence: 0,
+            timestamp: referenceDate + 0,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 0,
+            author: testAuthor
+        )
+        let follow1 = MessageFixtures.message(
+            key: "%1",
+            sequence: 1,
+            content: Content(from: Contact(contact: alice, following: true)),
+            timestamp: referenceDate + 1,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 1,
+            author: testAuthor
+        )
+        let about1 = MessageFixtures.message(
+            key: "%2",
+            sequence: 2,
+            content: Content(from: About(about: alice, name: "Alice")),
+            timestamp: referenceDate + 2,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 2,
+            author: alice
+        )
+        let about2 = MessageFixtures.message(
+            key: "%3",
+            sequence: 3,
+            content: Content(from: About(about: bob, name: "Bob")),
+            timestamp: referenceDate + 3,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 3,
+            author: bob
+        )
+        let unfollow1 = MessageFixtures.message(
+            key: "%4",
+            sequence: 4,
+            content: Content(from: Contact(contact: bob, following: false)),
+            timestamp: referenceDate + 4,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 4,
+            author: alice
+        )
+
+        try db.fillMessages(msgs: [post0, follow1, about1, about2, unfollow1])
+
+        let strategy = PostsAndContactsAlgorithm()
+        let proxy = try db.paginatedFeed(with: strategy)
+
+        XCTAssertEqual(proxy.count, 2)
+        XCTAssertEqual(proxy.messageBy(index: 0), follow1)
+        XCTAssertEqual(proxy.messageBy(index: 1), post0)
+
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post0.key), 1)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: follow1.key), 0)
     }
 
     func testPostsAlgorithm() throws {
