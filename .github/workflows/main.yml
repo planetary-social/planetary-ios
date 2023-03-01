@@ -52,7 +52,7 @@ jobs:
         working-directory: GoSSB/Sources/
 
       - name: Rebuild archives
-        run: make
+        run: GOROOT=$(go env GOROOT) make
         working-directory: GoSSB/Sources/
 
       - name: Confirm that the archives haven't changed
