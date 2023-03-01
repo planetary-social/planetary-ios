@@ -71,7 +71,6 @@
 		0AB736B924577451000190F8 /* RefreshOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736B824577451000190F8 /* RefreshOperation.swift */; };
 		0AB736BC2457753F000190F8 /* AsynchronousOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */; };
 		0AB736BE2457772B000190F8 /* SyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BD2457772B000190F8 /* SyncOperation.swift */; };
-		0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB736BF24577CB4000190F8 /* LoginOperation.swift */; };
 		0ABCA8F524366B9700D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
 		0ABCA8F624366CC800D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
 		0ABCA8F724366CC900D7F39C /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABCA8F424366B9700D7F39C /* AppError.swift */; };
@@ -1280,7 +1279,6 @@
 		0AB736B824577451000190F8 /* RefreshOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshOperation.swift; sourceTree = "<group>"; };
 		0AB736BB2457753F000190F8 /* AsynchronousOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsynchronousOperation.swift; sourceTree = "<group>"; };
 		0AB736BD2457772B000190F8 /* SyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperation.swift; sourceTree = "<group>"; };
-		0AB736BF24577CB4000190F8 /* LoginOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginOperation.swift; sourceTree = "<group>"; };
 		0ABCA8F424366B9700D7F39C /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 		0ABCA8F82436769400D7F39C /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		0ABCA8FC2436B41300D7F39C /* APIError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "APIError+LocalizedError.swift"; sourceTree = "<group>"; };
@@ -1950,7 +1948,6 @@
 			children = (
 				0AB736B824577451000190F8 /* RefreshOperation.swift */,
 				0AB736BD2457772B000190F8 /* SyncOperation.swift */,
-				0AB736BF24577CB4000190F8 /* LoginOperation.swift */,
 				0AF9E0A9246B23C700910575 /* SuspendOperation.swift */,
 				0AF9E0AB246B23F900910575 /* ExitOperation.swift */,
 				0A41F569248804D6005BB1DE /* LoadBundleOperation.swift */,
@@ -4477,7 +4474,6 @@
 				5B533E402959F96D00F5EED1 /* AppEnvironmentModifier.swift in Sources */,
 				53C9FA2C22FBBC3C00EAC35F /* NSAttributedString+FontColor.swift in Sources */,
 				C949E96E28119B47006C5F18 /* ProgressButton.swift in Sources */,
-				0AB736C024577CB4000190F8 /* LoginOperation.swift in Sources */,
 				53EE01F12204C16800DFDF16 /* Post.swift in Sources */,
 				5BAE9C90281F779F008AEA84 /* ContactHeaderView.swift in Sources */,
 				53E341F6224D9FC7002BB5F4 /* AppController+URL.swift in Sources */,
