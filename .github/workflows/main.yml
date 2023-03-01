@@ -15,7 +15,7 @@ env:
 jobs:
   test_golang_bindings:
     name: Test Go bindings
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -24,6 +24,11 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '1.20'
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '14.1'
 
       - name: Determine Go cache paths
         id: golang-path
@@ -45,11 +50,6 @@ jobs:
       - name: Run tests
         run: make -f Makefile.ci ci
         working-directory: GoSSB/Sources/
-
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '14.1'
 
       - name: Confirm that archives were rebuilt
         run: make
