@@ -31,11 +31,6 @@ import "C"
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
-	stdlog "log"
-	"os"
-	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -45,15 +40,22 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/queries"
-	"github.com/sirupsen/logrus"
 )
 
 const (
 	kilobyte = 1000
 	megabyte = 1000 * kilobyte
 )
+
 const (
 	memoryLimitInBytes = 500 * megabyte
+)
+
+const (
+	logFilenamePrefix = "gobot-"
+	logFilenameFormat = "2006-01-02_15-04"
+	logFilenameSuffix = ".log"
+	keepLogsFor       = 7 * 24 * time.Hour
 )
 
 func init() {
@@ -155,6 +157,10 @@ func ssbBotInit(
 		return false
 	}
 
+	if err := removeOldLogFiles(cfg); err != nil {
+		log.WithError(err).Error("failed to remove old log files")
+	}
+
 	err = initLogger(cfg)
 	if err != nil {
 		err = errors.Wrap(err, "failed to init logger")
@@ -200,60 +206,3 @@ func ssbBotInit(
 
 // needed for buildmode c-archive
 func main() {}
-
-func initPreInitLogger() {
-	log = newLogger(os.Stderr, false)
-	log = log.WithField("warning", "pre-init")
-}
-
-func initLogger(config bindings.BotConfig) error {
-	debugLogs := filepath.Join(config.Repo, "debug")
-	if err := os.MkdirAll(debugLogs, 0700); err != nil {
-		return errors.Wrap(err, "could not create logs directory")
-	}
-
-	logFileName := fmt.Sprintf("gobot-%s.log", time.Now().Format("2006-01-02_15-04"))
-	logFile, err := os.Create(filepath.Join(debugLogs, logFileName))
-	if err != nil {
-		return errors.Wrap(err, "failed to create debug log file")
-	}
-
-	log = newLogger(io.MultiWriter(os.Stderr, logFile), config.Testing)
-	return nil
-}
-
-func newLogger(w io.Writer, testing bool) logging.Logger {
-	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
-
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = swiftLikeFormat
-
-	logrusLogger := logrus.New()
-	logrusLogger.SetOutput(w)
-	logrusLogger.SetFormatter(customFormatter)
-	if testing {
-		logrusLogger.SetLevel(logrus.TraceLevel)
-	} else {
-		logrusLogger.SetLevel(logrus.DebugLevel)
-	}
-
-	logrusLoggerEntry := logrusLogger.WithField("source", "golang")
-	stdlog.SetOutput(logrusLoggerEntry.Writer())
-	return logging.NewLogrusLogger(logrusLoggerEntry)
-}
-
-// unsafeExternPointer converts a uintptr address known to be a valid pointer
-// external to the Go heap to an unsafe.Pointer, without triggering the
-// unsafeptr vet warning.
-func unsafeExternPointer(addr uintptr) unsafe.Pointer {
-	// Converting a uintptr directly to an unsafe.Pointer triggers a vet warning,
-	// because a uintptr cannot safely hold a pointer to the Go heap. (Because a
-	// uintptr may hold an integer, uintptr values are not traced during garbage
-	// collection and are not updated during stack resizing.)
-	//
-	// However, if we know that the address is not owned by the Go heap, it does
-	// not need to be traced by the GC and cannot be implicitly relocated.
-	// We silence the unsafeptr warning by converting a pointer-to-uintptr to
-	// a pointer-to-pointer.
-	return *(*unsafe.Pointer)(unsafe.Pointer(&addr))
-}

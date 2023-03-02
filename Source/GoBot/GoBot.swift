@@ -1722,6 +1722,26 @@ class GoBot: Bot, @unchecked Sendable {
             }
         }
     }
+
+    // MARK: Forked feed protection
+
+    func resetForkedFeedProtection() async throws {
+        // Make a log refresh so that database is fully synced with the backing store.
+        try await refresh(load: .long)
+        
+        let statistics = await statistics()
+        guard let configuration = config else {
+            return
+        }
+        configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
+        configuration.apply()
+        UserDefaults.standard.set(true, forKey: "prevent_feed_from_forks")
+        UserDefaults.standard.synchronize()
+        Log.info(
+            "User reset number of published messages " +
+            "to \(configuration.numberOfPublishedMessages)"
+        )
+    }
     
     private func mapReceiveLogMessages(msgs: [ReceiveLogMessage]) -> Messages {
         return msgs.map { msg in

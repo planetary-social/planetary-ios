@@ -167,7 +167,7 @@ class AppConfigurationViewController: DebugTableViewController {
         
         settings += [
             DebugTableViewCellModel(
-                title: Localized.Debug.resetForkedFeedProtection.text,
+                title: Localized.ForkedFeedProtection.resetForkedFeedProtection.text,
                 cellReuseIdentifier: DebugValueTableViewCell.className,
                 valueClosure: { [weak self] cell in
                     let enabled = AppConfiguration.current == self?.configuration
@@ -178,9 +178,9 @@ class AppConfigurationViewController: DebugTableViewController {
                 actionClosure: { [weak self] cell in
                     self?.confirm(
                         from: cell,
-                        message: Localized.Debug.resetForkedFeedProtectionDescription.text,
+                        message: Localized.ForkedFeedProtection.resetForkedFeedProtectionDescription.text,
                         isDestructive: true,
-                        confirmTitle: Localized.Debug.reset.text
+                        confirmTitle: Localized.ForkedFeedProtection.reset.text
                     ) {
                         guard let self = self,
                             let bot = self.configuration.bot else {
@@ -190,23 +190,13 @@ class AppConfigurationViewController: DebugTableViewController {
                         
                         Task {
                             AppController.shared.showProgress()
-                            // Make a log refresh so that database is fully synced with the backing store.
                             do {
-                                try await bot.refresh(load: .long)
+                                try await bot.resetForkedFeedProtection()
                             } catch {
                                 self.alert(error: error)
                                 return
                             }
-                            let statistics = await bot.statistics()
-                            self.configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
-                            self.configuration.apply()
-                            UserDefaults.standard.set(true, forKey: "prevent_feed_from_forks")
-                            UserDefaults.standard.synchronize()
                             self.tableView.reloadData()
-                            Log.info(
-                                "User reset number of published messages " +
-                                "to \(self.configuration.numberOfPublishedMessages)"
-                            )
                             AppController.shared.hideProgress()
                         }
                     }
