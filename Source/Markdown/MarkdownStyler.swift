@@ -37,7 +37,7 @@ class MarkdownStyler: DownStyler {
         if fontStyle == .large {
             bodyStyle.lineHeightMultiple = 0.9
         }
-        bodyStyle.paragraphSpacing = 0
+        bodyStyle.paragraphSpacing = 15
 
         codeStyle.lineSpacing = 0
         codeStyle.paragraphSpacing = 0
