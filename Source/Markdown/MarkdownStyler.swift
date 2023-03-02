@@ -31,13 +31,13 @@ class MarkdownStyler: DownStyler {
         let bodyStyle = NSMutableParagraphStyle()
         let codeStyle = NSMutableParagraphStyle()
         headingStyle.paragraphSpacingBefore = 0
-        headingStyle.paragraphSpacing = 0
+        headingStyle.paragraphSpacing = 10
 
         bodyStyle.lineSpacing = 0
         if fontStyle == .large {
             bodyStyle.lineHeightMultiple = 0.9
         }
-        bodyStyle.paragraphSpacing = 15
+        bodyStyle.paragraphSpacing = 10
 
         codeStyle.lineSpacing = 0
         codeStyle.paragraphSpacing = 0
