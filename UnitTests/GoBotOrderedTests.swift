@@ -199,14 +199,14 @@ class GoBotOrderedTests: XCTestCase {
     func test052_getPublishLogGivenNegativeIndex() throws {
         let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: -1)
         XCTAssertEqual(publishedMessages.count, 27)
-        XCTAssertEqual(publishedMessages.last?.contentType, .about)
+        XCTAssertEqual(publishedMessages.last?.value.content.type, .about)
     }
     
     /// Tests that the getPublishedLog function gives only messages after the given index.
     func test053_getPublishLogGivenLastIndex() throws {
         let publishedMessages = try GoBotOrderedTests.shared.bot.getPublishedLog(after: 25)
         XCTAssertEqual(publishedMessages.count, 1)
-        XCTAssertEqual(publishedMessages.last?.contentType, .about)
+        XCTAssertEqual(publishedMessages.last?.value.content.type, .about)
     }
     
     /// Tests that the getPublishedLog returns an empty list when we pass an out-of-bounds index.

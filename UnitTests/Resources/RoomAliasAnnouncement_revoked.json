@@ -16,5 +16,5 @@
         "signature": "P9AXG0P9eNJgk/V34rRLEHGeLEngRUk3Ym8ZE7xiDoqWx9WRQMgPNEKX+LLvVst0cZz4+OqQ/rXTTEDDh+CWBA==.sig.ed25519"
     },
     "timestamp": 1549282075405,
-    "ReceiveLogSeq": -1
+    "receiveLogSequence": -1
 }

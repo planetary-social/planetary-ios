@@ -1192,6 +1192,8 @@
 		C9F5E477288891DC000BCF03 /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5E476288891DC000BCF03 /* HighlightedText.swift */; };
 		C9FBE36C288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
 		C9FBE36D288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
+		DC8DF3C329A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */; };
+		DC8DF3C429A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */; };
 		E0020B27292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
 		E0020B28292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
 		E0020B2C292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json in Resources */ = {isa = PBXBuildFile; fileRef = E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */; };
@@ -1869,6 +1871,7 @@
 		C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleAxisGeometryReader.swift; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveLogMessage.swift; sourceTree = "<group>"; };
 		E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomAliasAnnouncement+ViewDatabase.swift"; sourceTree = "<group>"; };
 		E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_registered.json; sourceTree = "<group>"; };
 		E041A24B293D45DB00629A8E /* RoomAliasAnnouncement_revoked.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_revoked.json; sourceTree = "<group>"; };
@@ -2707,6 +2710,7 @@
 				53211CE32283717C007FB785 /* Image+UIImage.swift */,
 				531A8A3B21F7DBD800D5C8C0 /* Message.swift */,
 				5369D2A9220BAFC600A65622 /* Messages.swift */,
+				DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */,
 				531A8A3F21F7DDF100D5C8C0 /* Mention.swift */,
 				53B4F5F822B8602F00027C6A /* Mention+NSAttributedString.swift */,
 				0A7C5D5124EEC21C005E5035 /* MissionControlCenter.swift */,
@@ -3857,6 +3861,7 @@
 				53C2B13C2295BC940018D0A8 /* Keychain.swift in Sources */,
 				E0BB718D294A093E0048D55C /* RoomsOnboardingView.swift in Sources */,
 				C9724B7F2809E8F1000EBCCD /* Relationship.swift in Sources */,
+				DC8DF3C429A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */,
 				5B3FBE3229295CEC004F34CC /* BioView.swift in Sources */,
 				230242892372C8870091BBCA /* NSNotification+Bot.swift in Sources */,
 				C9724B512809D5A6000EBCCD /* AppDelegate+UIAppearance.swift in Sources */,
@@ -4433,6 +4438,7 @@
 				0ABCA8F92436769400D7F39C /* APIError.swift in Sources */,
 				535CD37F2267F2C60039BCF2 /* ContentCodable.swift in Sources */,
 				539FD4CB22C586CC005A4DF2 /* ReplyTextView.swift in Sources */,
+				DC8DF3C329A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */,
 				536255D123AAC5F0001007D0 /* AppDelegate+Background.swift in Sources */,
 				531EC40A230EF2DA001A25AD /* PreviewSettingsViewController.swift in Sources */,
 				C9C3788E27C6CCD400238B58 /* BotStatisticsService.swift in Sources */,
