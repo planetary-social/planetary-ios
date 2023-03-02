@@ -23,8 +23,8 @@ struct Message: Codable, Identifiable, @unchecked Sendable {
         case key
         case value
         case receivedTimestamp = "timestamp"
-        case receivedSeq = "ReceiveLogSeq"
-        case hashedKey = "HashedKey"
+        case receivedSeq = "receiveLogSequence"
+        case hashedKey = "hashedKey"
         case offChain = "off_chain"
     }
     

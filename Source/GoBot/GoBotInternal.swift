@@ -326,21 +326,16 @@ class GoBotInternal {
         let dec = JSONDecoder()
         return try dec.decode(ScuttlegobotBotStatus.self, from: d)
     }
-    
-    // MARK: manual block / replicate
-    
-    /// Instructs the bot to stop replicating the current feed without publishing a message on the user's log.
-    func ban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, true)
-//        }
-    }
-    
-    /// Instructs the bot to start replicating the given feed again if appropriate, undoing a call to `ban(feed:)`.
-    func unban(feed: FeedIdentifier) {
-//        feed.withGoString {
-//            ssbFeedBlock($0, false)
-//        }
+        
+    func setBanList(banList: BanList) throws {
+        let encodedHashes = try JSONEncoder().encode(banList)
+        let hashesStr = String(data: encodedHashes, encoding: .utf8)!
+        let succeeded = hashesStr.withGoString {
+            return ssbBanListSet($0)
+        }
+        if !succeeded {
+            throw GoBotError.unexpectedFault("failed to set the ban list")
+        }
     }
 
     // TODO: call this to fetch a feed without following it
@@ -433,7 +428,7 @@ class GoBotInternal {
     
     /// This fetches posts from go-ssb's RootLog - the log containing all posts from all users. The Go code will filter
     /// out some messages, such as those from blocked users and old messages.
-    func getReceiveLog(startSeq: UInt64, limit: Int32) throws -> Messages {
+    func getReceiveLog(startSeq: UInt64, limit: Int32) throws -> [ReceiveLogMessage] {
         guard let rawBytes = ssbStreamRootLog(startSeq, limit) else {
             throw GoBotError.unexpectedFault("rxLog pre-processing error")
         }
@@ -441,14 +436,14 @@ class GoBotInternal {
         free(rawBytes)
         do {
             let decoder = JSONDecoder()
-            return try decoder.decode([Message].self, from: data)
+            return try decoder.decode([ReceiveLogMessage].self, from: data)
         } catch {
             throw GoBotError.duringProcessing("rxLog json decoding error:", error)
         }
     }
     
     /// Fetches all the posts that the current user has published after the post with sequence number `startSeq`.
-    func getPublishedLog(after index: Int64) throws -> Messages {
+    func getPublishedLog(after index: Int64) throws -> [ReceiveLogMessage] {
         guard let rawBytes = ssbStreamPublishedLog(index) else {
             throw GoBotError.unexpectedFault("publishedLog pre-processing error")
         }
@@ -456,14 +451,14 @@ class GoBotInternal {
         free(rawBytes)
         do {
             let decoder = JSONDecoder()
-            return try decoder.decode([Message].self, from: data)
+            return try decoder.decode([ReceiveLogMessage].self, from: data)
         } catch {
             throw GoBotError.duringProcessing("publishedLog json decoding error:", error)
         }
     }
     
     // aka private.read
-    func getPrivateLog(startSeq: Int64, limit: Int) throws -> Messages {
+    func getPrivateLog(startSeq: Int64, limit: Int) throws -> [ReceiveLogMessage] {
         guard let rawBytes = ssbStreamPrivateLog(UInt64(startSeq), Int32(limit)) else {
             throw GoBotError.unexpectedFault("privateLog pre-processing error")
         }
@@ -472,7 +467,7 @@ class GoBotInternal {
         free(rawBytes)
         let decoder = JSONDecoder()
         do {
-            return try decoder.decode([Message].self, from: data)
+            return try decoder.decode([ReceiveLogMessage].self, from: data)
         } catch {
             throw GoBotError.duringProcessing("privateLog json decoding error:", error)
         }

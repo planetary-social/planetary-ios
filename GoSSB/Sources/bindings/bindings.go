@@ -356,6 +356,9 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 
 			logger = logger.WithField("mem_alloc", fmt.Sprintf("%v MB", bToMb(m.Alloc)))
 			logger = logger.WithField("mem_sys", fmt.Sprintf("%v MB", bToMb(m.Sys)))
+			logger = logger.WithField("mallocs", m.Mallocs)
+			logger = logger.WithField("frees", m.Frees)
+			logger = logger.WithField("gc_cpu_fraction", m.GCCPUFraction)
 			logger = logger.WithField("num_gc", m.NumGC)
 
 			logger.Debug("stats")

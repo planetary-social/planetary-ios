@@ -25,5 +25,5 @@
         },
     },
     "timestamp": 23,
-    "ReceiveLogSeq": 9999999
+    "receiveLogSequence": 9999999
 }
