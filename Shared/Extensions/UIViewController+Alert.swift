@@ -29,6 +29,68 @@ extension UIViewController: AlertRouter {
         )
         controller.view.tintColor = UIColor.tint.system
 
+        switch error {
+        case BotError.forkProtection:
+            let resetForkedFeedProtectionAction = UIAlertAction(
+                title: Localized.ForkedFeedProtection.prepareForReset.text,
+                style: .destructive
+            ) { _ in
+                controller.dismiss(animated: false)
+
+                let confirmAlertController = UIAlertController(
+                    title: Localized.ForkedFeedProtection.resetForkedFeedProtection.text,
+                    message: Localized.ForkedFeedProtection.resetForkedFeedProtectionDescription.text,
+                    preferredStyle: .alert
+                )
+                confirmAlertController.view.tintColor = UIColor.tint.system
+
+                let resetAction = UIAlertAction(
+                    title: Localized.ForkedFeedProtection.reset.text,
+                    style: .destructive
+                ) { _ in
+                    confirmAlertController.dismiss(animated: false)
+                    AppController.shared.showProgress()
+                    Task {
+                        do {
+                            try await Bots.current.resetForkedFeedProtection()
+                            await MainActor.run {
+                                AppController.shared.hideProgress()
+                            }
+                        } catch {
+                            await MainActor.run {
+                                AppController.shared.hideProgress {
+                                    self.alert(error: error)
+                                }
+                            }
+                        }
+                    }
+                }
+                confirmAlertController.addAction(resetAction)
+
+                let cancelAction = UIAlertAction(
+                    title: Localized.cancel.text,
+                    style: .cancel
+                ) { _ in
+                    confirmAlertController.dismiss(animated: true)
+                }
+                confirmAlertController.addAction(cancelAction)
+
+                self.present(alertController: confirmAlertController)
+            }
+            controller.addAction(resetForkedFeedProtectionAction)
+
+            if let url = URL(string: "https://github.com/planetary-social/planetary-ios/wiki/Forked-Feed") {
+                let moreInfoAction = UIAlertAction(
+                    title: Localized.ForkedFeedProtection.readMore.text,
+                    style: .default
+                ) { _ in
+                    UIApplication.shared.open(url)
+                }
+                controller.addAction(moreInfoAction)
+            }
+        default:
+            break
+        }
         let cancelAction = UIAlertAction(
             title: Localized.cancel.text,
             style: .cancel

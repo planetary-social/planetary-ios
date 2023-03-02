@@ -322,6 +322,9 @@ protocol Bot: AnyObject, Sendable {
     // MARK: Raw message
 
     func raw(of message: Message, completion: @escaping RawCompletion)
+
+    // MARK: Forked feed protection
+    func resetForkedFeedProtection() async throws
 }
 
 extension Bot {

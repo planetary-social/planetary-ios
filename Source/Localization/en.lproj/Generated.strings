@@ -334,9 +334,6 @@
 "Debug.debugTitle" = "Hacker Mode";
 "Debug.debugMenu" = "Dangerous and powerful debug menu";
 "Debug.debugFooter" = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options.";
-"Debug.resetForkedFeedProtection" = "Reset Forked Feed Protection";
-"Debug.resetForkedFeedProtectionDescription" = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?";
-"Debug.reset" = "Reset";
 "Debug.noBotConfigured" = "No bot configured.";
 
 "Error.login" = "The peer to peer engine failed to start. Please use Restart to repair and restart it or use Ignore to browse the content that is already fetched to your device.";
@@ -344,7 +341,7 @@
 "Error.supportNotConfigured" = "Support is not configured.";
 "Error.invitationRedemptionFailed" = "Could not join {{ starName }}. Please try again or contact support.";
 "Error.invitationRedemptionFailedWithReason" = "Invitation redemption failed with message: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time.";
+"Error.cannotPublishBecauseRestoring" = "Planetary’s validation checks for your data feed have determined it needs to restore your data from the network and cannot publish new posts until it’s completed recovery.\n\nHowever, if you are sure your data feed is already up to date, you can reset Forked Feed Protection and continue posting.\nIf you are unsure and network restoration seems hung, please get in touch with support.";
 "Error.restoring" = "Planetary is currently restoring your data from the network.";
 "Error.invalidAppConfiguration" = "Invalid app configuration";
 "Error.couldNotGenerateLink" = "Could not generate link.";
@@ -397,3 +394,9 @@
 
 "Discover.emptyTitle" = "Discover Planetary";
 "Discover.emptyDescription" = "The Discover tab lets you see more people on Planetary. Specifically it's everything the people you follow are following.";
+
+"ForkedFeedProtection.resetForkedFeedProtection" = "Reset Forked Feed Protection";
+"ForkedFeedProtection.resetForkedFeedProtectionDescription" = "This will reset the number of published messages associated with your identity to the number currently in your database on this device. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?";
+"ForkedFeedProtection.reset" = "Reset";
+"ForkedFeedProtection.prepareForReset" = "Prepare for Reset";
+"ForkedFeedProtection.readMore" = "More Info";
