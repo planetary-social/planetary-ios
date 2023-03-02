@@ -860,15 +860,13 @@ class ViewDatabase {
     /// authors and newly unbanned authors.
     func applyBanList(
         _ banList: [String]
-    ) throws -> (bannedAuthors: [FeedIdentifier], unbannedAuthors: [FeedIdentifier]) {
+    ) throws {
         try updateBanTable(from: banList)
         let bannedAuthors = try authorsMatching(banList: banList)
         let unbannedAuthors = try bannedAuthorsNotIn(banList: banList)
         try ban(authors: bannedAuthors)
         try unban(authors: unbannedAuthors)
         try deleteMessagesMatching(banList: banList)
-        
-        return (bannedAuthors, unbannedAuthors)
     }
     
     /// Overwrites the banList table with the new banList

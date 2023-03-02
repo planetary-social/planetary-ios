@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import CryptoKit
 
 extension String {
     func withGoString<R>(_ call: (gostring_t) -> R) -> R {
@@ -195,7 +196,8 @@ class GoBot: Bot, @unchecked Sendable {
             userInitiatedQueue.async {
                 do {
                     try self.database.delete(allFrom: identity)
-                    let publishedPosts = try self.bot.getPublishedLog(after: -1)
+                    let receiveLogMsgs = try self.bot.getPublishedLog(after: -1)
+                    let publishedPosts = self.mapReceiveLogMessages(msgs: receiveLogMsgs)
                     try self.database.fillMessages(msgs: publishedPosts)
                     continuation.resume()
                 } catch {
@@ -673,7 +675,7 @@ class GoBot: Bot, @unchecked Sendable {
                         return
                     }
                     let lastPostIndex = try self.database.largestSeqFromPublishedLog()
-                    let publishedPosts = try self.bot.getPublishedLog(after: lastPostIndex)
+                    let publishedPosts = self.mapReceiveLogMessages(msgs: try self.bot.getPublishedLog(after: lastPostIndex))
                     try self.database.fillMessages(msgs: publishedPosts)
                     try self.updateNumberOfPublishedMessages(for: identity)
                     self.numberOfPublishedMessagesLock.unlock()
@@ -791,7 +793,7 @@ class GoBot: Bot, @unchecked Sendable {
             
             // If the go log is empty we need to request 0. Otherwise request the next seq number.
             let startSeq = UInt64(current <= 0 ? 0 : current + 1)
-            let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
+            let msgs = self.mapReceiveLogMessages(msgs: try self.bot.getReceiveLog(startSeq: startSeq, limit: limit))
             
             guard !msgs.isEmpty else {
                 Log.debug("[#rx log#] no new messages from go-ssb")
@@ -836,7 +838,7 @@ class GoBot: Bot, @unchecked Sendable {
             count = Int64(rawCount)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
+            let msgs = self.mapReceiveLogMessages(msgs: try self.bot.getPrivateLog(startSeq: count, limit: 1000))
             
             if !msgs.isEmpty {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -911,11 +913,6 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
-        guard !isRestoring else {
-            completion(identifier, nil, BotError.restoring)
-            return
-        }
-
         userInitiatedQueue.async {
 
             // get non-empty data from blob storage
@@ -1236,16 +1233,8 @@ class GoBot: Bot, @unchecked Sendable {
         }
             
         do {
-            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
-            
-            // add as blocked peers to bot (those dont have contact messages)
-            for author in bannedAuthors {
-                bot.ban(feed: author)
-            }
-            
-            for author in unbannedAuthors {
-                bot.unban(feed: author)
-            }
+            try self.database.applyBanList(banList)
+            try bot.setBanList(banList: banList)
         } catch {
             Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }
@@ -1731,6 +1720,40 @@ class GoBot: Bot, @unchecked Sendable {
                 free(pointer)
                 completion(.success(string))
             }
+        }
+    }
+
+    // MARK: Forked feed protection
+
+    func resetForkedFeedProtection() async throws {
+        // Make a log refresh so that database is fully synced with the backing store.
+        try await refresh(load: .long)
+        
+        let statistics = await statistics()
+        guard let configuration = config else {
+            return
+        }
+        configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
+        configuration.apply()
+        UserDefaults.standard.set(true, forKey: "prevent_feed_from_forks")
+        UserDefaults.standard.synchronize()
+        Log.info(
+            "User reset number of published messages " +
+            "to \(configuration.numberOfPublishedMessages)"
+        )
+    }
+    
+    private func mapReceiveLogMessages(msgs: [ReceiveLogMessage]) -> Messages {
+        return msgs.map { msg in
+            let digest = SHA256.hash(data: Data(msg.key.utf8))
+
+            return Message(
+                key: msg.key,
+                value: msg.value,
+                timestamp: NSDate().timeIntervalSince1970 * 1000,
+                receivedSeq: msg.receiveLogSequence,
+                hashedKey: Data(digest).base64EncodedString()
+            )
         }
     }
 }

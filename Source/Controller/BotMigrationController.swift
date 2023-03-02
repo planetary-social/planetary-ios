@@ -6,6 +6,7 @@
 //  Copyright © 2023 Verse Communications Inc. All rights reserved.
 //
 
+import CrashReporting
 import Foundation
 import SwiftUI
 import UIKit
@@ -27,7 +28,27 @@ class BotMigrationController: BotMigrationViewModel {
     }
     
     func dismissPressed() {
-        hostingController.dismiss(animated: true)
+        let userDefaults = UserDefaults.standard
+        let didMigrateIdentityToScuttlego = userDefaults.bool(forKey: UserDefaults.didMigrateIdentityToScuttlego)
+        if didMigrateIdentityToScuttlego {
+            hostingController.dismiss(animated: true)
+        } else {
+            Task.detached(priority: .high) { [hostingController] in
+                do {
+                    if AppConfiguration.current?.numberOfPublishedMessages ?? 0 > 10 {
+                        // Only sync for users that previously published many messages with go-ssb
+                        // and could have forked their feed
+                        try await Bots.current.syncLoggedIdentity()
+                    }
+                    userDefaults.setValue(true, forKey: UserDefaults.didMigrateIdentityToScuttlego)
+                } catch {
+                    CrashReporting.shared.reportIfNeeded(error: error)
+                }
+                Task.detached { @MainActor [hostingController] in
+                    hostingController.dismiss(animated: true)
+                }
+            }
+        }
     }
     
     func tryAgainPressed() {

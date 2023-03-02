@@ -39,8 +39,7 @@ extern bool ssbInviteAccept(gostring_t token);
 
 extern void ssbFeedReplicate(gostring_t feed);
 
-extern bool ssbBanListAdd(gostring_t hash);
-extern bool ssbBanListRemove(gostring_t hash);
+extern bool ssbBanListSet(gostring_t hashes);
 
 extern char* ssbPublish(gostring_t content);
 extern char* ssbPublishPrivate(gostring_t content, gostring_t recipients);

@@ -19,7 +19,7 @@ tidy:
 
 .PHONY: lint
 lint:
-	#go vet ./... # disable due to complaints about unsafe.Pointer misuse
+	go vet ./...
 	golangci-lint run ./...
 
 .PHONY: tools
