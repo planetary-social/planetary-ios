@@ -71,7 +71,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
               contact_about.about_id IS NOT NULL
               AND contact_author.author NOT IN pub_list
             )
-            AND contacts.state = 1
+            AND contacts.state IN (1, -1)
           )
           AND (
             authors.author IN following_list
@@ -148,7 +148,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
               contact_about.about_id IS NOT NULL
               AND contact_author.author NOT IN pub_list
             )
-            AND contacts.state = 1
+            AND contacts.state IN (1, -1)
           )
           AND (
             authors.author IN following_list
@@ -293,7 +293,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
               contact_about.about_id IS NOT NULL
               AND contact_author.author NOT IN pub_list
             )
-            AND contacts.state = 1
+            AND contacts.state IN (1, -1)
           )
           AND (
             authors.author IN following_list

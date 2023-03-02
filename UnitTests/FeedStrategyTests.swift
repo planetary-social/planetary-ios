@@ -74,22 +74,42 @@ class FeedStrategyTests: ViewDatabaseTestCase {
             receivedSeq: 5,
             author: testAuthor
         )
+        let block1 = MessageFixtures.message(
+            key: "%6",
+            sequence: 6,
+            content: Content(from: Contact(contact: bob, blocking: true)),
+            timestamp: referenceDate + 6,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 6,
+            author: alice
+        )
+        let about3 = MessageFixtures.message(
+            key: "%7",
+            sequence: 7,
+            content: Content(from: About(about: bob, name: "Bob")),
+            timestamp: referenceDate + 7,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 7,
+            author: bob
+        )
         
-        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4, post5])
+        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4, post5, block1, about3])
         
         let strategy = RecentlyActivePostsAndContactsAlgorithm()
         let proxy = try db.paginatedFeed(with: strategy)
         
-        XCTAssertEqual(proxy.count, 4)
-        XCTAssertEqual(proxy.messageBy(index: 0), post5)
-        XCTAssertEqual(proxy.messageBy(index: 1), post0)
-        XCTAssertEqual(proxy.messageBy(index: 2), post3)
-        XCTAssertEqual(proxy.messageBy(index: 3), follow1)
+        XCTAssertEqual(proxy.count, 5)
+        XCTAssertEqual(proxy.messageBy(index: 0), block1)
+        XCTAssertEqual(proxy.messageBy(index: 1), post5)
+        XCTAssertEqual(proxy.messageBy(index: 2), post0)
+        XCTAssertEqual(proxy.messageBy(index: 3), post3)
+        XCTAssertEqual(proxy.messageBy(index: 4), follow1)
 
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%0"), 1)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 2)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%1"), 3)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: block1.key), 0)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post5.key), 1)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post0.key), 2)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post3.key), 3)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: follow1.key), 4)
     }
 
     /// Verifies that RecentlyActivePostsAndContactsAlgorithm discards unfollows
@@ -264,22 +284,42 @@ class FeedStrategyTests: ViewDatabaseTestCase {
             receivedSeq: 5,
             author: testAuthor
         )
+        let block1 = MessageFixtures.message(
+            key: "%6",
+            sequence: 6,
+            content: Content(from: Contact(contact: bob, blocking: true)),
+            timestamp: referenceDate + 6,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 6,
+            author: alice
+        )
+        let about3 = MessageFixtures.message(
+            key: "%7",
+            sequence: 7,
+            content: Content(from: About(about: bob, name: "Bob")),
+            timestamp: referenceDate + 7,
+            receivedTimestamp: receivedDate,
+            receivedSeq: 7,
+            author: bob
+        )
 
-        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4, post5])
+        try db.fillMessages(msgs: [post0, follow1, about2, post3, reply4, post5, block1, about3])
 
         let strategy = PostsAndContactsAlgorithm()
         let proxy = try db.paginatedFeed(with: strategy)
 
-        XCTAssertEqual(proxy.count, 4)
-        XCTAssertEqual(proxy.messageBy(index: 0), post5)
-        XCTAssertEqual(proxy.messageBy(index: 1), post3)
-        XCTAssertEqual(proxy.messageBy(index: 2), follow1)
-        XCTAssertEqual(proxy.messageBy(index: 3), post0)
+        XCTAssertEqual(proxy.count, 5)
+        XCTAssertEqual(proxy.messageBy(index: 0), block1)
+        XCTAssertEqual(proxy.messageBy(index: 1), post5)
+        XCTAssertEqual(proxy.messageBy(index: 2), post3)
+        XCTAssertEqual(proxy.messageBy(index: 3), follow1)
+        XCTAssertEqual(proxy.messageBy(index: 4), post0)
 
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%5"), 0)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%3"), 1)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%1"), 2)
-        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: "%0"), 3)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: block1.key), 0)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post5.key), 1)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post3.key), 2)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: follow1.key), 3)
+        XCTAssertEqual(try db.numberOfRecentPosts(with: strategy, since: post0.key), 4)
     }
 
     /// Verifies that PostsAndContactsAlgorithm discards unfollows
