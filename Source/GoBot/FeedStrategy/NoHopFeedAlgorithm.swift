@@ -42,7 +42,7 @@ final class NoHopFeedAlgorithm: NSObject, FeedStrategy {
             OR contact_about.about_id IS NOT NULL
           )
           AND authors.author = :identity_key
-          AND claimed_at < STRFTIME('%s') * 1000;
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000;
     """
     // swiftlint:enable indentation_width
 
@@ -93,7 +93,7 @@ final class NoHopFeedAlgorithm: NSObject, FeedStrategy {
             FROM
               last_message
           )
-          AND STRFTIME('%s') * 1000;
+          AND STRFTIME('%s') * 1000 + 1000;
         """
     // swiftlint:enable indentation_width
 
@@ -192,7 +192,7 @@ final class NoHopFeedAlgorithm: NSObject, FeedStrategy {
             OR contact_about.about_id IS NOT NULL
           )
           AND authors.author = :identity_key
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           claimed_at DESC
         LIMIT
