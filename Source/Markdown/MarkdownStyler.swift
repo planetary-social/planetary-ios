@@ -23,47 +23,77 @@ class MarkdownStyler: DownStyler {
 
         // Suitable for text-only posts in Discover
         case large
+
+        // Suitable for posts in Thread
+        case thread
     }
 
     init(fontStyle: FontStyle) {
-        var paragraphStyles = StaticParagraphStyleCollection()
         let headingStyle = NSMutableParagraphStyle()
         let bodyStyle = NSMutableParagraphStyle()
         let codeStyle = NSMutableParagraphStyle()
-        headingStyle.paragraphSpacingBefore = 0
-        headingStyle.paragraphSpacing = 10
 
-        bodyStyle.lineSpacing = 0
-        if fontStyle == .large {
-            bodyStyle.lineHeightMultiple = 0.9
+        var listItemOptions = ListItemOptions()
+        var quoteStripeOptions = QuoteStripeOptions()
+        var thematicBreakOptions = ThematicBreakOptions()
+        var codeBlockOptions = CodeBlockOptions()
+
+        switch fontStyle {
+        case .thread:
+            headingStyle.paragraphSpacingBefore = 16
+            headingStyle.paragraphSpacing = 8
+
+            bodyStyle.lineSpacing = 1
+            bodyStyle.paragraphSpacing = 12
+
+            codeStyle.lineSpacing = 1
+            codeStyle.paragraphSpacing = 8
+
+            listItemOptions.maxPrefixDigits = 2
+            listItemOptions.spacingAfterPrefix = 8
+            listItemOptions.spacingAbove = 8
+            listItemOptions.spacingBelow = 8
+
+            quoteStripeOptions.thickness = 1
+            quoteStripeOptions.spacingAfter = 0
+
+            thematicBreakOptions.thickness = 1
+            thematicBreakOptions.indentation = 0
+
+            codeBlockOptions.containerInset = 0
+        case .small, .regular, .large, .compact:
+            headingStyle.paragraphSpacingBefore = 0
+            headingStyle.paragraphSpacing = 0
+
+            bodyStyle.lineSpacing = 0
+            bodyStyle.paragraphSpacing = 0
+            if fontStyle == .large {
+                bodyStyle.lineHeightMultiple = 0.9
+            }
+
+            codeStyle.lineSpacing = 0
+            codeStyle.paragraphSpacing = 0
+
+            listItemOptions.maxPrefixDigits = 1
+            listItemOptions.spacingAfterPrefix = 4
+            listItemOptions.spacingAbove = 2
+            listItemOptions.spacingBelow = 4
+
+            quoteStripeOptions.thickness = 2
+            quoteStripeOptions.spacingAfter = 8
+
+            thematicBreakOptions.thickness = 1
+            thematicBreakOptions.indentation = 0
+
+            codeBlockOptions.containerInset = 8
         }
-        bodyStyle.paragraphSpacing = 10
 
-        codeStyle.lineSpacing = 0
-        codeStyle.paragraphSpacing = 0
-
+        var paragraphStyles = StaticParagraphStyleCollection()
         paragraphStyles.body = bodyStyle
         paragraphStyles.heading1 = headingStyle
         paragraphStyles.heading2 = headingStyle
         paragraphStyles.heading3 = headingStyle
         paragraphStyles.code = codeStyle
-
-        var listItemOptions = ListItemOptions()
-        listItemOptions.maxPrefixDigits = 1
-        listItemOptions.spacingAfterPrefix = 4
-        listItemOptions.spacingAbove = 2
-        listItemOptions.spacingBelow = 4
-
-        var quoteStripeOptions = QuoteStripeOptions()
-        quoteStripeOptions.thickness = 1
-        quoteStripeOptions.spacingAfter = 0
-
-        var thematicBreakOptions = ThematicBreakOptions()
-        thematicBreakOptions.thickness = 1
-        thematicBreakOptions.indentation = 0
-
-        var codeBlockOptions = CodeBlockOptions()
-        codeBlockOptions.containerInset = 0
 
         let downStylerConfiguration = DownStylerConfiguration(
             fonts: MarkdownStyler.fontCollection(fontStyle: fontStyle),
@@ -84,6 +114,11 @@ class MarkdownStyler: DownStyler {
         var heading2: UIFont.TextStyle
         var heading3: UIFont.TextStyle
         switch fontStyle {
+        case .thread:
+            body = .body
+            heading1 = .title1
+            heading2 = .title2
+            heading3 = .title3
         case .regular:
             body = .body
             heading1 = .title3
@@ -108,7 +143,7 @@ class MarkdownStyler: DownStyler {
         var fonts = StaticFontCollection()
         fonts.body = UIFont.preferredFont(forTextStyle: body)
         switch fontStyle {
-        case .regular:
+        case .regular, .thread:
             fonts.heading1 = UIFont.preferredFont(forTextStyle: heading1)
             fonts.heading2 = UIFont.preferredFont(forTextStyle: heading2)
             fonts.heading3 = UIFont.preferredFont(forTextStyle: heading3)
