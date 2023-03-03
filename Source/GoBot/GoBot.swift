@@ -49,6 +49,9 @@ class GoBot: Bot, @unchecked Sendable {
 
     private var _identity: Identity?
     var identity: Identity? { self._identity }
+
+    private var _joinedPubs: [Pub]?
+    var joinedPubs: [Pub]? { self._joinedPubs }
     
     var isRestoring = false
 
@@ -372,6 +375,7 @@ class GoBot: Bot, @unchecked Sendable {
         userInitiatedQueue.async {
             do {
                 let pubs = try self.database.getJoinedPubs()
+                self._joinedPubs = pubs
                 queue.async {
                     completion(pubs, nil)
                 }
