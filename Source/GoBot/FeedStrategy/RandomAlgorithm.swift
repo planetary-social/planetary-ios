@@ -145,7 +145,7 @@ final class RandomAlgorithm: NSObject, FeedStrategy {
                 AND (contacts.state = -1 OR contacts.state = 1)
             )
           )
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           RANDOM()
         LIMIT
@@ -271,7 +271,7 @@ final class RandomAlgorithm: NSObject, FeedStrategy {
             FROM
               pubs
           )
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           RANDOM()
         LIMIT

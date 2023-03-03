@@ -78,7 +78,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
             OR authors.id = :user_id
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000;
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000;
     """
     // swiftlint:enable indentation_width
 
@@ -165,7 +165,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
             LIMIT
               1
           )
-          AND STRFTIME('%s') * 1000;
+          AND STRFTIME('%s') * 1000 + 1000;
         """
     // swiftlint:enable indentation_width
 
@@ -300,7 +300,7 @@ final class PostsAndContactsAlgorithm: NSObject, FeedStrategy {
             OR authors.id = :user_id
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           claimed_at DESC
         LIMIT

@@ -65,7 +65,7 @@ final class OneHopFeedAlgorithm: NSObject, FeedStrategy {
             OR authors.author = :identity_key
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000;
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000;
     """
     // swiftlint:enable indentation_width
 
@@ -135,7 +135,7 @@ final class OneHopFeedAlgorithm: NSObject, FeedStrategy {
             FROM
               last_message
           )
-          AND STRFTIME('%s') * 1000;
+          AND STRFTIME('%s') * 1000 + 1000;
         """
     // swiftlint:enable indentation_width
 
@@ -253,7 +253,7 @@ final class OneHopFeedAlgorithm: NSObject, FeedStrategy {
             OR authors.id = :identity_key
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           claimed_at DESC
         LIMIT

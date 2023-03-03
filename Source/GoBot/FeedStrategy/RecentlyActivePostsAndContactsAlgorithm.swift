@@ -68,7 +68,7 @@ final class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
             OR authors.id = :user_id
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000;
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000;
     """
     // swiftlint:enable indentation_width
 
@@ -131,7 +131,7 @@ final class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
             WHERE
               mk.key = :message_key
           )
-          AND claimed_at < STRFTIME('%s') * 1000;
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000;
     """
     // swiftlint:enable indentation_width
 
@@ -241,7 +241,7 @@ final class RecentlyActivePostsAndContactsAlgorithm: NSObject, FeedStrategy {
             OR authors.id = :user_id
           )
           AND authors.author NOT IN pub_list
-          AND claimed_at < STRFTIME('%s') * 1000
+          AND claimed_at < STRFTIME('%s') * 1000 + 1000
         ORDER BY
           last_activity_time DESC
         LIMIT
