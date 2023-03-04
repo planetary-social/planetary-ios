@@ -22,15 +22,6 @@ class LoadBundleOperation: AsynchronousOperation {
     override func main() {
         Log.info("LoadBundleOperation started.")
         
-        let configuredIdentity = AppConfiguration.current?.identity
-        let loggedInIdentity = Bots.current.identity
-        guard loggedInIdentity != nil, loggedInIdentity == configuredIdentity else {
-            Log.info("Not logged in. LoadBundleOperation finished.")
-            self.error = BotError.notLoggedIn
-            self.finish()
-            return
-        }
-        
         let group = DispatchGroup()
         
         let feedPaths = bundle.paths(forResourcesOfType: "json", inDirectory: "Feeds")
