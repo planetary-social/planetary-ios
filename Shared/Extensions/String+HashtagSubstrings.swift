@@ -18,7 +18,7 @@ extension String {
     // [a-zA-Z-\\d] - alphanumeric and the dash
     // [a-zA-Z][a-zA-Z-\\d] - mixed alphanumeric and the dash
     // ([a-zA-Z\\d]|$) - ending with non-alphanumeric or end of input
-    private static let alphanumericHashtagRegex = "#[a-zA-Z]*[a-zA-Z-\\d]*[a-zA-Z][a-zA-Z-\\d]*([a-zA-Z\\d]|$)"
+    private static let alphanumericHashtagRegex = "#[\\p{L}]*[\\p{L}-\\d]*[\\p{L}][\\p{L}-\\d]*([\\p{L}\\d]|$)"
 
     func hashtagSubstringsWithRanges() -> [(String, NSRange)] {
         guard let regex = try? NSRegularExpression(pattern: String.alphanumericHashtagRegex, options: []) else {
