@@ -38,6 +38,12 @@ struct RelationshipButton: View {
         relationship?.isBlocking ?? false
     }
 
+    private var joined: Bool {
+        botRepository.current.joinedPubs?.contains { pub in
+            pub.address.key == relationship?.other
+        } ?? false
+    }
+
     var body: some View {
         Button {
             Analytics.shared.trackDidTapButton(buttonName: "follow")
@@ -121,13 +127,13 @@ struct RelationshipButton: View {
         if isBlocking {
             return Localized.blocking.text
         } else if isFollowing {
-            if isStar {
+            if isStar, joined {
                 return Localized.joined.text
             } else {
                 return Localized.following.text
             }
         } else {
-            if isStar {
+            if isStar, !joined {
                 return Localized.join.text
             } else {
                 if isFollowedBy {
@@ -192,25 +198,26 @@ struct RelationshipButton: View {
         guard let relationshipToUpdate = relationship else {
             return
         }
+        let joinedStar = joined
         isToggling = true
         Task.detached {
             let bot = await botRepository.current
             let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
             let star = pubs.first { $0.feed == relationshipToUpdate.other }
             do {
-                if let star = star {
-                    try await bot.join(star: star)
-                    Analytics.shared.trackDidFollowPub()
-                    relationshipToUpdate.isFollowing = true
-                } else if relationshipToUpdate.isBlocking {
+                if relationshipToUpdate.isBlocking {
                     try await bot.unblock(identity: relationshipToUpdate.other)
                     Analytics.shared.trackDidUnblockIdentity()
                     relationshipToUpdate.isBlocking = false
+                } else if relationshipToUpdate.isFollowing {
+                    try await bot.unfollow(identity: relationshipToUpdate.other)
+                    Analytics.shared.trackDidUnfollowIdentity()
+                    relationshipToUpdate.isFollowing = false
                 } else {
-                    if relationshipToUpdate.isFollowing {
-                        try await bot.unfollow(identity: relationshipToUpdate.other)
-                        Analytics.shared.trackDidUnfollowIdentity()
-                        relationshipToUpdate.isFollowing = false
+                    if let star = star, !joinedStar {
+                        try await bot.join(star: star)
+                        Analytics.shared.trackDidFollowPub()
+                        relationshipToUpdate.isFollowing = true
                     } else {
                         try await bot.follow(identity: relationshipToUpdate.other)
                         Analytics.shared.trackDidFollowIdentity()
