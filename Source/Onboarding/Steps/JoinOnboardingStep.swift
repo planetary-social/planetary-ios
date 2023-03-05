@@ -25,7 +25,7 @@ import CrashReporting
         self.view.lookBusy(after: 0)
 
         // SIMULATE ONBOARDING
-        if self.data.simulated {
+        guard !data.simulated else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.view.lookReady()
                 self.next()
@@ -92,10 +92,11 @@ import CrashReporting
     private func startOver() {
         guard self.data.simulated == false else { return }
         self.view.lookBusy()
-        Onboarding.reset {
-            [weak self] in
-            self?.view.lookReady()
-            AppController.shared.launch()
+        Onboarding.reset { [weak self] in
+            DispatchQueue.main.async {
+                self?.view.lookReady()
+                AppController.shared.launch()
+            }
         }
     }
 }
