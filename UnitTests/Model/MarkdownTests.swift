@@ -35,7 +35,7 @@ class MarkdownTests: XCTestCase {
     }
 
     func testParseChannelWithDash() throws {
-        let markdown = "this is a test #chan-nel1 and another #chan_nel2 plus a third #channel3"
+        let markdown = "this is a test #chan-nel1 and another #chan-nel2 plus a third #channel3"
         let attributedString = markdown.parseMarkdown()
         let links = parseLinks(in: attributedString)
         XCTAssertEqual(links.count, 3)
@@ -43,10 +43,10 @@ class MarkdownTests: XCTestCase {
         let secondLink = try XCTUnwrap(links[1])
         let thirdLink = try XCTUnwrap(links[2])
         XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23chan-nel1"))
-        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%23chan_nel2"))
+        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%23chan-nel2"))
         XCTAssertEqual(thirdLink.url, URL(string: "planetary://planetary.link/%23channel3"))
         XCTAssertEqual(firstLink.name, "#chan-nel1")
-        XCTAssertEqual(secondLink.name, "#chan_nel2")
+        XCTAssertEqual(secondLink.name, "#chan-nel2")
         XCTAssertEqual(thirdLink.name, "#channel3")
     }
 
@@ -59,6 +59,19 @@ class MarkdownTests: XCTestCase {
         XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23sameAs"))
         XCTAssertEqual(firstLink.name, "#sameAs")
     }
+
+    func testParseChannelsWithNonLatinCharacters() throws {
+        let markdown = "this is a test #português and #日本語"
+        let attributedString = markdown.parseMarkdown()
+        let links = parseLinks(in: attributedString)
+        XCTAssertEqual(links.count, 2)
+        let firstLink = try XCTUnwrap(links[0])
+        let secondLink = try XCTUnwrap(links[1])
+        XCTAssertEqual(firstLink.url, URL(string: "planetary://planetary.link/%23portugu%C3%AAs"))
+        XCTAssertEqual(firstLink.name, "#português")
+        XCTAssertEqual(secondLink.url, URL(string: "planetary://planetary.link/%23%E6%97%A5%E6%9C%AC%E8%AA%9E"))
+        XCTAssertEqual(secondLink.name, "#日本語")
+    }   
 
     func testParseManyChannels() throws {
         let markdown = "this is a test #channel1 and another #channel2 plus a third #channel3"
