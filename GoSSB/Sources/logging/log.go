@@ -1,42 +1,72 @@
 package logging
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/planetary-social/scuttlego/logging"
+	"github.com/sirupsen/logrus"
+)
+
+const (
+	ErrorField = "error"
+)
 
 type Logger interface {
-	WithError(err error) Logger
 	WithField(key string, v any) Logger
 
-	Error(message string)
-	Debug(message string)
-	Trace(message string)
+	EnabledLevel() logging.Level
+	Error() logging.LoggingSystemEntry
+	Debug() logging.LoggingSystemEntry
+	Trace() logging.LoggingSystemEntry
 }
 
 type LogrusLogger struct {
-	logger logrus.Ext1FieldLogger
+	fields map[string]any
+	system logging.LogrusLoggingSystem
 }
 
-func NewLogrusLogger(logger logrus.Ext1FieldLogger) LogrusLogger {
-	return LogrusLogger{
-		logger: logger,
+func NewLogrusLogger(logger *logrus.Logger) *LogrusLogger {
+	system := logging.NewLogrusLoggingSystem(logger)
+	return &LogrusLogger{
+		system: system,
+		fields: make(map[string]any),
 	}
 }
 
-func (l LogrusLogger) WithError(err error) Logger {
-	return NewLogrusLogger(l.logger.WithError(err))
+func copyLogrusLogger(logger *LogrusLogger) *LogrusLogger {
+	newLogger := &LogrusLogger{
+		system: logger.system,
+		fields: make(map[string]any),
+	}
+	for k, v := range logger.fields {
+		newLogger.fields[k] = v
+	}
+	return newLogger
 }
 
-func (l LogrusLogger) WithField(key string, v any) Logger {
-	return NewLogrusLogger(l.logger.WithField(key, v))
+func (l *LogrusLogger) WithField(key string, value any) Logger {
+	newLogger := copyLogrusLogger(l)
+	newLogger.fields[key] = value
+	return newLogger
 }
 
-func (l LogrusLogger) Error(message string) {
-	l.logger.Error(message)
+func (l LogrusLogger) EnabledLevel() logging.Level {
+	return l.system.EnabledLevel()
 }
 
-func (l LogrusLogger) Debug(message string) {
-	l.logger.Debug(message)
+func (l LogrusLogger) Error() logging.LoggingSystemEntry {
+	return l.addFields(l.system.Error())
 }
 
-func (l LogrusLogger) Trace(message string) {
-	l.logger.Trace(message)
+func (l LogrusLogger) Debug() logging.LoggingSystemEntry {
+	return l.addFields(l.system.Debug())
+}
+
+func (l LogrusLogger) Trace() logging.LoggingSystemEntry {
+	return l.addFields(l.system.Trace())
+}
+
+func (l LogrusLogger) addFields(entry logging.LoggingSystemEntry) logging.LoggingSystemEntry {
+	for k, v := range l.fields {
+		entry = entry.WithField(k, v)
+	}
+	return entry
 }
