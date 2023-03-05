@@ -33,7 +33,11 @@ func ssbTestingMakeNamedKey(name string) int {
 		return -1
 	}
 
-	log.WithField("function", "ssbTestingMakeNamedKey").WithField("name", name).Debug("created a key")
+	log.
+		Debug().
+		WithField("function", "ssbTestingMakeNamedKey").
+		WithField("name", name).
+		Message("created a key")
 
 	return 0
 }

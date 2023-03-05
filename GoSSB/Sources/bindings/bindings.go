@@ -102,7 +102,7 @@ func (n *Node) Start(
 		return errors.Wrap(err, "could not create the identity ref")
 	}
 
-	log.WithField("identity", publicIdentityRef).Debug("building service")
+	log.Debug().WithField("identity", publicIdentityRef).Message("building service")
 
 	config, err := n.toConfig(swiftConfig, log)
 	if err != nil {
@@ -143,9 +143,9 @@ func (n *Node) Start(
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
 			logger := log.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
-				logger.WithError(err).Error("error calling onBlobDownloaded")
+				logger.Error().WithField(bindingslogging.ErrorField, err).Message("error calling onBlobDownloaded")
 			} else {
-				logger.Debug("called onBlobDownloaded")
+				logger.Debug().Message("called onBlobDownloaded")
 			}
 		}
 	}()
@@ -156,7 +156,7 @@ func (n *Node) Start(
 
 		if err := service.Run(ctx); err != nil {
 			if !errors.Is(err, context.Canceled) {
-				log.WithError(err).Error("service terminated with an error")
+				log.Error().WithField(bindingslogging.ErrorField, err).Message("service terminated with an error")
 			}
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
 		}
@@ -274,15 +274,13 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		return di.Config{}, errors.Wrap(err, "error creating hops")
 	}
 
-	logger := NewLoggerAdapter(bindingsLogger)
-
 	config := di.Config{
 		DataDirectory:      swiftConfig.Repo,
 		GoSSBDataDirectory: swiftConfig.OldRepo,
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		LoggingSystem:      logger,
+		LoggingSystem:      bindingsLogger,
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
@@ -291,7 +289,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
-			options.SetLogger(badger.NewLogger(logger, badger.LoggerLevelInfo))
+			options.SetLogger(badger.NewLogger(bindingsLogger, badger.LoggerLevelInfo))
 			options.SetValueLogFileSize(32 * mebibyte)
 			options.SetBlockCacheSize(32 * mebibyte)
 			options.SetIndexCacheSize(0)
@@ -329,8 +327,9 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 		stats, err := service.App.Queries.Status.Handle()
 		if err != nil {
 			logger.
-				WithError(err).
-				Error("stats error")
+				Error().
+				WithField(bindingslogging.ErrorField, err).
+				Message("error executing status query")
 		} else {
 			var peers []string
 			for _, remote := range stats.Peers {
@@ -338,6 +337,7 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 			}
 
 			logger := logger.
+				Debug().
 				WithField("messages", stats.NumberOfMessages).
 				WithField("feeds", stats.NumberOfFeeds).
 				WithField("peers", strings.Join(peers, ", ")).
@@ -361,7 +361,7 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 			logger = logger.WithField("gc_cpu_fraction", m.GCCPUFraction)
 			logger = logger.WithField("num_gc", m.NumGC)
 
-			logger.Debug("stats")
+			logger.Message("stats")
 		}
 
 		select {

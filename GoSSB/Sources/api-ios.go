@@ -158,7 +158,7 @@ func ssbBotInit(
 	}
 
 	if err := removeOldLogFiles(cfg); err != nil {
-		log.WithError(err).Error("failed to remove old log files")
+		log.Error().WithField(logging.ErrorField, err).Message("failed to remove old log files")
 	}
 
 	err = initLogger(cfg)
