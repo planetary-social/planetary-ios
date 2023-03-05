@@ -34,9 +34,9 @@
 "Localized.posted" = "{{somebody}} posteó";
 "Localized.replied" = "{{somebody}} contestó";
 "Localized.liked" = "A {{somebody}} le gustó";
-"Localized.startedFollowing" = "{{somebody}} empezó a seguir a";
-"Localized.stoppedFollowing" = "{{somebody}} dejo de seguir a";
-"Localized.startedBlocking" = "{{somebody}} bloqueó a";
+"Localized.startedFollowing" = "{{somebody}} siguió a";
+"Localized.stoppedFollowing" = "{{somebody}} dejó de seguir a";
+"Localized.startedBlocking" = "{{somebody}} ignoró a";
 "Localized.followStats" = "Siguiendo a {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "Este usuario está fuera de tu red";
 "Localized.showMeInDirectory" = "Mostrame en el directorio";
@@ -334,9 +334,6 @@
 "Debug.debugTitle" = "Modo Hacker";
 "Debug.debugMenu" = "Menú de desarrollo poderoso y peligroso";
 "Debug.debugFooter" = "Esta es la parte en la que dejamos que te dispares en el pié. Acá es donde accedés a tu llave privada, configurás nuevas llaves, ves información sobre la red, sobre los pubs, y todo tipo de cosas. Cuidado con lo que cambiás en este menú, podés romper cosas con estas opciones.";
-"Debug.resetForkedFeedProtection" = "Resetear protección contra bifurcación de feeds";
-"Debug.resetForkedFeedProtectionDescription" = "Esto va a resetar el número de mensajes publicados asociado con tu identidad al número actual en tu base de datos. También va a prender la protección contra bifurcación de feeds si estaba apagada. Solo deberías hacer esto si estás seguro de que todos tus mensajes publicados están en este dispositivo. ¿Estás seguro?";
-"Debug.reset" = "Resetear";
 "Debug.noBotConfigured" = "Ningún bot configurado.";
 
 "Error.login" = "El motor de par-a-par falló al arrancar. Por favor probá cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
@@ -344,7 +341,7 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No pudimos unirte a {{ starName }}. Por favor, intentá de vuelta o contactá con soporte.";
 "Error.invitationRedemptionFailedWithReason" = "El canje de invitación ha fallado con el mensaje: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary está restableciendo tus datos desde la red, y no puede publicar nuevos posts en este momento.";
+"Error.cannotPublishBecauseRestoring" = "Las comprobaciones de validación de Planetary para tus de datos de tu feed han determinado que necesitas restaurar tus datos de la red y no puedes publicar nuevas publicaciones hasta que se complete la recuperación.\n\nSin embargo, si estás seguro de que tus datos de tu feed ya están actualizados, puedes reiniciar la protección contra la bifurcación de feeds y continuar publicando.\nSi no estás seguro y el reinicio de la red parece bloqueado, comunícate con soporte.";
 "Error.restoring" = "Planetary esta recuperando tus datos de la red.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el link.";
@@ -397,3 +394,9 @@
 
 "Discover.emptyTitle" = "Descubrí Planetary";
 "Discover.emptyDescription" = "La pestaña Descubrir te deja ver más gente en Planetary. Específicamente es todo lo que las personas que seguís siguen.";
+
+"ForkedFeedProtection.resetForkedFeedProtection" = "Reiniciar la protección contra la bifurcación de feeds";
+"ForkedFeedProtection.resetForkedFeedProtectionDescription" = "Esto reiniciará el número de mensajes publicados asociados con tu identidad al número actual en tu base de datos en este dispositivo. También encenderá la protección contra bifurcación de feeds si está apagada. Solo deberías hacer esto si estás seguro de que todos tus mensajes publicados están en este dispositivo. ¿Estás seguro?";
+"ForkedFeedProtection.reset" = "Reiniciar";
+"ForkedFeedProtection.prepareForReset" = "Prepárate para reiniciar";
+"ForkedFeedProtection.readMore" = "Más información";

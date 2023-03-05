@@ -15,7 +15,9 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot, @unchecked Sendable {
-    
+
+    var joinedPubs: [Pub]? = nil
+
     var isRestoring = false
 
     func setRestoring(_ value: Bool) {
