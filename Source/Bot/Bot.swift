@@ -82,6 +82,9 @@ protocol Bot: AnyObject, Sendable {
 
     var identity: Identity? { get }
 
+    /// A cached list of pubs that the user joined
+    var joinedPubs: [Pub]? { get }
+
     func createSecret(completion: SecretCompletion)
 
     // MARK: Sync

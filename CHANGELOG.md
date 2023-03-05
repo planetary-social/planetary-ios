@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with calculating the number of new messages in Home screen. #1218
 - Show block messages in the Home feed. #635
 - Fix spacing and headings in the Thread screen. #1198
+- Add the option to unfollow a Pub you joined before. #1236
 
 ## [1.3.14] 2023-01-20
 
