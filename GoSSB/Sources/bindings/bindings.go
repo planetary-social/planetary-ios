@@ -14,11 +14,12 @@ import (
 
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
-	"github.com/planetary-social/scuttlego/di"
+	"github.com/planetary-social/scuttlego/service"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
 	"github.com/planetary-social/scuttlego/service/app"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
+	"github.com/planetary-social/scuttlego/service/di"
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/graph"
@@ -66,7 +67,7 @@ type Node struct {
 	mutex sync.Mutex
 
 	ctx        context.Context
-	service    *di.Service
+	service    *service.Service
 	cancel     context.CancelFunc
 	cleanup    func()
 	repository string
@@ -226,7 +227,7 @@ func (n *Node) isRunning() bool {
 
 func (n *Node) runMigrations(
 	ctx context.Context,
-	service di.Service,
+	service service.Service,
 	migrationOnRunningFn MigrationOnRunningFn,
 	migrationOnErrorFn MigrationOnErrorFn,
 	migrationOnDoneFn MigrationOnDoneFn,
@@ -248,33 +249,33 @@ func (n *Node) runMigrations(
 	return nil
 }
 
-func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
+func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (service.Config, error) {
 	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.NetworkKey)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to decode network key")
+		return service.Config{}, errors.Wrap(err, "failed to decode network key")
 	}
 
 	networkKey, err := boxstream.NewNetworkKey(networkKeyBytes)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to create network key")
+		return service.Config{}, errors.Wrap(err, "failed to create network key")
 	}
 
 	messageHMACBytes, err := base64.StdEncoding.DecodeString(swiftConfig.HMACKey)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to decode message hmac")
+		return service.Config{}, errors.Wrap(err, "failed to decode message hmac")
 	}
 
 	messageHMAC, err := formats.NewMessageHMAC(messageHMACBytes)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
+		return service.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
 	hops, err := graph.NewHops(swiftConfig.Hops)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "error creating hops")
+		return service.Config{}, errors.Wrap(err, "error creating hops")
 	}
 
-	config := di.Config{
+	config := service.Config{
 		DataDirectory:      swiftConfig.Repo,
 		GoSSBDataDirectory: swiftConfig.OldRepo,
 		ListenAddress:      swiftConfig.ListenAddr,
@@ -285,7 +286,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 			PreferredPubs: nil,
 		},
 		Hops: &hops,
-		ModifyBadgerOptions: func(options di.BadgerOptions) {
+		ModifyBadgerOptions: func(options service.BadgerOptions) {
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
@@ -319,7 +320,7 @@ func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
 	return identity.NewPrivateFromBytes(privateKeyBytes)
 }
 
-func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service di.Service) {
+func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service service.Service) {
 	var startTimestamp time.Time
 	var startMessages int
 
