@@ -51,6 +51,10 @@ class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { 
         }
     }
 
+    var isUsingTestingNetwork: Bool {
+        network?.name == Environment.Networks.test.name
+    }
+
     private var secretDidChange = false
     var secret: Secret {
         didSet {
