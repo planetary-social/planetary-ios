@@ -81,7 +81,7 @@ final class Post: ContentCodable, Sendable {
                 }
             }
         }
-        self.mentions = mentions
+        self.mentions = mentions.isEmpty ? nil : mentions
 
         // unused
         self.recps = nil

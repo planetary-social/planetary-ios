@@ -671,6 +671,10 @@
 		5B5BF56A29BB7619003C09A4 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56929BB7619003C09A4 /* PreviewView.swift */; };
 		5B5BF56C29BFE065003C09A4 /* ImagePickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56B29BFE065003C09A4 /* ImagePickerButton.swift */; };
 		5B5BF56E29C01E5A003C09A4 /* AttachedImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56D29C01E5A003C09A4 /* AttachedImageButton.swift */; };
+		5B5BF57529C2234D003C09A4 /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56729BA5746003C09A4 /* ComposeView.swift */; };
+		5B5BF57729C2239C003C09A4 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56929BB7619003C09A4 /* PreviewView.swift */; };
+		5B5BF57829C2239F003C09A4 /* ImagePickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56B29BFE065003C09A4 /* ImagePickerButton.swift */; };
+		5B5BF57929C2239F003C09A4 /* AttachedImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5BF56D29C01E5A003C09A4 /* AttachedImageButton.swift */; };
 		5B5EF4F7294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
 		5B5EF4F8294FDA460052237A /* InfiniteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4F6294FDA460052237A /* InfiniteDataSource.swift */; };
 		5B5EF4FB294FE1230052237A /* MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5EF4FA294FE1230052237A /* MessageList.swift */; };
@@ -3829,6 +3833,7 @@
 				2D1C46F0289DCA08003ED254 /* DiscoveryFeedStrategySelectionViewController.swift in Sources */,
 				C9724B2A2809D47D000EBCCD /* BackupOnboardingStep.swift in Sources */,
 				C9724B2B2809D47D000EBCCD /* BenefitsOnboardingStep.swift in Sources */,
+				5B5BF57829C2239F003C09A4 /* ImagePickerButton.swift in Sources */,
 				C9724B2C2809D47D000EBCCD /* BioOnboardingStep.swift in Sources */,
 				C9724B612809D680000EBCCD /* UICollectionView+Verse.swift in Sources */,
 				C9724B2D2809D47D000EBCCD /* BirthdateOnboardingStep.swift in Sources */,
@@ -3967,6 +3972,7 @@
 				C9724BB72809EC68000EBCCD /* (null) in Sources */,
 				0A64A84024735520009A5EBF /* NullPushAPI.swift in Sources */,
 				23EF5AAA249D177F00469977 /* BanListAPI.swift in Sources */,
+				5B5BF57729C2239C003C09A4 /* PreviewView.swift in Sources */,
 				53E26C5E23045D34009240B2 /* Data+Person.swift in Sources */,
 				23C7A47922748E8700F02311 /* URL+Identifier.swift in Sources */,
 				C9724B932809EA18000EBCCD /* SmallPostHeaderView.swift in Sources */,
@@ -4091,6 +4097,7 @@
 				236BCB7222689406006DF05B /* Address.swift in Sources */,
 				5B7AB68028F46EB1007DCCF1 /* ExtendedSocialStatsView.swift in Sources */,
 				C9D1EAD02832A0230092E098 /* MarkdownTests.swift in Sources */,
+				5B5BF57929C2239F003C09A4 /* AttachedImageButton.swift in Sources */,
 				53C2B13D2295BCC10018D0A8 /* Bundle+Version.swift in Sources */,
 				C9724BCE2809EDD4000EBCCD /* AppDelegate+Repair.swift in Sources */,
 				C9D1EACE2832A0230092E098 /* EncodeJSONtest.swift in Sources */,
@@ -4110,6 +4117,7 @@
 				5B373839288B09A30017756B /* ExtendedAboutCellView.swift in Sources */,
 				C9A2DE3527D0038700EAFA73 /* UIViewController+Alert.swift in Sources */,
 				C9724BDC2809EE3C000EBCCD /* SuspendOperation.swift in Sources */,
+				5B5BF57529C2234D003C09A4 /* ComposeView.swift in Sources */,
 				5316E95F21FFEB130053832E /* Post.swift in Sources */,
 				5336611622D96AD500100707 /* Dictionary+JSONSerialization.swift in Sources */,
 				C9724BDF2809EE4B000EBCCD /* Layout+SpacerView.swift in Sources */,
@@ -4970,7 +4978,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5002,7 +5010,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/UnitTests/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5224,7 +5232,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 416;
+				CURRENT_PROJECT_VERSION = 417;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
@@ -5259,7 +5267,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Resources/FBTT.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 416;
+				CURRENT_PROJECT_VERSION = 417;
 				DEVELOPMENT_TEAM = GZCZBKH7MY;
 				EAGER_LINKING = YES;
 				ENABLE_BITCODE = NO;
