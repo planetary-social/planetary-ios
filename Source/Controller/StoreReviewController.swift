@@ -65,7 +65,7 @@ enum StoreReviewController {
         guard let identity = Bots.current.identity else {
             throw PromptError.cannotReviewWhileLoggedOut
         }
-        
+
         guard !isYearlyPromptCountExceeded else {
             return
         }

@@ -63,11 +63,7 @@ struct GoldenIdentityView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .aspectRatio(goldenRatio, contentMode: ContentMode.fill)
         .background(
-            LinearGradient(
-                colors: [Color.cardBgTop, Color.cardBgBottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            LinearGradient.cardGradient
         )
         .cornerRadius(15)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))

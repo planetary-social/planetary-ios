@@ -173,6 +173,7 @@
 "NewPost.remove" = "Remove";
 "NewPost.publishing" = "Publishing...";
 "NewPost.restoring" = "Restoring...";
+"NewPost.mention" = "Mention";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";

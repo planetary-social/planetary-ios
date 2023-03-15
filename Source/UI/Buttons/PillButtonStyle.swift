@@ -9,11 +9,13 @@
 import SwiftUI
 
 struct PillButtonStyle: ButtonStyle {
+    var padding: CGFloat = 15
+
     @SwiftUI.Environment(\.isEnabled) private var isEnabled
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding()
+            .padding(padding)
             .background(
                 !isEnabled ? Color.pillButtonBackgroundDisabled :
                     configuration.isPressed ? Color.pillButtonBackgroundPressed : Color.pillButtonBackground

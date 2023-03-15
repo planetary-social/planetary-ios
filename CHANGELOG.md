@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Improved message replication performance.
+- Redesigned screen for composing posts with better support for previewing.
+- Filter list of followers/follows by name, bio or identity. 
 
 ## [2.0.0] _waiting for review_
 

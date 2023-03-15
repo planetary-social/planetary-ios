@@ -38,6 +38,9 @@ struct DiscoverView: View, HelpDrawerHost {
     @StateObject
     private var searchTextObserver = SearchTextFieldObserver()
 
+    @State
+    private var isPresentingCompose = false
+
     let helpDrawerType = HelpDrawer.discover
 
     func dismissDrawer(completion: (() -> Void)?) {
@@ -97,9 +100,12 @@ struct DiscoverView: View, HelpDrawerHost {
                 }
                 Button {
                     Analytics.shared.trackDidTapButton(buttonName: "compose")
-                    showCompose()
+                    isPresentingCompose = true
                 } label: {
                     Image.navIconWrite
+                }
+                .sheet(isPresented: $isPresentingCompose) {
+                    ComposeView(isPresenting: $isPresentingCompose)
                 }
             }
         }
@@ -123,15 +129,6 @@ struct DiscoverView: View, HelpDrawerHost {
             Analytics.shared.trackDidShowScreen(screenName: "discover")
             HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawerType, state: helpDrawerState)
         }
-    }
-
-    private func showCompose() {
-        let controller = NewPostViewController()
-        controller.didPublish = { post in
-            NotificationCenter.default.post(.didPublishPost(post))
-        }
-        let navController = UINavigationController(rootViewController: controller)
-        appController.present(navController, animated: true)
     }
 }
 

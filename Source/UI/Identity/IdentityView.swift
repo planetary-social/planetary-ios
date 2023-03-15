@@ -247,6 +247,7 @@ struct IdentityView: View {
             }
         }
     }
+
     private func loadAliases() {
         Task.detached {
             let bot = await botRepository.current

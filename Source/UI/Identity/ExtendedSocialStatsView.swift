@@ -130,7 +130,6 @@ struct ExtendedSocialStatsView: View {
                         }
                     }
                 }
-                .navigationBarTitleDisplayMode(.inline)
         }
     }
 
