@@ -4,9 +4,9 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.3
+	github.com/planetary-social/scuttlego v0.0.4
 	github.com/sirupsen/logrus v1.8.1
-	github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8
+	github.com/ssbc/go-ssb v0.2.2-0.20230308230318-d6db27d1852d
 	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
 	github.com/ssbc/go-ssb-refs v0.5.2
 	github.com/stretchr/testify v1.8.1
