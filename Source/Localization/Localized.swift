@@ -271,6 +271,7 @@ extension Localized {
         case remove = "Remove"
         case publishing = "Publishing..."
         case restoring = "Restoring..."
+        case mention = "Mention"
     }
 }
 

@@ -20,17 +20,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
 
     /// The last time we loaded the reports from the database or we checked if there are new reports to show
     private var lastTimeNewReportsUpdatesWasChecked = Date()
-
-    private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage.navIconWrite
-        let item = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: #selector(newPostButtonTouchUpInside)
-        )
-        return item
-    }()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
     var helpDrawerType: HelpDrawer { .notifications }
@@ -68,7 +57,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
+        navigationItem.rightBarButtonItems = [helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -193,17 +182,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
     @objc
     func didCreateReport(notification: Notification) {
         checkForNotificationUpdates(force: true)
-    }
-    
-    @objc
-    func newPostButtonTouchUpInside() {
-        Analytics.shared.trackDidTapButton(buttonName: "compose")
-        let controller = NewPostViewController()
-        controller.didPublish = { [weak self] _ in
-            self?.load()
-        }
-        let navController = UINavigationController(rootViewController: controller)
-        self.present(navController, animated: true, completion: nil)
     }
 }
 
