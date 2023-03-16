@@ -650,12 +650,10 @@ class ViewDatabaseTests: XCTestCase {
         try vdb.fillMessages(msgs: [testMessage])
         
         // Act
-        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([testMessage.key.sha256hash])
+        try vdb.applyBanList([testMessage.key.sha256hash])
         
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
-        XCTAssertEqual(bannedAuthors, [])
-        XCTAssertEqual(unbannedAuthors, [])
         XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
     
@@ -671,12 +669,10 @@ class ViewDatabaseTests: XCTestCase {
         try vdb.fillMessages(msgs: [testMessage])
         
         // Act
-        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([bannedAuthor.sha256hash])
+        try vdb.applyBanList([bannedAuthor.sha256hash])
         
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
-        XCTAssertEqual(bannedAuthors, [bannedAuthor])
-        XCTAssertEqual(unbannedAuthors, [])
         XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
     
@@ -691,13 +687,11 @@ class ViewDatabaseTests: XCTestCase {
         )
         
         // Act
-        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([testMessage.key.sha256hash])
+        try vdb.applyBanList([testMessage.key.sha256hash])
         try vdb.fillMessages(msgs: [testMessage])
         
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
-        XCTAssertEqual(bannedAuthors, [])
-        XCTAssertEqual(unbannedAuthors, [])
         XCTAssertThrowsError(try vdb.post(with: testMessage.key))
     }
     
@@ -712,13 +706,11 @@ class ViewDatabaseTests: XCTestCase {
         )
         
         // Act
-        let (bannedAuthors, unbannedAuthors) = try vdb.applyBanList([bannedAuthor.sha256hash])
+        try vdb.applyBanList([bannedAuthor.sha256hash])
         try vdb.fillMessages(msgs: [testMessage])
         
         // Assert
         XCTAssertEqual(try vdb.messageCount(), startingMessageCount)
-        XCTAssertEqual(bannedAuthors, [])
-        XCTAssertEqual(unbannedAuthors, [])
         XCTAssertThrowsError(try vdb.post(with: testMessage.key))
         XCTAssertNotNil(try vdb.authorID(of: bannedAuthor))
     }

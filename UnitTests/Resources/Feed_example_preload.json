@@ -14,7 +14,7 @@
       "signature": "P9AXG0P9eNJgk/V34rRLEHGeLEngRUk3Ym8ZE7xiDoqWx9WRQMgPNEKX+LLvVst0cZz4+OqQ/rXTTEDDh+CWBA==.sig.ed25519"
     },
     "timestamp": 1549282075305,
-    "ReceiveLogSeq": -1
+    "receiveLogSequence": -1
   },
   {
     "key": "%6I3KxdOY2XRwbfPm8IMRFaxlMZiyizw9s0sSyL6GUNg=.sha256",
@@ -32,7 +32,7 @@
       "signature": "2KxQ6UyJvEXeIY+T44Ad2bhg81nh/qtf+Fgy58ArkWAr8yPGt0+tK44sL30UgWTYPmtGlppWULIleLcenok+BQ==.sig.ed25519"
     },
     "timestamp": 1549282091197,
-    "ReceiveLogSeq": -2
+    "receiveLogSequence": -2
   },
   {
     "key": "%A779Qiywc+HJoMT1xfmuqGymyS9pnjNal+WfHBgk2GQ=.sha256",
@@ -51,7 +51,7 @@
       "signature": "PEf7pHr78Wc2qxaPEtvARdmZbSac5hp6MHBHfJZHUw7WxMpIcYMk/3i4gTgP+F7e6FfdcdS7ZQfpWiqNQG8yCw==.sig.ed25519"
     },
     "timestamp": 1549282102981,
-    "ReceiveLogSeq": -3
+    "receiveLogSequence": -3
   },
   {
     "key": "%8DsHDOHVRjX9Ti96k6hTOLIOoGY811R1HN+XgQf3lg0=.sha256",
@@ -68,7 +68,7 @@
       "signature": "tfqkEW+Rs9AdZvv+ZvQgfdPjmBcamc2FLl5pFmcMWUTr4wHcbAnIk89RLeXyW6V7xXWF26MNwV73ZRx6ShSHAQ==.sig.ed25519"
     },
     "timestamp": 1549282258764,
-    "ReceiveLogSeq": -4
+    "receiveLogSequence": -4
   },
   {
     "key": "%bG3yggHTql+z3qFRxpweBHc9HzSxBefW569m4Z+6pbU=.sha256",
@@ -86,6 +86,6 @@
       "signature": "MUUuaT8ofcyGSXtF3j//loWIXykJQKnzxy5vH7gJKlWE3FLrRoK2+eNEBgyaJs0UGyjLNalqYGw3OUC2V4QvDQ==.sig.ed25519"
     },
     "timestamp": 1549282262062,
-    "ReceiveLogSeq": -5
+    "receiveLogSequence": -5
   }
 ]

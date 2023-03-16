@@ -31,10 +31,6 @@ import "C"
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -44,15 +40,22 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/planetary-social/scuttlego/service/app/queries"
-	"github.com/sirupsen/logrus"
 )
 
 const (
 	kilobyte = 1000
 	megabyte = 1000 * kilobyte
 )
+
 const (
 	memoryLimitInBytes = 500 * megabyte
+)
+
+const (
+	logFilenamePrefix = "gobot-"
+	logFilenameFormat = "2006-01-02_15-04"
+	logFilenameSuffix = ".log"
+	keepLogsFor       = 7 * 24 * time.Hour
 )
 
 func init() {
@@ -65,13 +68,6 @@ var (
 	log  logging.Logger
 	node = bindings.NewNode()
 )
-
-//export ssbVersion
-func ssbVersion() *C.char {
-	defer logPanic()
-
-	return C.CString("project-raptor") // todo remove this function, I don't see why we need this
-}
 
 //export ssbBotStop
 func ssbBotStop() bool {
@@ -161,6 +157,10 @@ func ssbBotInit(
 		return false
 	}
 
+	if err := removeOldLogFiles(cfg); err != nil {
+		log.Error().WithField(logging.ErrorField, err).Message("failed to remove old log files")
+	}
+
 	err = initLogger(cfg)
 	if err != nil {
 		err = errors.Wrap(err, "failed to init logger")
@@ -169,7 +169,7 @@ func ssbBotInit(
 
 	onBlobDownloadedFn := func(event queries.BlobDownloaded) error {
 		ref := C.CString(event.Id.String())
-		ret := C.callNotifyBlobs(unsafe.Pointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
+		ret := C.callNotifyBlobs(unsafeExternPointer(notifyBlobReceivedFn), C.int64_t(event.Size.InBytes()), ref)
 		C.free(unsafe.Pointer(ref))
 		if !ret {
 			return errors.New("calling C function failed")
@@ -179,19 +179,19 @@ func ssbBotInit(
 
 	migrationOnRunningFn := func(migrationIndex, migrationsCount int) {
 		if notifyMigrationOnRunningFn != 0 {
-			C.callNotifyMigrationOnRunning(unsafe.Pointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
+			C.callNotifyMigrationOnRunning(unsafeExternPointer(notifyMigrationOnRunningFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount))
 		}
 	}
 
 	migrationOnErrorFn := func(migrationIndex, migrationsCount, error int) {
 		if notifyMigrationOnErrorFn != 0 {
-			C.callNotifyMigrationOnError(unsafe.Pointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
+			C.callNotifyMigrationOnError(unsafeExternPointer(notifyMigrationOnErrorFn), C.int64_t(migrationIndex), C.int64_t(migrationsCount), C.int64_t(error))
 		}
 	}
 
 	migrationOnDoneFn := func(migrationsCount int) {
 		if notifyMigrationOnDoneFn != 0 {
-			C.callNotifyMigrationOnDone(unsafe.Pointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
+			C.callNotifyMigrationOnDone(unsafeExternPointer(notifyMigrationOnDoneFn), C.int64_t(migrationsCount))
 		}
 	}
 
@@ -206,38 +206,3 @@ func ssbBotInit(
 
 // needed for buildmode c-archive
 func main() {}
-
-func initPreInitLogger() {
-	log = newLogger(os.Stderr)
-	log = log.WithField("warning", "pre-init")
-}
-
-func initLogger(config bindings.BotConfig) error {
-	debugLogs := filepath.Join(config.Repo, "debug")
-	if err := os.MkdirAll(debugLogs, 0700); err != nil {
-		return errors.Wrap(err, "could not create logs directory")
-	}
-
-	logFileName := fmt.Sprintf("gobot-%s.log", time.Now().Format("2006-01-02_15-04"))
-	logFile, err := os.Create(filepath.Join(debugLogs, logFileName))
-	if err != nil {
-		return errors.Wrap(err, "failed to create debug log file")
-	}
-
-	log = newLogger(io.MultiWriter(os.Stderr, logFile))
-	return nil
-}
-
-func newLogger(w io.Writer) logging.Logger {
-	const swiftLikeFormat = "2006-01-02 15:04:05.0000000 (UTC)"
-
-	customFormatter := new(logrus.TextFormatter)
-	customFormatter.TimestampFormat = swiftLikeFormat
-
-	logrusLogger := logrus.New()
-	logrusLogger.SetOutput(w)
-	logrusLogger.SetFormatter(customFormatter)
-	logrusLogger.SetLevel(logrus.DebugLevel)
-
-	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
-}

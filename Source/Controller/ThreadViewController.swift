@@ -191,10 +191,6 @@ class ThreadViewController: ContentViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         headerView.removeFromSuperview()
-        let textValue = AttributedString(replyTextView.attributedText)
-        Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: textValue, images: self.images)
-        }
     }
 
     private func load(animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -210,29 +206,6 @@ class ThreadViewController: ContentViewController {
                 self?.update(with: root ?? post, replies: replies, animated: animated)
                 completion?()
             }
-        }
-    }
-    
-    private func setUpDrafts() {
-        Task {
-            if let draft = await self.draftStore.loadDraft() {
-                if let text = draft.attributedText {
-                    replyTextView.attributedText = text
-                }
-                galleryView.add(draft.images)
-                Log.info("Restored draft")
-            }
-            
-            replyTextView
-                .textPublisher
-                .throttle(for: 3, scheduler: queue, latest: true)
-                .sink { [weak self] newText in
-                    let newTextValue = newText.map { AttributedString($0) }
-                    Task(priority: .userInitiated) {
-                        await self?.draftStore.save(text: newTextValue, images: self?.images ?? [])
-                    }
-                }
-                .store(in: &cancellables)
         }
     }
 
@@ -270,7 +243,6 @@ class ThreadViewController: ContentViewController {
         self.interactionView.replies = replies as? StaticDataProxy
         self.interactionView.update()
         replyTextView.isHidden = root.offChain == true
-        setUpDrafts()
     }
 
     override func viewDidLayoutSubviews() {
@@ -381,10 +353,9 @@ class ThreadViewController: ContentViewController {
         let draftStore = draftStore
         let textValue = AttributedString(text)
         Task.detached(priority: .userInitiated) {
-            await draftStore.save(text: textValue, images: images)
             do {
                 let messageID = try await Bots.current.publish(post, with: images)
-                Analytics.shared.trackDidReply()
+                Analytics.shared.trackDidReply(characterCount: post.text.count)
                 await AppController.shared.hideProgress()
                 await MainActor.run {
                     self.buttonsView.postButton.isEnabled = true
@@ -512,10 +483,6 @@ extension ThreadViewController: ImageGalleryViewDelegate {
     func imageGalleryViewDidChange(_ view: ImageGalleryView) {
         self.buttonsView.photoButton.isEnabled = view.images.count < 8
         view.images.isEmpty ? view.close() : view.open()
-        let textValue = AttributedString(replyTextView.attributedText)
-        Task.detached(priority: .userInitiated) {
-            await self.draftStore.save(text: textValue, images: view.images)
-        }
     }
 
     func imageGalleryView(_ view: ImageGalleryView, didSelect image: UIImage, at indexPath: IndexPath) {

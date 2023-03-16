@@ -20,17 +20,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
 
     /// The last time we loaded the reports from the database or we checked if there are new reports to show
     private var lastTimeNewReportsUpdatesWasChecked = Date()
-
-    private lazy var newPostBarButtonItem: UIBarButtonItem = {
-        let image = UIImage.navIconWrite
-        let item = UIBarButtonItem(
-            image: image,
-            style: .plain,
-            target: self,
-            action: #selector(newPostButtonTouchUpInside)
-        )
-        return item
-    }()
     
     lazy var helpButton: UIBarButtonItem = { HelpDrawerCoordinator.helpBarButton(for: self) }()
     var helpDrawerType: HelpDrawer { .notifications }
@@ -68,7 +57,7 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
 
     init() {
         super.init(scrollable: false, title: .notifications)
-        navigationItem.rightBarButtonItems = [newPostBarButtonItem, helpButton]
+        navigationItem.rightBarButtonItems = [helpButton]
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -194,17 +183,6 @@ class NotificationsViewController: ContentViewController, HelpDrawerViewControll
     func didCreateReport(notification: Notification) {
         checkForNotificationUpdates(force: true)
     }
-    
-    @objc
-    func newPostButtonTouchUpInside() {
-        Analytics.shared.trackDidTapButton(buttonName: "compose")
-        let controller = NewPostViewController()
-        controller.didPublish = { [weak self] _ in
-            self?.load()
-        }
-        let navController = UINavigationController(rootViewController: controller)
-        self.present(navController, animated: true, completion: nil)
-    }
 }
 
 private class NotificationsTableViewDataSource: MessageTableViewDataSource {
@@ -316,15 +294,13 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
 private class HeaderView: UITableViewHeaderFooterView {
 
     private lazy var button: UIButton = {
-        let attributeContainer = AttributeContainer([
-            .font: UIFont.systemFont(ofSize: 15, weight: .semibold)
-        ])
-        let attributedTitle = AttributedString(
-            Localized.Notifications.markAllAsRead.text,
-            attributes: attributeContainer
-        )
         var configuration = UIButton.Configuration.plain()
-        configuration.attributedTitle = attributedTitle
+        configuration.title = Localized.Notifications.markAllAsRead.text
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+            return outgoing
+        }
         let view = UIButton(configuration: configuration)
         view.useAutoLayout()
         view.addTarget(
@@ -373,6 +349,12 @@ private class HeaderView: UITableViewHeaderFooterView {
     func clearNotificationsButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "clear-notifications")
         let clearUnreadNotificationsOperation = ClearUnreadNotificationsOperation()
+        AppController.shared.showProgress()
+        clearUnreadNotificationsOperation.completionBlock = {
+            DispatchQueue.main.async {
+                AppController.shared.hideProgress()
+            }
+        }
         AppController.shared.addOperation(clearUnreadNotificationsOperation)
     }
 }

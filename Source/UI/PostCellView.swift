@@ -17,7 +17,7 @@ class PostCellView: MessageUIView {
 
     private lazy var seeMoreString: NSAttributedString = {
         let seeMore = NSMutableAttributedString(string: "... \(Localized.seeMore.text)")
-        let styler = MarkdownStyler(fontStyle: .regular)
+        let styler = MarkdownStyler(fontStyle: .thread)
         styler.style(seeMore: seeMore)
         let range = (seeMore.string as NSString).range(of: Localized.seeMore.text)
         seeMore.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.tint.default], range: range)

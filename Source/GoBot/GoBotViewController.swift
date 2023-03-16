@@ -124,25 +124,6 @@ class GoBotViewController: DebugTableViewController {
         )
     }
 
-    private var fullFsckAndRepairCell: DebugTableViewCellModel {
-        DebugTableViewCellModel(
-            title: "Full FSCK and Repair",
-            cellReuseIdentifier: DebugValueTableViewCell.className,
-            valueClosure: { cell in
-                cell.detailTextLabel?.text = "Run"
-            },
-            actionClosure: { _ in
-                DispatchQueue.global(qos: .userInitiated).async {
-                    let (worked, _) = GoBot.shared.bot.fsckAndRepair()
-                    guard worked else {
-                        Log.unexpected(.botError, "manual fsck failed")
-                        return
-                    }
-                }
-            }
-        )
-    }
-
     private var syncPublishedLogCell: DebugTableViewCellModel {
         DebugTableViewCellModel(
             title: "Sync with Published Log",
@@ -243,7 +224,7 @@ class GoBotViewController: DebugTableViewController {
         if GoBot.shared.bot.isRunning {
             cells += [publishCell]
         }
-        cells += [syncPublishedLogCell, fullFsckAndRepairCell, deleteRepoCell]
+        cells += [syncPublishedLogCell, deleteRepoCell]
         return ("Actions", cells, nil)
     }
 

@@ -14,16 +14,18 @@ import (
 
 	"github.com/boreq/errors"
 	badgeroptions "github.com/dgraph-io/badger/v3/options"
-	"github.com/planetary-social/scuttlego/di"
+	"github.com/planetary-social/scuttlego/service"
 	"github.com/planetary-social/scuttlego/service/adapters/badger"
+	"github.com/planetary-social/scuttlego/service/app"
 	"github.com/planetary-social/scuttlego/service/app/commands"
 	"github.com/planetary-social/scuttlego/service/app/queries"
+	"github.com/planetary-social/scuttlego/service/di"
 	"github.com/planetary-social/scuttlego/service/domain"
 	"github.com/planetary-social/scuttlego/service/domain/feeds/formats"
 	"github.com/planetary-social/scuttlego/service/domain/graph"
 	"github.com/planetary-social/scuttlego/service/domain/identity"
+	"github.com/planetary-social/scuttlego/service/domain/refs"
 	"github.com/planetary-social/scuttlego/service/domain/transport/boxstream"
-	refs "github.com/ssbc/go-ssb-refs"
 )
 
 var ErrNodeIsNotRunning = errors.New("node isn't running")
@@ -42,31 +44,30 @@ type MigrationOnErrorFn func(migrationIndex, migrationsCount, error int)
 type MigrationOnDoneFn func(migrationsCount int)
 
 type BotConfig struct {
-	// AppKey is a base64 encoded network key.
-	AppKey string `json:"AppKey"`
+	// NetworkKey is a base64 encoded network key.
+	NetworkKey string `json:"networkKey"`
 
 	// HMACKey is a base64 encoded message HMAC.
-	HMACKey string `json:"HMACKey"`
+	HMACKey string `json:"hmacKey"`
 
-	// Hops is the number of hops that should be replicated automatically.
-	// WARNING:
-	// 0 == followees
-	// 1 == followees of followees
-	// etc
-	Hops uint `json:"Hops"`
+	Hops       int    `json:"hops"`
+	KeyBlob    string `json:"keyBlob"`
+	Repo       string `json:"repo"`
+	OldRepo    string `json:"oldRepo"`
+	ListenAddr string `json:"listenAddr"`
+	Testing    bool   `json:"testing"`
+}
 
-	KeyBlob             string         `json:"KeyBlob"`
-	Repo                string         `json:"Repo"`
-	OldRepo             string         `json:"OldRepo"`
-	ListenAddr          string         `json:"ListenAddr"`
-	Testing             bool           `json:"Testing"`
-	ServicePubs         []refs.FeedRef `json:"ServicePubs"`
-	ViewDBSchemaVersion uint           `json:"SchemaVersion"`
+type Service struct {
+	Ctx context.Context
+	App app.Application
 }
 
 type Node struct {
-	mutex      sync.Mutex
-	service    *di.Service
+	mutex sync.Mutex
+
+	ctx        context.Context
+	service    *service.Service
 	cancel     context.CancelFunc
 	cleanup    func()
 	repository string
@@ -92,44 +93,42 @@ func (n *Node) Start(
 		return errors.New("node is already running")
 	}
 
-	local, err := n.toIdentity(swiftConfig)
+	privateIdentity, err := n.toIdentity(swiftConfig)
 	if err != nil {
 		return errors.Wrap(err, "could not create the identity")
 	}
+
+	publicIdentityRef, err := refs.NewIdentityFromPublic(privateIdentity.Public())
+	if err != nil {
+		return errors.Wrap(err, "could not create the identity ref")
+	}
+
+	log.Debug().WithField("identity", publicIdentityRef).Message("building service")
 
 	config, err := n.toConfig(swiftConfig, log)
 	if err != nil {
 		return errors.Wrap(err, "could not convert the config")
 	}
 
-	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
-	if err != nil {
-		return errors.Wrap(err, "error creating the progress callback")
-	}
-
 	if err = os.MkdirAll(config.DataDirectory, 0700); err != nil {
-		return errors.Wrap(err, "could not create the data directory") // todo should this be here?
+		return errors.Wrap(err, "could not create the data directory")
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	service, cleanup, err := di.BuildService(ctx, local, config)
+	service, cleanup, err := di.BuildService(privateIdentity, config)
 	if err != nil {
 		cancel()
 		return errors.Wrap(err, "error building service")
 	}
 
-	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
-	if err != nil {
+	if err := n.runMigrations(ctx, service, migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn); err != nil {
 		cancel()
-		return errors.Wrap(err, "error creating the migration command")
-	}
-
-	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
-		cancel()
+		cleanup()
 		return errors.Wrap(err, "error running migrations")
 	}
 
+	n.ctx = ctx
 	n.service = &service
 	n.cancel = cancel
 	n.cleanup = cleanup
@@ -145,9 +144,9 @@ func (n *Node) Start(
 		for event := range service.App.Queries.BlobDownloadedEvents.Handle(ctx) {
 			logger := log.WithField("blob", event.Id).WithField("size", event.Size.InBytes())
 			if err := onBlobDownloaded(event); err != nil {
-				logger.WithError(err).Error("error calling onBlobDownloaded")
+				logger.Error().WithField(bindingslogging.ErrorField, err).Message("error calling onBlobDownloaded")
 			} else {
-				logger.Debug("called onBlobDownloaded")
+				logger.Debug().Message("called onBlobDownloaded")
 			}
 		}
 	}()
@@ -158,7 +157,7 @@ func (n *Node) Start(
 
 		if err := service.Run(ctx); err != nil {
 			if !errors.Is(err, context.Canceled) {
-				log.WithError(err).Error("service terminated with an error")
+				log.Error().WithField(bindingslogging.ErrorField, err).Message("service terminated with an error")
 			}
 			// todo what to do if the service terminates for some reason? should it be restarted or should we just cleanup node?
 		}
@@ -180,6 +179,7 @@ func (n *Node) Stop() error {
 
 	n.wg.Wait()
 
+	n.ctx = nil
 	n.service = nil
 	n.cancel = nil
 	n.repository = ""
@@ -200,7 +200,7 @@ func (n *Node) Repository() (string, error) {
 	return n.repository, nil
 }
 
-func (n *Node) Get() (*di.Service, error) {
+func (n *Node) Get() (*Service, error) {
 	n.mutex.Lock()
 	defer n.mutex.Unlock()
 
@@ -208,7 +208,10 @@ func (n *Node) Get() (*di.Service, error) {
 		return nil, errors.New("node isn't running")
 	}
 
-	return n.service, nil
+	return &Service{
+		Ctx: n.ctx,
+		App: n.service.App,
+	}, nil
 }
 
 func (n *Node) IsRunning() bool {
@@ -222,52 +225,72 @@ func (n *Node) isRunning() bool {
 	return n.service != nil
 }
 
-func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (di.Config, error) {
-	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.AppKey)
+func (n *Node) runMigrations(
+	ctx context.Context,
+	service service.Service,
+	migrationOnRunningFn MigrationOnRunningFn,
+	migrationOnErrorFn MigrationOnErrorFn,
+	migrationOnDoneFn MigrationOnDoneFn,
+) error {
+	progressCallback, err := NewProgressCallback(migrationOnRunningFn, migrationOnErrorFn, migrationOnDoneFn)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to decode network key")
+		return errors.Wrap(err, "error creating the progress callback")
+	}
+
+	migrationsCmd, err := commands.NewRunMigrations(progressCallback)
+	if err != nil {
+		return errors.Wrap(err, "error creating the migration command")
+	}
+
+	if err := service.App.Commands.RunMigrations.Run(ctx, migrationsCmd); err != nil {
+		return errors.Wrap(err, "error running migrations")
+	}
+
+	return nil
+}
+
+func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Logger) (service.Config, error) {
+	networkKeyBytes, err := base64.StdEncoding.DecodeString(swiftConfig.NetworkKey)
+	if err != nil {
+		return service.Config{}, errors.Wrap(err, "failed to decode network key")
 	}
 
 	networkKey, err := boxstream.NewNetworkKey(networkKeyBytes)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to create network key")
+		return service.Config{}, errors.Wrap(err, "failed to create network key")
 	}
 
 	messageHMACBytes, err := base64.StdEncoding.DecodeString(swiftConfig.HMACKey)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to decode message hmac")
+		return service.Config{}, errors.Wrap(err, "failed to decode message hmac")
 	}
 
 	messageHMAC, err := formats.NewMessageHMAC(messageHMACBytes)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "failed to create message hmac")
+		return service.Config{}, errors.Wrap(err, "failed to create message hmac")
 	}
 
-	hops, err := graph.NewHops(int(swiftConfig.Hops + 1))
+	hops, err := graph.NewHops(swiftConfig.Hops)
 	if err != nil {
-		return di.Config{}, errors.Wrap(err, "error creating hops")
+		return service.Config{}, errors.Wrap(err, "error creating hops")
 	}
 
-	logger := NewLoggerAdapter(bindingsLogger)
-
-	// todo do something service pubs?
-
-	config := di.Config{
+	config := service.Config{
 		DataDirectory:      swiftConfig.Repo,
 		GoSSBDataDirectory: swiftConfig.OldRepo,
 		ListenAddress:      swiftConfig.ListenAddr,
 		NetworkKey:         networkKey,
 		MessageHMAC:        messageHMAC,
-		LoggingSystem:      logger,
+		LoggingSystem:      bindingsLogger,
 		PeerManagerConfig: domain.PeerManagerConfig{
 			PreferredPubs: nil,
 		},
 		Hops: &hops,
-		ModifyBadgerOptions: func(options di.BadgerOptions) {
+		ModifyBadgerOptions: func(options service.BadgerOptions) {
 			options.SetNumGoroutines(2)
 			options.SetNumCompactors(2)
 			options.SetCompression(badgeroptions.ZSTD)
-			options.SetLogger(badger.NewLogger(logger, badger.LoggerLevelInfo))
+			options.SetLogger(badger.NewLogger(bindingsLogger, badger.LoggerLevelInfo))
 			options.SetValueLogFileSize(32 * mebibyte)
 			options.SetBlockCacheSize(32 * mebibyte)
 			options.SetIndexCacheSize(0)
@@ -275,7 +298,7 @@ func (n *Node) toConfig(swiftConfig BotConfig, bindingsLogger bindingslogging.Lo
 		},
 	}
 
-	config.SetDefaults() // todo this should be automatic
+	config.SetDefaults()
 
 	return config, nil
 }
@@ -297,7 +320,7 @@ func (n *Node) toIdentity(config BotConfig) (identity.Private, error) {
 	return identity.NewPrivateFromBytes(privateKeyBytes)
 }
 
-func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service di.Service) {
+func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, service service.Service) {
 	var startTimestamp time.Time
 	var startMessages int
 
@@ -305,8 +328,9 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 		stats, err := service.App.Queries.Status.Handle()
 		if err != nil {
 			logger.
-				WithError(err).
-				Error("stats error")
+				Error().
+				WithField(bindingslogging.ErrorField, err).
+				Message("error executing status query")
 		} else {
 			var peers []string
 			for _, remote := range stats.Peers {
@@ -314,6 +338,7 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 			}
 
 			logger := logger.
+				Debug().
 				WithField("messages", stats.NumberOfMessages).
 				WithField("feeds", stats.NumberOfFeeds).
 				WithField("peers", strings.Join(peers, ", ")).
@@ -332,9 +357,12 @@ func (n *Node) printStats(ctx context.Context, logger bindingslogging.Logger, se
 
 			logger = logger.WithField("mem_alloc", fmt.Sprintf("%v MB", bToMb(m.Alloc)))
 			logger = logger.WithField("mem_sys", fmt.Sprintf("%v MB", bToMb(m.Sys)))
+			logger = logger.WithField("mallocs", m.Mallocs)
+			logger = logger.WithField("frees", m.Frees)
+			logger = logger.WithField("gc_cpu_fraction", m.GCCPUFraction)
 			logger = logger.WithField("num_gc", m.NumGC)
 
-			logger.Debug("stats")
+			logger.Message("stats")
 		}
 
 		select {

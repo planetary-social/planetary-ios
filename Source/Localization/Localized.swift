@@ -36,6 +36,7 @@ extension Localized {
             Localized.Help.YourNetwork.self,
             Localized.Search.self,
             Localized.Discover.self,
+            Localized.ForkedFeedProtection.self,
         ]
     }
 }
@@ -271,6 +272,7 @@ extension Localized {
         case remove = "Remove"
         case publishing = "Publishing..."
         case restoring = "Restoring..."
+        case mention = "Mention"
     }
 }
 
@@ -396,6 +398,19 @@ extension Localized {
         case unknownAliasRegistrationError = "There was a problem registering this alias"
         case typeYourAlias = "Type your alias"
         case registeringAlias = "Registering Alias..."
+    }
+}
+
+// MARK: - Forked Feed Protection
+
+extension Localized {
+
+    enum ForkedFeedProtection: String, Localizable, CaseIterable {
+        case resetForkedFeedProtection = "Reset Forked Feed Protection"
+        case resetForkedFeedProtectionDescription = "This will reset the number of published messages associated with your identity to the number currently in your database on this device. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?"
+        case reset = "Reset"
+        case prepareForReset = "Prepare for Reset"
+        case readMore = "More Info"
     }
 }
 
@@ -560,9 +575,6 @@ extension Localized {
         case debugTitle = "Hacker Mode"
         case debugMenu = "Dangerous and powerful debug menu"
         case debugFooter = "This is where we let you shoot yourself in the foot. Here is where you get at your private key, set new keys, see information about the network, pub's, and all sorts of things. Careful what you change in this menu, you can break things with these options."
-        case resetForkedFeedProtection = "Reset Forked Feed Protection"
-        case resetForkedFeedProtectionDescription = "This will reset the number of published messages associated with your identity to the number currently in your database. It will also turn forked feed protection on if it is off. You should only do this if you are sure all of your published messages are on this device. Are you sure?"
-        case reset = "Reset"
         case noBotConfigured = "No bot configured."
     }
 }
@@ -575,7 +587,7 @@ extension Localized {
         case supportNotConfigured = "Support is not configured."
         case invitationRedemptionFailed = "Could not join {{ starName }}. Please try again or contact support."
         case invitationRedemptionFailedWithReason = "Invitation redemption failed with message: {{ reason }}."
-        case cannotPublishBecauseRestoring = "Planetary is currently restoring your data from the network, and cannot publish new posts at this time."
+        case cannotPublishBecauseRestoring = "Planetary’s validation checks for your data feed have determined it needs to restore your data from the network and cannot publish new posts until it’s completed recovery.\n\nHowever, if you are sure your data feed is already up to date, you can reset Forked Feed Protection and continue posting.\nIf you are unsure and network restoration seems hung, please get in touch with support."
         case restoring = "Planetary is currently restoring your data from the network."
         case invalidAppConfiguration = "Invalid app configuration"
         case couldNotGenerateLink = "Could not generate link."

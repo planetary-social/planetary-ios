@@ -3,9 +3,7 @@ package main
 import "C"
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
@@ -55,7 +53,13 @@ func ssbStreamRootLog(startSeq int64, limit int) *C.char {
 		return nil
 	}
 
-	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamRootLog")
+	log.
+		Debug().
+		WithField("param.startSeq", startSeq).
+		WithField("param.limit", limit).
+		WithField("n", len(msgs)).
+		WithField("duration", time.Since(start)).
+		Message("returning new messages in ssbStreamRootLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
@@ -117,7 +121,12 @@ func ssbStreamPublishedLog(afterSeq int64) *C.char {
 		return nil
 	}
 
-	log.WithField("n", len(msgs)).WithField("duration", time.Since(start)).Debug("returning new messages in ssbStreamPublishedLog")
+	log.
+		Debug().
+		WithField("param.afterSeq", afterSeq).
+		WithField("n", len(msgs)).
+		WithField("duration", time.Since(start)).
+		Message("returning new messages in ssbStreamPublishedLog")
 
 	var buf bytes.Buffer
 	err = marshalAsLog(&buf, msgs)
@@ -133,17 +142,11 @@ func marshalAsLog(buf *bytes.Buffer, msgs []queries.LogMessage) error {
 	result := make([]logEntry, 0) // prevent empty arrays rendering as null
 
 	for _, logMsg := range msgs {
-		hasher := sha256.New()
-		hasher.Write([]byte(logMsg.Message.Id().String()))
-
 		entry := logEntry{
-			Key:           logMsg.Message.Id().String(),
-			Value:         logMsg.Message.Raw().Bytes(),
-			Timestamp:     time.Now().UnixMilli(),
-			ReceiveLogSeq: int64(logMsg.Sequence.Int()),
-			HashedKey:     fmt.Sprintf("%x", hasher.Sum(nil)),
+			Key:                logMsg.Message.Id().String(),
+			Value:              logMsg.Message.Raw().Bytes(),
+			ReceiveLogSequence: logMsg.Sequence.Int(),
 		}
-
 		result = append(result, entry)
 	}
 
@@ -155,9 +158,7 @@ func marshalAsLog(buf *bytes.Buffer, msgs []queries.LogMessage) error {
 }
 
 type logEntry struct {
-	Key           string          `json:"key"`
-	Value         json.RawMessage `json:"value"`
-	Timestamp     int64           `json:"timestamp"`
-	ReceiveLogSeq int64           `json:"ReceiveLogSeq"`
-	HashedKey     string          `json:"HashedKey"`
+	Key                string          `json:"key"`
+	Value              json.RawMessage `json:"value"`
+	ReceiveLogSequence int             `json:"receiveLogSequence"`
 }

@@ -32,13 +32,14 @@ extension BotStatistics {
 
     var analyticsStatistics: Analytics.Statistics {
         var statistics = Analytics.Statistics(lastSyncDate: lastSyncDate,
-                                              lastRefreshDate: lastRefreshDate)
+                                              lastRefreshDate: lastRefreshDate
+        )
 
         if repo.feedCount != -1 {
             statistics.repo = Analytics.RepoStatistics(feedCount: repo.feedCount,
                                                        messageCount: repo.messageCount,
-                                                       numberOfPublishedMessages: repo.numberOfPublishedMessages,
-                                                       lastHash: repo.lastHash)
+                                                       numberOfPublishedMessages: repo.numberOfPublishedMessages
+            )
         }
 
         if db.lastReceivedMessage != -3 {
@@ -49,7 +50,8 @@ extension BotStatistics {
         }
 
         statistics.peer = Analytics.PeerStatistics(peers: peer.count,
-                                                   connectedPeers: peer.connectionCount)
+                                                   connectedPeers: peer.connectionCount
+        )
 
         return statistics
     }
@@ -73,23 +75,18 @@ struct RepoStatistics: Equatable {
     /// Number of messages published by the user
     let numberOfPublishedMessages: Int
 
-    /// Last message in the repo
-    let lastHash: String
-
     init(
         path: String? = nil,
         identity: Identity? = nil,
         feedCount: Int = -1,
         messageCount: Int = 0,
-        numberOfPublishedMessages: Int = 0,
-        lastHash: String = ""
+        numberOfPublishedMessages: Int = 0
     ) {
         self.identity = identity
         self.path = path ?? "unknown"
         self.feedCount = feedCount
         self.messageCount = messageCount
         self.numberOfPublishedMessages = numberOfPublishedMessages
-        self.lastHash = lastHash
     }
 }
 

@@ -31,8 +31,7 @@ class ConnectedPeerListControllerTests: XCTestCase {
             path: nil,
             feedCount: 3,
             messageCount: 4,
-            numberOfPublishedMessages: 5,
-            lastHash: "hash"
+            numberOfPublishedMessages: 5
         ),
         peer: PeerStatistics(
             count: 3,
@@ -90,8 +89,7 @@ class ConnectedPeerListControllerTests: XCTestCase {
                 path: nil,
                 feedCount: 3,
                 messageCount: 4,
-                numberOfPublishedMessages: 5,
-                lastHash: "hash"
+                numberOfPublishedMessages: 5
             ),
             peer: PeerStatistics(
                 count: 3,

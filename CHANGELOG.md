@@ -8,12 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Improved message replication performance.
+- Redesigned screen for composing posts with better support for previewing.
+- Filter list of followers/follows by name, bio or identity. 
+
+## [2.0.0] _waiting for review_
+
 - Updated the localization strategy to have a better support of foreign languages. #1065
 - Added the option to join the Planetary room to the Manage Rooms screen. #1137
 - Add a button to delete the SQL database in the debug settings. #738
 - Change the underlying Secure Scuttlebutt implementation from go-ssb to scuttlego
+- Add the option to reset the Forked Feed Protection when it is triggered. #1162
 - Avoid showing an error alert when showing an identity we have no information for. #1114
 - Alert user if some error ocurred while replying to a post. #923
+- Fixed bug with calculating the number of new messages in Home screen. #1218
+- Show block messages in the Home feed. #635
+- Fix spacing and headings in the Thread screen. #1198
+- Support unicode in hashtags. #225
+- Add the option to unfollow a Pub you joined before. #1236
 
 ## [1.3.14] 2023-01-20
 

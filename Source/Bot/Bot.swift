@@ -82,6 +82,9 @@ protocol Bot: AnyObject, Sendable {
 
     var identity: Identity? { get }
 
+    /// A cached list of pubs that the user joined
+    var joinedPubs: [Pub]? { get }
+
     func createSecret(completion: SecretCompletion)
 
     // MARK: Sync
@@ -325,6 +328,9 @@ protocol Bot: AnyObject, Sendable {
     // MARK: Raw message
 
     func raw(of message: Message, completion: @escaping RawCompletion)
+
+    // MARK: Forked feed protection
+    func resetForkedFeedProtection() async throws
 }
 
 extension Bot {

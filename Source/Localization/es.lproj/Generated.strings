@@ -34,9 +34,9 @@
 "Localized.posted" = "{{somebody}} publicó";
 "Localized.replied" = "{{somebody}} respondió";
 "Localized.liked" = "A {{somebody}} le gustó";
-"Localized.startedFollowing" = "{{somebody}} empezó a seguirte";
-"Localized.stoppedFollowing" = "{{somebody}} dejó de seguirte";
-"Localized.startedBlocking" = "{{somebody}} bloqueó";
+"Localized.startedFollowing" = "{{somebody}} siguió a";
+"Localized.stoppedFollowing" = "{{somebody}} dejó de seguir a";
+"Localized.startedBlocking" = "{{somebody}} ignoró a";
 "Localized.followStats" = "Siguiendo a {{numberOfFollows}} • Seguido por {{numberOfFollowers}}";
 "Localized.userOusideNetwork" = "Este usuario está fuera de tu red";
 "Localized.showMeInDirectory" = "Mostrarme en el directorio";
@@ -149,9 +149,10 @@
 "Localized.noResultsHelp" = "¿No ves lo que estás buscando? Planetary solo puede buscar a la gente y publicaciones en tu red. Ahora mismo la búsqueda solo funciona con palabras completas, IDs de usuarios e IDs de publicaciones. Puede que excluyamos publicaciones con más de 6 meses de antigüedad para salvar espacio en tu dispositivo.";
 "Localized.rooms" = "Salas";
 "Localized.allCapsCopy" = "COPIAR";
-"Localized.upgradingAndRestoring" = "Planetary está actualizando y restaurando tus mensajes de la red.";
-"Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
 "Localized.percentComplete" = "completado";
+"Localized.botMigrationBody" = "Planetary necesita mejorar para darte una mejor experiencia de usuario.\n\nEsto puede llevar unos pocos minutos. Mantén la aplicación abierta hasta que esté completado.";
+"Localized.botMigrationGenericError" = "La migración falló. Por favor, prueba de nuevo o envía un email a support@planetary.social para obtener ayuda. Si el error persiste, a lo mejor necesitarás eliminar y reinstalar Planetary.";
+"Localized.startUsingPlanetaryTitle" = "Comenzar a usar Planetary";
 
 "Blocking.alertTitle" = "¿Estás seguro de que quieres ignorar a {{ name }}? No podréis ver el contenido del otro o poder contactar el uno con el otro. Esto será visible públicamente.";
 "Blocking.buttonTitle" = "Sí, ignorar a {{ name }}";
@@ -276,6 +277,8 @@
 "ManageRelays.roomHelpText" = "Los servidores de sala permiten a los miembros conectarse entre ellos y susurrarse directamente, usando el servidor como un túnel. Para añadir una sala necesitas preguntar a un miembro de una sala existente por una invitación o ejecutar la tuya propia.";
 "ManageRelays.deleteRoom" = "Eliminar";
 "ManageRelays.deleteRoomConfirmation" = "Nota: Esto solamente eliminará la sala de tu base de datos local de Planetary. No te elimina como miembro de la sala.";
+"ManageRelays.joinPlanetaryRoom" = "Unirse a la sala Planetary";
+"ManageRelays.joinPlanetaryRoomDescription" = "Al unirte al servidor de la sala oficial de Planetary podrás registrar alias como tunombre.planetary.name y sincronizar directamente con otros en la sala.";
 
 "Message.noPostsTitle" = "No hay publicaciones aquí todavía";
 "Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";
@@ -331,9 +334,6 @@
 "Debug.debugTitle" = "Modo Hacker";
 "Debug.debugMenu" = "Menú de desarrollo poderoso y peligroso";
 "Debug.debugFooter" = "Aquí es donde dejamos que te dispares en el pié. Aquí es donde accedes a tu llave privada, configuras nuevas llaves, ves información sobre la red, sobre los pubs, y todo tipo de cosas. Cuidado con lo que cambias en este menú, puedes romper cosas con estas opciones.";
-"Debug.resetForkedFeedProtection" = "Resetear Protección contra Bifurcación de Feeds";
-"Debug.resetForkedFeedProtectionDescription" = "Esto reseteará el número de mensajes publicados asociados con tu identidad al número actual en tu base de datos. También encenderá la protección contra bifurcación de feeds si está apagada. Solo deberías hacer esto si estás seguro de que todos tus mensajes publicados están en este dispositivo. ¿Estás seguro?";
-"Debug.reset" = "Resetear";
 "Debug.noBotConfigured" = "Ningún bot configurado.";
 
 "Error.login" = "El motor de par-a-par falló en el inicio. Por favor prueba cerrando e iniciando la aplicación una y otra vez para ver si eso lo arregla.";
@@ -341,7 +341,7 @@
 "Error.supportNotConfigured" = "Soporte no está configurado.";
 "Error.invitationRedemptionFailed" = "No se pudo unir a {{ starName }}. Por favor, inténtalo de nuevo o contacta con soporte.";
 "Error.invitationRedemptionFailedWithReason" = "El canje de la invitación falló con el mensaje: {{ reason }}.";
-"Error.cannotPublishBecauseRestoring" = "Planetary está restaurando tus datos de la red y no puede publicar nuevos mensajes en este momento.";
+"Error.cannotPublishBecauseRestoring" = "Las comprobaciones de validación de Planetary para tus de datos de tu feed han determinado que necesitas restaurar tus datos de la red y no puedes publicar nuevas publicaciones hasta que se complete la recuperación.\n\nSin embargo, si estás seguro de que tus datos de tu feed ya están actualizados, puedes reiniciar la protección contra la bifurcación de feeds y continuar publicando.\nSi no estás seguro y el reinicio de la red parece bloqueado, comunícate con soporte.";
 "Error.restoring" = "Planetary está restaurando tus datos de la red.";
 "Error.invalidAppConfiguration" = "Configuración de app inválida";
 "Error.couldNotGenerateLink" = "No pudo generar el enlace.";
@@ -394,3 +394,9 @@
 
 "Discover.emptyTitle" = "Descubre Planetary";
 "Discover.emptyDescription" = "La pestaña Descubrir te deja ver más gente en Planetary. Específicamente es todo lo que las personas a las que sigues siguen.";
+
+"ForkedFeedProtection.resetForkedFeedProtection" = "Reiniciar la protección contra la bifurcación de feeds";
+"ForkedFeedProtection.resetForkedFeedProtectionDescription" = "Esto reiniciará el número de mensajes publicados asociados con tu identidad al número actual en tu base de datos en este dispositivo. También encenderá la protección contra bifurcación de feeds si está apagada. Solo deberías hacer esto si estás seguro de que todos tus mensajes publicados están en este dispositivo. ¿Estás seguro?";
+"ForkedFeedProtection.reset" = "Reiniciar";
+"ForkedFeedProtection.prepareForReset" = "Prepárate para reiniciar";
+"ForkedFeedProtection.readMore" = "Más información";

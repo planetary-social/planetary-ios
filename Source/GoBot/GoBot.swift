@@ -11,6 +11,7 @@ import UIKit
 import Logger
 import Analytics
 import CrashReporting
+import CryptoKit
 
 extension String {
     func withGoString<R>(_ call: (gostring_t) -> R) -> R {
@@ -48,6 +49,9 @@ class GoBot: Bot, @unchecked Sendable {
 
     private var _identity: Identity?
     var identity: Identity? { self._identity }
+
+    private var _joinedPubs: [Pub]?
+    var joinedPubs: [Pub]? { self._joinedPubs }
     
     var isRestoring = false
 
@@ -195,7 +199,8 @@ class GoBot: Bot, @unchecked Sendable {
             userInitiatedQueue.async {
                 do {
                     try self.database.delete(allFrom: identity)
-                    let publishedPosts = try self.bot.getPublishedLog(after: -1)
+                    let receiveLogMsgs = try self.bot.getPublishedLog(after: -1)
+                    let publishedPosts = self.mapReceiveLogMessages(msgs: receiveLogMsgs)
                     try self.database.fillMessages(msgs: publishedPosts)
                     continuation.resume()
                 } catch {
@@ -289,7 +294,6 @@ class GoBot: Bot, @unchecked Sendable {
             hmacKey: hmacKey,
             secret: secret,
             pathPrefix: repoPrefix,
-            disableEBT: isRestoring,
             migrationDelegate: migrationDelegate
         )
 
@@ -371,6 +375,7 @@ class GoBot: Bot, @unchecked Sendable {
         userInitiatedQueue.async {
             do {
                 let pubs = try self.database.getJoinedPubs()
+                self._joinedPubs = pubs
                 queue.async {
                     completion(pubs, nil)
                 }
@@ -674,7 +679,7 @@ class GoBot: Bot, @unchecked Sendable {
                         return
                     }
                     let lastPostIndex = try self.database.largestSeqFromPublishedLog()
-                    let publishedPosts = try self.bot.getPublishedLog(after: lastPostIndex)
+                    let publishedPosts = self.mapReceiveLogMessages(msgs: try self.bot.getPublishedLog(after: lastPostIndex))
                     try self.database.fillMessages(msgs: publishedPosts)
                     try self.updateNumberOfPublishedMessages(for: identity)
                     self.numberOfPublishedMessagesLock.unlock()
@@ -745,16 +750,7 @@ class GoBot: Bot, @unchecked Sendable {
         }
         
         guard targetMessage.author == self._identity else {
-            // drop content directly / can't request others to do so
-            do {
-                try self.bot.nullContent(
-                    author: targetMessage.author,
-                    sequence: UInt(targetMessage.sequence)
-                )
-            } catch {
-                completion(GoBotError.duringProcessing("failed to null content", error))
-                return
-            }
+            // can't request others to drop content
             completion(nil)
             return
         }
@@ -792,52 +788,6 @@ class GoBot: Bot, @unchecked Sendable {
         }
     }
     
-    private func repairViewConstraints21012020(with author: Identity, current: Int64) -> (Analytics.BotRepair, Error?) {
-        // fields we want to include in the tracked event
-        var repair = Analytics.BotRepair(
-            function: "ViewConstraints21012020",
-            numberOfMessagesInDB: current,
-            numberOfMessagesInRepo: self._statistics.repo.messageCount
-        )
-
-        let (worked, maybeReport) = self.bot.fsckAndRepair()
-        guard worked else {
-            return (repair, GoBotError.unexpectedFault("[constraint violation] failed to heal gobot repository"))
-        }
-
-        guard let report = maybeReport else { // there was nothing to repair?
-            return (repair, GoBotError.unexpectedFault("[constraint violation] viewdb error but nothing to repair"))
-        }
-
-        repair.reportedAuthors = report.Authors.count
-        repair.reportedMessages = report.Messages
-
-        if !report.Authors.contains(author) {
-            Log.unexpected(.botError, "ViewConstraints21012020 warning: affected author not in heal report")
-            // there could be others, so go on
-        }
-
-        for author in report.Authors {
-            do {
-                try self.database.delete(allFrom: author)
-            } catch ViewDatabaseError.unknownAuthor {
-                // after the viewdb schema bump, ppl that have this bug
-                // only have it in the gobot after the update
-                // therefore we can skip this if the viewdb is filling for the first time
-                guard current == -1 else {
-                    let errorMessage = "[constraint violation] expected author from fsck report in viewdb"
-                    return (repair, GoBotError.unexpectedFault(errorMessage))
-                }
-                continue
-            } catch {
-                let errorMessage = "[constraint violation] unable to drop affected feed from viewdb"
-                return (repair, GoBotError.duringProcessing(errorMessage, error))
-            }
-        }
-
-        return (repair, nil)
-    }
-    
     // should only be called by refresh() (which does the proper completion on mainthread)
     private func updateReceive(limit: Int32 = 15_000, completion: @escaping (Result<Void, Error>) -> Void) {
         do {
@@ -847,7 +797,7 @@ class GoBot: Bot, @unchecked Sendable {
             
             // If the go log is empty we need to request 0. Otherwise request the next seq number.
             let startSeq = UInt64(current <= 0 ? 0 : current + 1)
-            let msgs = try self.bot.getReceiveLog(startSeq: startSeq, limit: limit)
+            let msgs = self.mapReceiveLogMessages(msgs: try self.bot.getReceiveLog(startSeq: startSeq, limit: limit))
             
             guard !msgs.isEmpty else {
                 Log.debug("[#rx log#] no new messages from go-ssb")
@@ -871,19 +821,6 @@ class GoBot: Bot, @unchecked Sendable {
                 Log.debug("[#rx log#] added \(msgs.count) new messages from go-ssb")
                 
                 completion(.success(()))
-            } catch ViewDatabaseError.messageConstraintViolation(let author, let sqlErr) {
-                let (repair, error) = self.repairViewConstraints21012020(with: author, current: current)
-    
-                Analytics.shared.trackBotDidRepair(
-                    databaseError: sqlErr,
-                    error: error?.localizedDescription,
-                    repair: repair
-                )
-
-                #if DEBUG
-                print("[rx log] viewdb fill of aborted and repaired.")
-                #endif
-                completion(.failure(error ?? GoBotError.unexpectedFault("updateReceive failed")))
             } catch {
                 let encapsulatedError = GoBotError.duringProcessing(
                     "viewDB: message filling failed: \(error.localizedDescription)",
@@ -905,7 +842,7 @@ class GoBot: Bot, @unchecked Sendable {
             count = Int64(rawCount)
             
             // TOOD: redo until diff==0
-            let msgs = try self.bot.getPrivateLog(startSeq: count, limit: 1000)
+            let msgs = self.mapReceiveLogMessages(msgs: try self.bot.getPrivateLog(startSeq: count, limit: 1000))
             
             if !msgs.isEmpty {
                 try self.database.fillMessages(msgs: msgs, pms: true)
@@ -980,11 +917,6 @@ class GoBot: Bot, @unchecked Sendable {
             return
         }
         
-        guard !isRestoring else {
-            completion(identifier, nil, BotError.restoring)
-            return
-        }
-
         userInitiatedQueue.async {
 
             // get non-empty data from blob storage
@@ -1278,13 +1210,6 @@ class GoBot: Bot, @unchecked Sendable {
                 return
             }
 
-            do {
-                try self.bot.nullFeed(author: identity)
-            } catch {
-                completion("", GoBotError.duringProcessing("deleting feed from bot failed", error))
-                return
-            }
-
             completion(messageIdentifier, nil)
             NotificationCenter.default.post(name: .didBlockUser, object: identity)
         }
@@ -1312,17 +1237,8 @@ class GoBot: Bot, @unchecked Sendable {
         }
             
         do {
-            let (bannedAuthors, unbannedAuthors) = try self.database.applyBanList(banList)
-            
-            // add as blocked peers to bot (those dont have contact messages)
-            for author in bannedAuthors {
-                try bot.nullFeed(author: author)
-                bot.ban(feed: author)
-            }
-            
-            for author in unbannedAuthors {
-                bot.unban(feed: author)
-            }
+            try self.database.applyBanList(banList)
+            try bot.setBanList(banList: banList)
         } catch {
             Log.unexpected(.botError, "failed to apply ban list: \(error)")
         }
@@ -1663,8 +1579,7 @@ class GoBot: Bot, @unchecked Sendable {
                 identity: self.identity,
                 feedCount: feedCount,
                 messageCount: messageCount,
-                numberOfPublishedMessages: ownMessages,
-                lastHash: counts?.lastHash ?? ""
+                numberOfPublishedMessages: ownMessages
             )
             
             let connectionCount = self.bot.openConnections()
@@ -1822,6 +1737,40 @@ class GoBot: Bot, @unchecked Sendable {
                 free(pointer)
                 completion(.success(string))
             }
+        }
+    }
+
+    // MARK: Forked feed protection
+
+    func resetForkedFeedProtection() async throws {
+        // Make a log refresh so that database is fully synced with the backing store.
+        try await refresh(load: .long)
+        
+        let statistics = await statistics()
+        guard let configuration = config else {
+            return
+        }
+        configuration.numberOfPublishedMessages = statistics.repo.numberOfPublishedMessages
+        configuration.apply()
+        UserDefaults.standard.set(true, forKey: "prevent_feed_from_forks")
+        UserDefaults.standard.synchronize()
+        Log.info(
+            "User reset number of published messages " +
+            "to \(configuration.numberOfPublishedMessages)"
+        )
+    }
+    
+    private func mapReceiveLogMessages(msgs: [ReceiveLogMessage]) -> Messages {
+        return msgs.map { msg in
+            let digest = SHA256.hash(data: Data(msg.key.utf8))
+
+            return Message(
+                key: msg.key,
+                value: msg.value,
+                timestamp: NSDate().timeIntervalSince1970 * 1000,
+                receivedSeq: msg.receiveLogSequence,
+                hashedKey: Data(digest).base64EncodedString()
+            )
         }
     }
 }

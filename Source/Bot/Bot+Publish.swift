@@ -18,23 +18,23 @@ extension Bot {
         Thread.assertIsMainThread()
 
         // publish all images first
-        self.prepare(images) {
-            blobs, error in
+        self.prepare(images) { blobs, error in
             if Log.optional(error) { completion(Identifier.null, error); return }
 
             // mutate post to include blobs
             let postWithBlobs = post.copy(with: blobs)
 
             // publish post
-            self.publish(content: postWithBlobs) {
-                postIdentifier, error in
+            self.publish(content: postWithBlobs) { postIdentifier, error in
                 if Log.optional(error) { completion(.null, error); return }
                 completion(postIdentifier, nil)
             }
         }
     }
-    
-    @MainActor func publish(_ post: Post, with images: [UIImage] = []) async throws -> MessageIdentifier {
+
+    @discardableResult
+    @MainActor
+    func publish(_ post: Post, with images: [UIImage] = []) async throws -> MessageIdentifier {
         try await withCheckedThrowingContinuation { continuation in
             publish(post, with: images) { result, error in
                 if let error = error {
@@ -50,23 +50,19 @@ extension Bot {
     // will quit after first failure and return an error without models
     // if some of the images were published and later ones fail well
     // then doing this again will duplicate already published images
-    func prepare(_ images: [UIImage],
-                 completion: @escaping PublishBlobsCompletion) {
+    func prepare(_ images: [UIImage], completion: @escaping PublishBlobsCompletion) {
         Thread.assertIsMainThread()
         if images.isEmpty { completion([], nil); return }
 
         var blobs = [Int: Blob]()
 
-        // TODO need to add Bot.publish(blobs)
-        // TODO check all blobs before publish
         let datas = images.compactMap { $0.blobData() }
-        // TODO need Bot error
+
         guard datas.count == images.count else { completion([], nil); return }
 
         for (index, data) in datas.enumerated() {
             let image = images[index]
-            self.addBlob(data: data) {
-                identifier, error in
+            self.addBlob(data: data) { identifier, error in
                 if let error = error { completion([], error); return }
                 let metadata = Blob.Metadata.describing(image, mimeType: .jpeg, data: data)
                 let blob = Blob(identifier: identifier, metadata: metadata)

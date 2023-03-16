@@ -15,7 +15,9 @@ enum FakeBotError: Error {
 }
 
 class FakeBot: Bot, @unchecked Sendable {
-    
+
+    var joinedPubs: [Pub]? = nil
+
     var isRestoring = false
 
     func setRestoring(_ value: Bool) {
@@ -316,6 +318,8 @@ class FakeBot: Bot, @unchecked Sendable {
             completion([], error)
         }
     }
+
+    func resetForkedFeedProtection() async throws { }
 
     func feed(strategy: FeedStrategy, completion: @escaping PaginatedCompletion) {
         completion(StaticDataProxy(), nil)

@@ -34,7 +34,7 @@ extension String {
 
     /// Find all hashtags in a given string and replaces them with deeplinks
     private func findHashtags(in markdown: String, usingMarkdownLinks: Bool) throws -> String {
-        let regex = "(?:^|\\s)(?<hashtag>#[a-zA-Z0-9_-]+|#[a-zA-Z0-9_-]+$)"
+        let regex = "(?:^|\\s)(?<hashtag>#[\\p{L}\\d-]+|#[\\p{L}\\d-]+$)"
         let regularExpression = try NSRegularExpression(pattern: regex)
         let wholeRange = NSRange(location: 0, length: markdown.utf16.count)
         if let match = regularExpression.firstMatch(in: markdown, range: wholeRange) {
@@ -139,7 +139,7 @@ extension String {
     
     func decodeMarkdown(small: Bool = false, host: String = "") -> NSAttributedString {
         let down = Down(markdownString: self)
-        let styler = MarkdownStyler(fontStyle: small ? .compact : .regular)
+        let styler = MarkdownStyler(fontStyle: small ? .compact : .thread)
         do {
             let attributedString = try down.toAttributedString(.default, styler: styler)
             let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)

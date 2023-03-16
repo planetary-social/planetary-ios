@@ -9,17 +9,42 @@
 import SwiftUI
 
 struct LoadingView: View {
+    var text: String?
+
     var body: some View {
         ZStack {
-            PeerConnectionAnimationView(peerCount: 3, color: UIColor.secondaryTxt)
-                .scaleEffect(1.3)
+            if let text = text {
+                VStack(spacing: 15) {
+                    animationView
+                    Text(text)
+                        .foregroundColor(.secondaryTxt)
+                }
+                .padding()
+                .background(LinearGradient.cardGradient)
+                .cornerRadius(20)
+            } else {
+                animationView
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    }
+
+    private var animationView: some View {
+        PeerConnectionAnimationView(peerCount: 3, color: UIColor.secondaryTxt)
+            .scaleEffect(1.3)
     }
 }
 
 struct LoadingView_Previews: PreviewProvider {
     static var previews: some View {
-        LoadingView()
+        VStack {
+            LoadingView()
+            LoadingView(text: "Loading")
+        }
+        VStack {
+            LoadingView()
+            LoadingView(text: "Loading")
+        }
+        .preferredColorScheme(.dark)
     }
 }

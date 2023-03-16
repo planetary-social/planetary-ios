@@ -75,11 +75,7 @@ struct MessageCard: View {
                 }
             }
             .background(
-                LinearGradient(
-                    colors: [Color.cardBgTop, Color.cardBgBottom],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                LinearGradient.cardGradient
             )
             .cornerRadius(cornerRadius)
             .padding(padding)
