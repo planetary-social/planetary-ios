@@ -46,7 +46,7 @@ assignees: ''
 - [ ] Create a [Github Release](https://github.com/planetary-social/planetary-ios/releases/new), copying in the tag name and a link to the CHANGELOG.
 - [ ] Click "Release this Version" in [App Store Connect](https://appstoreconnect.apple.com/apps/1481617318/appstore/ios/version/inflight)
 - [ ] Merge the release branch into `main` and delete it.
-- [ ] Post release notes to Planetary account at https://planetary.rocks. (Connect to replicate with `sbot gossip.connect "net:planetary.rocks:8008~shs:l1sGqWeCZRA99gN+t9sI6+UOzGcHq3KhLQUYEwb4DCo="`)
+- [ ] Post release notes to Planetary account at https://planetary.rocks. (Connect your machine to replicate by opening the console and running `sbot gossip.connect "net:planetary.rocks:8008~shs:l1sGqWeCZRA99gN+t9sI6+UOzGcHq3KhLQUYEwb4DCo="`)
 - [ ] Post release notes on [Radaar](https://radaar.io)
 - [ ] Post release notes on [Discord](https://discord.com/channels/776485686181363729/776485686181363732)
 - [ ] Update this wiki page with any procedural changes.
