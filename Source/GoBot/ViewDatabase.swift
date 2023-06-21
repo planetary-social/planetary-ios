@@ -789,6 +789,42 @@ class ViewDatabase {
             return nil
         }
     }
+
+    func likesMessage(with identifier: MessageIdentifier, author: FeedIdentifier) throws -> Bool {
+        let db = try checkoutConnection()
+
+        // swiftlint:disable indentation_width
+        let query = """
+        SELECT
+            COUNT(*) > 0
+        FROM
+          tangles t
+          JOIN messagekeys rmk ON rmk.id = t.root
+          JOIN messages ON messages.msg_id = t.msg_ref
+          JOIN authors ON authors.id = messages.author_id
+          JOIN votes ON votes.msg_ref = t.msg_ref
+        WHERE
+          messages.type = 'vote'
+          AND rmk.key = :message_identifier
+          AND authors.author = :author_identifier
+          AND messages.hidden = FALSE
+          AND messages.is_decrypted = FALSE
+          AND votes.value > 0
+        LIMIT
+          1
+        """
+        // swiftlint:enable indentation_width
+
+        let bindings: [String: Binding?] = [
+            ":message_identifier": identifier,
+            ":author_identifier": author
+        ]
+        if let liked = try db.prepare(query).scalar(bindings) as? Int64 {
+            return liked > 0
+        } else {
+            return false
+        }
+    }
     
     // MARK: pubs & rooms
 

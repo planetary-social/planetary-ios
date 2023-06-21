@@ -252,6 +252,8 @@ protocol Bot: AnyObject, Sendable {
     /// Fetches the message with the given Identigfier from the database.
     func message(identifier: MessageIdentifier) async throws -> Message?
 
+    func likes(identifier: MessageIdentifier, by author: FeedIdentifier) async throws -> Bool
+
     /// Fetches the post with the given ID from the database.
     func post(from key: MessageIdentifier) throws -> Message
     

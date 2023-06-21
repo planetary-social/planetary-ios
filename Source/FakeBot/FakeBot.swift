@@ -333,6 +333,10 @@ class FakeBot: Bot, @unchecked Sendable {
         return nil
     }
 
+    func likes(identifier: MessageIdentifier, by author: FeedIdentifier) async throws -> Bool {
+        return false
+    }
+
     func post(from key: MessageIdentifier) throws -> Message {
         throw FakeBotError.runtimeError("not implemented")
     }

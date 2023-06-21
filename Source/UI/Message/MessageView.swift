@@ -32,61 +32,111 @@ struct MessageView: View {
     @State
     private var message: Message?
 
+    @State
+    private var root: Message?
+
     @EnvironmentObject
     private var botRepository: BotRepository
 
     @ObservedObject
     private var dataSource: FeedStrategyMessageDataSource
 
-    init(identifier: MessageIdentifier, bot: Bot) {
-        self.init(identifierOrMessage: .left(identifier), bot: bot)
+    @State
+    private var showCompose = false
+
+    @State
+    private var isLoadingMessage = false
+
+    @State
+    private var isLoadingRoot = false
+
+    init(identifier: MessageIdentifier, shouldOpenCompose: Bool = false, bot: Bot) {
+        self.init(identifierOrMessage: .left(identifier), shouldOpenCompose: shouldOpenCompose, bot: bot)
     }
 
-    init(message: Message, bot: Bot) {
-        self.init(identifierOrMessage: .right(message), bot: bot)
+    init(message: Message, shouldOpenCompose: Bool = false, bot: Bot) {
+        self.init(identifierOrMessage: .right(message), shouldOpenCompose: shouldOpenCompose, bot: bot)
     }
 
-    init(identifierOrMessage: Either<MessageIdentifier, Message>, bot: Bot) {
+    init(identifierOrMessage: Either<MessageIdentifier, Message>, shouldOpenCompose: Bool, bot: Bot) {
         self.identifierOrMessage = identifierOrMessage
+        switch identifierOrMessage {
+        case .right(let message):
+            self.message = message
+        default:
+            self.message = nil
+        }
+        self.showCompose = shouldOpenCompose
         self.dataSource = FeedStrategyMessageDataSource(
             strategy: RepliesStrategy(identifier: identifierOrMessage.id),
             bot: bot
         )
     }
 
+    var identifierOrLoadedMessage: Either<MessageIdentifier, Message> {
+        if let message = message {
+            return .right(message)
+        } else {
+            return identifierOrMessage
+        }
+    }
+
+    var rootIdentifier: Either<MessageIdentifier, Message>? {
+        if let root = root {
+            return .right(root)
+        } else if let identifier = message?.content.post?.root {
+            return .left(identifier)
+        } else if let identifier = message?.content.vote?.vote.link {
+            return .left(identifier)
+        } else {
+            return nil
+        }
+    }
+
     var body: some View {
         Group {
-            if let message = message {
+            if isLoadingMessage {
+                LoadingView()
+            } else {
                 VStack(spacing: 0) {
                     ScrollView(.vertical) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            MessageHeaderView(message: message)
-                            Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                            if let contact = message.content.contact {
-                                IdentityCard(identity: contact.contact, style: .compact)
-                            } else if let post = message.content.post {
-                                CompactPostView(identifier: message.id, post: post, lineLimit: nil)
-                            } else if let vote = message.content.vote {
-                                CompactVoteView(identifier: message.id, vote: vote.vote)
+                        ZStack(alignment: .top) {
+                            if isLoadingRoot {
+                                LoadingCard(style: .compact)
+                                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                                    .opacity(0.7)
+                            } else if let rootIdentifier = rootIdentifier {
+                                ZStack {
+                                    MessageButton(
+                                        identifierOrMessage: rootIdentifier,
+                                        style: .compact,
+                                        shouldDisplayChain: false
+                                    )
+                                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                                    .opacity(0.7)
+                                }
+                                .frame(height: 100, alignment: .top)
                             }
-                        }
-                        .background(
-                            LinearGradient(
-                                colors: [Color.cardBgTop, Color.cardBgBottom],
-                                startPoint: .top,
-                                endPoint: .bottom
+                            CompactMessageView(
+                                identifierOrMessage: identifierOrLoadedMessage,
+                                shouldTruncateIfNeeded: false,
+                                didTapReply: {
+                                    showCompose = true
+                                }
                             )
-                        )
-                        .cornerRadius(20)
-                        .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
-                        .compositingGroup()
-                        .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
-                        .shadow(
-                            color: .cardShadowBottom,
-                            radius: 10,
-                            x: 0,
-                            y: 4
-                        )
+                            .compositingGroup()
+                            .shadow(color: .cardBorderBottom, radius: 0, x: 0, y: 4)
+                            .shadow(
+                                color: .cardShadowBottom,
+                                radius: 10,
+                                x: 0,
+                                y: 4
+                            )
+                            .offset(y: rootIdentifier == nil ? 0 : 100)
+                            .padding(
+                                EdgeInsets(top: 0, leading: 0, bottom: rootIdentifier == nil ? 0 : 100, trailing: 0)
+                            )
+                        }
                         MessageStack(dataSource: dataSource, chained: true)
                             .placeholder(when: dataSource.isEmpty, alignment: .top) {
                                 EmptyView()
@@ -94,14 +144,59 @@ struct MessageView: View {
                         Spacer(minLength: 15)
                     }
                 }
-            } else {
-                LoadingView()
             }
         }
         .background(Color.appBg)
-        .navigationTitle(Localized.Post.one.text)
+        .navigationTitle(title)
+        .onReceive(NotificationCenter.default.publisher(for: .didPublishPost)) { _ in
+            Task {
+                await reloadMessage()
+                await dataSource.loadFromScratch()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didPublishVote)) { notification in
+            guard let identifier = notification.identifier else {
+                return
+            }
+            if identifier == message?.key {
+                Task {
+                    await reloadMessage()
+                    await dataSource.loadFromScratch()
+                }
+            } else if let cache = dataSource.cache, cache.contains(where: { $0.key == identifier }) {
+                Task {
+                    await dataSource.loadFromScratch()
+                }
+            }
+        }
+        .sheet(isPresented: $showCompose) {
+            ComposeView(isPresenting: $showCompose, root: message)
+        }
         .task {
             loadMessageIfNeeded()
+            loadRootIfNeeded()
+        }
+    }
+
+    private var title: String {
+        switch identifierOrMessage {
+        case .left:
+            return Localized.Message.message.text
+        case .right(let message):
+            switch message.content.type {
+            case .post:
+                if message.content.post?.root != nil {
+                    return Localized.Message.reply.text
+                } else {
+                    return Localized.Post.title.text
+                }
+            case .contact:
+                return Localized.Message.contact.text
+            case .vote:
+                return Localized.Message.reaction.text
+            default:
+                return Localized.Message.message.text
+            }
         }
     }
 
@@ -111,23 +206,80 @@ struct MessageView: View {
         }
         switch identifierOrMessage {
         case .left(let messageIdentifier):
+            isLoadingMessage = true
             Task.detached {
                 let bot = await botRepository.current
                 do {
                     let result = try await bot.message(identifier: messageIdentifier)
                     await MainActor.run {
                         message = result
+                        isLoadingMessage = false
+                        loadRootIfNeeded()
                     }
                 } catch {
                     Log.optional(error)
                     CrashReporting.shared.reportIfNeeded(error: error)
                     await MainActor.run {
                         message = nil
+                        isLoadingMessage = false
                     }
                 }
             }
         case .right(let message):
             self.message = message
+        }
+    }
+
+    private func reloadMessage() async {
+        let messageIdentifier = identifierOrMessage.id
+        let bot = botRepository.current
+        do {
+            let result = try await bot.message(identifier: messageIdentifier)
+            await MainActor.run {
+                message = result
+            }
+        } catch {
+            Log.optional(error)
+            CrashReporting.shared.reportIfNeeded(error: error)
+        }
+    }
+
+    private func loadRootIfNeeded() {
+        guard root == nil else {
+            return
+        }
+        guard let content = message?.content else {
+            return
+        }
+        var rootIdentifier: MessageIdentifier?
+        switch content.type {
+        case .vote:
+            rootIdentifier = content.vote?.vote.link
+        case .post:
+            rootIdentifier = content.post?.root
+        default:
+            rootIdentifier = nil
+        }
+        guard let rootIdentifier = rootIdentifier else {
+            return
+        }
+        isLoadingRoot = true
+        Task.detached {
+            let bot = await botRepository.current
+            do {
+                let result = try await bot.message(identifier: rootIdentifier)
+                await MainActor.run {
+                    root = result
+                    isLoadingRoot = false
+                }
+            } catch {
+                Log.optional(error)
+                CrashReporting.shared.reportIfNeeded(error: error)
+                await MainActor.run {
+                    root = nil
+                    isLoadingRoot = false
+                }
+            }
         }
     }
 }
@@ -142,7 +294,7 @@ struct MessageView_Previews: PreviewProvider {
                     branches: nil,
                     hashtags: nil,
                     mentions: nil,
-                    root: nil,
+                    root: "%somepost",
                     text: .loremIpsum(words: 10)
                 )
             ),
@@ -167,7 +319,9 @@ struct MessageView_Previews: PreviewProvider {
         return message
     }
     static var previews: some View {
-        MessageView(message: message, bot: FakeBot())
-            .injectAppEnvironment(botRepository: .fake)
+        NavigationView {
+            MessageView(message: message, bot: FakeBot())
+                .injectAppEnvironment(botRepository: .fake)
+        }
     }
 }
