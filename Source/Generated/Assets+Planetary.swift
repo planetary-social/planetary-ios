@@ -210,6 +210,7 @@ extension Image {
        static let iconTwit = Image("icon-twit", bundle: Bundle.current)
        static let imageOnboarding = Image("image-onboarding", bundle: Bundle.current)
        static let launch = Image("launch", bundle: Bundle.current)
+       static let messageNotVisible = Image("message-not-visible", bundle: Bundle.current)
        static let missingAboutIcon = Image("missing-about-icon", bundle: Bundle.current)
        static let navIconCamera = Image("nav-icon-camera", bundle: Bundle.current)
        static let navIconDismiss = Image("nav-icon-dismiss", bundle: Bundle.current)
@@ -280,6 +281,7 @@ extension UIImage {
        static let iconTwit = UIImage(named: "icon-twit", in: Bundle.current, with: nil)!
        static let imageOnboarding = UIImage(named: "image-onboarding", in: Bundle.current, with: nil)!
        static let launch = UIImage(named: "launch", in: Bundle.current, with: nil)!
+       static let messageNotVisible = UIImage(named: "message-not-visible", in: Bundle.current, with: nil)!
        static let missingAboutIcon = UIImage(named: "missing-about-icon", in: Bundle.current, with: nil)!
        static let navIconCamera = UIImage(named: "nav-icon-camera", in: Bundle.current, with: nil)!
        static let navIconDismiss = UIImage(named: "nav-icon-dismiss", in: Bundle.current, with: nil)!

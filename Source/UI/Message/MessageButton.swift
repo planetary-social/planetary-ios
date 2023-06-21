@@ -13,21 +13,35 @@ import SwiftUI
 ///
 /// The button opens ThreadViewController when tapped.
 struct MessageButton: View {
-    var message: Message
-    var style = CardStyle.compact
+
+    var identifierOrMessage: Either<MessageIdentifier, Message>
+    var style: CardStyle
+
+    // If true, it displays a chain line above the card
+    var shouldDisplayChain: Bool
+
+    init(identifier: MessageIdentifier, style: CardStyle, shouldDisplayChain: Bool = false) {
+        self.init(identifierOrMessage: .left(identifier), style: style, shouldDisplayChain: shouldDisplayChain)
+    }
+
+    init(message: Message, style: CardStyle, shouldDisplayChain: Bool = false) {
+        self.init(identifierOrMessage: .right(message), style: style, shouldDisplayChain: shouldDisplayChain)
+    }
+
+    init(identifierOrMessage: Either<MessageIdentifier, Message>, style: CardStyle, shouldDisplayChain: Bool) {
+        self.identifierOrMessage = identifierOrMessage
+        self.style = style
+        self.shouldDisplayChain = shouldDisplayChain
+    }
 
     @EnvironmentObject
     private var appController: AppController
 
     var body: some View {
         Button {
-            if let contact = message.content.contact {
-                appController.open(identity: contact.contact)
-            } else {
-                appController.open(identifier: message.id)
-            }
+            appController.open(identifier: identifierOrMessage.id)
         } label: {
-            MessageCard(message: message, style: style)
+            MessageCard(identifierOrMessage: identifierOrMessage, style: style, shouldDisplayChain: shouldDisplayChain)
         }
         .buttonStyle(CardButtonStyle())
     }
@@ -71,9 +85,9 @@ struct MessageButton_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            MessageButton(message: message)
+            MessageButton(message: message, style: .compact)
             MessageButton(message: message, style: .golden)
-            MessageButton(message: message)
+            MessageButton(message: message, style: .compact)
                 .preferredColorScheme(.dark)
         }
         .environmentObject(AppController.shared)

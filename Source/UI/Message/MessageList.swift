@@ -16,7 +16,7 @@ struct MessageList<DataSource>: View where DataSource: MessageDataSource {
     var body: some View {
         InfiniteList(dataSource: dataSource) { message in
             if let message = message as? Message {
-                MessageButton(message: message)
+                MessageButton(message: message, style: .compact)
                     .id(message)
             }
         }

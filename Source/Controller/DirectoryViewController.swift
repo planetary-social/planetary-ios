@@ -358,7 +358,8 @@ extension DirectoryViewController: UITableViewDelegate {
             }
             
             navigationController?.pushViewController(
-                ThreadViewController(with: post, startReplying: false), animated: true
+                MessageViewBuilder.build(identifier: post.id),
+                animated: true
             )
         case .network:
             let identity = self.people[indexPath.row].identity

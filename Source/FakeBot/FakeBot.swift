@@ -328,7 +328,15 @@ class FakeBot: Bot, @unchecked Sendable {
     func feed(identity: Identity, completion: PaginatedCompletion) {
         completion(StaticDataProxy(), nil)
     }
-    
+
+    func message(identifier: MessageIdentifier) async throws -> Message? {
+        return nil
+    }
+
+    func likes(identifier: MessageIdentifier, by author: FeedIdentifier) async throws -> Bool {
+        return false
+    }
+
     func post(from key: MessageIdentifier) throws -> Message {
         throw FakeBotError.runtimeError("not implemented")
     }

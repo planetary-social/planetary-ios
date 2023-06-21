@@ -270,7 +270,7 @@ private class NotificationsTableViewDelegate: MessageTableViewDelegate {
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         } else if message.contentType == .post {
             Analytics.shared.trackDidSelectItem(kindName: "post")
-            let controller = ThreadViewController(with: message)
+            let controller = MessageViewBuilder.build(identifier: message.id)
             self.viewController?.navigationController?.pushViewController(controller, animated: true)
         }
     }
