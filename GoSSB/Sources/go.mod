@@ -4,9 +4,9 @@ require (
 	github.com/boreq/errors v0.1.0
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/pkg/errors v0.9.1
-	github.com/planetary-social/scuttlego v0.0.0-20230302164237-c6e75ef25af8
+	github.com/planetary-social/scuttlego v0.0.4
 	github.com/sirupsen/logrus v1.8.1
-	github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8
+	github.com/ssbc/go-ssb v0.2.2-0.20230308230318-d6db27d1852d
 	github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57
 	github.com/ssbc/go-ssb-refs v0.5.2
 	github.com/stretchr/testify v1.8.1
@@ -40,9 +40,12 @@ require (
 	github.com/keks/persist v0.0.0-20210520094901-9bdd97c1fad2 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/libp2p/go-reuseport v0.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rs/zerolog v1.29.0 // indirect
 	github.com/ssbc/go-gabbygrove v0.2.2 // indirect
 	github.com/ssbc/go-luigi v0.3.7-0.20230119190114-bd28e676fa99 // indirect
 	github.com/ssbc/go-metafeed v1.1.3 // indirect

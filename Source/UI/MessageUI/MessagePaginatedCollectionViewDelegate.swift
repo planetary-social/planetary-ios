@@ -29,7 +29,7 @@ extension MessagePaginatedCollectionViewDelegate: UICollectionViewDelegate {
         guard let message = dataSource.data.messageBy(index: indexPath.row) else {
             return
         }
-        let controller = ThreadViewController(with: message)
+        let controller = MessageViewBuilder.build(identifier: message.id)
         self.viewController?.navigationController?.pushViewController(controller, animated: true)
     }
 }

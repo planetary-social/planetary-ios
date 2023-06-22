@@ -57,6 +57,9 @@ struct HomeView: View, HelpDrawerHost {
     @State
     private var lastTimeNewFeedUpdatesWasChecked = Date()
 
+    @State
+    private var isPresentingCompose = false
+
     private var shouldShowFloatingButton: Bool {
         numberOfNewItems > 0
     }
@@ -102,9 +105,12 @@ struct HomeView: View, HelpDrawerHost {
                 }
                 Button {
                     Analytics.shared.trackDidTapButton(buttonName: "compose")
-                    showCompose()
+                    isPresentingCompose = true
                 } label: {
                     Image.navIconWrite
+                }
+                .sheet(isPresented: $isPresentingCompose) {
+                    ComposeView(isPresenting: $isPresentingCompose)
                 }
             }
         }
@@ -138,15 +144,6 @@ struct HomeView: View, HelpDrawerHost {
             Analytics.shared.trackDidShowScreen(screenName: "home")
             HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawerType, state: helpDrawerState)
         }
-    }
-
-    private func showCompose() {
-        let controller = NewPostViewController()
-        controller.didPublish = { post in
-            NotificationCenter.default.post(.didPublishPost(post))
-        }
-        let navController = UINavigationController(rootViewController: controller)
-        appController.present(navController, animated: true)
     }
 
     private func updateBadgeNumber(value: Int) {

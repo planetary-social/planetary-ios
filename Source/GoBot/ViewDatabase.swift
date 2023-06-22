@@ -703,9 +703,127 @@ class ViewDatabase {
         }
     }
     
-    func message(with id: MessageIdentifier) throws -> Message {
-        let msgId = try self.msgID(of: id, make: false)
-        return try post(with: msgId)
+    func message(with identifier: MessageIdentifier) throws -> Message? {
+        let db = try checkoutConnection()
+
+        // swiftlint:disable indentation_width
+        let query = """
+            SELECT
+              messages.*,
+              posts.*,
+              contacts.*,
+              contact_about.about_id,
+              tangles.*,
+              messagekeys.*,
+              votes.*,
+              authors.*,
+              author_about.*,
+              contact_author.author AS contact_identifier,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  post_blobs
+                WHERE
+                  post_blobs.msg_ref = messages.msg_id
+              ) as has_blobs,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  mention_feed
+                WHERE
+                  mention_feed.msg_ref = messages.msg_id
+              ) as has_feed_mentions,
+              EXISTS (
+                SELECT
+                  1
+                FROM
+                  mention_message
+                WHERE
+                  mention_message.msg_ref = messages.msg_id
+              ) as has_message_mentions,
+              (
+                SELECT
+                  COUNT(*)
+                FROM
+                  tangles
+                WHERE
+                  root = messages.msg_id
+              ) as replies_count,
+              (
+                SELECT
+                  GROUP_CONCAT(abouts.image, ';')
+                FROM
+                  tangles
+                  JOIN messages AS tangled_message ON tangled_message.msg_id = tangles.msg_ref
+                  JOIN abouts ON abouts.about_id = tangled_message.author_id
+                WHERE
+                  tangles.root = messages.msg_id
+                  AND abouts.image IS NOT NULL
+                LIMIT
+                  2
+              ) as replies
+            FROM
+              messages
+              LEFT JOIN posts ON messages.msg_id = posts.msg_ref
+              LEFT JOIN contacts ON messages.msg_id = contacts.msg_ref
+              LEFT JOIN tangles ON tangles.msg_ref = messages.msg_id
+              LEFT JOIN votes ON votes.msg_ref = messages.msg_id
+              JOIN messagekeys ON messagekeys.id = messages.msg_id
+              JOIN authors ON authors.id = messages.author_id
+              LEFT JOIN abouts AS author_about ON author_about.about_id = messages.author_id
+              LEFT JOIN authors AS contact_author ON contact_author.id = contacts.contact_id
+              LEFT JOIN abouts AS contact_about ON contact_about.about_id = contacts.contact_id
+            WHERE
+              messagekeys.key = :message_identifier
+            LIMIT
+              1
+        """
+        // swiftlint:enable indentation_width
+
+        let bindings: [String: Binding?] = [":message_identifier": identifier]
+        if let row = try db.prepare(query).bind(bindings).prepareRowIterator().next() {
+            return try Message(row: row, database: self)
+        } else {
+            return nil
+        }
+    }
+
+    func likesMessage(with identifier: MessageIdentifier, author: FeedIdentifier) throws -> Bool {
+        let db = try checkoutConnection()
+
+        // swiftlint:disable indentation_width
+        let query = """
+        SELECT
+            COUNT(*) > 0
+        FROM
+          tangles t
+          JOIN messagekeys rmk ON rmk.id = t.root
+          JOIN messages ON messages.msg_id = t.msg_ref
+          JOIN authors ON authors.id = messages.author_id
+          JOIN votes ON votes.msg_ref = t.msg_ref
+        WHERE
+          messages.type = 'vote'
+          AND rmk.key = :message_identifier
+          AND authors.author = :author_identifier
+          AND messages.hidden = FALSE
+          AND messages.is_decrypted = FALSE
+          AND votes.value > 0
+        LIMIT
+          1
+        """
+        // swiftlint:enable indentation_width
+
+        let bindings: [String: Binding?] = [
+            ":message_identifier": identifier,
+            ":author_identifier": author
+        ]
+        if let liked = try db.prepare(query).scalar(bindings) as? Int64 {
+            return liked > 0
+        } else {
+            return false
+        }
     }
     
     // MARK: pubs & rooms

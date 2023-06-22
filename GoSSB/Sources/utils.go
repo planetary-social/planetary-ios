@@ -49,18 +49,20 @@ func ssbGenKey() *C.char {
 func logError(functionName string, errPtr *error) {
 	if err := *errPtr; err != nil {
 		log.
-			WithError(err).
+			Error().
+			WithField(logging.ErrorField, err).
 			WithField("function", functionName).
-			Error("function returned an error")
+			Message("function returned an error")
 	}
 }
 
 func logPanic() {
 	if p := recover(); p != nil {
 		log.
+			Error().
 			WithField("panic", p).
 			WithField("stack", string(debug.Stack())).
-			Error("encountered a panic")
+			Message("encountered a panic")
 		panic(p)
 	}
 }
@@ -101,9 +103,9 @@ func newLogger(w io.Writer, testing bool) logging.Logger {
 		logrusLogger.SetLevel(logrus.DebugLevel)
 	}
 
-	logrusLoggerEntry := logrusLogger.WithField("source", "golang")
-	stdlog.SetOutput(logrusLoggerEntry.Writer())
-	return logging.NewLogrusLogger(logrusLoggerEntry)
+	stdlog.SetOutput(logrusLogger.Writer())
+
+	return logging.NewLogrusLogger(logrusLogger).WithField("source", "golang")
 }
 
 func removeOldLogFiles(cfg bindings.BotConfig) error {

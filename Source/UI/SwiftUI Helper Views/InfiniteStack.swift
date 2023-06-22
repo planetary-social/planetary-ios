@@ -125,7 +125,7 @@ struct InfiniteStack_Previews: PreviewProvider {
     }
     static var previews: some View {
         InfiniteStack(dataSource: StaticMessageDataSource(messages: [message])) { message in
-            MessageButton(message: message)
+            MessageButton(message: message, style: .compact)
         }
     }
 }

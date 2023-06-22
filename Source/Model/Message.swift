@@ -95,7 +95,7 @@ struct Message: Codable, Identifiable, @unchecked Sendable {
 extension Message: Equatable {
 
     static func == (lhs: Message, rhs: Message) -> Bool {
-        lhs.key == rhs.key
+        lhs.key == rhs.key && lhs.metadata.replies.count == rhs.metadata.replies.count
     }
 }
 

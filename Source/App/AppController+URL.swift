@@ -123,14 +123,8 @@ extension AppController {
     }
     
     func pushThreadViewController(for identifier: MessageIdentifier) {
-        Bots.current.thread(rootKey: identifier) { (root, _, error) in
-            if let root = root {
-                let controller = ThreadViewController(with: root)
-                self.push(controller)
-            } else if let error = error {
-                self.alert(error: error)
-            }
-        }
+        let controller = MessageViewBuilder.build(identifier: identifier)
+        self.push(controller, animated: true)
     }
 
     func pushChannelViewController(for hashtag: String) {

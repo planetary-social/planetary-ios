@@ -113,3 +113,20 @@ extension Either: Identifiable, Equatable, Hashable where Left == FeedIdentifier
         hasher.combine(id)
     }
 }
+
+extension Either where Left == MessageIdentifier, Right == Message {
+    var id: MessageIdentifier {
+        switch self {
+        case .left(let identifier):
+            return identifier
+        case .right(let message):
+            return message.id
+        }
+    }
+    static func == (lhs: Either, rhs: Either) -> Bool {
+        lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

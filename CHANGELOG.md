@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Redesigned screen that shows the detail of a message.
+- Sub-threads: you can now reply to a reply.
+- Add the option to reply to a reaction or a contact message (follow, unfollow, block).
+- The Preview screen shows the message you are replying to (if so).
+
+## [2.0.1] 2023-03-28
+
+- Improved message replication performance.
+- Redesigned screen for composing posts with better support for previewing.
+- Filter list of followers/follows by name, bio or identity. 
+
+## [2.0.0] 2023-03-08
+
 - Updated the localization strategy to have a better support of foreign languages. #1065
 - Added the option to join the Planetary room to the Manage Rooms screen. #1137
 - Add a button to delete the SQL database in the debug settings. #738

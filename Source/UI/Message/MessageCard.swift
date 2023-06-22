@@ -13,159 +13,46 @@ import SwiftUI
 /// Use this view inside MessageButton to have nice borders.
 struct MessageCard: View {
 
-    var message: Message
-    var style = CardStyle.compact
+    var identifierOrMessage: Either<MessageIdentifier, Message>
+    var style: CardStyle
+    var shouldDisplayChain: Bool
+
+    init(identifier: MessageIdentifier, style: CardStyle, shouldDisplayChain: Bool = false) {
+        self.init(identifierOrMessage: .left(identifier), style: style, shouldDisplayChain: shouldDisplayChain)
+    }
+
+    init(message: Message, style: CardStyle, shouldDisplayChain: Bool = false) {
+        self.init(identifierOrMessage: .right(message), style: style, shouldDisplayChain: shouldDisplayChain)
+    }
+
+    init(identifierOrMessage: Either<MessageIdentifier, Message>, style: CardStyle, shouldDisplayChain: Bool) {
+        self.identifierOrMessage = identifierOrMessage
+        self.style = style
+        self.shouldDisplayChain = shouldDisplayChain
+    }
 
     @EnvironmentObject
     private var appController: AppController
 
-    private var author: About {
-        About(
-            identity: message.author,
-            name: message.metadata.author.about?.name,
-            description: nil,
-            image: message.metadata.author.about?.image,
-            publicWebHosting: nil
-        )
-    }
+    @EnvironmentObject
+    private var botRepository: BotRepository
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        ZStack {
+            if shouldDisplayChain {
+                Path { path in
+                    path.move(to: CGPoint(x: 35, y: -4))
+                    path.addLine(to: CGPoint(x: 35, y: 15))
+                }
+                .stroke(style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                .fill(Color.secondaryTxt)
+            }
             switch style {
             case .compact:
-                HStack(alignment: .center) {
-                    Button {
-                        appController.open(identity: author.identity)
-                    } label: {
-                        HStack(alignment: .center) {
-                            AvatarView(metadata: author.image, size: 24)
-                            if let header = attributedHeader {
-                                Text(header)
-                                    .lineLimit(1)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                        }
-                    }
-                    MessageOptionsButton(message: message)
-                }
-                .padding(10)
-                Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                if let contact = message.content.contact {
-                    IdentityCard(identity: contact.contact, style: .compact)
-                } else if let post = message.content.post {
-                    Group {
-                        CompactPostView(identifier: message.id, post: post)
-                        Divider().overlay(Color.cardDivider).shadow(color: .cardDividerShadow, radius: 0, x: 0, y: 1)
-                        HStack {
-                            StackedAvatarsView(avatars: replies, size: 20, border: 0)
-                            if let replies = attributedReplies {
-                                Text(replies)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color.secondaryTxt)
-                            }
-                            Spacer()
-                            Image.buttonReply
-                        }
-                        .padding(15)
-                    }
-                }
+                CompactMessageView(identifierOrMessage: identifierOrMessage, shouldTruncateIfNeeded: true)
             case .golden:
-                if let contact = message.content.contact {
-                    GoldenIdentityView(identity: contact.contact)
-                } else if let post = message.content.post {
-                    GoldenPostView(identifier: message.id, post: post, author: author)
-                }
+                GoldenMessageView(identifierOrMessage: identifierOrMessage)
             }
-        }
-        .background(
-            LinearGradient(
-                colors: [Color.cardBgTop, Color.cardBgBottom],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .cornerRadius(cornerRadius)
-        .padding(padding)
-    }
-
-    private var attributedHeader: AttributedString? {
-        var localized: Localized
-        switch message.contentType {
-        case .post:
-            guard let post = message.content.post else {
-                return nil
-            }
-            if post.isRoot {
-                localized = .posted
-            } else {
-                localized = .replied
-            }
-        case .contact:
-            guard let contact = message.content.contact else {
-                return nil
-            }
-            if contact.isBlocking {
-                localized = .startedBlocking
-            } else if contact.isFollowing {
-                localized = .startedFollowing
-            } else {
-                localized = .stoppedFollowing
-            }
-        default:
-            return nil
-        }
-        let string = localized.text(["somebody": "**\(author.displayName)**"])
-        do {
-            var attributed = try AttributedString(markdown: string)
-            if let range = attributed.range(of: author.displayName) {
-                attributed[range].foregroundColor = .primaryTxt
-            }
-            return attributed
-        } catch {
-            return nil
-        }
-    }
-
-    var padding: EdgeInsets {
-        switch style {
-        case .golden:
-            return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        case .compact:
-            return EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15)
-        }
-    }
-
-    var cornerRadius: CGFloat {
-        switch style {
-        case .golden:
-            return 15
-        case .compact:
-            return 20
-        }
-    }
-
-    private var replies: [ImageMetadata] {
-        Array(message.metadata.replies.abouts.compactMap { $0.image }.prefix(2))
-    }
-
-    private var attributedReplies: AttributedString? {
-        guard !message.metadata.replies.isEmpty else {
-            return nil
-        }
-        let replyCount = message.metadata.replies.count
-        let localized = replyCount == 1 ? Localized.Reply.one : Localized.Reply.many
-        let string = localized.text(["count": "**\(replyCount)**"])
-        do {
-            var attributed = try AttributedString(markdown: string)
-            if let range = attributed.range(of: "\(replyCount)") {
-                attributed[range].foregroundColor = .primaryTxt
-            }
-            return attributed
-        } catch {
-            return nil
         }
     }
 }
@@ -264,12 +151,12 @@ struct MessageCard_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ScrollView {
-                VStack {
-                    MessageCard(message: message)
-                    MessageCard(message: messageWithOneReply)
-                    MessageCard(message: messageWithReplies)
-                    MessageCard(message: messageWithLongAuthor)
-                    MessageCard(message: messageWithUnknownAuthor)
+                VStack(spacing: 0) {
+                    MessageCard(message: message, style: .compact)
+                    MessageCard(message: messageWithOneReply, style: .compact)
+                    MessageCard(message: messageWithReplies, style: .compact)
+                    MessageCard(message: messageWithLongAuthor, style: .compact)
+                    MessageCard(message: messageWithUnknownAuthor, style: .compact)
                 }
             }
             ScrollView {
@@ -283,18 +170,17 @@ struct MessageCard_Previews: PreviewProvider {
             }
             ScrollView {
                 VStack {
-                    MessageCard(message: message)
-                    MessageCard(message: messageWithOneReply)
-                    MessageCard(message: messageWithReplies)
-                    MessageCard(message: messageWithLongAuthor)
-                    MessageCard(message: messageWithUnknownAuthor)
+                    MessageCard(message: message, style: .compact)
+                    MessageCard(message: messageWithOneReply, style: .compact)
+                    MessageCard(message: messageWithReplies, style: .compact)
+                    MessageCard(message: messageWithLongAuthor, style: .compact)
+                    MessageCard(message: messageWithUnknownAuthor, style: .compact)
                 }
             }
             .preferredColorScheme(.dark)
         }
         .padding()
         .background(Color.appBg)
-        .environmentObject(BotRepository.fake)
-        .environmentObject(AppController.shared)
+        .injectAppEnvironment(botRepository: BotRepository.fake)
     }
 }

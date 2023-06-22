@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Post: ContentCodable {
+final class Post: ContentCodable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case branch
@@ -37,18 +37,19 @@ class Post: ContentCodable {
 
     /// Intended to be used when publishing a new Post from a UI.
     /// Check out NewPostViewController for an example.
-    init(attributedText: NSAttributedString,
-         root: MessageIdentifier? = nil,
-         branches: [MessageIdentifier]? = nil) {
+    init(
+        attributedText: NSAttributedString,
+        root: MessageIdentifier? = nil,
+        branches: [MessageIdentifier]? = nil
+    ) {
         // required
         self.branch = branches
         self.root = root
         self.text = attributedText.markdown
         self.type = .post
 
-        var mentionsFromHashtags = attributedText.string.hashtags().map {
-            tag in
-            Mention(link: tag.string)
+        var mentionsFromHashtags = attributedText.string.hashtags().map { hashtag in
+            Mention(link: hashtag.string)
         }
 
         mentionsFromHashtags.append(contentsOf: attributedText.mentions())
@@ -59,35 +60,65 @@ class Post: ContentCodable {
         self.reply = nil
     }
 
+    /// Intended to be used when publishing a new Post from a UI.
+    /// Check out PreviewView for an example.
+    init(text: String, root: MessageIdentifier? = nil, branches: [MessageIdentifier]? = nil) {
+        self.branch = branches
+        self.root = root
+        self.text = text
+        self.type = .post
+
+        let attributed = text.parseMarkdown()
+        var mentions = [Mention]()
+        for attributedRun in attributed.runs {
+            if let link = attributedRun.attributes.link ?? attributedRun.attributes.imageURL {
+                let name = String(attributed[attributedRun.range].characters)
+                if link.scheme == URL.planetaryScheme {
+                    let path = String(link.path.dropFirst())
+                    if path.isValidIdentifier || path.isHashtag {
+                        mentions.append(Mention(link: path, name: name))
+                    }
+                }
+            }
+        }
+        self.mentions = mentions.isEmpty ? nil : mentions
+
+        // unused
+        self.recps = nil
+        self.reply = nil
+    }
+
     /// Intended to be used to create models in the view database or unit tests.
-    init(blobs: Blobs? = nil,
-         branches: [MessageIdentifier]? = nil,
-         hashtags: Hashtags? = nil,
-         mentions: [Mention]? = nil,
-         root: MessageIdentifier? = nil,
-         text: String) {
+    init(
+        blobs: Blobs? = nil,
+        branches: [MessageIdentifier]? = nil,
+        hashtags: Hashtags? = nil,
+        mentions: [Mention]? = nil,
+        root: MessageIdentifier? = nil,
+        text: String
+    ) {
         // required
         self.branch = branches
         self.root = root
         self.text = text
         self.type = .post
         
-        var m: Mentions = []
+        var mention: Mentions = []
         if let mentions = mentions {
-            m = mentions
+            mention = mentions
         }
         if let blobs = blobs {
-            for b in blobs {
-                m.append(b.asMention())
+            for blob in blobs {
+                mention.append(blob.asMention())
             }
         }
         if let tags = hashtags {
-            for h in tags {
-                m.append(Mention(link: h.string))
+            for hashtag in tags {
+                mention.append(Mention(link: hashtag.string))
             }
         }
         // keep it optional
-        self.mentions = m.count > 0 ? m : nil
+        self.mentions = mention.count > 0 ? mention : nil
 
         // unused
         self.recps = nil
@@ -137,38 +168,36 @@ extension Post {
     }
 }
 
-/* code to handle both kinds of recpients:
- patchcore publishes this object instead of just the key as a string
- { link: @pubkey, name: somenick}
- 
- 
- handling from https://stackoverflow.com/a/49023027
-*/
-
 enum RecipientElement: Codable {
     case namedKey(RecipientNamedKey)
     case string(Identity)
     
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let x = try? container.decode(Identity.self) {
-            self = .string(x)
+        if let identity = try? container.decode(Identity.self) {
+            self = .string(identity)
             return
         }
-        if let x = try? container.decode(RecipientNamedKey.self) {
-            self = .namedKey(x)
+        if let namedKey = try? container.decode(RecipientNamedKey.self) {
+            self = .namedKey(namedKey)
             return
         }
-        throw DecodingError.typeMismatch(RecipientElement.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for RecipientElement"))
+        throw DecodingError.typeMismatch(
+            RecipientElement.self,
+            DecodingError.Context(
+                codingPath: decoder.codingPath,
+                debugDescription: "Wrong type for RecipientElement"
+            )
+        )
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
-        case .namedKey(let x):
-            try container.encode(x.link)
-        case .string(let x):
-            try container.encode(x)
+        case .namedKey(let namedKey):
+            try container.encode(namedKey.link)
+        case .string(let identity):
+            try container.encode(identity)
         }
     }
 }
@@ -183,27 +212,14 @@ struct RecipientNamedKey: Codable {
     }
 }
 
-/* TODO: there is a cleaner solution here
- tried this to get [Identity] but got the following error so I added getRecipientIdentities as a workaround
- Constrained extension must be declared on the unspecialized generic type 'Array' with constraints specified by a 'where' clause
- 
- 
- typealias Recipients = [RecipientElement]
- 
- extension Recipients {
-     func recipients() -> [Identity] {
-        return getRecipientIdentities(self)
-     }
- }
-*/
 func getRecipientIdentities(recps: [RecipientElement]) -> [Identity] {
     var identities: [Identity] = []
-    for r in recps {
-        switch r {
-        case .string(let str):
-            identities.append(str)
-        case .namedKey(let nk):
-            identities.append(nk.link)
+    for recipient in recps {
+        switch recipient {
+        case .string(let identity):
+            identities.append(identity)
+        case .namedKey(let namedKey):
+            identities.append(namedKey.link)
         }
     }
     return identities

@@ -1,5 +1,4 @@
 app_identifier("com.planetary.ios") # The bundle identifier of your app
-apple_id("matt@lorentz.is") # Your Apple email address
 
 itc_team_id("119631974") # App Store Connect Team ID
 team_id("GZCZBKH7MY") # Developer Portal Team ID

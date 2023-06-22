@@ -10,6 +10,7 @@ import Foundation
 
 extension Notification.Name {
     static let didPublishPost = Notification.Name("didPublishPost")
+    static let didPublishVote = Notification.Name("didPublishVote")
 }
 
 extension Notification {
@@ -18,11 +19,23 @@ extension Notification {
         self.userInfo?["post"] as? Post
     }
 
+    var identifier: MessageIdentifier? {
+        self.userInfo?["identifier"] as? MessageIdentifier
+    }
+
     static func didPublishPost(_ post: Post) -> Notification {
         Notification(
             name: .didPublishPost,
             object: nil,
             userInfo: ["post": post]
+        )
+    }
+
+    static func didPublishVote(to message: MessageIdentifier) -> Notification {
+        Notification(
+            name: .didPublishVote,
+            object: nil,
+            userInfo: ["identifier": message]
         )
     }
 }

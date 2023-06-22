@@ -16,24 +16,24 @@ extension AttributedString: @unchecked Sendable {}
 #endif
 
 /// A class representing a drafted post. Supports NSCoding so it can be saved to disk.
-class Draft: NSObject, NSCoding {
+final class Draft: NSObject, NSCoding, Sendable {
     
-    var attributedText: NSAttributedString?
-    var images: [UIImage] = []
+    let text: String
+    let images: [UIImage]
     
-    init(attributedText: NSAttributedString?, images: [UIImage]) {
-        self.attributedText = attributedText
+    init(text: String, images: [UIImage]) {
+        self.text = text
         self.images = images
     }
     
     // swiftlint:disable legacy_objc_type
     required init?(coder: NSCoder) {
-        self.attributedText = coder.decodeObject(of: NSAttributedString.self, forKey: "attributedText")
+        self.text = coder.decodeObject(forKey: "text") as? String ?? ""
         self.images = (coder.decodeObject(of: NSArray.self, forKey: "images") as? [UIImage]) ?? []
     }
     
     func encode(with coder: NSCoder) {
-        coder.encode(attributedText, forKey: "attributedText")
+        coder.encode(text, forKey: "text")
         coder.encode(images, forKey: "images")
     }
     // swiftlint:enable legacy_objc_type
@@ -43,7 +43,7 @@ class Draft: NSObject, NSCoding {
             return false
         }
         
-        return otherDraft.attributedText == attributedText && otherDraft.images == images
+        return otherDraft.text == text && otherDraft.images == images
     }
 }
 
@@ -67,10 +67,10 @@ actor DraftStore {
         
         return nil
     }
-    
-    func save(text string: AttributedString?, images: [UIImage]) {
+
+    func save(text string: String, images: [UIImage]) {
         let draft = Draft(
-            attributedText: string.map { NSAttributedString($0) },
+            text: string,
             images: images
         )
         
