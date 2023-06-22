@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add timestamps back to message cards
+- Fix max width on top card in thread view
+
+## [???] 
+
 - Redesigned screen that shows the detail of a message.
 - Sub-threads: you can now reply to a reply.
 - Add the option to reply to a reaction or a contact message (follow, unfollow, block).
