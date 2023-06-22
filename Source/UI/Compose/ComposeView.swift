@@ -19,6 +19,8 @@ struct ComposeView: View {
     @Binding
     var isPresenting: Bool
 
+    var root: Message?
+
     /// State holding the text the user is typing
     @StateObject
     private var textEditorObserver = TextEditorObserver()
@@ -68,6 +70,10 @@ struct ComposeView: View {
     /// Used to maintain focus on the text editor when the keyboard is dismissed or the screen appears
     @FocusState
     private var textEditorIsFocused: Bool
+
+    private var isReply: Bool {
+        root != nil
+    }
 
     var body: some View {
         NavigationView {
@@ -158,6 +164,7 @@ struct ComposeView: View {
                             PreviewView(
                                 text: textEditorObserver.text,
                                 photos: photos,
+                                root: root,
                                 isPresenting: $isPresenting
                             )
                             .task {
@@ -185,7 +192,7 @@ struct ComposeView: View {
             .background {
                 Color.appBg
             }
-            .navigationTitle(Localized.newPost.text)
+            .navigationTitle(isReply ? Localized.newReply.text : Localized.newPost.text)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

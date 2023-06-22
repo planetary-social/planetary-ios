@@ -1477,7 +1477,33 @@ class GoBot: Bot, @unchecked Sendable {
     func feed(identity: Identity, completion: @escaping PaginatedCompletion) {
         feed(strategy: NoHopFeedAlgorithm(identity: identity), completion: completion)
     }
-    
+
+    func message(identifier: MessageIdentifier) async throws -> Message? {
+        try await withCheckedThrowingContinuation { continuation in
+            userInitiatedQueue.async { [identifier] in
+                do {
+                    let message = try self.database.message(with: identifier)
+                    continuation.resume(returning: message)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func likes(identifier: MessageIdentifier, by author: FeedIdentifier) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            userInitiatedQueue.async { [identifier] in
+                do {
+                    let liked = try self.database.likesMessage(with: identifier, author: author)
+                    continuation.resume(returning: liked)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     func post(from key: MessageIdentifier) throws -> Message {
         try self.database.post(with: key)
     }

@@ -11,7 +11,17 @@ import SwiftUI
 
 struct MessageOptionsButton: View {
 
-    var message: Message
+    var identifier: MessageIdentifier
+    var message: Message?
+
+    init(identifier: MessageIdentifier) {
+        self.identifier = identifier
+    }
+
+    init(message: Message) {
+        self.identifier = message.id
+        self.message = message
+    }
 
     @EnvironmentObject
     private var botRepository: BotRepository
@@ -38,27 +48,33 @@ struct MessageOptionsButton: View {
                 Analytics.shared.trackDidSelectAction(actionName: "copy_message_identifier")
                 copyMessageIdentifier()
             }
-            Button(Localized.shareThisMessage.text) {
-                Analytics.shared.trackDidSelectAction(actionName: "share_message")
-                showingShare = true
-            }
-            Button(Localized.viewSource.text) {
-                Analytics.shared.trackDidSelectAction(actionName: "view_message_source")
-                showingSource = true
-            }
-            Button(Localized.reportPost.text, role: .destructive) {
-                Analytics.shared.trackDidSelectAction(actionName: "report_post")
-                reportPost()
+            if message != nil {
+                Button(Localized.shareThisMessage.text) {
+                    Analytics.shared.trackDidSelectAction(actionName: "share_message")
+                    showingShare = true
+                }
+                Button(Localized.viewSource.text) {
+                    Analytics.shared.trackDidSelectAction(actionName: "view_message_source")
+                    showingSource = true
+                }
+                Button(Localized.reportPost.text, role: .destructive) {
+                    Analytics.shared.trackDidSelectAction(actionName: "report_post")
+                    reportPost()
+                }
             }
         }
         .sheet(isPresented: $showingSource) {
             NavigationView {
-                RawMessageView(viewModel: RawMessageController(message: message, bot: botRepository.current))
-                    .navigationBarTitleDisplayMode(.inline)
+                if let message = message {
+                    RawMessageView(viewModel: RawMessageController(message: message, bot: botRepository.current))
+                        .navigationBarTitleDisplayMode(.inline)
+                } else {
+                    EmptyView()
+                }
             }
         }
         .sheet(isPresented: $showingShare) {
-            if let url = message.key.publicLink {
+            if let url = message?.key.publicLink {
                 ActivityViewController(activityItems: [url])
             } else {
                 ActivityViewController(activityItems: [])
@@ -67,11 +83,14 @@ struct MessageOptionsButton: View {
     }
 
     func copyMessageIdentifier() {
-        UIPasteboard.general.string = message.key
+        UIPasteboard.general.string = identifier
         AppController.shared.showToast(Localized.identifierCopied.text)
     }
 
     func reportPost() {
+        guard let message = message else {
+            return
+        }
         AppController.shared.report(message, in: nil, from: message.author)
     }
 }
@@ -106,6 +125,7 @@ struct MessageOptionsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MessageOptionsButton(message: message)
+            MessageOptionsButton(identifier: "%unset")
             MessageOptionsButton(message: message)
                 .preferredColorScheme(.dark)
         }

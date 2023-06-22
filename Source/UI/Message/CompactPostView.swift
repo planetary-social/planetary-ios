@@ -12,16 +12,19 @@ struct CompactPostView: View {
 
     let identifier: MessageIdentifier
 
+    var lineLimit: Int?
+
     var post: Post {
         didSet {
             blobs = post.anyBlobs
         }
     }
 
-    init(identifier: MessageIdentifier, post: Post) {
+    init(identifier: MessageIdentifier, post: Post, lineLimit: Int? = 5) {
         self.identifier = identifier
         self.post = post
         self.blobs = post.anyBlobs
+        self.lineLimit = lineLimit
         self.markdown = post.text.parseMarkdown()
     }
 
@@ -48,7 +51,7 @@ struct CompactPostView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(markdown)
-                .lineLimit(5)
+                .lineLimit(lineLimit)
                 .font(.body)
                 .foregroundColor(.primaryTxt)
                 .accentColor(.accent)

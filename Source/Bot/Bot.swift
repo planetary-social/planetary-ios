@@ -248,7 +248,12 @@ protocol Bot: AnyObject, Sendable {
     /// This is useful for showing all the posts from a particular
     /// person, like in an About screen.
     func feed(strategy: FeedStrategy, limit: Int, offset: Int?, completion: @escaping MessagesCompletion)
-    
+
+    /// Fetches the message with the given Identigfier from the database.
+    func message(identifier: MessageIdentifier) async throws -> Message?
+
+    func likes(identifier: MessageIdentifier, by author: FeedIdentifier) async throws -> Bool
+
     /// Fetches the post with the given ID from the database.
     func post(from key: MessageIdentifier) throws -> Message
     
