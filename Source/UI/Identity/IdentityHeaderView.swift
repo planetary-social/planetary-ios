@@ -97,8 +97,8 @@ struct IdentityHeaderView: View {
                                     .font(.subheadline)
                                     .lineLimit(1)
                                     .foregroundColor(Color.secondaryTxt)
-                                if let aliases, let count = aliases.count, count > 1 {
-                                    AliasCountButton(aliases: aliases, count: count - 1)
+                                if let aliases, aliases.count > 1 {
+                                    AliasCountButton(aliases: aliases, count: aliases.count - 1)
                                 }
                             }
                             if extendedHeader {
