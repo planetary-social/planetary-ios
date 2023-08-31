@@ -1212,10 +1212,6 @@
 		C9F5E477288891DC000BCF03 /* HighlightedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F5E476288891DC000BCF03 /* HighlightedText.swift */; };
 		C9FBE36C288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
 		C9FBE36D288A1A830068F63A /* SingleAxisGeometryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */; };
-		DC08FF842A8116DC009F87D1 /* ContactUsMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */; };
-		DC08FF852A8116DC009F87D1 /* ContactUsMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */; };
-		DC08FF862A8116DC009F87D1 /* ContactUsMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */; };
-		DC08FF872A8116DC009F87D1 /* ContactUsMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */; };
 		DC8DF3C329A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */; };
 		DC8DF3C429A4E35300DDE4FC /* ReceiveLogMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */; };
 		E0020B27292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */; };
@@ -1905,7 +1901,6 @@
 		C9FBE36B288A1A820068F63A /* SingleAxisGeometryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleAxisGeometryReader.swift; sourceTree = "<group>"; };
 		CF9B62C70608D7BF6B9E6C75 /* Pods-UnitTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.test.xcconfig"; sourceTree = "<group>"; };
 		DA47D5E4C3A8F4D56C502C60 /* Pods_Planetary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Planetary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactUsMailView.swift; sourceTree = "<group>"; };
 		DC8DF3C229A4E35300DDE4FC /* ReceiveLogMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveLogMessage.swift; sourceTree = "<group>"; };
 		E0020B26292D438F002CA1B1 /* RoomAliasAnnouncement+ViewDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoomAliasAnnouncement+ViewDatabase.swift"; sourceTree = "<group>"; };
 		E0020B2A292D47E5002CA1B1 /* RoomAliasAnnouncement_registered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RoomAliasAnnouncement_registered.json; sourceTree = "<group>"; };
@@ -2207,7 +2202,6 @@
 				53B634B322150A4100400403 /* MainViewController.swift */,
 				0AD8D630240EC38600D87A95 /* ManagePubsViewController.swift */,
 				5319EBD622F22BA700EC7583 /* MenuViewController.swift */,
-				DC08FF832A8116DC009F87D1 /* ContactUsMailView.swift */,
 				53B4F5F022B7123900027C6A /* NotificationsViewController.swift */,
 				5B1FF5E428D8AA25008F3A85 /* RawMessageController.swift */,
 				0AD8D634240EFF8800D87A95 /* RedeemInviteViewController.swift */,
@@ -3764,7 +3758,6 @@
 				2358695D24A0FB3500F4FC1D /* Dictionary+JSONSerialization.swift in Sources */,
 				23EF5AA6249CE69900469977 /* NullBlocksAPI.swift in Sources */,
 				2358695F24A0FB6500F4FC1D /* Date+ISO8601.swift in Sources */,
-				DC08FF872A8116DC009F87D1 /* ContactUsMailView.swift in Sources */,
 				2358695924A0FAE800F4FC1D /* APIError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3929,7 +3922,6 @@
 				C949E96F28119B47006C5F18 /* ProgressButton.swift in Sources */,
 				5B97D1E629635FFF000AA5D1 /* SearchResultsView.swift in Sources */,
 				C9724B742809E7A6000EBCCD /* UIFont+Verse.swift in Sources */,
-				DC08FF862A8116DC009F87D1 /* ContactUsMailView.swift in Sources */,
 				C969F0E12899CFEE00081615 /* Room.swift in Sources */,
 				5B46612529CFB537008B8E8C /* LoadingCard.swift in Sources */,
 				C9724BE22809EE7D000EBCCD /* SyncOperation.swift in Sources */,
@@ -4380,7 +4372,6 @@
 				5314EF5722EA29330065D02A /* GoBotInternal.swift in Sources */,
 				0A64A83824735392009A5EBF /* PushAPIService.swift in Sources */,
 				5314EF5C22EA29BA0065D02A /* NSAttributedString+Markdownable.swift in Sources */,
-				DC08FF852A8116DC009F87D1 /* ContactUsMailView.swift in Sources */,
 				23EF5AA4249CE69900469977 /* NullBlocksAPI.swift in Sources */,
 				237D057D2335149200973D63 /* Blob+UIImage.swift in Sources */,
 				5314EF5222EA28F50065D02A /* Content.swift in Sources */,
@@ -4648,7 +4639,6 @@
 				5336611122D965B300100707 /* UIColor+Random.swift in Sources */,
 				5BC7F5082999BCC9007D5566 /* CompactVoteView.swift in Sources */,
 				C9F1C85527C9875A005A3228 /* Color+Hex.swift in Sources */,
-				DC08FF842A8116DC009F87D1 /* ContactUsMailView.swift in Sources */,
 				8DA9567D230DA46C00A334EB /* UIButton+Text.swift in Sources */,
 				53B4F5F122B7123900027C6A /* NotificationsViewController.swift in Sources */,
 				5BA32EDC291597DE00744984 /* BotRepository.swift in Sources */,
