@@ -34,6 +34,7 @@
 "Localized.posted" = "{{somebody}} publicó";
 "Localized.replied" = "{{somebody}} respondió";
 "Localized.liked" = "A {{somebody}} le gustó";
+"Localized.reacted" = "{{somebody}} reaccionó";
 "Localized.startedFollowing" = "{{somebody}} siguió a";
 "Localized.stoppedFollowing" = "{{somebody}} dejó de seguir a";
 "Localized.startedBlocking" = "{{somebody}} ignoró a";
@@ -52,6 +53,7 @@
 "Localized.postAction" = "Publicar";
 "Localized.preview" = "Vista previa";
 "Localized.newPost" = "Nueva publicación";
+"Localized.newReply" = "Nueva respuesta";
 "Localized.deletePost" = "Eliminar esta publicación";
 "Localized.editPost" = "Editar esta publicación";
 "Localized.confirmDeletePost" = "¿Estás seguro de que quieres eliminar esta publicación?";
@@ -281,6 +283,11 @@
 "ManageRelays.joinPlanetaryRoom" = "Unirse a la sala Planetary";
 "ManageRelays.joinPlanetaryRoomDescription" = "Al unirte al servidor de la sala oficial de Planetary podrás registrar alias como tunombre.planetary.name y sincronizar directamente con otros en la sala.";
 
+"Message.message" = "Mensaje";
+"Message.reaction" = "Reacción";
+"Message.contact" = "Contacto";
+"Message.post" = "Publicación";
+"Message.reply" = "Respuesta";
 "Message.noPostsTitle" = "No hay publicaciones aquí todavía";
 "Message.noPostsDescription" = "Esto significa que el usuario no ha publicado nada o no tienes suficientes conexiones en común para sincronizarte con sus publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";
 "Message.noPostsInHashtagDescription" = "Esto significa que no se han publicado mensajes con este hashtag, o no tienes las suficientes conexiones como para sincronizarte con estas publicaciones.\n\nAprende [cómo funciona susurrar]({{ link }}) en Planetary.";
@@ -357,6 +364,7 @@
 "Channel.one" = "etiqueta";
 "Channel.many" = "etiquetas";
 
+"Post.title" = "Publicación";
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";
 
