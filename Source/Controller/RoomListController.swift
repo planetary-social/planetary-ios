@@ -130,12 +130,20 @@ import Secrets
     func joinPlanetaryRoom() {
         loadingMessage = Localized.loading.text
         Task {
-            guard let token = Keys.shared.get(key: .planetaryRoomToken) else {
+            let key: Key
+            let host: String
+            if AppConfiguration.current?.isUsingTestingNetwork == true {
+                key = .lorentzRoomToken
+                host = "test-room.lorentz.is"
+            } else {
+                key = .planetaryRoomToken
+                host = "planetary.name"
+            }
+            guard let token = Keys.shared.get(key: key) else {
                 loadingMessage = nil
                 return
             }
             do {
-                let host = "planetary.name"
                 try await RoomInvitationRedeemer.redeem(token: token, at: host, bot: bot)
                 refresh()
                 alertMessageTitle = Localized.success.text
