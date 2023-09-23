@@ -18,9 +18,28 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
+    xcodes # ensure correct version of xcode is installed and selected
+    api_key = app_store_connect_api_key(
+      key_id: "4L8Z9W89TJ",
+      issuer_id: "8985ca52-aba6-4f7a-91bb-d052a5b030fa",
+      key_filepath: "~/.fastlane/AuthKey_4L8Z9W89TJ.p8"
+    )
     increment_build_number(xcodeproj: "Planetary.xcodeproj")
-    build_app(workspace: "Planetary.xcworkspace", scheme: "Planetary")
-    upload_to_testflight
+    version_number = get_version_number(xcodeproj: "Planetary.xcodeproj", target: "Planetary")
+    build_number = get_build_number
+    gym(workspace: "Planetary.xcworkspace", scheme: "Planetary", clean: true, xcargs: "-allowProvisioningUpdates")
+    changelog = read_changelog
+    upload_to_testflight(changelog: changelog)
+    stamp_changelog(section_identifier: "#{version_number} (#{build_number})")
+    git_commit(message: "TestFlight deployment", path: "*")
+    add_git_tag(tag: "v#{version_number}-#{build_number}")
+    push_to_git_remote
+    notification(
+      subtitle: "Build uploaded", 
+      message: "tap to open App Store Connect", 
+      sound: "Pebble", 
+      open: "https://appstoreconnect.apple.com/apps/1481617318/testflight/ios"
+    )
   end
 end
 

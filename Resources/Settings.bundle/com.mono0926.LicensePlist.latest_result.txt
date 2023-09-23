@@ -119,4 +119,4 @@ body: The MIT License (MIT…
 
 add-version-numbers: false
 
-LicensePlist Version: 3.24.9
+LicensePlist Version: 3.24.10
