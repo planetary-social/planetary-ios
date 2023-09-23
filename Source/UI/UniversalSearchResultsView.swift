@@ -481,7 +481,7 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
                 return
             }
             let post = posts[indexPath.row]
-            let controller = ThreadViewController(with: post, startReplying: false)
+            let controller = MessageViewBuilder.build(identifier: post.id)
             delegate?.present(controller)
         case .network:
             guard let inNetworkPeople = searchResults.inNetworkPeople else {

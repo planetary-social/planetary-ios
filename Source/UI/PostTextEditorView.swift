@@ -51,6 +51,10 @@ class PostTextEditorView: UIView {
         return view
     }()
 
+    override var intrinsicContentSize: CGSize {
+        sourceTextView.intrinsicContentSize
+    }
+
     var attributedText: NSAttributedString {
         get {
             sourceTextView.attributedText

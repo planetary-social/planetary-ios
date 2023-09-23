@@ -81,6 +81,7 @@ enum Localized: String, Localizable, CaseIterable {
     case posted = "{{somebody}} posted"
     case replied = "{{somebody}} replied"
     case liked = "{{somebody}} liked"
+    case reacted = "{{somebody}} reacted"
     case startedFollowing = "{{somebody}} started following"
     case stoppedFollowing = "{{somebody}} stopped following"
     case startedBlocking = "{{somebody}} blocked"
@@ -102,6 +103,7 @@ enum Localized: String, Localizable, CaseIterable {
     case postAction = "Post"
     case preview = "Preview"
     case newPost = "New Post"
+    case newReply = "New Reply"
     case deletePost = "Delete this post"
     case editPost = "Edit this post"
     case confirmDeletePost = "Are you sure you want to delete this post?"
@@ -271,6 +273,7 @@ extension Localized {
         case remove = "Remove"
         case publishing = "Publishing..."
         case restoring = "Restoring..."
+        case mention = "Mention"
     }
 }
 
@@ -448,6 +451,11 @@ extension Localized {
 
 extension Localized {
     enum Message: String, Localizable, CaseIterable {
+        case message = "Message"
+        case reaction = "Reaction"
+        case contact = "Contact"
+        case post = "Post"
+        case reply = "Reply"
         case noPostsTitle = "No posts here yet"
         case noPostsDescription = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
         case noPostsInHashtagDescription = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary."
@@ -611,6 +619,7 @@ extension Localized {
 
 extension Localized {
     enum Post: String, Localizable, CaseIterable {
+        case title = "Post"
         case one = "post"
         case many = "posts"
     }

@@ -34,6 +34,7 @@
 "Localized.posted" = "{{somebody}} posteó";
 "Localized.replied" = "{{somebody}} contestó";
 "Localized.liked" = "A {{somebody}} le gustó";
+"Localized.reacted" = "{{somebody}} reaccionó";
 "Localized.startedFollowing" = "{{somebody}} siguió a";
 "Localized.stoppedFollowing" = "{{somebody}} dejó de seguir a";
 "Localized.startedBlocking" = "{{somebody}} ignoró a";
@@ -52,6 +53,7 @@
 "Localized.postAction" = "Postear";
 "Localized.preview" = "Vista previa";
 "Localized.newPost" = "Nuevo post";
+"Localized.newReply" = "Nueva respuesta";
 "Localized.deletePost" = "Eliminar este post";
 "Localized.editPost" = "Editar este post";
 "Localized.confirmDeletePost" = "¿Estás seguro de que querés borrar este post?";
@@ -173,6 +175,7 @@
 "NewPost.remove" = "Eliminar";
 "NewPost.publishing" = "Publicando...";
 "NewPost.restoring" = "Restaurando...";
+"NewPost.mention" = "Mencionar";
 
 "Offboarding.reset" = "Eliminar";
 "Offboarding.resetIdentity" = "Eliminar mi identidad";
@@ -280,6 +283,11 @@
 "ManageRelays.joinPlanetaryRoom" = "Unirse a la sala Planetary";
 "ManageRelays.joinPlanetaryRoomDescription" = "Al unirte al servidor de la sala oficial de Planetary podrás registrar alias como tunombre.planetary.name y sincronizar directamente con otros en la sala.";
 
+"Message.message" = "Mensaje";
+"Message.reaction" = "Reacción";
+"Message.contact" = "Contacto";
+"Message.post" = "Publicación";
+"Message.reply" = "Respuesta";
 "Message.noPostsTitle" = "Aún no hay posts aquí";
 "Message.noPostsDescription" = "Esto significa que el usuario no ha posteado nada o no tienes suficientes conexiones en común para sincronizarte con sus posts.\n\nAprendé [cómo se chusmea]({{ link }}) en Planetary.";
 "Message.noPostsInHashtagDescription" = "Esto significa que no se han publicado posts con este hashtag, o no tienes las suficientes conexiones como para sincronizarte con estos posts.\n\nAprende [cómo se chusmea]({{ link }}) en Planetary.";
@@ -356,6 +364,7 @@
 "Channel.one" = "hashtag";
 "Channel.many" = "hashtags";
 
+"Post.title" = "Publicación";
 "Post.one" = "publicación";
 "Post.many" = "publicaciones";
 

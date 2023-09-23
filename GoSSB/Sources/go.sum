@@ -175,8 +175,8 @@ github.com/philhofer/fwd v1.0.0/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
-github.com/planetary-social/scuttlego v0.0.3 h1:Z3Qn+DDUem5WYBARuf6atCMUn+smo5MqFUM818MZb0k=
-github.com/planetary-social/scuttlego v0.0.3/go.mod h1:6317yJFAMsnkTvfGkvKvOfq05hCU+2SMc78j3sgVjiU=
+github.com/planetary-social/scuttlego v0.0.4 h1:54rsM2Aj/5KA7QixRPsca0pYDQVoQp56SjQq4Spg5dI=
+github.com/planetary-social/scuttlego v0.0.4/go.mod h1:4JQ1EHILc5UmSD86fEhNuy3pyFs4HmMhpce/YCSuX8g=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
@@ -215,8 +215,8 @@ github.com/ssbc/go-netwrap v0.1.5-0.20221019160355-cd323bb2e29d/go.mod h1:tsE1qe
 github.com/ssbc/go-secretstream v1.2.11-0.20221019175226-fa042d4912fe/go.mod h1:imXhXNa5OfEL+qrGtOs6NZ9zJe6L3P+ZwFVC2mIgH0E=
 github.com/ssbc/go-secretstream v1.2.11-0.20221111164233-4b41f899f844 h1:r1uKQOpTliDf9BCMbRfCeynZ87Y+XMs/DBZqZzB596Y=
 github.com/ssbc/go-secretstream v1.2.11-0.20221111164233-4b41f899f844/go.mod h1:imXhXNa5OfEL+qrGtOs6NZ9zJe6L3P+ZwFVC2mIgH0E=
-github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8 h1:p1Nwim4mUOrsY/iXlu2m/Ctk0p6GjHJNg4WUqIygEjY=
-github.com/ssbc/go-ssb v0.2.2-0.20230212123438-2cdd828cd8c8/go.mod h1:kBucAtyavzNPi81r37zkYSa569sOvvO2nwvzMUexG3w=
+github.com/ssbc/go-ssb v0.2.2-0.20230308230318-d6db27d1852d h1:3jzEBxJe5nqHhaIlM984T52YPsRwbNrwuXpkQsllAtQ=
+github.com/ssbc/go-ssb v0.2.2-0.20230308230318-d6db27d1852d/go.mod h1:tKx4OFBqFpNCxYUZagBnfqVfLhYtzUM1vJVR3tUkLnw=
 github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57 h1:wfIu3HcI8HGLSbJFo35eKMjFBMhHhXJsYGTAOVhpNkQ=
 github.com/ssbc/go-ssb-multiserver v0.1.5-0.20221019203850-917ae0e23d57/go.mod h1:LMJaMYVJxtYKTj8A0t8+iM+K2/SuYSvp14urj9sHLa8=
 github.com/ssbc/go-ssb-refs v0.5.2-0.20221017100922-8e95413c6580/go.mod h1:rUj40X7iiUWFt62aF4NVm3uNnKiPZ9Uo/ds4D4ZE980=

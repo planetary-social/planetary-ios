@@ -34,6 +34,7 @@
 "Localized.posted" = "{{somebody}} posted";
 "Localized.replied" = "{{somebody}} replied";
 "Localized.liked" = "{{somebody}} liked";
+"Localized.reacted" = "{{somebody}} reacted";
 "Localized.startedFollowing" = "{{somebody}} started following";
 "Localized.stoppedFollowing" = "{{somebody}} stopped following";
 "Localized.startedBlocking" = "{{somebody}} blocked";
@@ -52,6 +53,7 @@
 "Localized.postAction" = "Post";
 "Localized.preview" = "Preview";
 "Localized.newPost" = "New Post";
+"Localized.newReply" = "New Reply";
 "Localized.deletePost" = "Delete this post";
 "Localized.editPost" = "Edit this post";
 "Localized.confirmDeletePost" = "Are you sure you want to delete this post?";
@@ -173,6 +175,7 @@
 "NewPost.remove" = "Remove";
 "NewPost.publishing" = "Publishing...";
 "NewPost.restoring" = "Restoring...";
+"NewPost.mention" = "Mention";
 
 "Offboarding.reset" = "Delete";
 "Offboarding.resetIdentity" = "Delete My Identity";
@@ -280,6 +283,11 @@
 "ManageRelays.joinPlanetaryRoom" = "Join Planetary Room";
 "ManageRelays.joinPlanetaryRoomDescription" = "Joining the official Planetary room server will allow to register aliases like yourname.planetary.name, and sync directly with others in the room.";
 
+"Message.message" = "Message";
+"Message.reaction" = "Reaction";
+"Message.contact" = "Contact";
+"Message.post" = "Post";
+"Message.reply" = "Reply";
 "Message.noPostsTitle" = "No posts here yet";
 "Message.noPostsDescription" = "This means the user hasn't posted anything, or you don't have enough connections in common to synchronize their posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
 "Message.noPostsInHashtagDescription" = "This means no messages have been posted under this hashtag, or you don't have enough connections to synchronize these posts.\n\nLearn [how gossipping works]({{ link }}) on Planetary.";
@@ -356,6 +364,7 @@
 "Channel.one" = "channel";
 "Channel.many" = "channels";
 
+"Post.title" = "Post";
 "Post.one" = "post";
 "Post.many" = "posts";
 

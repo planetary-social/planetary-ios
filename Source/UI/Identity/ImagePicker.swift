@@ -12,6 +12,7 @@ import SwiftUI
 struct ImagePicker: UIViewControllerRepresentable {
     
     var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    var cameraDevice: UIImagePickerController.CameraDevice = .front
     var onCompletion: ((UIImage?) -> Void)
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
@@ -19,7 +20,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         imagePicker.sourceType = sourceType
         imagePicker.delegate = context.coordinator
         if sourceType == .camera {
-            imagePicker.cameraDevice = .front
+            imagePicker.cameraDevice = cameraDevice
         }
         return imagePicker
     }
