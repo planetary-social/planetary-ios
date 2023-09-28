@@ -41,6 +41,11 @@ struct MessageHeaderView: View {
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
+                        Spacer()
+                        Text(message.claimedDate.elapsedTimeFromNowString())
+                            .lineLimit(1)
+                            .font(.body)
+                            .foregroundColor(.secondaryText)
                     }
                 }
                 MessageOptionsButton(message: message)
