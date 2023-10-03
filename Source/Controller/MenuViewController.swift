@@ -13,8 +13,9 @@ import Analytics
 import CrashReporting
 import Logger
 import Support
+import MessageUI
 
-class MenuViewController: UIViewController, ConnectedPeerListRouter {
+class MenuViewController: UIViewController, ConnectedPeerListRouter, MFMailComposeViewControllerDelegate {
     
     var menuWidth: CGFloat = 300
 
@@ -110,7 +111,6 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
         self.menuView.profileButton.addTarget(self, action: #selector(profileButtonTouchUpInside), for: .touchUpInside)
         self.menuView.settingsButton.addTarget(self, action: #selector(settingsButtonTouchUpInside), for: .touchUpInside)
         self.menuView.helpButton.addTarget(self, action: #selector(helpButtonTouchUpInside), for: .touchUpInside)
-        self.menuView.reportBugButton.addTarget(self, action: #selector(reportBugButtonTouchUpInside), for: .touchUpInside)
     }
 
     @objc private func closeButtonTouchUpInside() {
@@ -142,31 +142,18 @@ class MenuViewController: UIViewController, ConnectedPeerListRouter {
 
     @objc private func helpButtonTouchUpInside() {
         Analytics.shared.trackDidTapButton(buttonName: "support")
-        guard let controller = Support.shared.mainViewController() else {
-            AppController.shared.alert(
-                title: Localized.error.text,
-                message: Localized.Error.supportNotConfigured.text,
-                cancelTitle: Localized.ok.text
-            )
-            return
-        }
+       
+        let mailViewController = MFMailComposeViewController()
+        mailViewController.mailComposeDelegate = self
+        mailViewController.setToRecipients(["support@planetary.social"])
+        mailViewController.setSubject("Reporting a bug in Planetary")
+        mailViewController.setMessageBody(
+            "Hello, \n\n I have found a bug in Planetary and would like to provide feedback",
+            isHTML: false
+        )
+        
         self.close {
-            AppController.shared.push(controller)
-        }
-    }
-
-    @objc private func reportBugButtonTouchUpInside() {
-        Analytics.shared.trackDidTapButton(buttonName: "report_bug")
-        guard let controller = Support.shared.myTicketsViewController(from: Bots.current.identity) else {
-            AppController.shared.alert(
-                title: Localized.error.text,
-                message: Localized.Error.supportNotConfigured.text,
-                cancelTitle: Localized.ok.text
-            )
-            return
-        }
-        self.close {
-            AppController.shared.push(controller)
+            AppController.shared.present(mailViewController, animated: true)
         }
     }
 
@@ -225,7 +212,6 @@ private class MenuView: UIView {
     let profileButton = MenuButton(title: .yourProfile, image: UIImage.verse.profile)
     let settingsButton = MenuButton(title: .settings, image: UIImage.verse.settings)
     let helpButton = MenuButton(title: .helpAndSupport, image: UIImage.verse.help)
-    let reportBugButton = MenuButton(title: .reportBug, image: UIImage.verse.reportBug)
 
     init(frame: CGRect, connectedPeersView: UIView) {
 
@@ -298,18 +284,12 @@ private class MenuView: UIView {
         Layout.fillSouth(of: separator, with: self.helpButton)
         self.helpButton.constrainHeight(to: 50)
         self.helpButton.imageEdgeInsets = .top(2)
+        if !MFMailComposeViewController.canSendMail() {
+            self.helpButton.isEnabled = false
+        }
         
         separator = Layout.separatorView(color: UIColor.menuBorderColor)
         Layout.fillSouth(of: self.helpButton, with: separator)
-
-        Layout.fillSouth(of: separator, with: self.reportBugButton)
-        self.reportBugButton.constrainHeight(to: 50)
-        
-        separator = Layout.separatorView(color: UIColor.menuBorderColor)
-        Layout.fillSouth(of: self.reportBugButton, with: separator)
-        
-        separator = Layout.separatorView(color: UIColor.menuBorderColor)
-        Layout.fillSouth(of: reportBugButton, with: separator)
 
         separator.bottomAnchor.constraint(equalTo: menuButtonContainer.bottomAnchor).isActive = true
         
