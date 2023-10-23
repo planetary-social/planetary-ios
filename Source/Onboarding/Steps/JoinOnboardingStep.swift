@@ -34,7 +34,7 @@ import CrashReporting
         }
 
         Task { [weak self] in
-            var context: Onboarding.Context?
+            let context: Onboarding.Context?
             
             do {
                 context = try await Onboarding.createProfile(from: data)

@@ -351,7 +351,6 @@ class ThreadViewController: ContentViewController {
         let post = Post(attributedText: text, root: self.rootKey, branches: [self.branchKey])
         let images = self.galleryView.images
         let draftStore = draftStore
-        let textValue = AttributedString(text)
         Task.detached(priority: .userInitiated) {
             do {
                 let messageID = try await Bots.current.publish(post, with: images)

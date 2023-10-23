@@ -82,7 +82,7 @@ class LaunchViewController: UIViewController {
         }
 
         // if no configuration then onboard
-        guard var configuration = appConfiguration else {
+        guard let configuration = appConfiguration else {
             launchIntoOnboarding()
             return
         }
