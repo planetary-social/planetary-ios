@@ -58,6 +58,10 @@ class BlobViewController: ContentViewController {
         forgetBlobCompletion()
 
         Task { @MainActor [weak self] in
+            guard let blob = self?.blob else {
+                return
+            }
+
             // cached image
             if let uiImage = Caches.blobs.image(for: blob) {
                 self?.imageView.image = uiImage

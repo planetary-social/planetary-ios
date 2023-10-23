@@ -67,7 +67,7 @@ fileprivate class ImageLoader: ObservableObject {
 
         await MainActor.run { [weak self] in
             guard let metadata = metadata, metadata.link != .null else {
-                isLoading = false
+                self?.isLoading = false
                 return
             }
 
