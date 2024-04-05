@@ -483,7 +483,6 @@
 		53AD3FDF22721AC2005228F9 /* Tappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FDE22721AC2005228F9 /* Tappable.swift */; };
 		53AD3FE122721CAE005228F9 /* MessageUpdateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE022721CAE005228F9 /* MessageUpdateable.swift */; };
 		53AD3FE522735C7B005228F9 /* MessageValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE422735C7B005228F9 /* MessageValue.swift */; };
-		53AD3FE72273AE21005228F9 /* ThreadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE62273AE21005228F9 /* ThreadViewController.swift */; };
 		53AD3FE922775936005228F9 /* Thread+Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE822775936005228F9 /* Thread+Assert.swift */; };
 		53AD3FEA227769F2005228F9 /* Thread+Assert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE822775936005228F9 /* Thread+Assert.swift */; };
 		53AD3FEB22776A3C005228F9 /* MessageValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE422735C7B005228F9 /* MessageValue.swift */; };
@@ -971,7 +970,6 @@
 		C9724B512809D5A6000EBCCD /* AppDelegate+UIAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FD4226FBD91005228F9 /* AppDelegate+UIAppearance.swift */; };
 		C9724B522809D5AB000EBCCD /* Layout+Separator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53211CC5227B5A85007FB785 /* Layout+Separator.swift */; };
 		C9724B532809D5DA000EBCCD /* MessageTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FDC22712CE0005228F9 /* MessageTableViewDelegate.swift */; };
-		C9724B552809D5E6000EBCCD /* ThreadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53AD3FE62273AE21005228F9 /* ThreadViewController.swift */; };
 		C9724B562809D5ED000EBCCD /* FloatingRefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF2DEEF247D9DB4003F457D /* FloatingRefreshButton.swift */; };
 		C9724B572809D5F2000EBCCD /* PinterestCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A487102249808E700BCD063 /* PinterestCollectionViewLayout.swift */; };
 		C9724B582809D5F8000EBCCD /* PostCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4871002498030800BCD063 /* PostCollectionViewCell.swift */; };
@@ -1574,7 +1572,6 @@
 		53AD3FDE22721AC2005228F9 /* Tappable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tappable.swift; sourceTree = "<group>"; };
 		53AD3FE022721CAE005228F9 /* MessageUpdateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdateable.swift; sourceTree = "<group>"; };
 		53AD3FE422735C7B005228F9 /* MessageValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageValue.swift; sourceTree = "<group>"; };
-		53AD3FE62273AE21005228F9 /* ThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadViewController.swift; sourceTree = "<group>"; };
 		53AD3FE822775936005228F9 /* Thread+Assert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Thread+Assert.swift"; sourceTree = "<group>"; };
 		53B4F5E822B457FC00027C6A /* URLRequest+APIHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+APIHeaders.swift"; sourceTree = "<group>"; };
 		53B4F5F022B7123900027C6A /* NotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewController.swift; sourceTree = "<group>"; };
@@ -2211,7 +2208,6 @@
 				E0BB7184294A08B40048D55C /* RoomsOnboardingController.swift */,
 				7BDA1D14291BFCD500EA2124 /* StoreReviewController.swift */,
 				0AF9E0A12465D7A700910575 /* ThreadReplyPaginatedDataSource.swift */,
-				53AD3FE62273AE21005228F9 /* ThreadViewController.swift */,
 				535B6A0523712D79008C248E /* UIViewController+Block.swift */,
 				53C966E1236D037000E70689 /* UIViewController+Report.swift */,
 				536255DD23AC4C46001007D0 /* UIViewController+Sync.swift */,
@@ -4027,7 +4023,6 @@
 				C9D1EAD22832A0230092E098 /* SecretTests.swift in Sources */,
 				C9724BA82809EB23000EBCCD /* FollowCountView.swift in Sources */,
 				C9724BE12809EE6D000EBCCD /* EditAboutViewController.swift in Sources */,
-				C9724B552809D5E6000EBCCD /* ThreadViewController.swift in Sources */,
 				C9724B4B2809D574000EBCCD /* UIView+Layout.swift in Sources */,
 				53211CEE22852285007FB785 /* AppConfiguration.swift in Sources */,
 				C9724B6F2809E74B000EBCCD /* PostReplyView.swift in Sources */,
@@ -4752,7 +4747,6 @@
 				5B18DB7D2968B64A001F3B70 /* SearchResultsTab.swift in Sources */,
 				C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */,
 				5344D82F21C4649700704A34 /* AppDelegate.swift in Sources */,
-				53AD3FE72273AE21005228F9 /* ThreadViewController.swift in Sources */,
 				0A38800B2475ACC300777843 /* NullPubAPI.swift in Sources */,
 				C9E144C427E3C6ED00D6668A /* FakeBot.swift in Sources */,
 				5B747F70295E1AA8003D014A /* GoldenPostView.swift in Sources */,
