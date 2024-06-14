@@ -111,8 +111,7 @@ struct RelationshipButton: View {
     }
 
     private var star: Star? {
-        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
-            (AppConfiguration.current?.systemPubs ?? [])
+        let pubs = AppConfiguration.current?.systemPubs ?? []
         return pubs.first { $0.feed == relationship?.other }
     }
 
@@ -202,7 +201,7 @@ struct RelationshipButton: View {
         isToggling = true
         Task.detached {
             let bot = await botRepository.current
-            let pubs = (AppConfiguration.current?.communityPubs ?? []) + (AppConfiguration.current?.systemPubs ?? [])
+            let pubs = AppConfiguration.current?.systemPubs ?? []
             let star = pubs.first { $0.feed == relationshipToUpdate.other }
             do {
                 if relationshipToUpdate.isBlocking {

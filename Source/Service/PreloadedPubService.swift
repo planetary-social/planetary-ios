@@ -94,7 +94,7 @@ class PreloadedPubServiceAdapter: PreloadedPubService {
         
         Log.info("Dropping pub about messages")
         
-        let pubs = appConfig.communityPubs + appConfig.systemPubs
+        let pubs = appConfig.systemPubs
         pubs.forEach {
             do {
                 try goBot.database.deleteAbouts(for: $0.feed)
