@@ -209,6 +209,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 </string>
+			<key>License</key>
+			<string>Apache-2.0</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>

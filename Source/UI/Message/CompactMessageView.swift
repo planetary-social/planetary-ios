@@ -138,6 +138,7 @@ struct CompactMessageView: View {
         )
         .cornerRadius(20)
         .padding(EdgeInsets(top: 15, leading: 15, bottom: 0, trailing: 15))
+        .frame(maxWidth: 500)
         .onReceive(NotificationCenter.default.publisher(for: .didPublishVote)) { notification in
             guard let identifier = notification.identifier else {
                 return
