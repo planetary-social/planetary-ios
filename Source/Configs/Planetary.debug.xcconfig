@@ -19,8 +19,8 @@ SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 
 // If you change any invitations here you should track them here too: https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking
 
-PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~3Ht0U0ZcO7UaiVann2wPTOr3rDM3GjmTyswjx7Mh5K4=
-PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~l7SxAVayKsu96TzNCDIkOWMiUA1LDGtSV06vfq93FmY=
+PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~gkPjmojoEv5xNRcCl/BzF1reod2pnh+ciS1E+Tr6XOc=
+PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~hLsEIUnGlGhZ02p946sdGA5DkeGLYZU67Of4kFtrEdc=
 
 PLANETARY_SYSTEM_PUBS = ${PUB_ONE} ${PUB_TWO} ${PUB_THREE} 
 // ${PUB_FOUR} - disabled due to being down - nov 5th 2022 - rabble
