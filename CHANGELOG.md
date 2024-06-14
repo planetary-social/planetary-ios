@@ -6,6 +6,10 @@ We define "Noteworthy changes" as 1) user-facing features or bugfixes 2) signifi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+- Remove topical pubs that are shutting down. See %1ao9SOiYKIOyPaqgWBJXXMngpiDyS/GJVIVkqg0Y1PU=.sha256
+
 ## [2.1.1] 2023-09-23
 
 - Add timestamps back to message cards
