@@ -19,37 +19,14 @@ SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 
 // If you change any invitations here you should track them here too: https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking
 
-PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~3Ht0U0ZcO7UaiVann2wPTOr3rDM3GjmTyswjx7Mh5K4=
-PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~l7SxAVayKsu96TzNCDIkOWMiUA1LDGtSV06vfq93FmY=
-PUB_THREE = three.planetary.pub:8008:@LQ8HBiEinU5FiXGaZH9JYFGBGdsB99mepBdh/Smq3VI=.ed25519~3BmUblybJ1RDWErRZAv/dHSKLd2Hx+H8xCWD9+TDwjQ=
-PUB_FOUR = four.planetary.pub:8008:@5KDK98cjIQ8bPoBkvp7bCwBXoQMlWpdIbCFyXER8Lbw=.ed25519~e9ZRXEw0RSTE6FX8jOwWV7yfMRDsAZkzlhCRbVMBUEc=
+PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~gkPjmojoEv5xNRcCl/BzF1reod2pnh+ciS1E+Tr6XOc=
+PUB_TWO = two.planetary.pub:8008:@7jJ7oou5pKKuyKvIlI5tl3ncjEXmZcbm3TvKqQetJIo=.ed25519~hLsEIUnGlGhZ02p946sdGA5DkeGLYZU67Of4kFtrEdc=
 
 PLANETARY_SYSTEM_PUBS = ${PUB_ONE} ${PUB_TWO} ${PUB_THREE} 
 // ${PUB_FOUR} - disabled due to being down - nov 5th 2022 - rabble
 
 TEST_PUB_ONE = dev.planetary.pub:8008:@IzuvGuH1r29Gjg4aBq+C0ke1b5t+Tk9tmSZfZIB9XFE=.ed25519~C7roPCA8eU59HvstGS/sGV06cGUYD26Tm/J8jtUo2jw=
-TEST_PUB_TWO = 167.99.36.26:8008:@zOTzL5j6Ox4pFhyj01eVoD3phCvnPJQNixtC3XbDniE=.ed25519~WVAtPG3sk8tbKKxd0k8RYjaKVKnJeLefNjBALvoCrGo=
 TEST_NETWORK_PUBS = ${TEST_PUB_ONE}
-TEST_NETWORK_COMMUNITIES = ${TEST_PUB_TWO}
-
-CRYPTO = crypto.planetary.pub:8008:@CBaNGA3MPZHPKo4gvrZsTCCV3DUgydmPnwK0UDRRbqQ=.ed25519~yrRA7UQNPJfFP5/cyo3kmFidfAWX6SEa8Rq4DHqsfNo=
-FLOSS = floss.planetary.pub:8008:@uHqyTLo/JwapDh+ryXKe0VyBMS7eqt0YEKwvUathiS8=.ed25519~vr3cPOGE5DgCCsxlinLRlFK6E6D0pWVWHv0DpEY314A=
-FREESOCIAL = pub.freesocial.co:8008:@ofYKOy2p9wsaxV73GqgOyh6C6nRGFM5FyciQyxwBd6A=.ed25519~ye9Z808S3KPQsV0MWr1HL0/Sh8boSEwW+ZK+8x85u9w=
-SCUTTLEUS = scuttle.us:8008:@WqcuCOIpLtXFRw/9vOAQJti8avTZ9vxT9rKrPo8qG6o=.ed25519~/ZUi9Chpl0g1kuWSrmehq2EwMQeV0Pd+8xw8XhWuhLE=
-PORRO = porro.club:8008:@qAFzUyH1dISX93LnQTllaAtudH79i/ht0crIUgAKTm8=.ed25519~0xqpvDaEWFjHKMjUsGRGgWMjeGBSYYYPXqX0nVyi1Hc=
-GARDENING = gardening.planetary.pub:8008:@1ZA2K/bPs41o4EJ1gAVVNGGj0WAB6laJC2AOJbdBrmM=.ed25519~YXJJxmyAxsAnUyn1b5CWURNkIg/T/kQlgN+eYq4EjJE=
-POETRY = poetry.planetary.pub:8008:@FBH3fASAJ3aJtzHL7nDg86HiuCjAKSljzXAIhlZqnFw=.ed25519~wu3Fahw7RcC++h/IGFncltVLwanontMtObeRB8EBSFQ=
-FUNGI = fungi.planetary.pub:8008:@ULtTfklxd39BtkQs97OwKRm1vncQHc/foySwTPErkwg=.ed25519~Z+Qguco1LSgWACi+zcaJFmS9Ek06dqPOFa473c+a+hU=
-COOKING = cooking.planetary.pub:8008:@8oxL9ddFp+y+EJx4HfYsnHKUUlscH0bgng4QJn1g5dQ=.ed25519~GeGYfdnNBBxT4785EiuHITVIA5SyQyge3hlNtF79ZcM=
-QUEER = queer.family:8008:@nnAMmrhLfy54wkYSgAZWK4fBg/b/83YjilPk5JfNzXM=.ed25519~kxCY33m5QNMnLbJ0pkHHUaWdRyANTlS4gaISXN2D3x0=
-
-ESPANOL = espanol.planetary.pub:8008:@KpZ49dSM+wr73t8peJQWBLjAlENLG9yLdVBNv7PgatI=.ed25519~s7GLx7uJSllwh4HVB0v7DOY4f9YO1kPw7RvjGDnXe7I=
-RUSSIAN = russian-language.planetary.pub:8008:@EmJzXv/EZrAuGS1UNpH07AVz908sGckRaX38BxVgA+0=.ed25519~Sq5cxugjyL3r2VdV2uoT4nG6fqMiws5f9xivqu12oQI=
-UKRAINIAN = ukrainian-language.planetary.pub:8008:@pDcdMNVFSDW43XAcsU4WHumId54h4mQi5y8z9FDGyqM=.ed25519~y9Ac9XkzNBHkwaIwxQijXxchVj4QgmPm8VKLBP+2Dag=
-FRENCH = francaise.planetary.pub:8008:@yzbJcRdC7BGLumJohjlySD7zwgVgR8udpFzAUK5/ptw=.ed25519~i34wbWgr+bsIdf0uLTABxekybDJEZu8EBPEg9FrN90w=
-CHINESE = chinese-language.planetary.pub:8008:@L1LEmI49J3lzKUy6XPkh9/6ci+Cc8JlUIGg8inzWaVo=.ed25519~LMWjK1qWd0MryvrkrMhSY746OuhRMf94tzQuZ+HdVQk=
-
-COMMUNITIES = ${CRYPTO} ${FLOSS} ${FREESOCIAL} ${SCUTTLEUS} ${PORRO} ${GARDENING} ${POETRY} ${FUNGI} ${COOKING} ${QUEER} ${ESPANOL} ${RUSSIAN} ${UKRAINIAN} ${CHINESE} ${FRENCH}
 
 PLANETARY = @l1sGqWeCZRA99gN+t9sI6+UOzGcHq3KhLQUYEwb4DCo=.ed25519
 PLANETARY_SYSTEM = ${PLANETARY}

@@ -68,8 +68,6 @@
 	<string>This app allows you to select photos to share with friends or use as your profile image.</string>
 	<key>PLAliasServers</key>
 	<string>$(PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
-	<key>PLCommunities</key>
-	<string>$(COMMUNITIES)</string>
 	<key>PLConstellation</key>
 	<string>$(CONSTELLATION)</string>
 	<key>PLDefaultNetworkKey</key>
@@ -94,8 +92,6 @@
 	<string>$(PLANETARY_SYSTEM_PUBS)</string>
 	<key>PLTestAliasServers</key>
 	<string>$(TEST_PLANETARY_COMMUNITY_ALIAS_SERVERS)</string>
-	<key>PLTestNetworkCommunities</key>
-	<string>$(TEST_NETWORK_COMMUNITIES)</string>
 	<key>PLTestNetworkPubs</key>
 	<string>$(TEST_NETWORK_PUBS)</string>
 	<key>PLTestingNetworkHMAC</key>
