@@ -132,17 +132,6 @@ class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { 
         }
     }
     
-    var communityPubs: [Star] {
-        switch ssbNetwork {
-        case Environment.Networks.mainNet:
-            return Environment.PlanetarySystem.communityPubs
-        case Environment.Networks.test:
-            return Environment.TestNetwork.communityPubs
-        default:
-            return []
-        }
-    }
-    
     var communityAliasServers: [Room] {
         switch ssbNetwork {
         case Environment.Networks.mainNet:
