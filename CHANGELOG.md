@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2 (429)] - 2024-06-17Z
+
+- Remove topical pubs that are shutting down. See %1ao9SOiYKIOyPaqgWBJXXMngpiDyS/GJVIVkqg0Y1PU=.sha256
+
+## [2.1.1] 2023-09-23
+
+- Add timestamps back to message cards
+- Fix max width on top card in thread view
+
+## [2.1.0]
+
 - Redesigned screen that shows the detail of a message.
 - Sub-threads: you can now reply to a reply.
 - Add the option to reply to a reaction or a contact message (follow, unfollow, block).

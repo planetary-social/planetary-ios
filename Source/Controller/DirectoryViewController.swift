@@ -46,9 +46,8 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         }
     }
     
-    private let communityPubs = (AppConfiguration.current?.communityPubs ?? []) +
-        (AppConfiguration.current?.systemPubs ?? [])
-    private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
+    private let pubs = AppConfiguration.current?.systemPubs ?? []
+    private lazy var pubIdentities = Set(pubs.map { $0.feed })
     
     /// A post that was loaded when the user put its ID in the search bar.
     private var searchedPost: Message?
@@ -131,7 +130,7 @@ class DirectoryViewController: ContentViewController, AboutTableViewDelegate, He
         if self.searchFilter.isEmpty {
             activeSections = Self.defaultSections
             self.people = allPeople.filter { person in
-                !self.communityPubIdentities.contains(person.identity)
+                !self.pubIdentities.contains(person.identity)
             }
         } else {
             let filter = searchFilter.lowercased()
@@ -270,7 +269,7 @@ extension DirectoryViewController: UITableViewDataSource {
         
         switch section {
         case .communityPubs:
-            return searchFilter.isEmpty ? communityPubs.count : 0
+            return searchFilter.isEmpty ? pubs.count : 0
         case .users:
             return activeSections.contains(.users) ? 1 : 0
         case .posts:
@@ -286,7 +285,7 @@ extension DirectoryViewController: UITableViewDataSource {
         switch section {
         case .communityPubs:
             let cell = dequeueExtendedAboutTableViewCell(in: tableView)
-            let star = communityPubs[indexPath.row]
+            let star = pubs[indexPath.row]
             if let about = self.allPeople.first(where: { $0.identity == star.feed }) {
                 cell.aboutView.update(with: star.feed, about: about, star: star)
             } else {
@@ -312,10 +311,10 @@ extension DirectoryViewController: UITableViewDataSource {
         case .network:
             // Users in Your Network
             let about = self.people[indexPath.row]
-            let isCommunity = communityPubIdentities.contains(about.identity)
+            let isCommunity = pubIdentities.contains(about.identity)
             if isCommunity {
                 let cell = dequeueExtendedAboutTableViewCell(in: tableView)
-                if let star = communityPubs.first(where: { $0.feed == about.identity }) {
+                if let star = pubs.first(where: { $0.feed == about.identity }) {
                     cell.aboutView.update(with: star.feed, about: about, star: star)
                 }
                 return cell
@@ -344,7 +343,7 @@ extension DirectoryViewController: UITableViewDelegate {
         
         switch section {
         case .communityPubs:
-            let star = communityPubs[indexPath.row]
+            let star = pubs[indexPath.row]
             let controller = IdentityViewBuilder.build(identity: star.feed)
             self.navigationController?.pushViewController(controller, animated: true)
         case .users:

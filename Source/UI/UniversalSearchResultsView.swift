@@ -130,9 +130,6 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
     
     // MARK: - Private Properties
     
-    private let communityPubs = AppConfiguration.current?.communityPubs ?? []
-    private lazy var communityPubIdentities = Set(communityPubs.map { $0.feed })
-    
     @Published private var searchResults = SearchResultsUI(data: .none, query: "")
     private var cancellables = [AnyCancellable]()
     private let searchQueue = DispatchQueue(label: "searchQueue", qos: .userInitiated)
@@ -443,28 +440,15 @@ class UniversalSearchResultsView: UIView, UITableViewDelegate, UITableViewDataSo
             guard let inNetworkPeople = searchResults.inNetworkPeople else {
                 return UITableViewCell()
             }
-            let about = inNetworkPeople[indexPath.row]
-            let isCommunity = communityPubIdentities.contains(about.identity)
-            if isCommunity {
-                let cell = (
-                    tableView.dequeueReusableCell(withIdentifier: CommunityTableViewCell.className)
-                    as? CommunityTableViewCell
-                ) ?? CommunityTableViewCell()
-                if let star = communityPubs.first(where: { $0.feed == about.identity }) {
-                    cell.communityView.update(with: star, about: about)
-                }
-                return cell
-            } else {
-                guard let inNetworkPeople = searchResults.inNetworkPeople else {
-                    return UITableViewCell()
-                }
-                let about = inNetworkPeople[indexPath.row]
-                let cell = (
-                    tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
-                ) ?? AboutTableViewCell()
-                cell.aboutView.update(with: about.identity, about: about)
-                return cell
+            guard let inNetworkPeople = searchResults.inNetworkPeople else {
+                return UITableViewCell()
             }
+            let about = inNetworkPeople[indexPath.row]
+            let cell = (
+                tableView.dequeueReusableCell(withIdentifier: AboutTableViewCell.className) as? AboutTableViewCell
+            ) ?? AboutTableViewCell()
+            cell.aboutView.update(with: about.identity, about: about)
+            return cell
         }
     }
 

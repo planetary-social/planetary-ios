@@ -51,6 +51,10 @@ class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { 
         }
     }
 
+    var isUsingTestingNetwork: Bool {
+        network?.name == Environment.Networks.test.name
+    }
+
     private var secretDidChange = false
     var secret: Secret {
         didSet {
@@ -123,17 +127,6 @@ class AppConfiguration: NSObject, NSCoding, Identifiable, @unchecked Sendable { 
             return Environment.PlanetarySystem.systemPubs
         case Environment.Networks.test:
             return Environment.TestNetwork.systemPubs
-        default:
-            return []
-        }
-    }
-    
-    var communityPubs: [Star] {
-        switch ssbNetwork {
-        case Environment.Networks.mainNet:
-            return Environment.PlanetarySystem.communityPubs
-        case Environment.Networks.test:
-            return Environment.TestNetwork.communityPubs
         default:
             return []
         }

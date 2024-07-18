@@ -20,8 +20,7 @@ final class ProfileStrategy: NSObject, FeedStrategy {
     }
 
     private var isStar: Bool {
-        let pubs = (AppConfiguration.current?.communityPubs ?? []) +
-            (AppConfiguration.current?.systemPubs ?? [])
+        let pubs = AppConfiguration.current?.systemPubs ?? []
         return pubs.contains { $0.feed == identity }
     }
 

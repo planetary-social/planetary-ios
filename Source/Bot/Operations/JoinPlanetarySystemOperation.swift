@@ -18,7 +18,7 @@ class JoinPlanetarySystemOperation: AsynchronousOperation {
     private var internalQueue: OperationQueue
     
     /// Minimum number of Planetary's pubs that should be followng the user for them to be considered in the system.
-    static let minNumberOfStars = 3
+    static let minNumberOfStars = 2
     
     let userDefaults = UserDefaults.standard
     

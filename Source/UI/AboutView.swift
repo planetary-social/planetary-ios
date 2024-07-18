@@ -205,9 +205,8 @@ class AboutView: MessageUIView {
             loadRelationship(identity: identity)
         }
         
-        let communityPubs = (AppConfiguration.current?.communityPubs ?? []) +
-            (AppConfiguration.current?.systemPubs ?? [])
-        if let star = communityPubs.first(where: { $0.feed == identity }) {
+        let pubs = AppConfiguration.current?.systemPubs ?? []
+        if let star = pubs.first(where: { $0.feed == identity }) {
             followButton.star = star
         } else {
             followButton.star = nil

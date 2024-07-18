@@ -32,10 +32,6 @@ struct Environment {
             Environment.value(for: "PLPlanetarySystem").split(separator: " ").map { Star(invite: String($0)) }
         }()
         
-        static let communityPubs: [Star] = {
-            Environment.value(for: "PLCommunities").split(separator: " ").map { Star(invite: String($0)) }
-        }()
-        
         static let planetaryIdentity: Identity = {
             Environment.value(for: "PLPlanetaryIdentity")
         }()
@@ -47,10 +43,6 @@ struct Environment {
     enum TestNetwork {
         static let systemPubs: [Star] = {
             Environment.value(for: "PLTestNetworkPubs").split(separator: " ").map { Star(invite: String($0)) }
-        }()
-        
-        static let communityPubs: [Star] = {
-            Environment.value(for: "PLTestNetworkCommunities").split(separator: " ").map { Star(invite: String($0)) }
         }()
         
         static let communityAliasServers: [Room] = {
