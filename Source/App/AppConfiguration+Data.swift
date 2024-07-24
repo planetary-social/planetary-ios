@@ -18,9 +18,12 @@ extension AppConfiguration {
     }
 
     static func from(_ data: Data) -> AppConfiguration? {
-        guard let object = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) else { return nil }
-        let configuration = object as? AppConfiguration
-        if configuration == nil { Log.unexpected(.missingValue, "Configuration could not be unarchived") }
+        let unarchiver = try? NSKeyedUnarchiver(forReadingFrom: data)
+        unarchiver?.requiresSecureCoding = false
+        guard let configuration = unarchiver?.decodeObject(of: self, forKey: NSKeyedArchiveRootObjectKey) else {
+            Log.unexpected(.missingValue, "Configuration could not be unarchived")
+            return nil
+        }
         return configuration
     }
 }
