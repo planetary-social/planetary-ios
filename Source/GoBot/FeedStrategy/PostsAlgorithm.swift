@@ -192,7 +192,7 @@ final class PostsAlgorithm: NSObject, FeedStrategy {
     private func filterOnlyFollowedPeople(query: Table, connection: Connection, userId: Int64) -> Table {
         query
             .filter(
-                Expression(literal: """
+                Expression<Bool>(literal: """
                 ((authors.author IN (SELECT followed_authors.author FROM contacts
                 JOIN authors AS followed_authors ON contacts.contact_id == followed_authors.id
                 WHERE contacts.author_id = \(userId) AND contacts.state == 1))
@@ -205,7 +205,7 @@ final class PostsAlgorithm: NSObject, FeedStrategy {
     private func filterNotFollowingPeople(query: Table, connection: Connection, userId: Int64) -> Table {
         query
             .filter(
-                Expression(literal: """
+                Expression<Bool>(literal: """
                 (authors.author NOT IN
                     (SELECT followed_and_blocked_authors.author FROM contacts
                     JOIN authors AS followed_and_blocked_authors ON contacts.contact_id == followed_and_blocked_authors.id
