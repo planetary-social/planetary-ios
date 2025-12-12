@@ -1,0 +1,28 @@
+{
+    "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
+    // Swift Extension Configuration
+    "swift.path": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+    // Enable test discovery and running via Swift extension
+    "swift.testing.codeLens": true,
+    "swift.testing.testExplorer": true,
+    // SourceKit-LSP configuration (uses default from toolchain)
+    // Note: swiftinterface errors may be resolved by restarting the language server
+    // Build server configuration (uses buildServer.json)
+    "swift.buildArguments": [],
+    // Exclude build artifacts from file watcher
+    "files.exclude": {
+        "**/.build": true,
+        "**/build": true,
+        "**/DerivedData": true
+    },
+    // Test configuration - prioritize Swift extension
+    "testing.automaticallyOpenPeekView": "never",
+    "testing.followRunningTest": true,
+    // Disable other test providers if they conflict
+    // SweetPad may be discovering tests via Xcode project
+    // We want Swift extension to discover via Package.swift instead
+    "testing.defaultGutterClickAction": "run",
+    "swift.swiftEnvironmentVariables": {
+        "DEVELOPER_DIR": "/Applications/Xcode.app"
+    }
+}
