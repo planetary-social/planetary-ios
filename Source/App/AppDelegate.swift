@@ -55,6 +55,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Check https://apple.co/2ZXayG9 for more info.
         Darwin.signal(SIGPIPE, SIG_IGN)
         
+        #if DEBUG
+        // Setup InjectionIII for hot reloading
+        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection.bundle")?.load()
+        #endif
+        
         // done
         return true
     }

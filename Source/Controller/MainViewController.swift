@@ -139,6 +139,9 @@ class MainViewController: UITabBarController {
             tabBarItemImageName: "tab-icon-channels"
         )
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        #if DEBUG
+        setupInjection()
+        #endif
     }
 
     convenience init() {
@@ -195,6 +198,31 @@ class MainViewController: UITabBarController {
     func selectDirectoryTab() {
         self.selectedViewController = self.directoryFeatureViewController
     }
+    
+    #if DEBUG
+    private func setupInjection() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(injected),
+            name: NSNotification.Name("INJECTION_BUNDLE_NOTIFICATION"),
+            object: nil
+        )
+    }
+    
+    @objc func injected() {
+        // Force view refresh on injection
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        
+        // Refresh the home view controller if it's currently visible
+        // The SwiftUI view will refresh automatically via its own injection token,
+        // but we can force a layout update here for UIKit components
+        if selectedViewController == homeFeatureViewController {
+            homeFeatureViewController.view.setNeedsLayout()
+            homeFeatureViewController.view.layoutIfNeeded()
+        }
+    }
+    #endif
 }
 
 protocol TopScrollable {

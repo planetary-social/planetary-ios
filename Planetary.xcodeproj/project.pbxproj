@@ -1124,6 +1124,8 @@
 		C982CBD12833ED1C00D8963F /* FeedStrategySelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */; };
 		C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
 		C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */; };
+		C982CBD72833F7D800D89640 /* RecentlyActivePostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD42833F7D600D89640 /* RecentlyActivePostsAlgorithm.swift */; };
+		C982CBD82833F7D800D89640 /* RecentlyActivePostsAlgorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD42833F7D600D89640 /* RecentlyActivePostsAlgorithm.swift */; };
 		C982CBD72834233700D8963F /* FeedStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD62834233700D8963F /* FeedStrategyTests.swift */; };
 		C982CBD92834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
 		C982CBDA2834682C00D8963F /* UserDefaults+Planetary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */; };
@@ -1829,6 +1831,7 @@
 		C97A826428D256D00064848A /* Task+CancellableSleep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Task+CancellableSleep.swift"; sourceTree = "<group>"; };
 		C982CBD02833ED1C00D8963F /* FeedStrategySelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategySelectionViewController.swift; sourceTree = "<group>"; };
 		C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAndContactsAlgorithm.swift; sourceTree = "<group>"; };
+		C982CBD42833F7D600D89640 /* RecentlyActivePostsAlgorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentlyActivePostsAlgorithm.swift; sourceTree = "<group>"; };
 		C982CBD62834233700D8963F /* FeedStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStrategyTests.swift; sourceTree = "<group>"; };
 		C982CBD82834682C00D8963F /* UserDefaults+Planetary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Planetary.swift"; sourceTree = "<group>"; };
 		C98A013B2790AED800E29A97 /* ViewDatabasePerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDatabasePerformanceTests.swift; sourceTree = "<group>"; };
@@ -2889,6 +2892,7 @@
 				5BC297582806022C00C0CD81 /* PostsAlgorithm.swift */,
 				5BC2975C2806024B00C0CD81 /* PostsAndContactsAlgorithm.swift */,
 				C982CBD32833F7D500D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift */,
+				C982CBD42833F7D600D89640 /* RecentlyActivePostsAlgorithm.swift */,
 				5BAD727C2892C4C5001494B4 /* NoHopFeedAlgorithm.swift */,
 				5B8F2F5228AEA24F005EE536 /* OneHopFeedAlgorithm.swift */,
 				5BA6E3B629366ED4000393AC /* HashtagAlgorithm.swift */,
@@ -4263,6 +4267,7 @@
 				535754F622692B4B002A6989 /* BotStatistics.swift in Sources */,
 				53AD3FEB22776A3C005228F9 /* MessageValue.swift in Sources */,
 				C982CBD52833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
+				C982CBD72833F7D800D89640 /* RecentlyActivePostsAlgorithm.swift in Sources */,
 				53E26C58230382DC009240B2 /* Date+ISO8601.swift in Sources */,
 				5B4AEA73294D14240059E039 /* EmptyHomeView.swift in Sources */,
 				5B88E5FF29707D8F005F865D /* CardButtonStyle.swift in Sources */,
@@ -4870,6 +4875,7 @@
 				531B92B122CAC203005D5255 /* PostButtonsView.swift in Sources */,
 				531D0A1321EACC0A008E40A8 /* GoBotViewController.swift in Sources */,
 				C982CBD42833F7D600D8963F /* RecentlyActivePostsAndContactsAlgorithm.swift in Sources */,
+				C982CBD82833F7D800D89640 /* RecentlyActivePostsAlgorithm.swift in Sources */,
 				0AAF8C4325C6444B00FD8D0F /* CommunityCellView.swift in Sources */,
 				53C2B12C2294E8A50018D0A8 /* AppConfiguration+Keychain.swift in Sources */,
 				5314EF8322EB713C0065D02A /* UIView+Shake.swift in Sources */,

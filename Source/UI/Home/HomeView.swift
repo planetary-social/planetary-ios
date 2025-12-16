@@ -59,6 +59,10 @@ struct HomeView: View, HelpDrawerHost {
 
     @State
     private var isPresentingCompose = false
+    
+    #if DEBUG
+    @State private var injectionToken = UUID()
+    #endif
 
     private var shouldShowFloatingButton: Bool {
         numberOfNewItems > 0
@@ -144,6 +148,12 @@ struct HomeView: View, HelpDrawerHost {
             Analytics.shared.trackDidShowScreen(screenName: "home")
             HelpDrawerCoordinator.showFirstTimeHelp(for: helpDrawerType, state: helpDrawerState)
         }
+        #if DEBUG
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("INJECTION_BUNDLE_NOTIFICATION"))) { _ in
+            injectionToken = UUID()
+        }
+        .id(injectionToken)
+        #endif
     }
 
     private func updateBadgeNumber(value: Int) {

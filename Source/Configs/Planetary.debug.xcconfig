@@ -17,6 +17,9 @@ PRODUCT_BUNDLE_IDENTIFIER = com.planetary.ios
 
 SWIFT_OBJC_BRIDGING_HEADER = ${PROJECT_DIR}/Source/GoBot/GoBotBridge.h
 
+// InjectionIII linker flags for hot reloading (Debug only)
+OTHER_LDFLAGS = $(inherited) -Xlinker -interposable
+
 // If you change any invitations here you should track them here too: https://github.com/planetary-social/infrastructure/wiki/Pub-Invitation-Tracking
 
 PUB_ONE = one.planetary.pub:8008:@CIlwTOK+m6v1hT2zUVOCJvvZq7KE/65ErN6yA2yrURY=.ed25519~gkPjmojoEv5xNRcCl/BzF1reod2pnh+ciS1E+Tr6XOc=
